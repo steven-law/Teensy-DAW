@@ -500,6 +500,7 @@ void gridchannel3Sequencer () {   //static Display rendering
   drawSequencerGrid();
   drawColors(2);
   drawNoteNames();
+  //test Github test
 }
 void channel3Sequencer () {
 
