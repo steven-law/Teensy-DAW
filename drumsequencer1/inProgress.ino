@@ -25,11 +25,8 @@ int channel2Clip[8][16] {
 
 void gridchannel2Sequencer () {   //static Display rendering
   clearWorkSpace();
-  drawOctavesbuttons();
+  drawMelodicSequencerStatic(1);
   tft.print(ch2Octaves);
-  drawSequencerGrid();
-  drawColors(1);
-  drawNoteNames();
 }
 void channel2Sequencer () {
   TS_Point p = ts.getPoint();
@@ -54,11 +51,11 @@ void channel2Sequencer () {
 
 
   if (ts.touched()) {
-    if (gridTouchX > 17 && gridTouchX < 20  && gridTouchY > 1 && gridTouchY < 4) {
+    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
       ch2Octaves--;
       clearStepsGrid();
     }
-    if (gridTouchX > 17 && gridTouchX < 20  && gridTouchY > 7 && gridTouchY < 10) {
+    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
       ch2Octaves++;
       clearStepsGrid();
     }
@@ -77,13 +74,13 @@ void channel2Sequencer () {
       int on_screen_y = (tone) * STEP_FRAME_H + 24;
       if (channel2loop[tone][step_number] == LOW) {
         channel2loop[tone][step_number] = HIGH;
-        channel2clip[ch2Clip][step_number] = ch2NoteValue;  //here i assign them to the array
+        channel2Clip[ch2Clip][step_number] = ch2NoteValue;  //here i assign them to the array
         tft.fillCircle( on_screen_x, on_screen_y, 5, trackColor[1]); //draw the active step circles
       }
       else if (channel2loop[tone][step_number] == HIGH) {
         channel2loop[tone][step_number] = LOW;
-        channel2clip[ch2Clip][step_number] = 0;
-        tft.fillCircle( on_screen_x on_screen_y, 5, ILI9341_DARKGREY); //draw the active step circles
+        channel2Clip[ch2Clip][step_number] = 0;
+        tft.fillCircle( on_screen_x, on_screen_y, 5, ILI9341_DARKGREY); //draw the active step circles
       }
     }
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {

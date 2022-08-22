@@ -26,6 +26,13 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 #define DOT_OFFSET_X 40  //STEP_FRAME_W * 2 + 8
 #define DOT_OFFSET_Y 24  //STEP_FRAME_H + 8
 #define DOT_RADIUS 5
+#define OCTAVE_CHANGE_LEFTMOST 17
+#define OCTAVE_CHANGE_RIGHTMOST 20
+#define OCTAVE_CHANGE_UP_TOPMOST 1
+#define OCTAVE_CHANGE_UP_BOTTOMMOST 4
+#define OCTAVE_CHANGE_DOWN_TOPMOST 7
+#define OCTAVE_CHANGE_DOWN_BOTTOMMOST 10
+#define OCTAVE_CHANGE_CLEAR_RECT_LEFT_TOP
 int trackColor[8] {6150246, 3326604, 1095334, 8678659, 6003265, 7678932, 12943157, 8044207};
 int step_Frame_X;
 int step_Frame_Y;
@@ -347,10 +354,10 @@ void startUpScreen () {   //static Display rendering
   tft.print("D");
   tft.fillRect(1, STEP_FRAME_H * 2, 15, STEP_FRAME_H, trackColor[1]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 34);
-  tft.print("M");
+  tft.print("2");
   tft.fillRect(1, STEP_FRAME_H * 3, 15, STEP_FRAME_H, trackColor[2]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 50);
-  tft.print("C");
+  tft.print("3");
   tft.fillRect(1, STEP_FRAME_H * 4, 15, STEP_FRAME_H, trackColor[3]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 66);
   tft.print("4");
@@ -449,9 +456,7 @@ void songMode() {
 
 void gridDrumSequencer () {   //static Display rendering
   clearWorkSpace();
-  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, 192, trackColor[0]);
-  drawSequencerGrid();
-  drawColors(0);
+  drawDrumSequencerStatic(0);
   for (int i = 1; i < 13; i++) {
     tft.setCursor(18, STEP_FRAME_H * i + 2);
     tft.setFont(Arial_8);
@@ -495,11 +500,8 @@ void drumSequencer() {
 
 void gridchannel3Sequencer () {   //static Display rendering
   clearWorkSpace();
-  drawOctavesbuttons();
+  drawMelodicSequencerStatic(2);
   tft.print(octavesCh3);
-  drawSequencerGrid();
-  drawColors(2);
-  drawNoteNames();
   //test Github test
 }
 void channel3Sequencer () {
@@ -522,10 +524,10 @@ void channel3Sequencer () {
 
 
   if (ts.touched()) {
-    if (gridTouchX > 17 && gridTouchX < 20  && gridTouchY > 1 && gridTouchY < 4) {
+    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
       octavesCh3--;
     }
-    if (gridTouchX > 17 && gridTouchX < 20  && gridTouchY > 7 && gridTouchY < 10) {
+    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
       octavesCh3++;
     }
     tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
@@ -549,7 +551,8 @@ void channel3Sequencer () {
   delay(100);
 }
 
-void drawSequencerGrid () {
+void drawMelodicSequencerStatic(int color) {
+  //draw the Main Grid
   for (int i = 0; i < 17; i++) {   //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
     tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE); //(x, y-start, length, color)
@@ -558,24 +561,22 @@ void drawSequencerGrid () {
     step_Frame_Y = i * 16;
     tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE); //(x-start, y, length, color)
   }
-}
-void drawColors (int color) {
-  for (int C = 0; C < 8; C++) {
-    tft.fillRect(STEP_FRAME_W * 2 * C + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[color] + C * 20);
-    tft.setCursor(STEP_FRAME_W * 2 * C + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
+  //draw Clipselector
+  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
+    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[color] + ClipNr * 20);
+    tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
     tft.setTextSize(1);
     tft.print("Clip ");
-    tft.print(C + 1);
+    tft.print(ClipNr + 1);
   }
   for (int i = 0; i < 12; i++) {
     if (scales[scaleSelected][i] == HIGH) {
-      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, 15, STEP_FRAME_H, trackColor[color]);
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[color]);
     }
   }
-}
-void drawOctavesbuttons () {
+  //draw Octavebuttons
   tft.fillRect(STEP_FRAME_W * 18, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 8, ILI9341_DARKGREY);
   tft.fillTriangle(STEP_FRAME_W * 18, STEP_FRAME_H * 4, STEP_FRAME_W * 20, STEP_FRAME_H * 4, STEP_FRAME_W * 19, STEP_FRAME_H * 2, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
   tft.fillTriangle(STEP_FRAME_W * 18, STEP_FRAME_H * 8, STEP_FRAME_W * 20, STEP_FRAME_H * 8, STEP_FRAME_W * 19, STEP_FRAME_H * 10, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
@@ -584,8 +585,8 @@ void drawOctavesbuttons () {
   tft.setFont(Arial_16);
   tft.setTextColor(ILI9341_WHITE);
   tft.setTextSize(1);
-}
-void drawNoteNames () {
+
+  //draw Notenames
   for (int n = 0; n < 12; n++) {   //hor notes
     tft.setCursor(18, STEP_FRAME_H * n + 18);
     tft.setFont(Arial_8);
@@ -594,6 +595,35 @@ void drawNoteNames () {
     tft.print(noteNames[n]);
   }
 }
+void drawDrumSequencerStatic (int color) {
+  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, 192, trackColor[color]);
+  //draw main Grid
+  for (int i = 0; i < 17; i++) {   //vert Lines
+    step_Frame_X = i * STEP_FRAME_W;
+    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE); //(x, y-start, length, color)
+  }
+  for (int i = 0; i < 13; i++) {   //hor lines
+    step_Frame_Y = i * 16;
+    tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE); //(x-start, y, length, color)
+  }
+  //draw Clipselector
+  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
+    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[color] + ClipNr * 20);
+    tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_BLACK);
+    tft.setTextSize(1);
+    tft.print("Clip ");
+    tft.print(ClipNr + 1);
+  }
+  //draw active steps
+  for (int i = 0; i < 12; i++) {
+    if (scales[scaleSelected][i] == HIGH) {
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[color]);
+    }
+  }
+}
+
 void clearWorkSpace () {    //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20 , STEP_FRAME_H * 14, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
   tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, STEP_FRAME_H * 12, ILI9341_DARKGREY);
