@@ -21,6 +21,10 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 
 #define STEP_FRAME_W 16
 #define STEP_FRAME_H 16
+#define SEQ_GRID_LEFT 2
+#define SEQ_GRID_RIGHT 17
+#define SEQ_GRID_TOP 1
+#define SEQ_GRID_BOTTOM 12
 #define GRID_LENGTH_HOR 256
 #define GRID_LENGTH_VERT 192
 #define DOT_OFFSET_X 40  //STEP_FRAME_W * 2 + 8
@@ -479,7 +483,7 @@ void drumSequencer() {
     }
   }
   if (ts.touched()) {
-    if (gridTouchX > 1 && gridTouchX < 18  && gridTouchY > 0 && gridTouchY < 13) {
+    if (gridTouchX => SEQ_GRID_LEFT && gridTouchX =< SEQ_GRID_RIGHT  && gridTouchY => SEQ_GRID_TOP && gridTouchY =< SEQ_GRID_BOTTOM) {
       if (drumbeat[dClip][gridTouchY - 1][gridTouchX - 2] == LOW) {
         drumbeat[dClip][gridTouchY - 1][gridTouchX - 2] = HIGH;
         tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]); //draw the active step circles
