@@ -365,10 +365,10 @@ void startUpScreen () {   //static Display rendering
   tft.print("D");
   tft.fillRect(1, STEP_FRAME_H * 2, 15, STEP_FRAME_H, trackColor[1]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 34);
-  tft.print("2");
+  tft.print("M");
   tft.fillRect(1, STEP_FRAME_H * 3, 15, STEP_FRAME_H, trackColor[2]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 50);
-  tft.print("3");
+  tft.print("C");
   tft.fillRect(1, STEP_FRAME_H * 4, 15, STEP_FRAME_H, trackColor[3]); //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(4, 66);
   tft.print("4");
@@ -588,7 +588,7 @@ void drawMelodicSequencerStatic(int color) {
     }
   }
   //draw Octavebuttons
-  tft.fillRect(STEP_FRAME_W * 18, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 8, ILI9341_DARKGREY);
+  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 8, ILI9341_DARKGREY);
   tft.fillTriangle(STEP_FRAME_W * 18, STEP_FRAME_H * 4, STEP_FRAME_W * 20, STEP_FRAME_H * 4, STEP_FRAME_W * 19, STEP_FRAME_H * 2, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
   tft.fillTriangle(STEP_FRAME_W * 18, STEP_FRAME_H * 8, STEP_FRAME_W * 20, STEP_FRAME_H * 8, STEP_FRAME_W * 19, STEP_FRAME_H * 10, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
   tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
@@ -649,6 +649,6 @@ void clearStepsGrid () {   // clear all Steps from Display
 void clearStepsGridY () {
   for (int T = 0; T < 12; T++) {
 
-    tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY); // circle: x, y, radius, color
+    tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); // circle: x, y, radius, color
   }
 }
