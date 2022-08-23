@@ -36,7 +36,14 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 #define OCTAVE_CHANGE_UP_BOTTOMMOST 4
 #define OCTAVE_CHANGE_DOWN_TOPMOST 7
 #define OCTAVE_CHANGE_DOWN_BOTTOMMOST 10
-#define OCTAVE_CHANGE_CLEAR_RECT_LEFT_TOP
+#define OCTAVE0 0
+#define OCTAVE1 12
+#define OCTAVE2 24
+#define OCTAVE3 36
+#define OCTAVE4 48
+#define OCTAVE5 60
+#define OCTAVE6 72
+
 int trackColor[8] {6150246, 3326604, 1095334, 8678659, 6003265, 7678932, 12943157, 8044207};
 int step_Frame_X;
 int step_Frame_Y;
@@ -483,7 +490,7 @@ void drumSequencer() {
     }
   }
   if (ts.touched()) {
-    if (gridTouchX => SEQ_GRID_LEFT && gridTouchX =< SEQ_GRID_RIGHT  && gridTouchY => SEQ_GRID_TOP && gridTouchY =< SEQ_GRID_BOTTOM) {
+    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
       if (drumbeat[dClip][gridTouchY - 1][gridTouchX - 2] == LOW) {
         drumbeat[dClip][gridTouchY - 1][gridTouchX - 2] = HIGH;
         tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]); //draw the active step circles
