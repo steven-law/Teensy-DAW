@@ -68,7 +68,7 @@ void channel2Sequencer () {
     tft.print(ch2Octaves);
 
     //gridstep handling, one line under we let the code calculate the notevalue (0-127) from the selected step and selected octave
-    if (gridTouchX > 1 && gridTouchX < 18  && gridTouchY > 0 && gridTouchY < 13) {  //if we touch anything within the Sequencer grid do:
+    if (gridTouchX => SEQ_GRID_LEFT && gridTouchX =< SEQ_GRID_RIGHT  && gridTouchY => SEQ_GRID_TOP && gridTouchY =< SEQ_GRID_BOTTOM)  {  //if we touch anything within the Sequencer grid do:
       ch2NoteValue = (gridTouchY - 1) + (ch2Octaves * 12);        //here i let the sketch calculate the note value
       int tone = ch2NoteValue % 12; // which note out of the 12 is it <--   isn´t this just showing us ANY Note whatever the octave settig is?
       int step_number = gridTouchX - 2;
