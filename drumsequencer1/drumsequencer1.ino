@@ -19,6 +19,13 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 #define TS_MAXX 3730
 #define TS_MAXY 3800
 
+#define ch2COLOR 1
+#define ch3COLOR 2
+#define ch4COLOR 3
+#define ch5COLOR 4
+#define ch6COLOR 5
+#define ch7COLOR 6
+#define ch8COLOR 7
 #define STEP_FRAME_W 16
 #define STEP_FRAME_H 16
 #define SEQ_GRID_LEFT 2
@@ -43,7 +50,7 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 #define OCTAVE4 48
 #define OCTAVE5 60
 #define OCTAVE6 72
-
+#define CHORD_QUANT 7
 int trackColor[8] {6150246, 3326604, 1095334, 8678659, 6003265, 7678932, 12943157, 8044207};
 int step_Frame_X;
 int step_Frame_Y;
@@ -60,6 +67,7 @@ bool songSelect = LOW;     // a handler to keep the mode active after selecting
 bool drumSelect = LOW;     // a handler to keep the mode active after selecting
 bool channel2Select = LOW;     // a handler to keep the mode active after selecting
 bool channel3Select = LOW;     // a handler to keep the mode active after selecting
+bool chordSelect = HIGH;
 
 bool arrangment1[16][51] {
   // 1  5  9 13  17 21 25 29  33 37 41 45  49 53 57 61  65 69 73 77  81 85 89 93  97 101 5  9  13 17 21 25  29 33 37 41  45 49 53 57  61 65 69 73  77 81 85 89  93 97  201
@@ -91,6 +99,9 @@ int scales[scalesQuant][12] {  //bool array for greying out notes that are not i
 };
 char* scaleNames[scalesQuant] = {"Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian"}; // Scale Names for selecting
 char* scaleNamesShort[scalesQuant] = {"Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd"}; // Scale Names for selecting
+char* chordNames[CHORD_QUANT] = {"Minor 7th", "Minor 9th", "Major 7th", "Major 9th", "Maus", "HAse", "Hund"};
+char* chordNamesShort[CHORD_QUANT] = {"Min7", "Min9", "Maj7", "Maj9", "Ma", "HA", "HU"};
+int chordSelected = 0;
 
 //drumchannel
 int dClip = 0;         //variable for clipselecting
@@ -224,7 +235,7 @@ int fullNotes[8][12] {
 };
 
 byte ch2NoteValue;
-
+byte ch3NoteValue;
 int notesCh3[12] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 int octavesCh3 = 3;
 bool channel3loop[12][16] {
@@ -288,6 +299,26 @@ void loop() {
         tft.print(scaleNames[i]);
       }
     }
+//    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    //Chord Select
+//    if (gridTouchX >= 18 && gridTouchY == 1) {
+//      chordSelect = HIGH;
+//      scaleSelect = LOW;
+//      songSelect = LOW;
+//      drumSelect = LOW;
+//      channel2Select = LOW;
+//      channel3Select = LOW;
+//      gridScaleSelector();
+//      chordSelector();
+//
+//      for (int i = 0; i < CHORD_QUANT; i++) {
+//        tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
+//        tft.setFont(Arial_8);
+//        tft.setTextColor(ILI9341_WHITE);
+//        tft.setTextSize(1);
+//        tft.print(chordNames[i]);
+//      }
+//    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select Songarranger and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 0) {
@@ -397,8 +428,8 @@ void showCoordinates () {
   tft.setCursor(60, 230);
   tft.print("Y = ");
   tft.print(gridTouchY);
-  tft.print("  note = ");
-  tft.print(ch2NoteValue);
+  tft.print("  chord = ");
+  tft.print(chordSelected);
   delay(100);
 }
 
@@ -428,6 +459,28 @@ void scaleSelector () {
       //            gridSongMode();
       //            songSelect = HIGH;
       //      startUpScreen();
+    }
+  }
+  delay(100);
+}
+
+void chordSelector () {
+  for (int i = 0; i < CHORD_QUANT; i++) {
+    tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(1);
+    tft.print(chordNames[i]);
+
+    if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
+      chordSelected = i;
+      tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H, STEP_FRAME_W * 2 , STEP_FRAME_H, ILI9341_WHITE); //Xmin, Ymin, Xlength, Ylength, color
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H + 1, STEP_FRAME_W * 2 - 2 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+      tft.setCursor(STEP_FRAME_W * 18 + 2,STEP_FRAME_H + 2);
+      tft.setFont(Arial_8);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print(chordNamesShort[chordSelected]);
     }
   }
   delay(100);
@@ -509,58 +562,6 @@ void drumSequencer() {
 }
 
 
-void gridchannel3Sequencer () {   //static Display rendering
-  clearWorkSpace();
-  drawMelodicSequencerStatic(2);
-  tft.print(octavesCh3);
-  //test Github test
-}
-void channel3Sequencer () {
-
-
-  TS_Point p = ts.getPoint();
-  touchX = map(p.x, 180, 3730, 0, 320);
-  touchY = map(p.y, 260, 3760, 0, 240);
-  gridTouchX = map(p.x, 180, 3730, 0, 19);
-  gridTouchY = map(p.y, 260, 3760, 0, 14);
-  for (int T = 0; T < 12; T++) {
-    for (int S = 0; S < 16; S++) {
-
-      if (channel3loop[T][S] == HIGH) {
-        tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[2]); // circle: x, y, radius, color
-      }
-    }
-  }
-
-
-
-  if (ts.touched()) {
-    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-      octavesCh3--;
-    }
-    if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-      octavesCh3++;
-    }
-    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5 + 8);
-    tft.setFont(Arial_16);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setTextSize(1);
-    tft.print(octavesCh3);
-
-    if (gridTouchX > 1 && gridTouchX < 18  && gridTouchY > 0 && gridTouchY < 13) {
-      if (channel3loop[gridTouchY - 1][gridTouchX - 2] == LOW) {
-        channel3loop[gridTouchY - 1][gridTouchX - 2] = HIGH;
-        tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[2]); //draw the active step circles
-      }
-      else if (channel3loop[gridTouchY - 1][gridTouchX - 2] == HIGH) {
-        channel3loop[gridTouchY - 1][gridTouchX - 2] = LOW;
-        tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active step circles
-      }
-    }
-  }
-  delay(100);
-}
 
 void drawMelodicSequencerStatic(int color) {
   //draw the Main Grid
@@ -637,7 +638,7 @@ void drawDrumSequencerStatic (int color) {
 
 void clearWorkSpace () {    //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20 , STEP_FRAME_H * 14, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
-  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, STEP_FRAME_H * 12, ILI9341_DARKGREY);
+  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H * 12, ILI9341_DARKGREY);
 }
 void clearStepsGrid () {   // clear all Steps from Display
   for (int T = 0; T < 12; T++) {
