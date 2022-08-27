@@ -2,6 +2,7 @@
 #include <font_Arial.h> // from ILI9341_t3
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
+#include <font_AwesomeF000.h>
 
 #define CS_PIN  8
 #define TFT_DC  9
@@ -22,7 +23,6 @@ const long interval = 200;
 #define TS_MAXX 3730
 #define TS_MAXY 3800
 
-#define ch1COLOR 0
 #define ch2COLOR 1
 #define ch3COLOR 2
 #define ch4COLOR 3
@@ -30,9 +30,9 @@ const long interval = 200;
 #define ch6COLOR 5
 #define ch7COLOR 6
 #define ch8COLOR 7
-#define STEP_QUANT 16
 #define STEP_FRAME_W 16
 #define STEP_FRAME_H 16
+#define STEP_QUANT 16
 #define SEQ_GRID_LEFT 2
 #define SEQ_GRID_RIGHT 17
 #define SEQ_GRID_TOP 1
@@ -56,6 +56,7 @@ const long interval = 200;
 #define OCTAVE5 60
 #define OCTAVE6 72
 #define OCTAVE7 84
+#define MAX_VOICES 4
 #define CHORD_QUANT 7
 int trackColor[8] {6150246, 3326604, 1095334, 8678659, 6003265, 7678932, 12943157, 8044207};
 int step_Frame_X;
@@ -66,21 +67,21 @@ int gridTouchX;            //decided to handle touchthingys with a grid, so here
 int gridTouchY;            //decided to handle touchthingys with a grid, so here it is, 15 grids
 
 
-
+int sixteenthClock = 0;
 
 bool scaleSelect = LOW;
 bool songSelect = LOW;     // a handler to keep the mode active after selecting
-bool channel1Select = LOW;     // a handler to keep the mode active after selecting
+bool drumSelect = LOW;     // a handler to keep the mode active after selecting
 bool channel2Select = LOW;     // a handler to keep the mode active after selecting
 bool channel3Select = LOW;     // a handler to keep the mode active after selecting
 bool channel4Select = LOW;     // a handler to keep the mode active after selecting
 bool channel5Select = LOW;     // a handler to keep the mode active after selecting
 bool channel6Select = LOW;     // a handler to keep the mode active after selecting
 bool channel7Select = LOW;     // a handler to keep the mode active after selecting
-bool channel8Select = LOW;
+bool channel8Select = LOW;     // a handler to keep the mode active after selecting
 bool chordSelect = LOW;
 
-bool arrangment1[16][51] {
+bool arrangment1[8][51] {
   // 1  5  9 13  17 21 25 29  33 37 41 45  49 53 57 61  65 69 73 77  81 85 89 93  97 101 5  9  13 17 21 25  29 33 37 41  45 49 53 57  61 65 69 73  77 81 85 89  93 97  201
   {1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1,  0}, //channel 1
   {0, 0, 0, 0,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1,  0}, //channel 2
@@ -110,29 +111,40 @@ int scales[scalesQuant][12] {  //bool array for greying out notes that are not i
 };
 char* scaleNames[scalesQuant] = {"Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian"}; // Scale Names for selecting
 char* scaleNamesShort[scalesQuant] = {"Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd"}; // Scale Names for selecting
+char* chordNames[CHORD_QUANT] = {"Minor 7th", "Minor 9th", "Major 7th", "Major 9th", "Maus", "HAse", "Hund"};
+char* chordNamesShort[CHORD_QUANT] = {"Min7", "Min9", "Maj7", "Maj9", "Ma", "HA", "HU"};
+int chordSelected = 0;
 
-int sixteenthStep;
+
+
 
 void setup() {
   Serial.begin(38400);
-  usbMIDI.setHandleClock(myClock);
-  usbMIDI.setHandleContinue(myContinue);
-  usbMIDI.setHandleStop(myStop);
+//  usbMIDI.setHandleClock(myClock);
+//  usbMIDI.setHandleContinue(myContinue);
+//  usbMIDI.setHandleStop(myStop);
   tft.begin();
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
   ts.begin();
   ts.setRotation(3);
   while (!Serial && (millis() <= 1000));
+
   startUpScreen();
 }
 
 
+
 void loop() {
-  usbMIDI.read();
+//  usbMIDI.read();
+
+  unsigned long currentMillis = millis();
   showCoordinates ();
+boolean istouched = ts.touched();
   TS_Point p = ts.getPoint();
   if (ts.touched()) {
+    touchX = map(p.x, 180, 3730, 0, 320);
+    touchY = map(p.y, 260, 3760, 0, 240);
     gridTouchX = map(p.x, 180, 3730, 0, 19);
     gridTouchY = map(p.y, 260, 3760, 0, 14);
 
@@ -140,19 +152,20 @@ void loop() {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Scale Select
     if (gridTouchX >= 18 && gridTouchY == 0) {
-      scaleSelect = HIGH;
-      channel2Select = LOW;
-      channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
-
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = HIGH;
+      chordSelect = LOW;
       gridScaleSelector();
       scaleSelector();
+
 
       for (int i = 0; i < scalesQuant; i++) {
         tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
@@ -167,148 +180,160 @@ void loop() {
     //  select Songarranger and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 0) {
       songSelect = HIGH;
+      drumSelect = LOW;
       channel2Select = LOW;
-      channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
       channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
       channel7Select = LOW;
+      channel8Select = LOW;
       scaleSelect = LOW;
-      channel1Select = LOW;
+      chordSelect = LOW;
       gridSongMode();
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select Drumchannel and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 1) {
-      channel1Select = HIGH;
-      channel2Select = LOW;
-      channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      gridchannel1Sequencer();
+      drumSelect = HIGH;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = LOW;
+      chordSelect = LOW;
+      gridDrumSequencer();
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel2 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 2) {
-      channel2Select = HIGH;
-      channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = HIGH;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = LOW;
+      chordSelect = LOW;
       gridchannel2Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel3 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 3) {
-      channel3Select = HIGH;
-      channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel7Select = LOW;
-      channel2Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = HIGH;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = LOW;
+      chordSelect = LOW;
       gridchannel3Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel4 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 4) {
-      channel4Select = HIGH;
-      channel8Select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = HIGH;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = LOW;
+      chordSelect = LOW;
       gridchannel4Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel5 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 5) {
-      channel5Select = HIGH;
-      channel8Select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel4Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = HIGH;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = LOW;
+      scaleSelect = LOW;
+      chordSelect = LOW;
       gridchannel5Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel6 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 6) {
-      channel6Select = HIGH;
-      channel8Select = LOW;
-      channel7Select = LOW;
+      songSelect = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
       channel4Select = LOW;
       channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      channel6Select = HIGH;
+      channel7Select = LOW;
+      channel8Select = LOW;
       scaleSelect = LOW;
-      songSelect = LOW;
-      channel1Select = LOW;
+      chordSelect = LOW;
       gridchannel6Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel7 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 7) {
+      songSelect = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
       channel7Select = HIGH;
       channel8Select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
       scaleSelect = LOW;
-      songSelect = LOW;
-      channel1Select = LOW;
+      chordSelect = LOW;
       gridchannel7Sequencer();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  select channel2 and make some static graphics
+    //  select channel8 and make some static graphics
     if (gridTouchX == 0 && gridTouchY == 8) {
-      channel8Select = HIGH;
-      channel4Select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
-      scaleSelect = LOW;
       songSelect = LOW;
-      channel1Select = LOW;
+      drumSelect = LOW;
+      channel2Select = LOW;
+      channel3Select = LOW;
+      channel4Select = LOW;
+      channel5Select = LOW;
+      channel6Select = LOW;
+      channel7Select = LOW;
+      channel8Select = HIGH;
+      scaleSelect = LOW;
+      chordSelect = LOW;
       gridchannel8Sequencer();
     }
   }
   if (scaleSelect == HIGH) {
     scaleSelector();
   }
+  if (chordSelect == HIGH) {
+    chordSelector();
+  }
   if (songSelect == HIGH) {
     songMode();
   }
 
-  if (channel1Select == HIGH) {
-    channel1Sequencer();
+  if (drumSelect == HIGH) {
+    drumSequencer();
   }
 
   if (channel2Select == HIGH) {
@@ -339,7 +364,6 @@ void loop() {
 
 void startUpScreen () {   //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
-  
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(Arial_9);
   tft.drawRect(STEP_FRAME_W * 10 - 2, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
@@ -377,18 +401,20 @@ void startUpScreen () {   //static Display rendering
   tft.drawRect(STEP_FRAME_W * 18, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
   tft.drawRect(STEP_FRAME_W * 8 - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
   tft.setTextColor(ILI9341_GREEN);
-  //  tft.setFont(AwesomeF000_10);
+  tft.setFont(AwesomeF000_10);
   tft.setCursor(STEP_FRAME_W * 8, 1);
   tft.print("K");
-  tft.drawRect(STEP_FRAME_W * 9 - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE); //STOP RECT FRAME
-  tft.fillRect(STEP_FRAME_W * 9+1, 3, 10, 10, ILI9341_LIGHTGREY);  //STOP RECT
-  tft.drawRect(STEP_FRAME_W * 7 - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);  // RECORD CIRCLE FRAME
-  tft.fillCircle(STEP_FRAME_W * 7 + 5, 7, DOT_RADIUS + 1, ILI9341_RED); // RECORD CIRCLE
+  tft.drawRect(STEP_FRAME_W * 9 - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.setCursor(STEP_FRAME_W * 9, 1);
+  tft.print("M");
+  tft.drawRect(STEP_FRAME_W * 7 - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
+  tft.fillCircle(STEP_FRAME_W * 7 + 5, 7, DOT_RADIUS + 1, ILI9341_RED); // circle: x, y, radius, color
 
 }
 void showCoordinates () {
-    unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= 50) {
     previousMillis = currentMillis;
     tft.fillRect(20, 0, 80, 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setTextColor(ILI9341_GREEN);
@@ -399,8 +425,8 @@ void showCoordinates () {
     tft.setCursor(50, 3);
     tft.print("Y");
     tft.print(gridTouchY);
-//    tft.setCursor(80, 3);
-//    tft.print(sixteenthClock);
+    tft.setCursor(80, 3);
+    tft.print(sixteenthClock);
   }
 }
 
@@ -409,32 +435,57 @@ void gridScaleSelector () {   //static Display rendering
   tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 16 , STEP_FRAME_H * 12, ILI9341_WHITE); //Xmin, Ymin, Xlength, Ylength, color
 }
 void scaleSelector () {
-    unsigned long currentMillis = millis();
+  unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-  for (int i = 0; i < scalesQuant; i++) {
-    tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setTextSize(1);
-    tft.print(scaleNames[i]);
-
-    if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
-      scaleSelected = i;
-      tft.fillRect(STEP_FRAME_W * 18 + 1, 1, STEP_FRAME_W * 2 - 2 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
-      tft.setCursor(STEP_FRAME_W * 18 + 2, 2);
+    for (int i = 0; i < scalesQuant; i++) {
+      tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
       tft.setFont(Arial_8);
       tft.setTextColor(ILI9341_WHITE);
       tft.setTextSize(1);
-      tft.print(scaleNamesShort[scaleSelected]);
+      tft.print(scaleNames[i]);
+
+      if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
+        scaleSelected = i;
+        tft.fillRect(STEP_FRAME_W * 18 + 1, 1, STEP_FRAME_W * 2 - 2 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+        tft.setCursor(STEP_FRAME_W * 18 + 2, 2);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print(scaleNamesShort[scaleSelected]);
+
+      }
     }
-  }
   }
 }
 
+void chordSelector () {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    for (int i = 0; i < CHORD_QUANT; i++) {
+      tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
+      tft.setFont(Arial_8);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print(chordNames[i]);
+
+      if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
+        chordSelected = i;
+        tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H, STEP_FRAME_W * 2 , STEP_FRAME_H, ILI9341_WHITE); //Xmin, Ymin, Xlength, Ylength, color
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H + 1, STEP_FRAME_W * 2 - 2 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+        tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H + 2);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print(chordNamesShort[chordSelected]);
+      }
+    }
+  }
+}
 
 void gridSongMode () {   //static Display rendering
-  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, 192, ILI9341_DARKGREY);
+  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W * 19, STEP_FRAME_H * 13, ILI9341_DARKGREY);
   clearWorkSpace();
   for (int f = 0; f < 27; f++) {     //do this for all phrases
     //vertical Line
@@ -463,9 +514,10 @@ void songMode() {
 }
 
 
+
 void drawMelodicSequencerStatic(int color) {
   //draw the Main Grid
-  for (int i = 0; i < 17; i++) {   //vert Lines
+  for (int i = 0; i <= STEP_QUANT; i++) {   //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
     tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE); //(x, y-start, length, color)
   }
@@ -507,6 +559,34 @@ void drawMelodicSequencerStatic(int color) {
     tft.print(noteNames[n]);
   }
 }
+void drawDrumSequencerStatic (int color) {
+  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, 192, trackColor[color]);
+  //draw main Grid
+  for (int i = 0; i <= STEP_QUANT; i++) {   //vert Lines
+    step_Frame_X = i * STEP_FRAME_W;
+    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE); //(x, y-start, length, color)
+  }
+  for (int i = 0; i < 13; i++) {   //hor lines
+    step_Frame_Y = i * 16;
+    tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE); //(x-start, y, length, color)
+  }
+  //draw Clipselector
+  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
+    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[color] + ClipNr * 20);
+    tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_BLACK);
+    tft.setTextSize(1);
+    tft.print("Clip ");
+    tft.print(ClipNr + 1);
+  }
+  //draw active steps
+  for (int i = 0; i < 12; i++) {
+    if (scales[scaleSelected][i] == HIGH) {
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[color]);
+    }
+  }
+}
 
 void clearWorkSpace () {    //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20 , STEP_FRAME_H * 13, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
@@ -514,7 +594,7 @@ void clearWorkSpace () {    //clear the whole grid from Display
 }
 void clearStepsGrid () {   // clear all Steps from Display
   for (int T = 0; T < 12; T++) {
-    for (int S = 0; S < 16; S++) {
+    for (int S = 0; S < STEP_QUANT; S++) {
       tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY); // circle: x, y, radius, color
     }
   }
