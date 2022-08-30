@@ -758,6 +758,16 @@ bool channel8Clip[8][127][STEP_QUANT] {
   }
 };
 
+byte ch8Clip[8][STEP_QUANT] {
+  {0, -1, -1,  0,  -1, -1,  0, -1,  -1,  0, -1,  9, -1, 10, -1},
+  {3, -1, -1,  3,  -1, -1,  3, -1,  -1,  3, -1,  2, -1,  2, -1},
+  {},{},{},{},{},{}
+};
+
+byte ch8OctavesClip[8][STEP_QUANT] {
+  {3, -1, -1,  3,  -1, -1,  3, -1,  -1,  3, -1,  2, -1,  2, -1},
+  {},{},{},{},{},{},{}
+};
 void gridchannel8Sequencer () {   //static Display rendering
   clearWorkSpace();
   drawMelodicSequencerStatic(ch8COLOR);
@@ -772,60 +782,14 @@ void channel8Sequencer () {
     gridTouchX = map(p.x, 180, 3730, 0, 19);  // mapping the touch coordinates to a grid of 20
     gridTouchY = map(p.y, 260, 3760, 0, 14);  //mapping the touch coordinates to a grid of 15
 
-    switch (ch8Octaves) {
-      case 0:
-        for (byte T = OCTAVE0; T < OCTAVE1; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
+    byte tone_start = ch8Octaves * 12;
+    byte tone_end = (ch8Octaves + 1) * 12;
+    for (byte tone = tone_start ; tone < tone_end ; tone++) {
+      for (byte step = 0 ; step < STEP_QUANT ; step++) {
+        if (channel7Clip[ch8Clip][tone][step]) {
+          tft.fillCircle((step * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]);
         }
-        break;
-      case 1:
-        for (byte T = OCTAVE1; T < OCTAVE2; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
-        }
-        break;
-      case 2:
-        for (byte T = OCTAVE2; T < OCTAVE3; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
-        }
-        break;
-      case 3:
-        for (byte T = 36; T < 48; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
-        }
-        break;
-      case 4:
-        for (byte T = OCTAVE5; T < OCTAVE6; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
-        }
-        break;
-      case 5:
-        for (byte T = OCTAVE6; T < OCTAVE7; T++) {
-          for (byte S = 0; S < STEP_QUANT; S++) {
-            if (channel8Clip[ch8Clip][T][S] == HIGH) {
-              tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, (T - ch8Octaves * 12) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch8COLOR]); // circle: x, y, radius, color
-            }
-          }
-        }
+      }
     }
 
 

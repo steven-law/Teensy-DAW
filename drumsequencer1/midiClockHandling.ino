@@ -11,6 +11,8 @@ byte setNoteOn;
 byte noteOnClock;
 byte zaehler = 0;
 int zeitAlt = 0;
+
+byte velocity = 96;
 //24ppqn  6ppqn=sixteenthClock  24ppqn=fourthClock  96ppqn=barClock 384ppqn=phraseClock
 void myClock() {
   noInterrupts();

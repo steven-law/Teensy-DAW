@@ -2,6 +2,18 @@
 #include <font_Arial.h> // from ILI9341_t3
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
+#include "FifteenStep.h"
+
+#define SEQUENCER_MEMORY 1024
+FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);
+
+// set initial state for dynamic values
+int tempo = 120;
+int steps = 16;
+//int polyphony = 12;
+// save button state
+int button_last = 0;
+
 
 #define CS_PIN  8
 #define TFT_DC  9
@@ -15,7 +27,7 @@ ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC);
 
 unsigned long previousMillis = 0;
 const long interval = 200;
-int barClock = 0;
+byte barClock = 0;
 
 
 // This is calibration data for the raw touch data to the screen coordinates
@@ -79,11 +91,17 @@ int trackTouchY;
 
 
 
-bool scaleSelect = LOW;
+
 bool songSelectPage_1 = LOW;     // a handler to keep the mode active after selecting
 bool songSelectPage_2 = LOW;     // a handler to keep the mode active after selecting
 bool songSelectPage_3 = LOW;     // a handler to keep the mode active after selecting
 bool songSelectPage_4 = LOW;     // a handler to keep the mode active after selecting
+byte PHRASE_SEGMENT_LENGTH = 8;
+byte pageNumber = 0;
+byte songPositionY = 228;
+byte stepPositionY = 236;
+byte gridPositionY = 232;
+byte pixelbarClock = 0;
 bool channel1Select = LOW;     // a handler to keep the mode active after selecting
 bool channel2Select = LOW;     // a handler to keep the mode active after selecting
 bool channel3Select = LOW;     // a handler to keep the mode active after selecting
@@ -97,6 +115,7 @@ bool chordSelect = LOW;
 
 
 //Scales
+bool scaleSelect = LOW;
 const int scalesQuant = 9;     //how many scales do we have
 int scaleSelected = 0;         //variable for scale selecting
 char* noteNames[12] =          //notenames that are printed on the left
@@ -122,10 +141,16 @@ char* scaleNamesShort[scalesQuant] = {"Chrom", "Major", "NatMi", "HarMi", "MelMi
 
 
 void setup() {
-  Serial.begin(38400);
-  usbMIDI.setHandleClock(myClock);
-  usbMIDI.setHandleContinue(myContinue);
-  usbMIDI.setHandleStop(myStop);
+  Serial.begin(31250); // set MIDI baud
+  //  usbMIDI.setHandleClock(myClock);
+  //  usbMIDI.setHandleContinue(myContinue);
+  //  usbMIDI.setHandleStop(myStop);
+  // start sequencer and set callbacks
+  seq.begin(tempo, steps);
+  seq.setMidiHandler(midi);
+  seq.setStepHandler(step);
+
+
   tft.begin();
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
@@ -139,7 +164,10 @@ void setup() {
 void loop() {
   noInterrupts();
   usbMIDI.read();
-
+  // this is needed to keep the sequencer
+  // running. there are other methods for
+  // start, stop, and pausing the steps
+  seq.run();
 
   interrupts();
   showCoordinates ();
@@ -149,7 +177,21 @@ void loop() {
     gridTouchY = map(p.y, 260, 3760, 0, 14);
     trackTouchY = map(p.y, 630, 3290, 1, 8);
 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Play button
+    if (gridTouchX == 8 || gridTouchX == 9  && gridTouchY == 0) {
+      seq.start();
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Play button
+    if (gridTouchX == 10 && gridTouchY == 0) {
+      seq.stop();
+      seq.panic();
+      barClock = 0;
+      tft.fillRect(STEP_FRAME_W * 2, stepPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      tft.fillRect(STEP_FRAME_W * 2, songPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      tft.fillRect(STEP_FRAME_W * 2, gridPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Scale Select
     if (gridTouchX >= 18 && gridTouchY == 0) {
@@ -445,11 +487,13 @@ void showCoordinates () {
     tft.print("Y");
     tft.print(gridTouchY);
 
-    tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON - 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+
+
+    tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON, 3, STEP_FRAME_W * 2 - 3, 10, ILI9341_DARKGREY);
     tft.setTextColor(ILI9341_WHITE);
     tft.setFont(Arial_9);
-    tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 2, 3);
-    tft.print(barClock);
+    tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
+    tft.print(tempo);
   }
 }
 

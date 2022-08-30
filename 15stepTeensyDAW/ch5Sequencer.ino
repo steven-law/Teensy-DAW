@@ -775,9 +775,9 @@ void channel5Sequencer () {
     byte tone_start = ch5Octaves * 12;
     byte tone_end = (ch5Octaves + 1) * 12;
     for (byte tone = tone_start ; tone < tone_end ; tone++) {
-      for (byte step = 0 ; step < STEP_QUANT ; step++) {
-        if (channel4Clip[ch5Clip][tone][step]) {
-          tft.fillCircle((step * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]);
+      for (byte steps = 0 ; steps < STEP_QUANT ; steps++) {
+        if (channel4Clip[ch5Clip][tone][steps]) {
+          tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]);
         }
       }
     }
@@ -807,11 +807,11 @@ void channel5Sequencer () {
         int step_number = gridTouchX - 2;
         if (channel5Clip[ch5Clip][ch5tone][step_number] == LOW) {
           channel5Clip[ch5Clip][ch5tone][step_number] = HIGH;
-          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]); //draw the active step circles
+          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]); //draw the active steps circles
         }
         else if (channel5Clip[ch5Clip][ch5tone][step_number] == HIGH) {
           channel5Clip[ch5Clip][ch5tone][step_number] = LOW;
-          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active step circles
+          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
         }
       }
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {

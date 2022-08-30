@@ -1,9 +1,9 @@
 
 //also test for github
-byte ch5Clip = 0;
-byte ch5tone;
-byte ch5Octaves = 3;
-bool channel5Clip[8][127][STEP_QUANT] {
+byte ch7Clip = 0;
+byte ch7tone;
+byte ch7Octaves = 3;
+bool channel7Clip[8][127][STEP_QUANT] {
   //Clip0
   {
     //Octave 0
@@ -758,13 +758,13 @@ bool channel5Clip[8][127][STEP_QUANT] {
   }
 };
 
-void gridchannel5Sequencer () {   //static Display rendering
+void gridchannel7Sequencer () {   //static Display rendering
   clearWorkSpace();
-  drawMelodicSequencerStatic(ch5COLOR);
-  tft.print(ch5Octaves);
+  drawMelodicSequencerStatic(ch7COLOR);
+  tft.print(ch7Octaves);
 }
 
-void channel5Sequencer () {
+void channel7Sequencer () {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -772,12 +772,12 @@ void channel5Sequencer () {
     gridTouchX = map(p.x, 180, 3730, 0, 19);  // mapping the touch coordinates to a grid of 20
     gridTouchY = map(p.y, 260, 3760, 0, 14);  //mapping the touch coordinates to a grid of 15
 
-    byte tone_start = ch5Octaves * 12;
-    byte tone_end = (ch5Octaves + 1) * 12;
+    byte tone_start = ch7Octaves * 12;
+    byte tone_end = (ch7Octaves + 1) * 12;
     for (byte tone = tone_start ; tone < tone_end ; tone++) {
-      for (byte step = 0 ; step < STEP_QUANT ; step++) {
-        if (channel4Clip[ch5Clip][tone][step]) {
-          tft.fillCircle((step * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]);
+      for (byte steps = 0 ; steps < STEP_QUANT ; steps++) {
+        if (channel7Clip[ch7Clip][tone][steps]) {
+          tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch7COLOR]);
         }
       }
     }
@@ -787,11 +787,11 @@ void channel5Sequencer () {
     //octave selection
     if (ts.touched()) {
       if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-        ch5Octaves--;
+        ch7Octaves--;
         clearStepsGrid();
       }
       if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-        ch5Octaves++;
+        ch7Octaves++;
         clearStepsGrid();
       }
       //draw the octave number
@@ -800,22 +800,22 @@ void channel5Sequencer () {
       tft.setFont(Arial_16);
       tft.setTextColor(ILI9341_WHITE);
       tft.setTextSize(1);
-      tft.print(ch5Octaves);
+      tft.print(ch7Octaves);
 
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
-        ch5tone = (gridTouchY - 1) + ch5Octaves * 12;
+        ch7tone = (gridTouchY - 1) + ch7Octaves * 12;
         int step_number = gridTouchX - 2;
-        if (channel5Clip[ch5Clip][ch5tone][step_number] == LOW) {
-          channel5Clip[ch5Clip][ch5tone][step_number] = HIGH;
-          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch5COLOR]); //draw the active step circles
+        if (channel7Clip[ch7Clip][ch7tone][step_number] == LOW) {
+          channel7Clip[ch7Clip][ch7tone][step_number] = HIGH;
+          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch7COLOR]); //draw the active steps circles
         }
-        else if (channel5Clip[ch5Clip][ch5tone][step_number] == HIGH) {
-          channel5Clip[ch5Clip][ch5tone][step_number] = LOW;
-          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active step circles
+        else if (channel7Clip[ch7Clip][ch7tone][step_number] == HIGH) {
+          channel7Clip[ch7Clip][ch7tone][step_number] = LOW;
+          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
         }
       }
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
-        ch5Clip = (gridTouchX / 2) - 1;
+        ch7Clip = (gridTouchX / 2) - 1;
         clearStepsGrid();
       }
     }
