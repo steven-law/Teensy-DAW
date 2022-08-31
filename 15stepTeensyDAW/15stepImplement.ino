@@ -12,18 +12,83 @@ byte thickness = 3;
 // position and last are passed to the callback
 void step(int current, int last) {
 
+  for (int i = 0; i < 127; i++) {
+    if (channel1Clip[ch1Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel1channel);
+    }
+    else if (channel1Clip[ch1Clip][i][current+1] == LOW) {
+      usbMIDI.sendNoteOff(i, velocity, channel1channel);
+    }
+  }
+    for (int i = 0; i < 127; i++) {
+    if (channel2Clip[ch2Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel2channel);
+    }
+    else if (channel2Clip[ch2Clip][i][current+1] == LOW) {
+      usbMIDI.sendNoteOff(i, velocity, channel2channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel3Clip[ch3Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel3channel);
+    }
+    else if (channel3Clip[ch3Clip][i][current+1] == LOW) {
+      usbMIDI.sendNoteOff(i, velocity, channel3channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel4Clip[ch4Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel4channel);
+    }
+    else if (channel4Clip[ch4Clip][i][current+1] == LOW) {
+      usbMIDI.sendNoteOff(i, velocity, channel4channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel5Clip[ch5Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel5channel);
+    }
+    else {
+      usbMIDI.sendNoteOff(i, velocity, channel5channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel6Clip[ch6Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel6channel);
+    }
+    else {
+      usbMIDI.sendNoteOff(i, velocity, channel6channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel7Clip[ch7Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel7channel);
+    }
+    else {
+      usbMIDI.sendNoteOff(i, velocity, channel7channel);
+    }
+  }
+      for (int i = 0; i < 127; i++) {
+    if (channel8Clip[ch8Clip][i][current] == HIGH) {
+      usbMIDI.sendNoteOn(i, velocity, channel8channel);
+    }
+    else {
+      usbMIDI.sendNoteOff(i, velocity, channel8channel);
+    }
+  }
+  
   for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
-    for (int stepwidth = 0; stepwidth < 16; stepwidth++) {
+    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
       tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
       tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
-//  for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
-//    if (current >= 16) {
-//      tft.drawFastHLine(STEP_FRAME_W * 13, songPositionY + songPointerThickness, STEP_FRAME_W * 9, ILI9341_DARKGREY);
-//
-//    }
-//  }
+  for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
+    if (current == 0) {
+      tft.drawFastHLine(STEP_FRAME_W * 17, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+
+    }
+  }
   if (current == 0) {
     barClock++;
     pixelbarClock++;
@@ -31,19 +96,19 @@ void step(int current, int last) {
     tft.setTextColor(ILI9341_WHITE);
     tft.setFont(Arial_9);
     tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 2, 3);
-    tft.print(barClock+1);
+    tft.print(barClock + 1);
     for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
       tft.drawPixel(barClock + STEP_FRAME_W * 2, (songPositionY + songPointerThickness) , ILI9341_GREEN);
       tft.drawFastHLine(pixelbarClock * PHRASE_SEGMENT_LENGTH + STEP_FRAME_W * 2, gridPositionY + songPointerThickness, PHRASE_SEGMENT_LENGTH, ILI9341_GREEN);
       tft.drawFastHLine((pixelbarClock - 1) * PHRASE_SEGMENT_LENGTH + STEP_FRAME_W * 2, gridPositionY + songPointerThickness, PHRASE_SEGMENT_LENGTH, ILI9341_DARKGREY);
     }
-    if (pixelbarClock == 255/PHRASE_SEGMENT_LENGTH) {
-      
+    if (pixelbarClock == 255 / PHRASE_SEGMENT_LENGTH) {
+
       pixelbarClock = 0;
       tft.fillRect(STEP_FRAME_W * 2, gridPositionY, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
     }
     if (barClock == 255) {
-      
+
       barClock = 0;
       tft.fillRect(STEP_FRAME_W * 2, songPositionY, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
     }
@@ -64,12 +129,7 @@ void midi(byte channel, byte command, byte arg1, byte arg2) {
     // shift over command
     command <<= 4;
     // add channel to the command
-    command |= channel;
+    command |= channel1channel;
   }
-
-  // send MIDI data
-  Serial.write(command);
-  Serial.write(arg1);
-  Serial.write(arg2);
 
 }
