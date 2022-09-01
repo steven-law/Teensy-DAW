@@ -12,18 +12,16 @@ byte thickness = 3;
 // position and last are passed to the callback
 void step(int current, int last) {
 
-  if (pattern[i][beatcount] == HIGH) {                                    // if the instrument is set to high at this point
-    if (!held_notes[inst][127]) {
-      held_notes[inst][127] = true;
-    }
-  }
-  else {
-    if (held_notes[inst][127]) {
-      trellis.noteOff(i + 36, 0);                                           // if its low, shut up
-      trellis.setPixelColor(i + 16, pixelcolor[i]);
-      held_notes[inst][127] = false;
-    }
-  }
+  //  if (pattern[i][beatcount] == HIGH) {                                    // if the instrument is set to high at this point
+  //    if (!held_notes[inst][127]) {
+  //      held_notes[inst][127] = true;
+  //    }
+  //  }
+  //  else {
+  //    if (held_notes[inst][127]) {
+  //      held_notes[inst][127] = false;
+  //    }
+  //  }
   for (int i = 0; i < 127; i++) {
     if (channel1Clip[ch1Clip][i][current] == HIGH) {
       usbMIDI.sendNoteOn(i, velocity, channel1channel);
@@ -80,14 +78,14 @@ void step(int current, int last) {
       usbMIDI.sendNoteOff(i, velocity, channel7channel);
     }
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel8Clip[ch8Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel8channel);
-    }
-    else {
-      usbMIDI.sendNoteOff(i, velocity, channel8channel);
-    }
+  //  for (int i = 0; i < 16; i++) {
+  if (clip[7][ch8Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[7][ch8Clip][current], velocity, channel8channel);
   }
+  else {
+    usbMIDI.sendNoteOff(clip[7][ch8Clip][current], velocity, channel8channel);
+  }
+  //  }
 
   for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
