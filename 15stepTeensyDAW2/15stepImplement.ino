@@ -77,10 +77,11 @@ void step(int current, int last) {
 
 
   
-  if (clip[6][ch7Clip][current] > 0) {
+  if (clip[6][ch7Clip][current] > VALUE_NOTEOFF) {
     usbMIDI.sendNoteOn(clip[6][ch7Clip][current], velocity, channel7channel);
   }
-  else if (clip[6][ch7Clip][current + 1] <= 0) {
+  else if (clip[6][ch7Clip][current + 1] == VALUE_NOTEOFF) {
+    
     usbMIDI.sendNoteOff(clip[6][ch7Clip][current], velocityOff, channel7channel);
   }
 
@@ -89,10 +90,10 @@ void step(int current, int last) {
 
   
   if (clip[7][ch8Clip][current] > VALUE_NOTEOFF) {
-    usbMIDI.sendNoteOn(clip[7][ch8Clip][current], velocity, channel8channel);
+    usbMIDI.sendNoteOn(clip[7][ch8songModePlayedClip][current], velocity, channel8channel);
   }
   if (clip[7][ch8Clip][current] == VALUE_NOTEOFF) {
-    usbMIDI.sendNoteOff(clip[7][ch8Clip][last], velocityOff, channel8channel);
+    usbMIDI.sendNoteOff(clip[7][ch8songModePlayedClip][last], velocityOff, channel8channel);
   }
 
 
@@ -121,14 +122,18 @@ void step(int current, int last) {
       tft.drawFastHLine(pixelbarClock * PHRASE_SEGMENT_LENGTH + STEP_FRAME_W * 2, gridPositionY + songPointerThickness, PHRASE_SEGMENT_LENGTH, ILI9341_GREEN);
       tft.drawFastHLine((pixelbarClock - 1) * PHRASE_SEGMENT_LENGTH + STEP_FRAME_W * 2, gridPositionY + songPointerThickness, PHRASE_SEGMENT_LENGTH, ILI9341_DARKGREY);
     }
-    if (pixelbarClock == 255 / PHRASE_SEGMENT_LENGTH) {
 
+    if (barClock == 4) {
+      phrase++;
+      ch8songModePlayedClip = arrangment1[7][phrase];
+    }
+    if (pixelbarClock == 255 / PHRASE_SEGMENT_LENGTH) {
       pixelbarClock = 0;
       tft.fillRect(STEP_FRAME_W * 2, gridPositionY, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
     }
     if (barClock == 255) {
-
       barClock = 0;
+      phrase = 0;
       tft.fillRect(STEP_FRAME_W * 2, songPositionY, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
     }
   }
