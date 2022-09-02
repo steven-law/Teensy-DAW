@@ -30,62 +30,49 @@ void step(int current, int last) {
       usbMIDI.sendNoteOff(i, velocity, channel1channel);
     }
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel2Clip[ch2Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel2channel);
-    }
-    else if (channel2Clip[ch2Clip][i][current + 1] == LOW) {
-      usbMIDI.sendNoteOff(i, velocity, channel2channel);
-    }
+   if (clip[1][ch2Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[1][ch2Clip][current], velocity, channel8channel);
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel3Clip[ch3Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel3channel);
-    }
-    else if (channel3Clip[ch3Clip][i][current + 1] == LOW) {
-      usbMIDI.sendNoteOff(i, velocity, channel3channel);
-    }
+  else {
+    usbMIDI.sendNoteOff(clip[1][ch2Clip][current], velocity, channel8channel);
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel4Clip[ch4Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel4channel);
-    }
-    else if (channel4Clip[ch4Clip][i][current + 1] == LOW) {
-      usbMIDI.sendNoteOff(i, velocity, channel4channel);
-    }
+  if (clip[2][ch3Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[2][ch3Clip][current], velocity, channel8channel);
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel5Clip[ch5Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel5channel);
-    }
-    else {
-      usbMIDI.sendNoteOff(i, velocity, channel5channel);
-    }
+  else {
+    usbMIDI.sendNoteOff(clip[2][ch3Clip][current], velocity, channel8channel);
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel6Clip[ch6Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel6channel);
-    }
-    else {
-      usbMIDI.sendNoteOff(i, velocity, channel6channel);
-    }
+  if (clip[3][ch4Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[3][ch4Clip][current], velocity, channel8channel);
   }
-  for (int i = 0; i < 127; i++) {
-    if (channel7Clip[ch7Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel7channel);
-    }
-    else {
-      usbMIDI.sendNoteOff(i, velocity, channel7channel);
-    }
+  else {
+    usbMIDI.sendNoteOff(clip[3][ch4Clip][current], velocity, channel8channel);
   }
-  //  for (int i = 0; i < 16; i++) {
+  if (clip[4][ch5Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[4][ch5Clip][current], velocity, channel8channel);
+  }
+  else {
+    usbMIDI.sendNoteOff(clip[4][ch5Clip][current], velocity, channel8channel);
+  }
+  if (clip[5][ch6Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[5][ch6Clip][current], velocity, channel8channel);
+  }
+  else {
+    usbMIDI.sendNoteOff(clip[5][ch6Clip][current], velocity, channel8channel);
+  }
+  if (clip[6][ch7Clip][current] >= 0) {
+    usbMIDI.sendNoteOn(clip[6][ch7Clip][current], velocity, channel7channel);
+  }
+  else {
+    usbMIDI.sendNoteOff(clip[6][ch7Clip][current], velocity, channel7channel);
+  }
   if (clip[7][ch8Clip][current] >= 0) {
     usbMIDI.sendNoteOn(clip[7][ch8Clip][current], velocity, channel8channel);
   }
   else {
     usbMIDI.sendNoteOff(clip[7][ch8Clip][current], velocity, channel8channel);
   }
-  //  }
+
 
   for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
