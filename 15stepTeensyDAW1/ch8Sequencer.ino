@@ -47,13 +47,13 @@ void channel8Sequencer (byte desired_instrument) {
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         ch8tone = (gridTouchY - 1) + ch8Octaves * 12;
         int step_number = gridTouchX - 2;
-        if (clip[desired_instrument][ch8Clip][step_number] == 0) {
+        if (clip[desired_instrument][ch8Clip][step_number] < 0) {
           clip[desired_instrument][ch8Clip][step_number] = ch8tone;
           //          clipOctaves[7][ch8Clip][step_number] = ch8Octaves;
           tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[desired_instrument]); //draw the active steps circles
         }
-        else if (clip[desired_instrument][ch8Clip][step_number] > 0) {
-          clip[desired_instrument][ch8Clip][step_number] = 0;
+        else if (clip[desired_instrument][ch8Clip][step_number] >= 0) {
+          clip[desired_instrument][ch8Clip][step_number] = -1;
           tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
         }
       }
