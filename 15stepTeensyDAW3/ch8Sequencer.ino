@@ -52,7 +52,8 @@ void channel8Sequencer (byte desired_instrument) {
         int notevalue_on_step = clip[desired_instrument][track[desired_instrument].clip_selector][touched_step];
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
-          notevalue_on_step = track[desired_instrument].tone;
+          clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = track[desired_instrument].tone;
+//          notevalue_on_step = track[desired_instrument].tone;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]); //draw the active steps circles
         }
         else if (notevalue_on_step > VALUE_NOTEOFF) {
