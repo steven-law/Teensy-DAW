@@ -92,6 +92,7 @@ void songModePage() {
 
         //if we touch any of the arranger lines the TrackNr and ClipNr are shown in a small rectangle on the bottom
         if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY <= 7) {
+          clip_to_change = arrangment1[touched_track][touched_phrase];
           tft.setFont(Arial_8);
           tft.setTextColor(ILI9341_WHITE);
 
@@ -103,13 +104,16 @@ void songModePage() {
           tft.print("C");
           tft.print(arrangment1[touched_track][touched_phrase] + 1);
         }
+
         //if we touch the first rectangle, change the selected clipNr +1, but its only changing the 3rdclip on track 8
-        if (gridTouchX == 4 && gridTouchY == 13) {
-          arrangment1[touched_track][touched_phrase]++;
+        if (gridTouchX == 4 && trackTouchY == 8) {
+          clip_to_change++;
+          arrangment1[touched_track][touched_phrase] = clip_to_change;
         }
         //if we touch the first rectangle, change the selected clipNr -1, but its only changing the 4rdclip on track 8
-        if (gridTouchX == 5 && gridTouchY == 13) {
-          arrangment1[touched_track][touched_phrase]--;
+        if (gridTouchX == 5 && trackTouchY == 8) {
+          clip_to_change--;
+          arrangment1[touched_track][touched_phrase] = clip_to_change;
         }
       }
     }

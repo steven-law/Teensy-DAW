@@ -1,6 +1,7 @@
 
 
 
+
 void gridchannel1Sequencer () {   //static Display rendering
   clearWorkSpace();
   drawMelodicSequencerStatic(ch1COLOR);

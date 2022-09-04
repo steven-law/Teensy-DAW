@@ -225,6 +225,7 @@ int songModeSelectedClip = 0;
 bool clipSelector = LOW;
 bool songArranger = HIGH;
 bool clipNumberSelector = LOW;
+int clip_to_change;
 
 //channel variables 1
 bool channel1Select = LOW;     // a handler to keep the mode active after selecting
@@ -1082,49 +1083,6 @@ bool channel1Clip[9][127][STEP_QUANT] {
   }
 };
 
-//channel variables 2
-bool channel2Select = LOW;     // a handler to keep the mode active after selecting
-byte channel2channel = 2;
-byte ch2Clip = 0;
-byte ch2tone;
-byte ch2Octaves = 3;
-
-//channel variables 3
-bool channel3Select = LOW;     // a handler to keep the mode active after selecting
-byte channel3channel = 3;
-byte ch3Clip = 0;
-byte ch3tone;
-byte ch3Octaves = 3;
-
-//channel variables 4
-bool channel4Select = LOW;     // a handler to keep the mode active after selecting
-byte channel4channel = 4;
-byte ch4Clip = 0;
-byte ch4tone;
-byte ch4Octaves = 3;
-
-//channel variables 5
-bool channel5Select = LOW;     // a handler to keep the mode active after selecting
-byte channel5channel = 5;
-byte ch5Clip = 0;
-byte ch5tone;
-byte ch5Octaves = 3;
-
-//channel variables 6
-bool channel6Select = LOW;     // a handler to keep the mode active after selecting
-byte channel6channel = 6;
-byte ch6Clip = 0;
-byte ch6tone;
-byte ch6Octaves = 3;
-
-//channel variables 7
-bool channel7Select = LOW;     // a handler to keep the mode active after selecting
-byte channel7channel = 7;
-byte ch7Clip = 0;
-byte ch7tone;
-byte ch7Octaves = 3;
-
-
 ////channel variables 8
 //bool channel8Select = LOW;
 //byte channel8channel = 8;
@@ -1227,15 +1185,19 @@ void loop() {
   if (ts.touched()) {
     gridTouchX = map(p.x, 180, 3730, 0, 19);
     gridTouchY = map(p.y, 260, 3760, 0, 14);
-    trackTouchY = map(p.y, 630, 3290, 0, 7);
+    trackTouchY = map(p.y, 620, 3120, 0, 7);
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
-
+    Serial.print(p.y);
+    Serial.print("--");
+    Serial.print(trackTouchY);
+    Serial.print("--");
+    Serial.println(constrainedtrackTouchY);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Play button
     if (gridTouchX == 8 && gridTouchY == 0 || gridTouchX == 9  && gridTouchY == 0) {
       seq.start();
       for (int i = 1; i <= 7; i++) {
-      track[i].clip_songMode = arrangment1[i][0];
+        track[i].clip_songMode = arrangment1[i][0];
       }
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1253,13 +1215,13 @@ void loop() {
     //Scale Select
     if (gridTouchX >= 18 && gridTouchY == 0) {
       scaleSelect = HIGH;
-      channel2Select = LOW;
+      track[1].select = LOW;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[6].select = LOW;
 
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1281,13 +1243,13 @@ void loop() {
     if (gridTouchX == 0 && gridTouchY == 0) {
       songSelectPage_1 = HIGH;
       songSelectPage_2 = LOW;
-      channel2Select = LOW;
+      track[1].select = LOW;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[6].select = LOW;
       scaleSelect = LOW;
       channel1Select = LOW;
       gridSongModePage_1();
@@ -1296,13 +1258,13 @@ void loop() {
     //  select Drumchannel and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 0) {
       channel1Select = HIGH;
-      channel2Select = LOW;
+      track[1].select = LOW;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[6].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1312,13 +1274,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel2 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 1) {
-      channel2Select = HIGH;
+      track[1].select = HIGH;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel7Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[6].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1328,13 +1290,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel3 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 2) {
-      channel3Select = HIGH;
+      track[2].select = HIGH;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel7Select = LOW;
-      channel2Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[6].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1344,13 +1306,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel4 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 3) {
-      channel4Select = HIGH;
+      track[3].select = HIGH;
       track[7].select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      track[6].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1360,13 +1322,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel5 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 4) {
-      channel5Select = HIGH;
+      track[4].select = HIGH;
       track[7].select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel4Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      track[6].select = LOW;
+      track[5].select = LOW;
+      track[3].select = LOW;
+      track[2].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1376,13 +1338,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel6 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 5) {
-      channel6Select = HIGH;
+      track[5].select = HIGH;
       track[7].select = LOW;
-      channel7Select = LOW;
-      channel4Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      track[6].select = LOW;
+      track[3].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1392,13 +1354,13 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel7 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 6) {
-      channel7Select = HIGH;
+      track[6].select = HIGH;
       track[7].select = LOW;
-      channel4Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      track[3].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1409,12 +1371,12 @@ void loop() {
     //  select channel8 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 7) {
       track[7].select = HIGH;
-      channel4Select = LOW;
-      channel7Select = LOW;
-      channel6Select = LOW;
-      channel5Select = LOW;
-      channel3Select = LOW;
-      channel2Select = LOW;
+      track[3].select = LOW;
+      track[6].select = LOW;
+      track[5].select = LOW;
+      track[4].select = LOW;
+      track[2].select = LOW;
+      track[1].select = LOW;
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
@@ -1434,28 +1396,14 @@ void loop() {
     channel1Sequencer();
   }
 
-  if (channel2Select == HIGH) {
-    channel2Sequencer(1);
+  for (int i = 1; i < 8; i++) {
+    if (track[i].select) {
+      channel8Sequencer(i);
+    }
   }
 
-  if (channel3Select == HIGH) {
-    channel3Sequencer(2);
-  }
-  if (channel4Select == HIGH) {
-    channel4Sequencer(3);
-  }
-  if (channel5Select == HIGH) {
-    channel5Sequencer(4);
-  }
-  if (channel6Select == HIGH) {
-    channel6Sequencer(5);
-  }
-  if (channel7Select == HIGH) {
-    channel7Sequencer(6);
-  }
-  if (track[7].select == HIGH) {
-    channel8Sequencer(7);
-  }
+
+
 }
 
 
