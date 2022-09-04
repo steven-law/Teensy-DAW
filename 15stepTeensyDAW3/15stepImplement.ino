@@ -13,82 +13,33 @@ byte thickness = 3;
 void step(int current, int last) {
   for (int i = 0; i < 127; i++) {
     if (channel1Clip[ch1Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, velocity, channel1channel);
+      usbMIDI.sendNoteOn(i, VELOCITY, channel1channel);
     }
     if (channel1Clip[ch1Clip][i][current + 1] == LOW) {
-      usbMIDI.sendNoteOff(i, velocityOff, channel1channel);
+      usbMIDI.sendNoteOff(i, VELOCITYOFF, channel1channel);
     }
   }
 
 
 
-  if (clip[1][ch2Clip][current] > 0) {
-    usbMIDI.sendNoteOn(clip[1][ch2Clip][current], velocity, channel2channel);
-  }
-  else if (clip[1][ch3Clip][current + 1] <= 0) {
-    usbMIDI.sendNoteOff(clip[1][ch2Clip][current], velocityOff, channel2channel);
-  }
 
+  for (int track_number = 1; track_number <= 7; track_number++) {
 
-
-  if (clip[2][ch3Clip][current] > 0) {
-    usbMIDI.sendNoteOn(clip[2][ch3Clip][current], velocity, channel3channel);
-  }
-  else if (clip[2][ch3Clip][current + 1] <= 0) {
-    usbMIDI.sendNoteOff(clip[2][ch3Clip][current], velocityOff, channel3channel);
+    if (clip[track_number][track[track_number].clip_songMode][current] > VALUE_NOTEOFF) {
+      usbMIDI.sendNoteOn(clip[track_number][track[track_number].clip_songMode][current], VELOCITY, track[track_number].MIDIchannel);
+    }
+    if (clip[track_number][track[track_number].clip_songMode][current] == VALUE_NOTEOFF) {
+      usbMIDI.sendNoteOff(clip[track_number][track[track_number].clip_songMode][last], VELOCITYOFF, track[track_number].MIDIchannel);
+    }
   }
 
 
-
-  if (clip[3][ch4Clip][current] > 0) {
-    usbMIDI.sendNoteOn(clip[3][ch4Clip][current], velocity, channel4channel);
-  }
-  else if (clip[3][ch4Clip][current + 1] <= 0) {
-    usbMIDI.sendNoteOff(clip[3][ch4Clip][current], velocityOff, channel4channel);
-  }
-
-
-
-  if (clip[4][ch5Clip][current] > 0) {
-    usbMIDI.sendNoteOn(clip[4][ch5Clip][current], velocity, channel5channel);
-  }
-  else if (clip[4][ch5Clip][current + 1] <= 0) {
-    usbMIDI.sendNoteOff(clip[4][ch5Clip][current], velocityOff, channel5channel);
-  }
-
-
-
-
-  if (clip[5][ch6Clip][current] > 0) {
-    usbMIDI.sendNoteOn(clip[5][ch6Clip][current], velocity, channel6channel);
-  }
-  else if (clip[5][ch6Clip][current + 1] <= 0) {
-    usbMIDI.sendNoteOff(clip[5][ch6Clip][current], velocityOff, channel6channel);
-  }
-
-
-
-
-  if (clip[6][ch7Clip][current] > VALUE_NOTEOFF) {
-    usbMIDI.sendNoteOn(clip[6][ch7Clip][current], velocity, channel7channel);
-  }
-  else if (clip[6][ch7Clip][current + 1] == VALUE_NOTEOFF) {
-
-    usbMIDI.sendNoteOff(clip[6][ch7Clip][current], velocityOff, channel7channel);
-  }
-
-  if (clip[7][ch8songModePlayedClip][current] > VALUE_NOTEOFF) {
-    usbMIDI.sendNoteOn(clip[7][ch8songModePlayedClip][current], velocity, channel8channel);
-  }
-  if (clip[7][ch8songModePlayedClip][current] == VALUE_NOTEOFF) {
-    usbMIDI.sendNoteOff(clip[7][ch8songModePlayedClip][last], velocityOff, channel8channel);
-  }
 
 
   for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
       tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
-      tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+      tft.drawFastHLine(last * stepwidth + STEP_FRAME_W * 2, stepPositionY + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
   for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
@@ -113,15 +64,15 @@ void step(int current, int last) {
 
     if (barClock % 2 == 0) {
       phrase++;
-//      if (arrangment1[0][phrase] == -1) {
-//        ch1songModePlayedClip = 8;
-//      }
+      //      if (arrangment1[0][phrase] == -1) {
+      //        ch1songModePlayedClip = 8;
+      //      }
       if (arrangment1[7][phrase] == -1) {
-        ch8songModePlayedClip = 8;
+        track[7].clip_songMode = 8;
       }
 
-      ch8songModePlayedClip = arrangment1[7][phrase];
-//      ch1songModePlayedClip = arrangment1[0][phrase];
+      track[7].clip_songMode = arrangment1[7][phrase];
+      //      ch1songModePlayedClip = arrangment1[0][phrase];
     }
     if (pixelbarClock == 255 / PHRASE_SEGMENT_LENGTH) {
       pixelbarClock = 0;

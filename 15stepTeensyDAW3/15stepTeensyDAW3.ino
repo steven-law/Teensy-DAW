@@ -7,6 +7,7 @@
 #define SEQUENCER_MEMORY 32768
 FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);
 
+
 // set initial state for dynamic values
 int tempo = 120;
 int steps = 16;
@@ -80,8 +81,8 @@ byte barClock = 0;
 #define OCTAVE6 72
 #define OCTAVE7 84
 #define CHORD_QUANT 7
-#define velocity 96
-#define velocityOff 0
+#define VELOCITY 96
+#define VELOCITYOFF 0
 #define VALUE_NOTEOFF 0
 
 #define NUM_CLIPS 9
@@ -1123,13 +1124,31 @@ byte ch7Clip = 0;
 byte ch7tone;
 byte ch7Octaves = 3;
 
-//channel variables 8
-bool channel8Select = LOW;
-byte channel8channel = 8;
-byte ch8Clip = 0;
-byte ch8tone;
-byte ch8Octaves = 3;
-int ch8songModePlayedClip = 0;
+
+////channel variables 8
+//bool channel8Select = LOW;
+//byte channel8channel = 8;
+//byte ch8Clip = 0;
+//byte ch8tone;
+//byte ch8Octaves = 3;
+//int ch8songModePlayedClip = 0;
+
+struct tracks {
+  bool select = false;
+  byte MIDIchannel = 0; // (although you may not need this, depends on how you structure thing later)
+  byte clip_selector = 0; //clipselection from trackview´s clip selector
+  byte clip_songMode; //clipselection from the arrangement
+  byte tone = 0;
+  byte shown_octaves = 3; //
+};
+// make an array of 8 channel_types, numbered 0-7
+tracks track[8];
+//track[].select;
+//track[].MIDIchannel;
+//track[].clip_selector;
+//track[].clip_songMode;
+//track[].tone;
+//track[].shown_octaves;
 
 
 
@@ -1161,14 +1180,29 @@ char* scaleNamesShort[scalesQuant] = {"Chrom", "Major", "NatMi", "HarMi", "MelMi
 
 void setup() {
   Serial.begin(31250); // set MIDI baud
-//    usbMIDI.setHandleClock(myClock);
-//    usbMIDI.setHandleContinue(myContinue);
-//    usbMIDI.setHandleStop(myStop);
+  //    usbMIDI.setHandleClock(myClock);
+  //    usbMIDI.setHandleContinue(myContinue);
+  //    usbMIDI.setHandleStop(myStop);
   // start sequencer and set callbacks
   seq.begin(tempo, steps);
   seq.setStepHandler(step);
   seq.stop();
 
+  /// set the default channel of each
+  track[0].MIDIchannel = 10;
+  track[1].MIDIchannel = 2;
+  track[2].MIDIchannel = 3;
+  track[3].MIDIchannel = 4;
+  track[4].MIDIchannel = 5;
+  track[5].MIDIchannel = 6;
+  track[6].MIDIchannel = 7;
+  track[7].MIDIchannel = 8;
+  //track[].select;
+  //track[].MIDIchannel;
+  //track[].clip_selector;
+  //track[].clip_songMode;
+  //track[].tone;
+  //track[].shown_octaves;
   tft.begin();
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
@@ -1200,10 +1234,12 @@ void loop() {
     //Play button
     if (gridTouchX == 8 && gridTouchY == 0 || gridTouchX == 9  && gridTouchY == 0) {
       seq.start();
-      ch8songModePlayedClip = arrangment1[7][phrase];
+      for (int i = 1; i <= 7; i++) {
+      track[i].clip_songMode = arrangment1[i][0];
+      }
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Play button
+    //Stop button
     if (gridTouchX == 10 && gridTouchY == 0) {
       seq.stop();
       seq.panic();
@@ -1218,7 +1254,7 @@ void loop() {
     if (gridTouchX >= 18 && gridTouchY == 0) {
       scaleSelect = HIGH;
       channel2Select = LOW;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1246,7 +1282,7 @@ void loop() {
       songSelectPage_1 = HIGH;
       songSelectPage_2 = LOW;
       channel2Select = LOW;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1261,7 +1297,7 @@ void loop() {
     if (gridTouchX == 0 && trackTouchY == 0) {
       channel1Select = HIGH;
       channel2Select = LOW;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1277,7 +1313,7 @@ void loop() {
     //  select channel2 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 1) {
       channel2Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1293,7 +1329,7 @@ void loop() {
     //  select channel3 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 2) {
       channel3Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1309,7 +1345,7 @@ void loop() {
     //  select channel4 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 3) {
       channel4Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel7Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1325,7 +1361,7 @@ void loop() {
     //  select channel5 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 4) {
       channel5Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel7Select = LOW;
       channel6Select = LOW;
       channel4Select = LOW;
@@ -1341,7 +1377,7 @@ void loop() {
     //  select channel6 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 5) {
       channel6Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel7Select = LOW;
       channel4Select = LOW;
       channel5Select = LOW;
@@ -1357,7 +1393,7 @@ void loop() {
     //  select channel7 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 6) {
       channel7Select = HIGH;
-      channel8Select = LOW;
+      track[7].select = LOW;
       channel4Select = LOW;
       channel6Select = LOW;
       channel5Select = LOW;
@@ -1372,7 +1408,7 @@ void loop() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel8 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 7) {
-      channel8Select = HIGH;
+      track[7].select = HIGH;
       channel4Select = LOW;
       channel7Select = LOW;
       channel6Select = LOW;
@@ -1392,18 +1428,7 @@ void loop() {
   if (songSelectPage_1 == HIGH) {
     songModePage();
   }
-  //    if (songSelectPage_1 == HIGH) {
-  //      songModePage_1();
-  //    }
-  //    if (songSelectPage_2 == HIGH) {
-  //      songModePage_2();
-  //    }
-  //    if (songSelectPage_3 == HIGH) {
-  //      songModePage_3();
-  //    }
-  //      if (songSelectPage_4 == HIGH) {
-  //      songModePage_4();
-  //    }
+
 
   if (channel1Select == HIGH) {
     channel1Sequencer();
@@ -1428,7 +1453,7 @@ void loop() {
   if (channel7Select == HIGH) {
     channel7Sequencer(6);
   }
-  if (channel8Select == HIGH) {
+  if (track[7].select == HIGH) {
     channel8Sequencer(7);
   }
 }
