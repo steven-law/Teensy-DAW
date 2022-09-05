@@ -2,13 +2,13 @@
 
 
 
-void gridchannel1Sequencer () {   //static Display rendering
+void griddrumStepSequencer () {   //static Display rendering
   clearWorkSpace();
-  drawMelodicSequencerStatic(ch1COLOR);
-  tft.print(ch1Octaves);
+  drawStepSequencerStatic(0);
+  
 }
 
-void channel1Sequencer () {
+void drumStepSequencer () {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -21,12 +21,18 @@ void channel1Sequencer () {
     for (byte tone = tone_start ; tone < tone_end ; tone++) {
       for (byte steps = 0 ; steps < STEP_QUANT ; steps++) {
         if (channel1Clip[ch1Clip][tone][steps] ) {
-          tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch1COLOR]);
+          tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]);
         }
       }
     }
 
-
+    //draw the octave number
+    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
+    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5 + 8);
+    tft.setFont(Arial_16);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(1);
+    tft.print(ch1Octaves);
 
     //octave selection
     if (ts.touched()) {
@@ -51,7 +57,7 @@ void channel1Sequencer () {
         int step_number = gridTouchX - 2;
         if (channel1Clip[ch1Clip][ch1tone][step_number] == LOW) {
           channel1Clip[ch1Clip][ch1tone][step_number] = HIGH;
-          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[ch1COLOR]); //draw the active steps circles
+          tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]); //draw the active steps circles
         }
         else if (channel1Clip[ch1Clip][ch1tone][step_number] == HIGH) {
           channel1Clip[ch1Clip][ch1tone][step_number] = LOW;

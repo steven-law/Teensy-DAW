@@ -37,14 +37,6 @@ byte barClock = 0;
 #define TS_MAXX 3730
 #define TS_MAXY 3800
 
-#define ch1COLOR 0
-#define ch2COLOR 1
-#define ch3COLOR 2
-#define ch4COLOR 3
-#define ch5COLOR 4
-#define ch6COLOR 5
-#define ch7COLOR 6
-#define ch8COLOR 7
 #define STEP_QUANT 16
 #define STEP_FRAME_W 16
 #define STEP_FRAME_H 16
@@ -72,19 +64,12 @@ byte barClock = 0;
 #define OCTAVE_CHANGE_UP_BOTTOMMOST 4
 #define OCTAVE_CHANGE_DOWN_TOPMOST 7
 #define OCTAVE_CHANGE_DOWN_BOTTOMMOST 10
-#define OCTAVE0 0
-#define OCTAVE1 12
-#define OCTAVE2 24
-#define OCTAVE3 36
-#define OCTAVE4 48
-#define OCTAVE5 60
-#define OCTAVE6 72
-#define OCTAVE7 84
-#define CHORD_QUANT 7
 #define VELOCITY 96
 #define VELOCITYOFF 0
 #define VALUE_NOTEOFF 0
-
+#define SONG_POSITION_POINTER_Y 228
+#define STEP_POSITION_POINTER_Y 236
+#define GRID_POSITION_POINTER_Y 232
 #define NUM_CLIPS 9
 #define NUM_INSTRUMENTS 8
 #define NUM_VOICES 4
@@ -194,6 +179,7 @@ int gridTouchX;            //decided to handle touchthingys with a grid, so here
 int gridTouchY;            //decided to handle touchthingys with a grid, so here it is, 15 grids
 int trackTouchY;
 int constrainedtrackTouchY;
+short Potentiometer1; 
 
 //songmode variables
 short arrangment1[8][64] {
@@ -212,11 +198,8 @@ bool songSelectPage_1 = LOW;     // a handler to keep the mode active after sele
 bool songSelectPage_2 = LOW;     // a handler to keep the mode active after selecting
 bool songSelectPage_3 = LOW;     // a handler to keep the mode active after selecting
 bool songSelectPage_4 = LOW;     // a handler to keep the mode active after selecting
-byte PHRASE_SEGMENT_LENGTH = 16;
+byte phraseSegmentLength = 16;
 byte pageNumber = 0;
-byte songPositionY = 228;
-byte stepPositionY = 236;
-byte gridPositionY = 232;
 byte pixelbarClock = 0;
 byte phrase = 0;
 int songModeSelectedTrack = 0;
@@ -1083,14 +1066,6 @@ bool channel1Clip[9][127][STEP_QUANT] {
   }
 };
 
-////channel variables 8
-//bool channel8Select = LOW;
-//byte channel8channel = 8;
-//byte ch8Clip = 0;
-//byte ch8tone;
-//byte ch8Octaves = 3;
-//int ch8songModePlayedClip = 0;
-
 struct tracks {
   bool select = false;
   byte MIDIchannel = 0; // (although you may not need this, depends on how you structure thing later)
@@ -1187,11 +1162,12 @@ void loop() {
     gridTouchY = map(p.y, 260, 3760, 0, 14);
     trackTouchY = map(p.y, 620, 3120, 0, 7);
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
-    Serial.print(p.y);
-    Serial.print("--");
-    Serial.print(trackTouchY);
-    Serial.print("--");
-    Serial.println(constrainedtrackTouchY);
+    //    Serial.print(p.y);
+    //    Serial.print("--");
+    //    Serial.print(trackTouchY);
+    //    Serial.print("--");
+    //    Serial.println(constrainedtrackTouchY);
+//    Serial.println(analogRead(A1));
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Play button
     if (gridTouchX == 8 && gridTouchY == 0 || gridTouchX == 9  && gridTouchY == 0) {
@@ -1207,9 +1183,9 @@ void loop() {
       seq.panic();
       barClock = 0;
       phrase = 0;
-      tft.fillRect(STEP_FRAME_W * 2, stepPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      tft.fillRect(STEP_FRAME_W * 2, songPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      tft.fillRect(STEP_FRAME_W * 2, gridPositionY, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Scale Select
@@ -1268,7 +1244,7 @@ void loop() {
       scaleSelect = LOW;
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
-      gridchannel1Sequencer();
+      griddrumStepSequencer();
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1285,7 +1261,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(1);
+      gridStepSequencer(1);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel3 and make some static graphics
@@ -1301,7 +1277,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(2);
+      gridStepSequencer(2);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel4 and make some static graphics
@@ -1317,7 +1293,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(3);
+      gridStepSequencer(3);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel5 and make some static graphics
@@ -1333,7 +1309,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(4);
+      gridStepSequencer(4);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel6 and make some static graphics
@@ -1349,7 +1325,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(5);
+      gridStepSequencer(5);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel7 and make some static graphics
@@ -1365,7 +1341,7 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(6);
+      gridStepSequencer(6);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel8 and make some static graphics
@@ -1381,24 +1357,28 @@ void loop() {
       songSelectPage_1 = LOW;
       songSelectPage_2 = LOW;
       channel1Select = LOW;
-      gridchannelSequencer(7);
+      gridStepSequencer(7);
     }
   }
+
+  //setting up the scaleSelector-view
   if (scaleSelect == HIGH) {
     scaleSelector();
   }
+  //setting up the songMode-view
   if (songSelectPage_1 == HIGH) {
     songModePage();
   }
 
-
+  //setting up the melodicStepSequencer-view for drumtrack #1
   if (channel1Select == HIGH) {
-    channel1Sequencer();
+    drumStepSequencer();
   }
 
+  //setting up the melodicStepSequencer-view for #2-8
   for (int i = 1; i < 8; i++) {
     if (track[i].select) {
-      channel8Sequencer(i);
+      melodicStepSequencer(i);
     }
   }
 
@@ -1519,7 +1499,7 @@ void scaleSelector () {
   }
 }
 
-void drawMelodicSequencerStatic(int color) {
+void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
   for (int i = 0; i < 17; i++) {   //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
@@ -1531,7 +1511,7 @@ void drawMelodicSequencerStatic(int color) {
   }
   //draw Clipselector
   for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
-    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[color] + ClipNr * 20);
+    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + ClipNr * 20);
     tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
@@ -1541,7 +1521,7 @@ void drawMelodicSequencerStatic(int color) {
   }
   for (int i = 0; i < 12; i++) {
     if (scales[scaleSelected][i] == HIGH) {
-      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[color]);
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
   }
   //draw Octavebuttons

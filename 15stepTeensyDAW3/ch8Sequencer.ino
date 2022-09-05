@@ -1,11 +1,11 @@
 
-void gridchannelSequencer (byte desired_instrument) {   //static Display rendering
+void gridStepSequencer (byte desired_instrument) {   //static Display rendering
   clearWorkSpace();
-  drawMelodicSequencerStatic(desired_instrument);
+  drawStepSequencerStatic(desired_instrument);
 
 }
 
-void channel8Sequencer (byte desired_instrument) {
+void melodicStepSequencer (byte desired_instrument) {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
