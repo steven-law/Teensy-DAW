@@ -53,11 +53,12 @@ void melodicStepSequencer (byte desired_instrument) {
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
           clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = track[desired_instrument].tone;
-//          notevalue_on_step = track[desired_instrument].tone;
+          //          notevalue_on_step = track[desired_instrument].tone;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]); //draw the active steps circles
         }
         else if (notevalue_on_step > VALUE_NOTEOFF) {
-          notevalue_on_step = VALUE_NOTEOFF;
+          //          notevalue_on_step = VALUE_NOTEOFF;
+          clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = VALUE_NOTEOFF;
 
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
         }
