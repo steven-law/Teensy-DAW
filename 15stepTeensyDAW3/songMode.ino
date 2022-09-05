@@ -104,8 +104,9 @@ void songModePage() {
           tft.print("-");
           tft.print("C");
           tft.print(arrangment1[touched_track][touched_phrase] + 1);
-          Potentiometer1 = analogRead(A1);
-          arrangment1[touched_track][touched_phrase] = map(Potentiometer1, 0, 1023, -1, 7);
+          int clipassign = analogRead(A1);
+           
+          arrangment1[touched_track][touched_phrase] = map(clipassign, 0, 1023, -1, 7);
 
         }
 

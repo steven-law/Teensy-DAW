@@ -179,7 +179,7 @@ int gridTouchX;            //decided to handle touchthingys with a grid, so here
 int gridTouchY;            //decided to handle touchthingys with a grid, so here it is, 15 grids
 int trackTouchY;
 int constrainedtrackTouchY;
-short Potentiometer1; 
+short Potentiometer1;
 
 //songmode variables
 short arrangment1[8][64] {
@@ -1167,7 +1167,7 @@ void loop() {
     //    Serial.print(trackTouchY);
     //    Serial.print("--");
     //    Serial.println(constrainedtrackTouchY);
-//    Serial.println(analogRead(A1));
+    //    Serial.println(analogRead(A1));
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Play button
     if (gridTouchX == 8 && gridTouchY == 0 || gridTouchX == 9  && gridTouchY == 0) {
@@ -1542,6 +1542,13 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.setTextSize(1);
     tft.print(noteNames[n]);
   }
+  //MIDIChannel assign button
+  tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 10 + 2);
+  tft.setFont(Arial_8);
+  tft.setTextColor(trackColor[desired_instrument]);
+  tft.setTextSize(1);
+  tft.print("MCh:");
+  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
 }
 
 void clearWorkSpace () {    //clear the whole grid from Display

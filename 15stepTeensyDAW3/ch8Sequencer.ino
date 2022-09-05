@@ -31,6 +31,12 @@ void melodicStepSequencer (byte desired_instrument) {
     tft.setTextColor(ILI9341_WHITE);
     tft.setTextSize(1);
     tft.print(track[desired_instrument].shown_octaves);
+    //draw MIDIChannel number
+    tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
+    tft.setFont(Arial_10);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(1);
+    tft.print(track[desired_instrument].MIDIchannel);
 
 
     //octave selection
@@ -44,6 +50,20 @@ void melodicStepSequencer (byte desired_instrument) {
         clearStepsGrid();
       }
 
+      //midichannel selection
+      if (gridTouchX >= 18 && gridTouchY == 11) {
+        int MIDIChannelAssign = analogRead(A1);
+        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 16);
+
+
+        //draw MIDIchannel number
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
+        tft.setFont(Arial_10);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print(track[desired_instrument].MIDIchannel);
+      }
 
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
@@ -59,7 +79,6 @@ void melodicStepSequencer (byte desired_instrument) {
         else if (notevalue_on_step > VALUE_NOTEOFF) {
           //          notevalue_on_step = VALUE_NOTEOFF;
           clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = VALUE_NOTEOFF;
-
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
         }
       }

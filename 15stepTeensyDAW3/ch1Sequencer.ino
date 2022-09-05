@@ -5,7 +5,7 @@
 void griddrumStepSequencer () {   //static Display rendering
   clearWorkSpace();
   drawStepSequencerStatic(0);
-  
+
 }
 
 void drumStepSequencer () {
@@ -51,6 +51,19 @@ void drumStepSequencer () {
       tft.setTextColor(ILI9341_WHITE);
       tft.setTextSize(1);
       tft.print(ch1Octaves);
+
+      if (gridTouchX >= 18 && gridTouchY == 11) {
+        int MIDIChannelAssign = analogRead(A1);
+        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 16);
+        //draw MIDIchannel number
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
+        tft.setFont(Arial_10);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+
+        tft.print(track[desired_instrument].MIDIchannel);
+      }
 
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         ch1tone = (gridTouchY - 1) + ch1Octaves * 12;
