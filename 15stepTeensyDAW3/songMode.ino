@@ -8,27 +8,41 @@ void gridSongModePage_1 () {   //static Display rendering
   //zooming
   tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_WHITE);
-  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 10, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * 18 + 3, STEP_FRAME_H * 10 + 4);
-  tft.print("1x");
-  tft.drawRect(STEP_FRAME_W * 19, STEP_FRAME_H * 10, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * 19 + 3, STEP_FRAME_H * 10 + 4);
-  tft.print("2x");
   tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * 18 + 3, STEP_FRAME_H * 11 + 4);
-  tft.print("3x");
+  tft.print("1x");
   tft.drawRect(STEP_FRAME_W * 19, STEP_FRAME_H * 11, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * 19 + 3, STEP_FRAME_H * 11 + 4);
+  tft.print("2x");
+  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * 18 + 3, STEP_FRAME_H * 12 + 4);
+  tft.print("3x");
+  tft.drawRect(STEP_FRAME_W * 19, STEP_FRAME_H * 12, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * 19 + 3, STEP_FRAME_H * 12 + 4);
   tft.print("4x");
 
-  //clip settings
+
+  //songlength
+  //start of loop
+  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
+  tft.print("S");
+  tft.print(start_of_loop + 1);
+  //end of loop
+  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
+  tft.print("E");
+  tft.print(end_of_loop + 1);
+
 
   //selecting pages
   for (byte pages = 0; pages < 4; pages++) {
-    tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
+    tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
     tft.setFont(Arial_12);
     tft.setTextColor(ILI9341_WHITE);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, ((pages + 1)) * STEP_FRAME_H * 2 + 12);
+    tft.setCursor(STEP_FRAME_W * 18 + 12, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H + 12);
     tft.print(pages + 1);
   }
   //vertical pointer Lines
@@ -41,6 +55,7 @@ void gridSongModePage_1 () {   //static Display rendering
     //last vertical gridline
     tft.drawFastVLine(288, STEP_FRAME_H, STEP_FRAME_H * 12, 370); // last vertical line(x, y-start, y-length, color)
   }
+
 }
 
 
@@ -54,9 +69,30 @@ void songModePage() {
       int touched_phrase = gridTouchX - 2;
       byte touched_track = trackTouchY;
 
+      //song length
+      //start of loop
+//      if (gridTouchX >= 18 && gridTouchY == 1) {
+//        start_of_loop = map(Potentiometer1, 0, 1023, 0, 254);
+//        tft.fillRect(STEP_FRAME_W * 18 + 2, STEP_FRAME_H + 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+//        tft.setFont(Arial_8);
+//        tft.setTextColor(ILI9341_WHITE);
+//        tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
+//        tft.print("S");
+//        tft.print(start_of_loop+1);
+//      }
+      //end of loop
+      if (gridTouchX >= 18 && gridTouchY == 2) {
+        end_of_loop = map(Potentiometer1, 0, 1023, 1, 255);
+        tft.fillRect(STEP_FRAME_W * 18 + 2, STEP_FRAME_H*2 + 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
+        tft.print("E");
+        tft.print(end_of_loop + 1);
+      }
       //page selection
       for (byte pages = 0; pages < 4; pages++) {
-        if (gridTouchX >= 18 && gridTouchY >= (pages + 1) * 2 && gridTouchY <= ((pages + 1) * 2) + 1) {
+        if (gridTouchX >= 18 && gridTouchY >= (pages + 2) * 2 && gridTouchY <= ((pages + 1) * 2) + 1) {
           pageNumber = pages;
           clearWorkSpace();
           gridSongModePage_1();
@@ -64,22 +100,22 @@ void songModePage() {
         }
       }
       //zooming
-      if (gridTouchX == 18 && gridTouchY == 10) { //page1
+      if (gridTouchX == 18 && gridTouchY == 11) { //page1
         phraseSegmentLength = 2;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 19 && gridTouchY == 10) { //page2
+      if (gridTouchX == 19 && gridTouchY == 11) { //page2
         phraseSegmentLength = 4;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 18 && gridTouchY == 11) { //page3
+      if (gridTouchX == 18 && gridTouchY == 12) { //page3
         phraseSegmentLength = 8;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 19 && gridTouchY == 11) { //page4
+      if (gridTouchX == 19 && gridTouchY == 12) { //page4
         phraseSegmentLength = 16;
         gridSongModePage_1();
         songModePage();
@@ -104,22 +140,11 @@ void songModePage() {
           tft.print("-");
           tft.print("C");
           tft.print(arrangment1[touched_track][touched_phrase] + 1);
-          int clipassign = analogRead(A1);
-           
+          int clipassign = Potentiometer1;
+
           arrangment1[touched_track][touched_phrase] = map(clipassign, 0, 1023, -1, 7);
 
         }
-
-        //        //if we touch the first rectangle, change the selected clipNr +1, but its only changing the 3rdclip on track 8
-        //        if (gridTouchX == 4 && gridTouchY == 13) {
-        //          clip_to_change++;
-        //          arrangment1[touched_track][touched_phrase] = clip_to_change;
-        //        }
-        //        //if we touch the first rectangle, change the selected clipNr -1, but its only changing the 4rdclip on track 8
-        //        if (gridTouchX == 5 && gridTouchY == 13) {
-        //          clip_to_change--;
-        //          arrangment1[touched_track][touched_phrase] = clip_to_change;
-        //        }
       }
     }
 

@@ -2,10 +2,14 @@
 #include <font_Arial.h> // from ILI9341_t3
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
+#include <SD.h>
 #include "FifteenStep.h"
 
 #define SEQUENCER_MEMORY 32768
 FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);
+
+File myFile;
+const int chipSelect = BUILTIN_SDCARD;
 
 
 // set initial state for dynamic values
@@ -179,7 +183,7 @@ int gridTouchX;            //decided to handle touchthingys with a grid, so here
 int gridTouchY;            //decided to handle touchthingys with a grid, so here it is, 15 grids
 int trackTouchY;
 int constrainedtrackTouchY;
-short Potentiometer1;
+
 
 //songmode variables
 short arrangment1[8][64] {
@@ -204,6 +208,8 @@ byte pixelbarClock = 0;
 byte phrase = 0;
 int songModeSelectedTrack = 0;
 int songModeSelectedClip = 0;
+byte end_of_loop = 255;
+byte start_of_loop = 0;
 
 bool clipSelector = LOW;
 bool songArranger = HIGH;
@@ -1106,7 +1112,7 @@ char* scaleNames[scalesQuant] = {"Chromatic", "Major", "Natural Minor", "Harmoni
 char* scaleNamesShort[scalesQuant] = {"Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd"}; // Scale Names for selecting
 
 
-
+int Potentiometer1;
 
 
 
@@ -1153,7 +1159,7 @@ void loop() {
   // running. there are other methods for
   // start, stop, and pausing the steps
   seq.run();
-
+  Potentiometer1 = analogRead(A20);
 
   showCoordinates ();
   TS_Point p = ts.getPoint();
@@ -1168,6 +1174,17 @@ void loop() {
     //    Serial.print("--");
     //    Serial.println(constrainedtrackTouchY);
     //    Serial.println(analogRead(A1));
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Save button
+    if (gridTouchX == 13 && gridTouchY == 0 || gridTouchX == 14  && gridTouchY == 0) {
+      savebutton();
+    }
+    //Load button
+    if (gridTouchX == 15 && gridTouchY == 0) {
+      loadbutton();
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Play button
     if (gridTouchX == 8 && gridTouchY == 0 || gridTouchX == 9  && gridTouchY == 0) {
@@ -1182,7 +1199,7 @@ void loop() {
       seq.stop();
       seq.panic();
       barClock = 0;
-      phrase = 0;
+      phrase = -1;
       tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
@@ -1246,7 +1263,6 @@ void loop() {
       songSelectPage_2 = LOW;
       griddrumStepSequencer();
     }
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  select channel2 and make some static graphics
     if (gridTouchX == 0 && trackTouchY == 1) {
@@ -1386,8 +1402,65 @@ void loop() {
 
 }
 
+void savebutton () {
+
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(chipSelect)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+
+  // delete the file:
+  Serial.println("Removing test.txt...");
+  SD.remove("test.txt");
 
 
+  // open the file.
+  Serial.println("Creating and opening test.txt...");
+  myFile = SD.open("test.txt", FILE_WRITE);
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    Serial.print("Writing to test.txt...");
+    for (byte tracks = 0; tracks < 8; tracks++) {
+      for (byte clips = 0; clips < 9; clips++) {
+        for (byte steps = 0; steps < 15; steps++) {
+          myFile.print(clip[tracks][clips][steps]);
+          myFile.print(", ");
+        }
+        myFile.println(clip[tracks][clips][15]);
+      }
+    }
+    myFile.println("end");
+    // close the file:
+    myFile.close();
+    Serial.println("done.");
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+
+  // re-open the file for reading:
+  myFile = SD.open("test.txt");
+  if (myFile) {
+    Serial.println("test.txt:");
+
+    // read from the file until there's nothing else in it:
+    while (myFile.available()) {
+      Serial.write(myFile.read());
+    }
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+
+  }
+}
+
+void loadbutton () {}
 void startUpScreen () {   //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
 
@@ -1412,7 +1485,7 @@ void startUpScreen () {   //static Display rendering
   }
 
   //scale Select
-  tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
+  tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON + 1, 0, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
 
   // record button & Rectangle
   tft.drawRect(STEP_FRAME_W * POSITION_RECORD_BUTTON - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);

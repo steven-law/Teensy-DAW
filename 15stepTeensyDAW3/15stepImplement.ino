@@ -67,19 +67,16 @@ void step(int current, int last) {
 
     if (barClock % 2 == 0) {
       phrase++;
-      //      if (arrangment1[0][phrase] == -1) {
-      //        ch1songModePlayedClip = 8;
-      //      }
-      if (arrangment1[7][phrase] == -1) {
-        track[7].clip_songMode = 8;
+      for (int instruments = 0; instruments < 8; instruments++) {
+        if (arrangment1[instruments][phrase] == -1) {
+          track[instruments].clip_songMode = 8;
+        }
+        track[instruments].clip_songMode = arrangment1[instruments][phrase];
       }
-
-      track[7].clip_songMode = arrangment1[7][phrase];
-      //      ch1songModePlayedClip = arrangment1[0][phrase];
-    }
-    if (pixelbarClock == 255 / phraseSegmentLength) {
-      pixelbarClock = 0;
-      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
+      if (pixelbarClock == end_of_loop / phraseSegmentLength) {
+        pixelbarClock = 0;
+        tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
+      }
     }
     if (barClock == 255) {
       seq.stop();
@@ -89,7 +86,13 @@ void step(int current, int last) {
       tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      
+    }
+    if (phrase >= end_of_loop) {
+      phrase = 0;
+      barClock = 0;
+      //      tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      //      tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      //      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
     }
   }
 
