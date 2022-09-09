@@ -17,10 +17,16 @@ void step(int current, int last) {
   //send midinotes for drumtrack #1
   for (int i = 0; i < 127; i++) {
     if (channel1Clip[ch1Clip][i][current] == HIGH) {
-      usbMIDI.sendNoteOn(i, VELOCITY, channel1channel);
+      if (!held_Drum_notes[current]) {
+        usbMIDI.sendNoteOn(i, VELOCITY, channel1channel);
+        held_Drum_notes[current] = true;
+      }
     }
-    if (channel1Clip[ch1Clip][i][current + 1] == LOW) {
-      usbMIDI.sendNoteOff(i, VELOCITYOFF, channel1channel);
+    else {
+      if (held_Drum_notes[last]) {
+        usbMIDI.sendNoteOff(i, VELOCITYOFF, channel1channel);
+        held_Drum_notes[last] = false;
+      }
     }
   }
 
@@ -29,10 +35,16 @@ void step(int current, int last) {
   //send midinotes for melodic track #2 -8
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (clip[track_number][track[track_number].clip_songMode][current] > VALUE_NOTEOFF) {
-      usbMIDI.sendNoteOn(clip[track_number][track[track_number].clip_songMode][current], VELOCITY, track[track_number].MIDIchannel);
+      if (!track[track_number].held_notes[current]) {
+        usbMIDI.sendNoteOn(clip[track_number][track[track_number].clip_songMode][current], VELOCITY, track[track_number].MIDIchannel);
+        track[track_number].held_notes[current] = true;
+      }
     }
-    if (clip[track_number][track[track_number].clip_songMode][current] == VALUE_NOTEOFF) {
-      usbMIDI.sendNoteOff(clip[track_number][track[track_number].clip_songMode][last], VELOCITYOFF, track[track_number].MIDIchannel);
+    else {
+      if (track[track_number].held_notes[last]) {
+        usbMIDI.sendNoteOff(clip[track_number][track[track_number].clip_songMode][last], VELOCITYOFF, track[track_number].MIDIchannel);
+        track[track_number].held_notes[last] = false;
+      }
     }
   }
 

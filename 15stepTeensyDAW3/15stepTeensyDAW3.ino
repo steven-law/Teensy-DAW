@@ -223,6 +223,7 @@ byte ch1Clip = 0;
 byte ch1tone;
 byte ch1Octaves = 3;
 byte ch1songModePlayedClip;
+bool held_Drum_notes[STEP_QUANT] {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 bool channel1Clip[9][127][STEP_QUANT] {
   //Clip0
   {
@@ -1079,6 +1080,7 @@ struct tracks {
   byte clip_songMode; //clipselection from the arrangement
   byte tone = 0;
   byte shown_octaves = 3; //
+  bool held_notes[STEP_QUANT] {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];
@@ -1088,6 +1090,7 @@ tracks track[8];
 //track[].clip_songMode;
 //track[].tone;
 //track[].shown_octaves;
+//track[].held_notes
 
 
 
@@ -1426,14 +1429,15 @@ void savebutton () {
     Serial.print("Writing to test.txt...");
     for (byte tracks = 0; tracks < 8; tracks++) {
       for (byte clips = 0; clips < 9; clips++) {
-        for (byte steps = 0; steps < 15; steps++) {
-          myFile.print(clip[tracks][clips][steps]);
-          myFile.print(", ");
+        for (byte steps = 0; steps < 16; steps++) {
+          myFile.print((char)clip[tracks][clips][steps]);
+          //          myFile.print(", ");
         }
-        myFile.println(clip[tracks][clips][15]);
+        //        myFile.print((char)(clip[tracks][clips][15]+33));
       }
+      //      myFile.println();
     }
-    myFile.println("end");
+    //    myFile.println("end");
     // close the file:
     myFile.close();
     Serial.println("done.");
@@ -1441,7 +1445,6 @@ void savebutton () {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
-
   // re-open the file for reading:
   myFile = SD.open("test.txt");
   if (myFile) {
@@ -1450,17 +1453,76 @@ void savebutton () {
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
       Serial.write(myFile.read());
+      //      int loadedValue = (myFile.read() - 33);
+      //      Serial.print(loadedValue);
+      //      for (int fill_step = 0; fill_step < 16; fill_step++) {
+      //        for (int fill_clip = 0; fill_clip < 8; fill_clip++) {
+      //          for (int fill_track = 0; fill_track < 8; fill_track++) {
+      //            clip[fill_track][fill_clip][fill_step] = loadedValue;
+      //          }
+      //        }
+      //    }
     }
+
     // close the file:
     myFile.close();
-  } else {
+  }
+  else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
-
   }
 }
 
-void loadbutton () {}
+void loadbutton () {
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(chipSelect)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+  // re-open the file for reading:
+  myFile = SD.open("test.txt");
+  if (myFile) {
+    Serial.println("test.txt:");
+
+    // read from the file until there's nothing else in it:
+    //    while (myFile.available()) {
+    //      Serial.write(myFile.read());
+    //      byte loadedValue = (myFile.read());
+    //      Serial.print(loadedValue);
+    bool debug_load = true;
+    bool loading_error = !myFile.available();
+    for (byte tracks = 0;  !loading_error && tracks < 8; tracks++) {
+      if (debug_load) Serial.printf("Starting read track %i:-\n", tracks);
+      for (byte clips = 0;  !loading_error && clips < 9; clips++) {
+        if (debug_load) Serial.printf("\tStarting read clips %i:-\n", clips);
+        for (byte steps = 0;  !loading_error && steps < 16; steps++) {
+          if (debug_load) Serial.printf("\t\tStarting read step %i:-\n", steps);
+          loading_error = !myFile.available();
+          if (loading_error) {
+            if (debug_load) Serial.printf("Loading error -- wanted to read a byte for clip[%i][%i][%i], but no data available!\n", tracks, clips, steps);
+            break;
+          }
+          clip[tracks][clips][steps] = myFile.read();
+          if (debug_load) Serial.printf("\t\t\tRead byte %i\n", clip[tracks][clips][steps]);
+          }
+      }
+    }
+    if (loading_error) {
+      Serial.println("Encountered error loading data!");
+    } else {
+      Serial.println("Success, I think?");
+    }
+
+    // close the file:
+    myFile.close();
+  }
+  else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+}
 void startUpScreen () {   //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
 
