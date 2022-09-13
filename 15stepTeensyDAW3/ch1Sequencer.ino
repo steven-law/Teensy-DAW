@@ -27,8 +27,8 @@ void drumStepSequencer () {
     }
 
     //draw the octave number
-    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5 + 8);
+    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3+1, ILI9341_DARKGREY);
+    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5);
     tft.setFont(Arial_16);
     tft.setTextColor(ILI9341_WHITE);
     tft.setTextSize(1);
@@ -36,17 +36,19 @@ void drumStepSequencer () {
 
     //octave selection
     if (ts.touched()) {
-      if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
+      if (gridTouchX == OCTAVE_CHANGE_LEFTMOST || gridTouchX == OCTAVE_CHANGE_RIGHTMOST - 1) {
+      if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
         ch1Octaves--;
         clearStepsGrid();
       }
-      if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
+      if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
         ch1Octaves++;
         clearStepsGrid();
       }
+      }
       //draw the octave number
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5 + 8);
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3, ILI9341_DARKGREY);
+      tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 4 + 8);
       tft.setFont(Arial_16);
       tft.setTextColor(ILI9341_WHITE);
       tft.setTextSize(1);
@@ -54,7 +56,7 @@ void drumStepSequencer () {
 
       if (gridTouchX >= 18 && gridTouchY == 11) {
         int MIDIChannelAssign = analogRead(A1);
-        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 16);
+        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 17);
         //draw MIDIchannel number
         tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
         tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);

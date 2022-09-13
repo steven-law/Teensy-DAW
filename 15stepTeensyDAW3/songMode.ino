@@ -128,7 +128,7 @@ void songModePage() {
 
 
         //if we touch any of the arranger lines the TrackNr and ClipNr are shown in a small rectangle on the bottom
-        if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY <= 7) {
+        if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX < SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 7) {
           clip_to_change = arrangment1[touched_track][touched_phrase];
           tft.setFont(Arial_8);
           tft.setTextColor(ILI9341_WHITE);

@@ -16,6 +16,7 @@ void melodicStepSequencer (byte desired_instrument) {
     byte tone_start = track[desired_instrument].shown_octaves * 12;
     byte tone_end = (track[desired_instrument].shown_octaves + 1) * 12;
 
+    //draw active steps
     for (byte steps = 0 ; steps < STEP_QUANT ; steps++) {
       if (clip[desired_instrument][track[desired_instrument].clip_selector][steps] > VALUE_NOTEOFF) {
         int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
@@ -25,12 +26,14 @@ void melodicStepSequencer (byte desired_instrument) {
     }
 
     //draw the octave number
-    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 4, ILI9341_DARKGREY);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5 + 8);
+    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3 + 1, ILI9341_DARKGREY);
+    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5);
     tft.setFont(Arial_16);
     tft.setTextColor(ILI9341_WHITE);
     tft.setTextSize(1);
     tft.print(track[desired_instrument].shown_octaves);
+
+
     //draw MIDIChannel number
     tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
     tft.setFont(Arial_10);
@@ -41,19 +44,22 @@ void melodicStepSequencer (byte desired_instrument) {
 
     //octave selection
     if (ts.touched()) {
-      if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-        track[desired_instrument].shown_octaves--;
-        clearStepsGrid();
+      if (gridTouchX == OCTAVE_CHANGE_LEFTMOST || gridTouchX == OCTAVE_CHANGE_RIGHTMOST - 1) {
+        if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
+          track[desired_instrument].shown_octaves--;
+          clearStepsGrid();
+        }
+        if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
+          track[desired_instrument].shown_octaves++;
+          clearStepsGrid();
+        }
       }
-      if (gridTouchX > OCTAVE_CHANGE_LEFTMOST && gridTouchX < OCTAVE_CHANGE_RIGHTMOST  && gridTouchY > OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-        track[desired_instrument].shown_octaves++;
-        clearStepsGrid();
-      }
+
 
       //midichannel selection
       if (gridTouchX >= 18 && gridTouchY == 11) {
         int MIDIChannelAssign = Potentiometer1;
-        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 16);
+        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 20);
 
 
         //draw MIDIchannel number
@@ -65,6 +71,7 @@ void melodicStepSequencer (byte desired_instrument) {
         tft.print(track[desired_instrument].MIDIchannel);
       }
 
+      //manually assigning steps to the grid; 
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
         int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;

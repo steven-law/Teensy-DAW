@@ -5,7 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-byte thickness = 3;
+
 
 
 // called when the step position changes. both the current
@@ -37,6 +37,9 @@ void step(int current, int last) {
     if (clip[track_number][track[track_number].clip_songMode][current] > VALUE_NOTEOFF) {
       if (!track[track_number].held_notes[current]) {
         usbMIDI.sendNoteOn(clip[track_number][track[track_number].clip_songMode][current], VELOCITY, track[track_number].MIDIchannel);
+        if (track[track_number].MIDIchannel == 17) {
+          drum1.noteOn();
+        }
         track[track_number].held_notes[current] = true;
       }
     }
@@ -50,19 +53,21 @@ void step(int current, int last) {
 
 
 
-
-  for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
+//draw the songpointer positions
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
       tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
       tft.drawFastHLine(last * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
-  for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     if (current == 0) {
       tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
 
     }
   }
+
+  //differnt things happening while the clock is running
   if (current == 0) {
     barClock++;
     pixelbarClock++;
@@ -71,7 +76,7 @@ void step(int current, int last) {
     tft.setFont(Arial_9);
     tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 2, 3);
     tft.print(barClock + 1);
-    for (int songPointerThickness = 0; songPointerThickness <= thickness; songPointerThickness++) {
+    for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
       tft.drawPixel(barClock + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness) , ILI9341_GREEN);
       tft.drawFastHLine(pixelbarClock * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
       tft.drawFastHLine((pixelbarClock - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
