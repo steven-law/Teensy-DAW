@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <SerialFlash.h>
 #include <ILI9341_t3.h>
-#include <font_Arial.h> // from ILI9341_t3
+#include <font_Arial.h>  // from ILI9341_t3
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 #include <SD.h>
@@ -12,14 +12,14 @@
 
 //calibration and customizing
 //Pinout for screen
-#define TIRQ_PIN     2    //alternate Pins: any digital pin
-#define CS_PIN       8    //alternate Pins: any digital pin
-#define TFT_DC       15   //alternate Pins 9, 10, 20, 21
-#define TFT_CS       10   //alternate Pins 9, 15, 20, 21
-#define TFT_RST      255  // 255 = unused, connect to 3.3V
-#define TFT_MOSI     11   //shareable
-#define TFT_SCLK     13   //shareable
-#define TFT_MISO     12   //shareable
+#define TIRQ_PIN 2   //alternate Pins: any digital pin
+#define CS_PIN 8     //alternate Pins: any digital pin
+#define TFT_DC 15    //alternate Pins 9, 10, 20, 21
+#define TFT_CS 10    //alternate Pins 9, 15, 20, 21
+#define TFT_RST 255  // 255 = unused, connect to 3.3V
+#define TFT_MOSI 11  //shareable
+#define TFT_SCLK 13  //shareable
+#define TFT_MISO 12  //shareable
 
 //calibrate your Screen
 // This is calibration data for the raw touch data to the screen coordinates
@@ -35,33 +35,69 @@ const long interval = 120;
 const int chipSelect = BUILTIN_SDCARD;
 
 //noteOn velocity for all tracks
-#define VELOCITY 96  
+#define VELOCITY 96
 
 // set initial tempo
 int tempo = 120;
 
 //individual trackcolors
-int trackColor[9] {6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE};
+int trackColor[9] { 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
 //end of calibration and custumizing
 
 
 
 //initiate the modules
-FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                         //initiate Sequencer
-File myFile;                                                                             //initiate SDCard Reader
-ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);      //initiate TFT-Srceen
-XPT2046_Touchscreen ts(CS_PIN);                                                          //initiate Touchscreen
+FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                     //initiate Sequencer
+File myFile;                                                                         //initiate SDCard Reader
+ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
+XPT2046_Touchscreen ts(CS_PIN);                                                      //initiate Touchscreen
 
 
 
 //Place for the Pluginconnections
+
 // GUItool: begin automatically generated code
-AudioSynthSimpleDrum     drum1;          //xy=137.40005493164062,89.00000762939453
-AudioMixer4              mixer1;         //xy=355.40000915527344,119.00000381469727
-AudioOutputPT8211        pt8211_1;       //xy=662.0000076293945,105.00000190734863
-AudioConnection          patchCord1(drum1, 0, mixer1, 0);
-AudioConnection          patchCord2(mixer1, 0, pt8211_1, 0);
-AudioConnection          patchCord3(mixer1, 0, pt8211_1, 1);
+AudioSynthWaveformDc     dc2;            //xy=57,352
+AudioSynthWaveform       waveform3;      //xy=81,176
+AudioSynthWaveform       waveform1;      //xy=84,80
+AudioSynthWaveform       waveform2;      //xy=85,129
+AudioSynthWaveform       waveform4;      //xy=94,226
+AudioSynthWaveformDc     dc3;            //xy=161,419
+AudioEffectEnvelope      envelope1;      //xy=169,303
+AudioMixer4              mixer1;         //xy=244,117
+AudioMixer4              mixer4;         //xy=346,244
+AudioFilterStateVariable filter1;        //xy=397,132
+AudioSynthWaveformDc     dc1;            //xy=435,360
+AudioEffectEnvelope      envelope2;      //xy=528,89
+AudioMixer4              mixer2;         //xy=585.0000076293945,150
+AudioEffectWaveFolder    wavefolder1;    //xy=701,206
+AudioEffectBitcrusher    bitcrusher1;    //xy=732,96
+AudioEffectDelay         delay1;         //xy=902,347
+AudioMixer4              mixer3;         //xy=906,164
+AudioFilterStateVariable filter3;        //xy=906,239
+AudioMixer4              mixer5;         //xy=1072,159
+AudioOutputPT8211        pt8211_1;       //xy=1251.25,236.25
+AudioConnection          patchCord1(dc2, envelope1);
+AudioConnection          patchCord2(waveform3, 0, mixer1, 2);
+AudioConnection          patchCord3(waveform1, 0, mixer1, 0);
+AudioConnection          patchCord4(waveform2, 0, mixer1, 1);
+AudioConnection          patchCord5(waveform4, 0, mixer1, 3);
+AudioConnection          patchCord6(dc3, 0, mixer4, 1);
+AudioConnection          patchCord7(envelope1, 0, mixer4, 0);
+AudioConnection          patchCord8(mixer1, 0, filter1, 0);
+AudioConnection          patchCord9(mixer4, 0, filter1, 1);
+AudioConnection          patchCord10(filter1, 0, envelope2, 0);
+AudioConnection          patchCord11(dc1, 0, wavefolder1, 1);
+AudioConnection          patchCord12(envelope2, 0, mixer2, 0);
+AudioConnection          patchCord13(mixer2, 0, wavefolder1, 0);
+AudioConnection          patchCord14(wavefolder1, bitcrusher1);
+AudioConnection          patchCord15(bitcrusher1, 0, mixer3, 0);
+AudioConnection          patchCord16(delay1, 0, filter3, 0);
+AudioConnection          patchCord17(mixer3, delay1);
+AudioConnection          patchCord18(mixer3, 0, mixer5, 0);
+AudioConnection          patchCord19(filter3, 2, mixer3, 1);
+AudioConnection          patchCord20(mixer5, 0, pt8211_1, 0);
+AudioConnection          patchCord21(mixer5, 0, pt8211_1, 1);
 // GUItool: end automatically generated code
 
 
@@ -73,7 +109,7 @@ AudioConnection          patchCord3(mixer1, 0, pt8211_1, 1);
 
 
 void setup() {
-  Serial.begin(31250); // set MIDI baud
+  Serial.begin(31250);  // set MIDI baud
   AudioMemory(15);
   // start sequencer and set callbacks
   seq.begin(tempo, steps);
@@ -90,18 +126,17 @@ void setup() {
   track[6].MIDIchannel = 7;
   track[7].MIDIchannel = 8;
 
-//load the pluginsettings
+  //load the pluginsettings
   drumSettings();
-  
+
   tft.begin();
   tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
   ts.begin();
   ts.setRotation(3);
-  while (!Serial && (millis() <= 1000));
+  while (!Serial && (millis() <= 1000))
+    ;
   startUpScreen();
-
-  
 }
 
 
@@ -114,7 +149,7 @@ void loop() {
   seq.run();
   Potentiometer1 = analogRead(A13);
 
-  showCoordinates ();
+  showCoordinates();
   TS_Point p = ts.getPoint();
   if (ts.touched()) {
     gridTouchX = map(p.x, 180, 3730, 0, 19);
@@ -161,7 +196,7 @@ void loop() {
       //arrangmentSelect button
       if (gridTouchX == POSITION_ARR_BUTTON || gridTouchX == POSITION_ARR_BUTTON + 1) {
         arrangmentSelect = map(Potentiometer1, 0, 1023, 0, 7);
-        tft.fillRect(STEP_FRAME_W * POSITION_ARR_BUTTON + 2, 1, STEP_FRAME_W * 2 - 3 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+        tft.fillRect(STEP_FRAME_W * POSITION_ARR_BUTTON + 2, 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_ARR_BUTTON + 3, 4);
         tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
@@ -174,7 +209,7 @@ void loop() {
       if (gridTouchX == POSITION_BPM_BUTTON || gridTouchX == POSITION_BPM_BUTTON + 1) {
         tempoSelect = map(Potentiometer1, 0, 1023, 50, 250);
         seq.setTempo(tempoSelect);
-        tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+        tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
         tft.setFont(Arial_10);
         tft.setTextColor(ILI9341_WHITE);
@@ -377,7 +412,7 @@ void loop() {
   }
 }
 
-void savebutton () {
+void savebutton() {
   Serial.print("Initializing SD card...");
   if (!SD.begin(chipSelect)) {
     Serial.println("initialization failed!");
@@ -400,16 +435,13 @@ void savebutton () {
       for (byte clips = 0; clips < 9; clips++) {
         for (byte steps = 0; steps < 16; steps++) {
           myFile.print((char)clip[tracks][clips][steps]);
-
         }
-
       }
     }
     // close the file:
     myFile.close();
     Serial.println("done.");
-  }
-  else {
+  } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
@@ -425,13 +457,12 @@ void savebutton () {
 
     // close the file:
     myFile.close();
-  }
-  else {
+  } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
 }
-void loadbutton () {
+void loadbutton() {
   Serial.print("Initializing SD card...");
 
   if (!SD.begin(chipSelect)) {
@@ -447,11 +478,11 @@ void loadbutton () {
     // read from the file until there's nothing else in it:
     bool debug_load = true;
     bool loading_error = !myFile.available();
-    for (byte tracks = 0;  !loading_error && tracks < 8; tracks++) {
+    for (byte tracks = 0; !loading_error && tracks < 8; tracks++) {
       if (debug_load) Serial.printf("Starting read track %i:-\n", tracks);
-      for (byte clips = 0;  !loading_error && clips < 9; clips++) {
+      for (byte clips = 0; !loading_error && clips < 9; clips++) {
         if (debug_load) Serial.printf("\tStarting read clips %i:-\n", clips);
-        for (byte steps = 0;  !loading_error && steps < 16; steps++) {
+        for (byte steps = 0; !loading_error && steps < 16; steps++) {
           if (debug_load) Serial.printf("\t\tStarting read step %i:-\n", steps);
           loading_error = !myFile.available();
           if (loading_error) {
@@ -471,14 +502,13 @@ void loadbutton () {
 
     // close the file:
     myFile.close();
-  }
-  else {
+  } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
 }
 
-void startUpScreen () {   //static Display rendering
+void startUpScreen() {  //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
 
   tft.setFont(Arial_9);
@@ -496,7 +526,7 @@ void startUpScreen () {   //static Display rendering
 
   //other tracks buttons
   for (int otherTracks = 2; otherTracks <= 8; otherTracks++) {
-    tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]); //Xmin, Ymin, Xlength, Ylength, color
+    tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
     tft.print(otherTracks);
   }
@@ -512,8 +542,8 @@ void startUpScreen () {   //static Display rendering
   tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 5, 7, DOT_RADIUS + 1, ILI9341_RED);
 
   //Play button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_PLAY_BUTTON - 2, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE); //PLAY RECT FRAME
-  tft.fillTriangle(STEP_FRAME_W * POSITION_PLAY_BUTTON + 10, 3, STEP_FRAME_W * POSITION_PLAY_BUTTON + 10, 13, STEP_FRAME_W * POSITION_PLAY_BUTTON + 20, 8, ILI9341_GREEN); // x1, y1, x2, y2, x3, y3
+  tft.drawRect(STEP_FRAME_W * POSITION_PLAY_BUTTON - 2, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);                                                                  //PLAY RECT FRAME
+  tft.fillTriangle(STEP_FRAME_W * POSITION_PLAY_BUTTON + 10, 3, STEP_FRAME_W * POSITION_PLAY_BUTTON + 10, 13, STEP_FRAME_W * POSITION_PLAY_BUTTON + 20, 8, ILI9341_GREEN);  // x1, y1, x2, y2, x3, y3
 
   //stop button & Rectangle
   tft.drawRect(STEP_FRAME_W * POSITION_STOP_BUTTON - 2, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
@@ -538,9 +568,8 @@ void startUpScreen () {   //static Display rendering
   tft.setFont(Arial_9);
   tft.setCursor(STEP_FRAME_W * POSITION_LOAD_BUTTON, 3);
   tft.print("L");
-
 }
-void showCoordinates () {
+void showCoordinates() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -564,11 +593,11 @@ void showCoordinates () {
   }
 }
 
-void gridScaleSelector () {   //static Display rendering
+void gridScaleSelector() {  //static Display rendering
   clearWorkSpace();
-  tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 16 , STEP_FRAME_H * 12, ILI9341_WHITE); //Xmin, Ymin, Xlength, Ylength, color
+  tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 16, STEP_FRAME_H * 12, ILI9341_WHITE);  //Xmin, Ymin, Xlength, Ylength, color
 }
-void scaleSelector () {
+void scaleSelector() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -581,7 +610,7 @@ void scaleSelector () {
 
       if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
         scaleSelected = i;
-        tft.fillRect(STEP_FRAME_W * POSITION_SCALE_BUTTON + 1, 1, STEP_FRAME_W * 2 - 2 , STEP_FRAME_H - 2, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+        tft.fillRect(STEP_FRAME_W * POSITION_SCALE_BUTTON + 1, 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_SCALE_BUTTON + 2, 2);
         tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
@@ -594,13 +623,13 @@ void scaleSelector () {
 
 void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
-  for (int i = 0; i < 17; i++) {   //vert Lines
+  for (int i = 0; i < 17; i++) {  //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
-    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE); //(x, y-start, length, color)
+    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
   }
-  for (int i = 0; i < 13; i++) {   //hor lines
+  for (int i = 0; i < 13; i++) {  //hor lines
     step_Frame_Y = i * 16;
-    tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE); //(x-start, y, length, color)
+    tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE);  //(x-start, y, length, color)
   }
   //draw Clipselector
   for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
@@ -617,7 +646,7 @@ void drawStepSequencerStatic(int desired_instrument) {
       tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
   }
-  
+
   //draw Octavebuttons
   int leftmost = STEP_FRAME_W * OCTAVE_CHANGE_LEFTMOST;
   int rightmost = STEP_FRAME_W * OCTAVE_CHANGE_RIGHTMOST;
@@ -626,16 +655,16 @@ void drawStepSequencerStatic(int desired_instrument) {
   int DOWN_topmost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_TOPMOST;
   int DOWN_bottommost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_BOTTOMMOST;
   tft.fillRect(leftmost + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 7, ILI9341_DARKGREY);
-  tft.fillTriangle(leftmost + 1, UP_bottommost,  rightmost, UP_bottommost,  leftmost + STEP_FRAME_W , UP_topmost, ILI9341_LIGHTGREY);  //octave arrow up
-  tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W , DOWN_bottommost, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
-  tft.fillRect(leftmost + 1, UP_bottommost, STEP_FRAME_W * 2, STEP_FRAME_H * 3+1, ILI9341_DARKGREY);
+  tft.fillTriangle(leftmost + 1, UP_bottommost, rightmost, UP_bottommost, leftmost + STEP_FRAME_W, UP_topmost, ILI9341_LIGHTGREY);         //octave arrow up
+  tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W, DOWN_bottommost, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
+  tft.fillRect(leftmost + 1, UP_bottommost, STEP_FRAME_W * 2, STEP_FRAME_H * 3 + 1, ILI9341_DARKGREY);
   tft.setCursor(leftmost + 12, STEP_FRAME_H * 4 + 8);
   tft.setFont(Arial_16);
   tft.setTextColor(ILI9341_WHITE);
   tft.setTextSize(1);
 
   //draw Notenames
-  for (int n = 0; n < 12; n++) {   //hor notes
+  for (int n = 0; n < 12; n++) {  //hor notes
     tft.setCursor(18, STEP_FRAME_H * n + 18);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
@@ -651,20 +680,20 @@ void drawStepSequencerStatic(int desired_instrument) {
   tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
 }
 
-void clearWorkSpace () {    //clear the whole grid from Display
-  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20 , STEP_FRAME_H * 13, ILI9341_DARKGREY); //Xmin, Ymin, Xlength, Ylength, color
+void clearWorkSpace() {                                                                                  //clear the whole grid from Display
+  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
   tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H * 12, ILI9341_DARKGREY);
 }
-void clearStepsGrid () {   // clear all Steps from Display
+void clearStepsGrid() {  // clear all Steps from Display
   for (int T = 0; T < 12; T++) {
     for (int S = 0; S < 16; S++) {
-      tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY); // circle: x, y, radius, color
+      tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
     }
   }
 }
-void clearStepsGridY () {  // clear all Steps in the same column
+void clearStepsGridY() {  // clear all Steps in the same column
   for (int T = 0; T < 12; T++) {
 
-    tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY); // circle: x, y, radius, color
+    tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
   }
 }

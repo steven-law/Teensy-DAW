@@ -69,17 +69,7 @@ void songModePage() {
       int touched_phrase = gridTouchX - 2;
       byte touched_track = trackTouchY;
 
-      //song length
-      //start of loop
-//      if (gridTouchX >= 18 && gridTouchY == 1) {
-//        start_of_loop = map(Potentiometer1, 0, 1023, 0, 254);
-//        tft.fillRect(STEP_FRAME_W * 18 + 2, STEP_FRAME_H + 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-//        tft.setFont(Arial_8);
-//        tft.setTextColor(ILI9341_WHITE);
-//        tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
-//        tft.print("S");
-//        tft.print(start_of_loop+1);
-//      }
+ 
       //end of loop
       if (gridTouchX >= 18 && gridTouchY == 2) {
         end_of_loop = map(Potentiometer1, 0, 1023, 1, 255);
@@ -128,7 +118,7 @@ void songModePage() {
 
 
         //if we touch any of the arranger lines the TrackNr and ClipNr are shown in a small rectangle on the bottom
-        if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX < SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 7) {
+        if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY <= 7) {
           clip_to_change = arrangment1[touched_track][touched_phrase];
           tft.setFont(Arial_8);
           tft.setTextColor(ILI9341_WHITE);
@@ -142,7 +132,7 @@ void songModePage() {
           tft.print(arrangment1[touched_track][touched_phrase] + 1);
           int clipassign = Potentiometer1;
 
-          arrangment1[touched_track][touched_phrase] = map(clipassign, 0, 1023, -1, 7);
+          arrangment1[touched_track][touched_phrase] = map(clipassign, 0, 1023, 0, 8);
 
         }
       }
@@ -153,7 +143,7 @@ void songModePage() {
     byte page_end = (pageNumber + 1) * phraseSegmentLength;
     for (byte phrase = page_start ; phrase < page_end * (16 / phraseSegmentLength) ; phrase++) {
       for (byte track = 0 ; track < 8 ; track++) {
-        if (arrangment1[track][phrase] >= 0) {
+        if (arrangment1[track][phrase] <= 7) {
           for (int thickness = -8; thickness < 8; thickness++) {
             tft.drawFastHLine((phrase - pageNumber * 16) * phraseSegmentLength + STEP_FRAME_W * 2, ((track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[track]); //(x-start, y, length, color)
           }

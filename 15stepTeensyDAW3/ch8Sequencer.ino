@@ -1,11 +1,9 @@
-
-void gridStepSequencer (byte desired_instrument) {   //static Display rendering
+void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   clearWorkSpace();
   drawStepSequencerStatic(desired_instrument);
-
 }
 
-void melodicStepSequencer (byte desired_instrument) {
+void melodicStepSequencer(byte desired_instrument) {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -17,10 +15,12 @@ void melodicStepSequencer (byte desired_instrument) {
     byte tone_end = (track[desired_instrument].shown_octaves + 1) * 12;
 
     //draw active steps
-    for (byte steps = 0 ; steps < STEP_QUANT ; steps++) {
-      if (clip[desired_instrument][track[desired_instrument].clip_selector][steps] > VALUE_NOTEOFF) {
+    for (byte steps = 0; steps < STEP_QUANT; steps++) {
+      if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] > VALUE_NOTEOFF) {
+        //if (clip[desired_instrument][track[desired_instrument].clip_selector][steps] > VALUE_NOTEOFF) {
         int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-        int dot_on_Y = ((clip[desired_instrument][track[desired_instrument].clip_selector][steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+        int dot_on_Y = ((ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+        //int dot_on_Y = ((clip[desired_instrument][track[desired_instrument].clip_selector][steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
         tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]);
       }
     }
@@ -71,20 +71,21 @@ void melodicStepSequencer (byte desired_instrument) {
         tft.print(track[desired_instrument].MIDIchannel);
       }
 
-      //manually assigning steps to the grid; 
+      //manually assigning steps to the grid;
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
         int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
         int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
-        int notevalue_on_step = clip[desired_instrument][track[desired_instrument].clip_selector][touched_step];
+        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
-          clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = track[desired_instrument].tone;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]); //draw the active steps circles
-        }
-        else if (notevalue_on_step > VALUE_NOTEOFF) {
-          clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = VALUE_NOTEOFF;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY); //draw the active steps circles
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
+          //clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = track[desired_instrument].tone;
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]);  //draw the active steps circles
+        } else if (notevalue_on_step > VALUE_NOTEOFF) {
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
+          //clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = VALUE_NOTEOFF;
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the active steps circles
         }
       }
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
@@ -92,6 +93,5 @@ void melodicStepSequencer (byte desired_instrument) {
         clearStepsGrid();
       }
     }
-
   }
 }
