@@ -15,16 +15,16 @@ void step(int current, int last) {
 
 
   //send midinotes for drumtrack #1
-  for (int i = 0; i < 127; i++) {
+  for (int i = 0; i < 12; i++) {
     if (channel1Clip[ch1Clip][i][current] == HIGH) {
       //      if (!held_Drum_notes[current]) {
-      usbMIDI.sendNoteOn(i, VELOCITY, channel1channel);
+      usbMIDI.sendNoteOn(drumnote[i], VELOCITY, channel1channel);
       //  held_Drum_notes[current] = true;
       //   }
     } else {
       //     if (held_Drum_notes[current]) {
 
-      usbMIDI.sendNoteOff(i, VELOCITYOFF, channel1channel);
+      usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, channel1channel);
       //    held_Drum_notes[current] = false;
       //    }
     }

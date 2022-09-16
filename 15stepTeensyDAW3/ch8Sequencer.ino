@@ -16,7 +16,7 @@ void melodicStepSequencer(byte desired_instrument) {
 
     //draw active steps
     for (byte steps = 0; steps < STEP_QUANT; steps++) {
-      if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] > VALUE_NOTEOFF) {
+      if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] > VALUE_NOTEOFF) {
         //if (clip[desired_instrument][track[desired_instrument].clip_selector][steps] > VALUE_NOTEOFF) {
         int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
         int dot_on_Y = ((ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;

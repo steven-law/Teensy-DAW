@@ -34,6 +34,9 @@ const long interval = 120;
 //pinout for SD CARD
 const int chipSelect = BUILTIN_SDCARD;
 
+//initial drumnotes
+byte drumnote[12] {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
+
 //noteOn velocity for all tracks
 #define VELOCITY 96
 
