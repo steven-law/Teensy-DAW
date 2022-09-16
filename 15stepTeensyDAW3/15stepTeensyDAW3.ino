@@ -230,7 +230,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[6].select = LOW;
-
+        Plugin_1_Select = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
         channel1Select = LOW;
@@ -259,6 +259,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[6].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         channel1Select = LOW;
         gridSongModePage_1();
@@ -274,6 +275,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[6].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -289,6 +291,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[6].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -305,6 +308,7 @@ void loop() {
         track[4].select = LOW;
         track[6].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -321,6 +325,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -337,6 +342,7 @@ void loop() {
         track[3].select = LOW;
         track[2].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -353,6 +359,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -369,6 +376,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -385,6 +393,7 @@ void loop() {
         track[4].select = LOW;
         track[2].select = LOW;
         track[1].select = LOW;
+        Plugin_1_Select = LOW;
         scaleSelect = LOW;
         songSelectPage_1 = LOW;
         songSelectPage_2 = LOW;
@@ -681,7 +690,12 @@ void drawStepSequencerStatic(int desired_instrument) {
   tft.setTextSize(1);
   tft.print("MCh:");
   tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
+
+    //Pluginbutton
+  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
 }
+
+
 
 void clearWorkSpace() {                                                                                  //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color

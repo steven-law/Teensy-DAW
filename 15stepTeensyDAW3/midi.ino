@@ -38,11 +38,18 @@ void step(int current, int last) {
       //if (clip[track_number][track[track_number].clip_songMode][current] > VALUE_NOTEOFF) {
       //  if (!track[track_number].held_notes[current]) {
       usbMIDI.sendNoteOn(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current], VELOCITY, track[track_number].MIDIchannel);
+      if (track[track_number].MIDIchannel == 17) {
+        waveform1.frequency(frequencies[ctrack[track_number].sequence[track[track_number].clip_songMode].step[current]]);
+        envelope1.noteOn();
+        envelope2.noteOn();
+      }
       //  track[track_number].held_notes[current] = true;
       // }
     } else {
       //   if (track[track_number].held_notes[current]) {
       usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[last], VELOCITYOFF, track[track_number].MIDIchannel);
+      envelope1.noteOff();
+      envelope2.noteOff();
       //    track[track_number].held_notes[current] = false;
       //  }
     }
@@ -81,7 +88,7 @@ void step(int current, int last) {
     if (barClock % 2 == 0) {
       phrase++;
       //Serial.println((clip[8][track[8].clip_songMode][current]));
-      Serial.println(arrangment1[7][phrase]);
+      //Serial.println(arrangment1[7][phrase]);
       for (int instruments = 0; instruments < 8; instruments++) {
         if (arrangment1[instruments][phrase] == 8) {
           track[instruments].clip_songMode = 8;

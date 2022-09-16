@@ -41,6 +41,16 @@ void melodicStepSequencer(byte desired_instrument) {
     tft.setTextSize(1);
     tft.print(track[desired_instrument].MIDIchannel);
 
+    //draw Plugin
+    if (track[desired_instrument].MIDIchannel == 17) {
+      tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 12 + 2);
+      tft.setFont(Arial_10);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print("Plg1");
+    } else {
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+    }
 
     //octave selection
     if (ts.touched()) {
@@ -91,6 +101,21 @@ void melodicStepSequencer(byte desired_instrument) {
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
         track[desired_instrument].clip_selector = (gridTouchX / 2) - 1;
         clearStepsGrid();
+      }
+      if (gridTouchX >= 18 && gridTouchY == 12) {
+        Plugin_1_Select = HIGH;
+        track[7].select = LOW;
+        track[3].select = LOW;
+        track[6].select = LOW;
+        track[5].select = LOW;
+        track[4].select = LOW;
+        track[2].select = LOW;
+        track[1].select = LOW;
+        scaleSelect = LOW;
+        songSelectPage_1 = LOW;
+        songSelectPage_2 = LOW;
+        channel1Select = LOW;
+        Plugin_1_View_Static();
       }
     }
   }
