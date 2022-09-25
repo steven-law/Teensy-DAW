@@ -9,23 +9,7 @@
       "name": "Debug Microcontroller",
       "request": "launch",
       "type": "cortex-debug",
-      "servertype": "openocd"
-    },
-    {
-      "cwd": "${workspaceRoot}",
-      "executable": "./bin/executable.elf",
-      "name": "Debug Microcontroller",
-      "request": "launch",
-      "type": "cortex-debug",
-      "servertype": "jlink"
-    },
-  {
-    "cwd": "${workspaceRoot}",
-    "executable": "./bin/executable.elf",
-    "name": "Debug Microcontroller",
-    "request": "launch",
-    "type": "cortex-debug",
-    "servertype": "jlink"
-  }
+      "servertype": "external"
+    }
   ]
 }

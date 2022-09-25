@@ -4,64 +4,41 @@ void griddrumStepSequencer() {  //static Display rendering
 }
 
 void drumStepSequencer() {
+  for (byte tone = 0; tone < 12; tone++) {
+    for (byte steps = 0; steps < STEP_QUANT; steps++) {
+      if (channel1Clip[ch1Clip][tone][steps]) {
+        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]);
+      }
+    }
+  }
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    TS_Point p = ts.getPoint();
-    gridTouchX = map(p.x, 180, 3730, 0, 19);  // mapping the touch coordinates to a grid of 20
-    gridTouchY = map(p.y, 260, 3760, 0, 14);  //mapping the touch coordinates to a grid of 15
 
-    byte tone_start = ch1Octaves * 12;
-    byte tone_end = (ch1Octaves + 1) * 12;
-    for (byte tone = tone_start; tone < tone_end; tone++) {
-      for (byte steps = 0; steps < STEP_QUANT; steps++) {
-        if (channel1Clip[ch1Clip][tone][steps]) {
-          tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0]);
-        }
-      }
-    }
     if (ts.touched()) {
-      /*
-    //draw the octave number
-    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3 + 1, ILI9341_DARKGREY);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5);
-    tft.setFont(Arial_16);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setTextSize(1);
-    tft.print(ch1Octaves);
 
-    //octave selection
-    
-      if (gridTouchX == OCTAVE_CHANGE_LEFTMOST || gridTouchX == OCTAVE_CHANGE_RIGHTMOST - 1) {
-        if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-          ch1Octaves--;
-          clearStepsGrid();
-        }
-        if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-          ch1Octaves++;
-          clearStepsGrid();
-        }
-      }
-      //draw the octave number
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 4 + 8);
-      tft.setFont(Arial_16);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print(ch1Octaves);
-*/
       //draw MIDIchannel number
       if (gridTouchX >= 18 && gridTouchY == 11) {
-        int MIDIChannelAssign = analogRead(A1);
-        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 17);
+        int MIDIChannelAssign = Potentiometer1;
+        track[0].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, MAX_CHANNELS);
         tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
         tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
         tft.setFont(Arial_10);
         tft.setTextColor(ILI9341_WHITE);
         tft.setTextSize(1);
-        tft.print(track[desired_instrument].MIDIchannel);
+        tft.print(track[0].MIDIchannel);
       }
-
+      //draw Plugin
+      for (int plugintext = 0; plugintext <= MAX_PLUGINS; plugintext++) {
+        if (track[0].MIDIchannel == plugintext + 17) {
+          tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+          tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 12 + 2);
+          tft.setFont(Arial_8);
+          tft.setTextColor(ILI9341_WHITE);
+          tft.setTextSize(1);
+          tft.print(pluginName[plugintext]);
+        }
+      }
 
       //assign drumnotes on the left
       if (gridTouchX == 1) {
@@ -76,8 +53,9 @@ void drumStepSequencer() {
           tft.print(drumnote[i]);
         }
       }
+      //assign drumsteps on the grid
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
-        ch1tone = (gridTouchY - 1) + ch1Octaves * 12;
+        ch1tone = (gridTouchY - 1);
         int step_number = gridTouchX - 2;
         if (channel1Clip[ch1Clip][ch1tone][step_number] == LOW) {
           channel1Clip[ch1Clip][ch1tone][step_number] = HIGH;
@@ -90,6 +68,20 @@ void drumStepSequencer() {
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
         ch1Clip = (gridTouchX / 2) - 1;
         clearStepsGrid();
+      }
+
+      //plugin_1_view
+      for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+        if (track[0].MIDIchannel == pluginSelection + 17) {
+          if (gridTouchX >= 18 && gridTouchY == 12) {
+            for (byte others = 0; others <= MAX_PAGES; others++) {
+              selectPage[others] = LOW;
+            }
+            selectPage[pluginSelection + 20] = HIGH;
+            //track[0].MIDIchannel = pluginSelection + 17;
+            Plugin_View_Static();
+          }
+        }
       }
     }
   }

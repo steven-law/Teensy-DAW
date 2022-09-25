@@ -1,7 +1,4 @@
-
-
-
-void gridSongModePage_1 () {   //static Display rendering
+void gridSongModePage_1() {  //static Display rendering
   tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, 15, 192, ILI9341_DARKGREY);
   clearWorkSpace();
 
@@ -47,15 +44,14 @@ void gridSongModePage_1 () {   //static Display rendering
   }
   //vertical pointer Lines
   int shownLines = 257 / phraseSegmentLength;
-  for (int f = 0; f < shownLines; f++) {     //do this for all phrases
-    tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 360); //(x, y-start, y-length, color)
+  for (int f = 0; f < shownLines; f++) {                                                      //do this for all phrases
+    tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 360);  //(x, y-start, y-length, color)
     if (f % 4 == 0) {
-      tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 370); //(x, y-start, y-length, color)
+      tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  //(x, y-start, y-length, color)
     }
     //last vertical gridline
-    tft.drawFastVLine(288, STEP_FRAME_H, STEP_FRAME_H * 12, 370); // last vertical line(x, y-start, y-length, color)
+    tft.drawFastVLine(288, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  // last vertical line(x, y-start, y-length, color)
   }
-
 }
 
 
@@ -64,16 +60,14 @@ void songModePage() {
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     if (ts.touched()) {
-      TS_Point p = ts.getPoint();
-
       int touched_phrase = gridTouchX - 2;
       byte touched_track = trackTouchY;
 
- 
+
       //end of loop
       if (gridTouchX >= 18 && gridTouchY == 2) {
         end_of_loop = map(Potentiometer1, 0, 1023, 1, 255);
-        tft.fillRect(STEP_FRAME_W * 18 + 2, STEP_FRAME_H*2 + 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.fillRect(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 2 + 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);
         tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
         tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
@@ -90,29 +84,29 @@ void songModePage() {
         }
       }
       //zooming
-      if (gridTouchX == 18 && gridTouchY == 11) { //page1
+      if (gridTouchX == 18 && gridTouchY == 11) {  //page1
         phraseSegmentLength = 2;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 19 && gridTouchY == 11) { //page2
+      if (gridTouchX == 19 && gridTouchY == 11) {  //page2
         phraseSegmentLength = 4;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 18 && gridTouchY == 12) { //page3
+      if (gridTouchX == 18 && gridTouchY == 12) {  //page3
         phraseSegmentLength = 8;
         gridSongModePage_1();
         songModePage();
       }
-      if (gridTouchX == 19 && gridTouchY == 12) { //page4
+      if (gridTouchX == 19 && gridTouchY == 12) {  //page4
         phraseSegmentLength = 16;
         gridSongModePage_1();
         songModePage();
       }
       //Clip Selector
-      if ( phraseSegmentLength == 16) {//only show clipselector when zoom is full in
-        tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[touched_track]); //draw a small rect to frame the clip info
+      if (phraseSegmentLength == 16) {                                                                                 //only show clipselector when zoom is full in
+        tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[touched_track]);  //draw a small rect to frame the clip info
         //        tft.fillTriangle(STEP_FRAME_W * 4, STEP_FRAME_H * 14, STEP_FRAME_W * 5, STEP_FRAME_H * 14, STEP_FRAME_W * 4 + 8, STEP_FRAME_H * 13, ILI9341_LIGHTGREY); //draw a triangle to change the clipNr  +1
         //        tft.fillTriangle(STEP_FRAME_W * 5, STEP_FRAME_H * 13, STEP_FRAME_W * 6, STEP_FRAME_H * 13, STEP_FRAME_W * 5 + 8, STEP_FRAME_H * 14, ILI9341_LIGHTGREY); //draw a triangle to change the clipNr  -1
 
@@ -133,7 +127,6 @@ void songModePage() {
           int clipassign = Potentiometer1;
 
           arrangment1[touched_track][touched_phrase] = map(clipassign, 0, 1023, 0, 8);
-
         }
       }
     }
@@ -141,14 +134,14 @@ void songModePage() {
     //draw horizontal song arrangment Lines
     byte page_start = pageNumber * phraseSegmentLength;
     byte page_end = (pageNumber + 1) * phraseSegmentLength;
-    for (byte phrase = page_start ; phrase < page_end * (16 / phraseSegmentLength) ; phrase++) {
-      for (byte track = 0 ; track < 8 ; track++) {
+    for (byte phrase = page_start; phrase < page_end * (16 / phraseSegmentLength); phrase++) {
+      for (byte track = 0; track < 8; track++) {
         if (arrangment1[track][phrase] <= 7) {
           for (int thickness = -8; thickness < 8; thickness++) {
-            tft.drawFastHLine((phrase - pageNumber * 16) * phraseSegmentLength + STEP_FRAME_W * 2, ((track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[track]); //(x-start, y, length, color)
+            tft.drawFastHLine((phrase - pageNumber * 16) * phraseSegmentLength + STEP_FRAME_W * 2, ((track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[track]);  //(x-start, y, length, color)
           }
           //only show clipnumbers when zoom is full in
-          if ( phraseSegmentLength == 16) {
+          if (phraseSegmentLength == 16) {
             tft.setFont(Arial_10);
             tft.setTextColor(ILI9341_WHITE);
             tft.setCursor((phrase - pageNumber * 16) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (track + 1) * TRACK_FRAME_H - 1);
@@ -158,5 +151,4 @@ void songModePage() {
       }
     }
   }
-
 }

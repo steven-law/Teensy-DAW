@@ -9,6 +9,13 @@
 #include "FifteenStep.h"
 #include "variables.h"
 
+// WAV files converted to code by wav2sketch
+#include "AudioSampleSnare.h"         // http://www.freesound.org/people/KEVOY/sounds/82583/
+#include "AudioSampleTomtom.h"        // http://www.freesound.org/people/zgump/sounds/86334/
+#include "AudioSampleHihat.h"         // http://www.freesound.org/people/mhc/sounds/102790/
+#include "AudioSampleKick.h"          // http://www.freesound.org/people/DWSD/sounds/171104/
+#include "AudioSampleCashregister.h"  // http://www.freesound.org/people/kiddpark/sounds/201159/
+#include "AudioSampleP2.h"
 
 //calibration and customizing
 //Pinout for screen
@@ -35,7 +42,7 @@ const long interval = 120;
 const int chipSelect = BUILTIN_SDCARD;
 
 //initial drumnotes
-byte drumnote[12] {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
+byte drumnote[12]{ 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 };
 
 //noteOn velocity for all tracks
 #define VELOCITY 96
@@ -44,7 +51,7 @@ byte drumnote[12] {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
 int tempo = 120;
 
 //individual trackcolors
-int trackColor[9] { 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
+int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
 //end of calibration and custumizing
 
 
@@ -59,48 +66,114 @@ XPT2046_Touchscreen ts(CS_PIN);                                                 
 
 //Place for the Pluginconnections
 
+
+
 // GUItool: begin automatically generated code
-AudioSynthWaveformDc     dc2;            //xy=57,352
-AudioSynthWaveform       waveform3;      //xy=81,176
-AudioSynthWaveform       waveform1;      //xy=84,80
-AudioSynthWaveform       waveform2;      //xy=85,129
-AudioSynthWaveform       waveform4;      //xy=94,226
-AudioSynthWaveformDc     dc3;            //xy=161,419
-AudioEffectEnvelope      envelope1;      //xy=169,303
-AudioMixer4              mixer1;         //xy=244,117
-AudioMixer4              mixer4;         //xy=346,244
-AudioFilterStateVariable filter1;        //xy=397,132
-AudioSynthWaveformDc     dc1;            //xy=435,360
-AudioEffectEnvelope      envelope2;      //xy=528,89
-AudioMixer4              mixer2;         //xy=585.0000076293945,150
-AudioEffectWaveFolder    wavefolder1;    //xy=701,206
-AudioEffectBitcrusher    bitcrusher1;    //xy=732,96
-AudioEffectDelay         delay1;         //xy=902,347
-AudioMixer4              mixer3;         //xy=906,164
-AudioFilterStateVariable filter3;        //xy=906,239
-AudioMixer4              mixer5;         //xy=1072,159
-AudioOutputPT8211        pt8211_1;       //xy=1251.25,236.25
-AudioConnection          patchCord1(dc2, envelope1);
-AudioConnection          patchCord2(waveform3, 0, mixer1, 2);
-AudioConnection          patchCord3(waveform1, 0, mixer1, 0);
-AudioConnection          patchCord4(waveform2, 0, mixer1, 1);
-AudioConnection          patchCord5(waveform4, 0, mixer1, 3);
-AudioConnection          patchCord6(dc3, 0, mixer4, 1);
-AudioConnection          patchCord7(envelope1, 0, mixer4, 0);
-AudioConnection          patchCord8(mixer1, 0, filter1, 0);
-AudioConnection          patchCord9(mixer4, 0, filter1, 1);
-AudioConnection          patchCord10(filter1, 0, envelope2, 0);
-AudioConnection          patchCord11(dc1, 0, wavefolder1, 1);
-AudioConnection          patchCord12(envelope2, 0, mixer2, 0);
-AudioConnection          patchCord13(mixer2, 0, wavefolder1, 0);
-AudioConnection          patchCord14(wavefolder1, bitcrusher1);
-AudioConnection          patchCord15(bitcrusher1, 0, mixer3, 0);
-AudioConnection          patchCord16(delay1, 0, filter3, 0);
-AudioConnection          patchCord17(mixer3, delay1);
-AudioConnection          patchCord18(mixer3, 0, mixer5, 0);
-AudioConnection          patchCord19(filter3, 2, mixer3, 1);
-AudioConnection          patchCord20(mixer5, 0, pt8211_1, 0);
-AudioConnection          patchCord21(mixer5, 0, pt8211_1, 1);
+AudioPlayMemory playMem9;             //xy=65,1075
+AudioPlayMemory playMem10;            //xy=70,1106
+AudioPlayMemory playMem7;             //xy=75,1005
+AudioPlayMemory playMem8;             //xy=75,1042
+AudioSynthWaveform waveform3;         //xy=81,176
+AudioSynthWaveform waveform1;         //xy=84,80
+AudioSynthWaveform waveform2;         //xy=85,129
+AudioPlayMemory playMem5;             //xy=85,929
+AudioPlayMemory playMem6;             //xy=86,967
+AudioSynthWaveformDc dc2;             //xy=90.14286041259766,270.1428737640381
+AudioPlayMemory playMem1;             //xy=90,789.0000114440918
+AudioPlaySdWav playSdWav12;           //xy=90.65714645385742,740.7142810821533
+AudioPlayMemory playMem2;             //xy=91,825
+AudioPlaySdWav playSdWav7;            //xy=92.65715026855469,559.7142786979675
+AudioSynthWaveform waveform4;         //xy=94,226
+AudioPlaySdWav playSdWav9;            //xy=92.65714645385742,631.714280128479
+AudioPlaySdWav playSdWav3;            //xy=93.65714645385742,404.71427631378174
+AudioPlaySdWav playSdWav10;           //xy=92.65714645385742,665.714280128479
+AudioPlaySdWav playSdWav4;            //xy=93.65715026855469,440.71427726745605
+AudioPlaySdWav playSdWav11;           //xy=92.65714645385742,704.714280128479
+AudioPlaySdWav playSdWav8;            //xy=93.65714645385742,596.7142791748047
+AudioPlayMemory playMem11;            //xy=92,1145
+AudioPlaySdWav playSdWav2;            //xy=96.65714645385742,367.71427631378174
+AudioPlaySdWav playSdWav5;            //xy=96.65714836120605,480.71427726745605
+AudioPlaySdWav playSdWav6;            //xy=96.65715026855469,520.7142782211304
+AudioPlaySdWav playSdWav1;            //xy=99.85715103149414,328.71427631378174
+AudioPlayMemory playMem12;            //xy=97,1183
+AudioPlayMemory playMem3;             //xy=100,859
+AudioPlayMemory playMem4;             //xy=107,895
+AudioEffectEnvelope envelope1;        //xy=232.4285659790039,267.1428518295288
+AudioMixer4 mixer1;                   //xy=244,117
+AudioSynthWaveformDc pl3dc1;          //xy=280.00000381469727,656.666708946228
+AudioMixer4 drummixer1;               //xy=300.8571548461914,352.85713386535645
+AudioMixer4 drummixer2;               //xy=302.8571548461914,441.85713386535645
+AudioMixer4 drummixer3;               //xy=311.8571548461914,533.8571338653564
+AudioMixer4 pl4drummixer1;            //xy=312,806
+AudioMixer4 pl4drummixer2;            //xy=314,895
+AudioSynthWaveform pl3waveform1;      //xy=317,593.1112384796143
+AudioMixer4 pl4drummixer3;            //xy=323,987
+AudioFilterStateVariable filter1;     //xy=397.0000114440918,113.42856979370117
+AudioEffectEnvelope pl3envelope2;     //xy=423.00000381469727,653.0000095367432
+AudioEffectEnvelope envelope2;        //xy=457.7142868041992,162.1428565979004
+AudioMixer4 drummixer4;               //xy=485.85716247558594,462.00000762939453
+AudioFilterStateVariable pl3filter1;  //xy=504.44439125061035,602.3334541320801
+AudioMixer4 pl4drummixer4;            //xy=540.0000076293945,815.1428833007812
+AudioEffectBitcrusher bitcrusher1;    //xy=577.7142486572266,111.71430587768555
+AudioEffectEnvelope pl3envelope1;     //xy=681.6667098999023,589.3334550857544
+AudioEffectDelay delay1;              //xy=726.5713958740234,249.42859268188477
+AudioMixer4 mixer3;                   //xy=730.5713958740234,66.42859268188477
+AudioFilterStateVariable filter3;     //xy=730.5713958740234,141.42859268188477
+AudioMixer4 mixer5;                   //xy=875.1429252624512,468.85719871520996
+AudioOutputPT8211 pt8211_1;           //xy=1035.535629272461,470.2500305175781
+AudioConnection patchCord1(playMem9, 0, pl4drummixer3, 0);
+AudioConnection patchCord2(playMem10, 0, pl4drummixer3, 1);
+AudioConnection patchCord3(playMem7, 0, pl4drummixer2, 2);
+AudioConnection patchCord4(playMem8, 0, pl4drummixer2, 3);
+AudioConnection patchCord5(waveform3, 0, mixer1, 2);
+AudioConnection patchCord6(waveform1, 0, mixer1, 0);
+AudioConnection patchCord7(waveform2, 0, mixer1, 1);
+AudioConnection patchCord8(playMem5, 0, pl4drummixer2, 0);
+AudioConnection patchCord9(playMem6, 0, pl4drummixer2, 1);
+AudioConnection patchCord10(dc2, envelope1);
+AudioConnection patchCord11(playMem1, 0, pl4drummixer1, 0);
+AudioConnection patchCord12(playSdWav12, 0, drummixer3, 3);
+AudioConnection patchCord13(playMem2, 0, pl4drummixer1, 1);
+AudioConnection patchCord14(playSdWav7, 0, drummixer2, 2);
+AudioConnection patchCord15(waveform4, 0, mixer1, 3);
+AudioConnection patchCord16(playSdWav9, 0, drummixer3, 0);
+AudioConnection patchCord17(playSdWav3, 0, drummixer1, 2);
+AudioConnection patchCord18(playSdWav10, 0, drummixer3, 1);
+AudioConnection patchCord19(playSdWav4, 0, drummixer1, 3);
+AudioConnection patchCord20(playSdWav11, 0, drummixer3, 2);
+AudioConnection patchCord21(playSdWav8, 0, drummixer2, 3);
+AudioConnection patchCord22(playMem11, 0, pl4drummixer3, 2);
+AudioConnection patchCord23(playSdWav2, 0, drummixer1, 1);
+AudioConnection patchCord24(playSdWav5, 0, drummixer2, 0);
+AudioConnection patchCord25(playSdWav6, 0, drummixer2, 1);
+AudioConnection patchCord26(playSdWav1, 0, drummixer1, 0);
+AudioConnection patchCord27(playMem12, 0, pl4drummixer3, 3);
+AudioConnection patchCord28(playMem3, 0, pl4drummixer1, 2);
+AudioConnection patchCord29(playMem4, 0, pl4drummixer1, 3);
+AudioConnection patchCord30(envelope1, 0, filter1, 1);
+AudioConnection patchCord31(mixer1, 0, filter1, 0);
+AudioConnection patchCord32(pl3dc1, pl3envelope2);
+AudioConnection patchCord33(drummixer1, 0, drummixer4, 0);
+AudioConnection patchCord34(drummixer2, 0, drummixer4, 1);
+AudioConnection patchCord35(drummixer3, 0, drummixer4, 2);
+AudioConnection patchCord36(pl4drummixer1, 0, pl4drummixer4, 0);
+AudioConnection patchCord37(pl4drummixer2, 0, pl4drummixer4, 1);
+AudioConnection patchCord38(pl3waveform1, 0, pl3filter1, 0);
+AudioConnection patchCord39(pl4drummixer3, 0, pl4drummixer4, 2);
+AudioConnection patchCord40(filter1, 0, envelope2, 0);
+AudioConnection patchCord41(pl3envelope2, 0, pl3filter1, 1);
+AudioConnection patchCord42(envelope2, bitcrusher1);
+AudioConnection patchCord43(drummixer4, 0, mixer5, 1);
+AudioConnection patchCord44(pl3filter1, 0, pl3envelope1, 0);
+AudioConnection patchCord45(pl4drummixer4, 0, mixer5, 3);
+AudioConnection patchCord46(bitcrusher1, 0, mixer3, 0);
+AudioConnection patchCord47(pl3envelope1, 0, mixer5, 2);
+AudioConnection patchCord48(delay1, 0, filter3, 0);
+AudioConnection patchCord49(mixer3, delay1);
+AudioConnection patchCord50(mixer3, 0, mixer5, 0);
+AudioConnection patchCord51(filter3, 2, mixer3, 1);
+AudioConnection patchCord52(mixer5, 0, pt8211_1, 0);
+AudioConnection patchCord53(mixer5, 0, pt8211_1, 1);
 // GUItool: end automatically generated code
 
 
@@ -108,18 +181,24 @@ AudioConnection          patchCord21(mixer5, 0, pt8211_1, 1);
 
 
 
-
-
-
 void setup() {
-  Serial.begin(31250);  // set MIDI baud
-  AudioMemory(15);
+  Serial.begin(9600);  // set MIDI baud
+  AudioMemory(200);
+
+  //initialize SD Card
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(chipSelect)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+
   // start sequencer and set callbacks
   seq.begin(tempo, steps);
   seq.setStepHandler(step);
   seq.stop();
 
-  /// set the default channel of each
+  /// set the default channel of each track
   track[0].MIDIchannel = 10;
   track[1].MIDIchannel = 2;
   track[2].MIDIchannel = 3;
@@ -130,15 +209,21 @@ void setup() {
   track[7].MIDIchannel = 8;
 
   //load the pluginsettings
-  drumSettings();
+  Plugin_1_Settings();
+  Plugin_2_Settings();
+  Plugin_3_Settings();
+  Plugin_4_Settings();
 
+  //initialize the TFT- and Touchscreen
   tft.begin();
-  tft.setRotation(1);
+  tft.setRotation(3);
   tft.fillScreen(ILI9341_BLACK);
   ts.begin();
-  ts.setRotation(3);
+  ts.setRotation(1);
   while (!Serial && (millis() <= 1000))
     ;
+
+  //load the startupScreen
   startUpScreen();
 }
 
@@ -150,21 +235,20 @@ void loop() {
   // running. there are other methods for
   // start, stop, and pausing the steps
   seq.run();
-  Potentiometer1 = analogRead(A13);
 
+  //read Potentiometer1
+  Potentiometer1 = analogRead(A13);
+Serial.println(track[0].MIDIchannel);
+  //always show the coordinates
   showCoordinates();
+
   TS_Point p = ts.getPoint();
   if (ts.touched()) {
-    gridTouchX = map(p.x, 180, 3730, 0, 19);
-    gridTouchY = map(p.y, 260, 3760, 0, 14);
-    trackTouchY = map(p.y, 620, 3120, 0, 7);
+    gridTouchX = map(p.x, 380, 3930, 0, 19);
+    gridTouchY = map(p.y, 300, 3800, 0, 14);
+    trackTouchY = map(p.y, 700, 3200, 0, 7);
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
-    //    Serial.print(p.y);
-    //    Serial.print("--");
-    //    Serial.print(trackTouchY);
-    //    Serial.print("--");
-    //    Serial.println(constrainedtrackTouchY);
-    //    Serial.println(analogRead(A1));
+
 
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Save, Load, Arrangment select
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,12 +275,13 @@ void loop() {
         seq.panic();
         barClock = 0;
         phrase = -1;
+        //clear the songposition pointers
         tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
         tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
         tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //arrangmentSelect button
+      //arrangmentSelect button ; not used right now
       if (gridTouchX == POSITION_ARR_BUTTON || gridTouchX == POSITION_ARR_BUTTON + 1) {
         arrangmentSelect = map(Potentiometer1, 0, 1023, 0, 7);
         tft.fillRect(STEP_FRAME_W * POSITION_ARR_BUTTON + 2, 1, STEP_FRAME_W * 2 - 3, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
@@ -222,21 +307,12 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Scale Select
       if (gridTouchX == POSITION_SCALE_BUTTON || gridTouchX == POSITION_SCALE_BUTTON + 1) {
-        scaleSelect = HIGH;
-        track[1].select = LOW;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[6].select = LOW;
-        Plugin_1_Select = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
+        for (byte others = 0; others <= MAX_PAGES; others++) {
+          selectPage[others] = LOW;
+        }
+        selectPage[SCALESELECT] = HIGH;
         gridScaleSelector();
         scaleSelector();
-
         for (int i = 0; i < scalesQuant; i++) {
           tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
           tft.setFont(Arial_8);
@@ -246,191 +322,110 @@ void loop() {
         }
       }
     }
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    //add your plugin- bool´s to the selectPage array
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
     if (gridTouchX == 0) {  //Songmode- and Trackselection
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select Songarranger and make some static graphics
+      //  select Songarranger
       if (gridTouchY == 0) {
-        songSelectPage_1 = HIGH;
-        songSelectPage_2 = LOW;
-        track[1].select = LOW;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[6].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        channel1Select = LOW;
+        for (byte others = 0; others <= MAX_PAGES; others++) {
+          selectPage[others] = LOW;
+        }
+        selectPage[SONGMODE] = HIGH;
         gridSongModePage_1();
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select Drumchannel and make some static graphics
+      //  select Drumchannel
       if (trackTouchY == 0) {
-        channel1Select = HIGH;
-        track[1].select = LOW;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[6].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
+        for (byte others = 0; others <= MAX_PAGES; others++) {
+          selectPage[others] = LOW;
+        }
+        selectPage[DRUMTRACK] = HIGH;
         griddrumStepSequencer();
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel2 and make some static graphics
-      if (trackTouchY == 1) {
-        track[1].select = HIGH;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[6].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(1);
+      //  select channel2-8
+      for (int tracks = 1; tracks < 8; tracks++) {
+        if (trackTouchY == tracks) {
+          for (byte others = 0; others <= MAX_PAGES; others++) {
+            selectPage[others] = LOW;
+          }
+          selectPage[tracks] = HIGH;
+          gridStepSequencer(tracks);
+        }
       }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel3 and make some static graphics
-      if (trackTouchY == 2) {
-        track[2].select = HIGH;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[6].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(2);
-      }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel4 and make some static graphics
-      if (trackTouchY == 3) {
-        track[3].select = HIGH;
-        track[7].select = LOW;
-        track[6].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(3);
-      }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel5 and make some static graphics
-      if (trackTouchY == 4) {
-        track[4].select = HIGH;
-        track[7].select = LOW;
-        track[6].select = LOW;
-        track[5].select = LOW;
-        track[3].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(4);
-      }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel6 and make some static graphics
-      if (trackTouchY == 5) {
-        track[5].select = HIGH;
-        track[7].select = LOW;
-        track[6].select = LOW;
-        track[3].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(5);
-      }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel7 and make some static graphics
-      if (trackTouchY == 6) {
-        track[6].select = HIGH;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(6);
-      }
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel8 and make some static graphics
-      if (trackTouchY == 7) {
-        track[7].select = HIGH;
-        track[3].select = LOW;
-        track[6].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        Plugin_1_Select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        gridStepSequencer(7);
-      }
+    }
+  }
+  //***********************************************************************************************************************
+  //9)copy one of the plugin Page Views
+  //and change the names according to our variables and functions.
+  //Every page you want to make has to have its own statement
+  //we create:
+
+  //  //setting up the Plugin3 Page1-view
+  //if (selectPage[PLUGIN3_PAGE1] == HIGH) {
+  //Plugin3_Page1_Dynamic();
+  //}
+
+  // after adding the active state statement
+  // now head over to the "midi.ino"
+  //look for *****************************************************************************************
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
+
+  //THIS IS IMPORTANT!!!!!; set your different plugin (or whatever) views in here
+  // every view you create has to be set to active here!!!!
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //-----------------------------------------
+  //setting up the Plugin1 Page1-view
+  if (selectPage[PLUGIN1_PAGE1] == HIGH) {
+    Plugin1_Page1_Dynamic();
+  }
+  //setting up the Plugin1 Page2-view
+  if (selectPage[PLUGIN1_PAGE2] == HIGH) {
+    Plugin1_Page2_Dynamic();
+  }
+  //setting up the Plugin2 Page1-view
+  if (selectPage[PLUGIN2_PAGE1] == HIGH) {
+    Plugin2_Page1_Dynamic();
+  }
+  //setting up the Plugin3 Page1-view
+  if (selectPage[PLUGIN3_PAGE1] == HIGH) {
+    Plugin3_Page1_Dynamic();
+  }
+
+  if (selectPage[PLUGIN4_PAGE1] == HIGH) {
+    Plugin4_Page1_Dynamic();
+  }
+
+
+  //setting up the StepSequencer-view for drumtrack #1
+  if (selectPage[DRUMTRACK] == HIGH) {
+    drumStepSequencer();
+  }
+  //setting up the melodicStepSequencer-view for #2-8
+  for (int i = 1; i < 8; i++) {
+    if (selectPage[i] == HIGH) {
+      melodicStepSequencer(i);
     }
   }
   //setting up the scaleSelector-view
-  if (scaleSelect == HIGH) {
+  if (selectPage[SCALESELECT] == HIGH) {
     scaleSelector();
   }
   //setting up the songMode-view
-  if (songSelectPage_1 == HIGH) {
+  if (selectPage[SONGMODE] == HIGH) {
     songModePage();
-  }
-
-  //setting up the melodicStepSequencer-view for drumtrack #1
-  if (channel1Select == HIGH) {
-    drumStepSequencer();
-  }
-
-  //setting up the melodicStepSequencer-view for #2-8
-  for (int i = 1; i < 8; i++) {
-    if (track[i].select) {
-      melodicStepSequencer(i);
-    }
   }
 }
 
 void savebutton() {
-  Serial.print("Initializing SD card...");
-  if (!SD.begin(chipSelect)) {
-    Serial.println("initialization failed!");
-    return;
-  }
-  Serial.println("initialization done.");
 
   // delete the file:
   Serial.println("Removing test.txt...");
@@ -475,14 +470,8 @@ void savebutton() {
   }
 }
 void loadbutton() {
-  Serial.print("Initializing SD card...");
 
-  if (!SD.begin(chipSelect)) {
-    Serial.println("initialization failed!");
-    return;
-  }
-  Serial.println("initialization done.");
-  // re-open the file for reading:
+  // open the file for reading:
   myFile = SD.open("test.txt");
   if (myFile) {
     Serial.println("test.txt:");
@@ -691,11 +680,53 @@ void drawStepSequencerStatic(int desired_instrument) {
   tft.print("MCh:");
   tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
 
-    //Pluginbutton
+  //Pluginbutton
   tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
 }
 
+void Plugin_View_Static() {
+  clearWorkSpace();
+  //show pageselector
+  for (byte pages = 0; pages < 4; pages++) {
+    tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
+    tft.setFont(Arial_12);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setCursor(STEP_FRAME_W * 18 + 12, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H + 12);
+    tft.print(pages + 1);
+  }
+}
 
+void drawbarH(byte XPos, byte YPos, byte value_rnd, char* fName, int color) {  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
+  int value_Pix;
+  int valueI_Pix;
+  value_Pix = map(value_rnd, 0, 100, 0, 32);
+  valueI_Pix = 32 - value_Pix;
+  tft.drawRect(STEP_FRAME_W * XPos - 1, STEP_FRAME_H * YPos, STEP_FRAME_W * 2 + 3, STEP_FRAME_H, ILI9341_WHITE);
+  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * YPos + 1, value_Pix, STEP_FRAME_H - 2, color);
+  tft.fillRect(STEP_FRAME_W * (XPos + 2) - valueI_Pix + 1, STEP_FRAME_H * YPos + 1, valueI_Pix, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * (YPos - 1) + 4);
+  tft.print(fName);
+  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * YPos + 4);
+  tft.print(value_rnd);
+}
+
+void drawbarV(byte XPos, byte YPos, byte value_rnd, char* fName, int color) {  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
+  int value_Pix;
+  int valueI_Pix;
+  value_Pix = map(value_rnd, 0, 100, 0, 32);
+  valueI_Pix = 32 - value_Pix;
+  tft.drawRect(STEP_FRAME_W * XPos, STEP_FRAME_H * (YPos - 1), STEP_FRAME_W, STEP_FRAME_H * 2, ILI9341_WHITE);
+  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * (YPos - 1) + 1, STEP_FRAME_W - 2, valueI_Pix - 2, ILI9341_DARKGREY);
+  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * (YPos + 1) - value_Pix + 1, STEP_FRAME_W - 2, value_Pix - 2, color);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * XPos - 3, STEP_FRAME_H * (YPos + 1) + 4);
+  tft.print(fName);
+  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * YPos + 4);
+  tft.print(value_rnd);
+}
 
 void clearWorkSpace() {                                                                                  //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color

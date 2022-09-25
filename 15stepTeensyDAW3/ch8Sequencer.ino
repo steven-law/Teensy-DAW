@@ -4,11 +4,14 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
 }
 
 void melodicStepSequencer(byte desired_instrument) {
+
+
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
-    TS_Point p = ts.getPoint();
+
+
     int touched_step = gridTouchX - 2;
     byte touched_note = gridTouchY - 1;
     byte tone_start = track[desired_instrument].shown_octaves * 12;
@@ -17,10 +20,8 @@ void melodicStepSequencer(byte desired_instrument) {
     //draw active steps
     for (byte steps = 0; steps < STEP_QUANT; steps++) {
       if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] > VALUE_NOTEOFF) {
-        //if (clip[desired_instrument][track[desired_instrument].clip_selector][steps] > VALUE_NOTEOFF) {
         int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
         int dot_on_Y = ((ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-        //int dot_on_Y = ((clip[desired_instrument][track[desired_instrument].clip_selector][steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
         tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]);
       }
     }
@@ -42,18 +43,19 @@ void melodicStepSequencer(byte desired_instrument) {
     tft.print(track[desired_instrument].MIDIchannel);
 
     //draw Plugin
-    if (track[desired_instrument].MIDIchannel == 17) {
-      tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 12 + 2);
-      tft.setFont(Arial_10);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print("Plg1");
-    } else {
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+    for (int plugintext = 0; plugintext <= MAX_PLUGINS; plugintext++) {
+      if (track[desired_instrument].MIDIchannel == plugintext + 17) {
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 12 + 2);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print(pluginName[plugintext]);
+      }
     }
 
-    //octave selection
     if (ts.touched()) {
+      //octave selection
       if (gridTouchX == OCTAVE_CHANGE_LEFTMOST || gridTouchX == OCTAVE_CHANGE_RIGHTMOST - 1) {
         if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
           track[desired_instrument].shown_octaves--;
@@ -69,7 +71,7 @@ void melodicStepSequencer(byte desired_instrument) {
       //midichannel selection
       if (gridTouchX >= 18 && gridTouchY == 11) {
         int MIDIChannelAssign = Potentiometer1;
-        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, 20);
+        track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, MAX_CHANNELS);
 
 
         //draw MIDIchannel number
@@ -90,32 +92,30 @@ void melodicStepSequencer(byte desired_instrument) {
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
-          //clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = track[desired_instrument].tone;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument]);  //draw the active steps circles
         } else if (notevalue_on_step > VALUE_NOTEOFF) {
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
-          //clip[desired_instrument][track[desired_instrument].clip_selector][touched_step] = VALUE_NOTEOFF;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the active steps circles
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
         }
       }
+
+      //clipselecting
       if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
         track[desired_instrument].clip_selector = (gridTouchX / 2) - 1;
         clearStepsGrid();
       }
-      if (gridTouchX >= 18 && gridTouchY == 12) {
-        Plugin_1_Select = HIGH;
-        track[7].select = LOW;
-        track[3].select = LOW;
-        track[6].select = LOW;
-        track[5].select = LOW;
-        track[4].select = LOW;
-        track[2].select = LOW;
-        track[1].select = LOW;
-        scaleSelect = LOW;
-        songSelectPage_1 = LOW;
-        songSelectPage_2 = LOW;
-        channel1Select = LOW;
-        Plugin_1_View_Static();
+
+      //plugin_1_view
+      for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+        if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+          if (gridTouchX >= 18 && gridTouchY == 12) {
+            for (byte others = 0; others <= MAX_PAGES; others++) {
+              selectPage[others] = LOW;
+            }
+            selectPage[pluginSelection + 20] = HIGH;
+            Plugin_View_Static();
+          }
+        }
       }
     }
   }
