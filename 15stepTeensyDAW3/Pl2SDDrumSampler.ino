@@ -38,6 +38,13 @@ void Plugin2_Page1_Dynamic() {
           drawbarH(touchX * 3, 3, Pl2Vol_rnd[touchX - 1], Pl2Controls[touchX - 1], ILI9341_BLUE);
         }
       }
+      //Volume
+      if (gridTouchX == 15 || gridTouchX == 16) {
+        pl3Volume_graph = map(Potentiometer1, 0, 1023, 0, 100);
+        pl3Volume = pl3Volume_graph / 100.00;
+        mixer5.gain(1, pl3Volume);
+        drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", ILI9341_RED);
+      }
     }
     if (gridTouchY == 7) {
       for (int touchX = 1; touchX < 5; touchX++) {

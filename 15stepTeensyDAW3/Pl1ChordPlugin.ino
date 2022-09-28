@@ -282,7 +282,7 @@ void Plugin1_Page2_Dynamic() {
           for (byte others = 0; others <= MAX_PAGES; others++) {
             selectPage[others] = LOW;
           }
-          selectPage[11] = HIGH;
+          selectPage[PLUGIN1_PAGE1] = HIGH;
           Plugin_View_Static();
         }
         //page2
@@ -290,7 +290,7 @@ void Plugin1_Page2_Dynamic() {
           for (byte others = 0; others <= MAX_PAGES; others++) {
             selectPage[others] = LOW;
           }
-          selectPage[12] = HIGH;
+          selectPage[PLUGIN1_PAGE2] = HIGH;
           Plugin_View_Static();
         }
         //page3
@@ -298,7 +298,7 @@ void Plugin1_Page2_Dynamic() {
           for (byte others = 0; others <= MAX_PAGES; others++) {
             selectPage[others] = LOW;
           }
-          selectPage[13] = HIGH;
+          selectPage[PLUGIN1_PAGE3] = HIGH;
           Plugin_View_Static();
         }
         //page4
@@ -306,7 +306,7 @@ void Plugin1_Page2_Dynamic() {
           for (byte others = 0; others <= MAX_PAGES; others++) {
             selectPage[others] = LOW;
           }
-          selectPage[14] = HIGH;
+          selectPage[PLUGIN1_PAGE4] = HIGH;
           Plugin_View_Static();
         }
       }

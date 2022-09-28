@@ -68,19 +68,19 @@ void step(int current, int last) {
       playMem1.play(AudioSampleKick);
     }
     if (channel1Clip[ch1Clip][1][current] == HIGH) {
-      playMem1.play(AudioSampleSnare);
+      playMem2.play(AudioSampleSnare);
     }
     if (channel1Clip[ch1Clip][2][current] == HIGH) {
-      playMem1.play(AudioSampleP2);
+      playMem3.play(AudioSampleP2);
     }
     if (channel1Clip[ch1Clip][3][current] == HIGH) {
-      playMem1.play(AudioSampleHihat);
+      playMem4.play(AudioSampleHihat);
     }
     if (channel1Clip[ch1Clip][4][current] == HIGH) {
-      playMem1.play(AudioSampleCashregister);
+      playMem5.play(AudioSampleCashregister);
     }
     if (channel1Clip[ch1Clip][5][current] == HIGH) {
-      playMem1.play(AudioSampleTomtom);
+      playMem6.play(AudioSampleTomtom);
     }
     if (channel1Clip[ch1Clip][6][current] == HIGH) {
       //playSdWav7.play("P6.WAV");
@@ -135,11 +135,11 @@ void step(int current, int last) {
         envelope1.noteOn();
         envelope2.noteOn();
       }
-     /* if (track[track_number].MIDIchannel == 19) {
+      if (track[track_number].MIDIchannel == 19) {
         pl3waveform1.frequency(note_frequency[ctrack[track_number].sequence[track[track_number].clip_songMode].step[current]]);
         pl3envelope1.noteOn();
         pl3envelope2.noteOn();
-      }*/
+      }
     } else {
       usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[last], VELOCITYOFF, track[track_number].MIDIchannel);
       envelope1.noteOff();

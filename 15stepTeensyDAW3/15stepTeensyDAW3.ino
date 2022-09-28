@@ -1,3 +1,45 @@
+/*Contributing Manual:
+
+Hello. Here i will show you how to implement new stuff easily.
+
+There are some things left to be made at this point, but feel free to add your features, tho.
+
+toDo´s:
+    • add polyphony
+    • add display stabilty 
+    • also how i update my screencontent, deletes are not always shown 
+    • internal plugins 
+    • if in the stepsequencer of a track, i would like to hear the selected clip. when in songmode, only play the arrangment 
+    • Adding the audioboard. for teensy 4.1
+    • replace the clip-array with a struct 
+    • make a PCB 
+    • make a housing 
+    • implement Record-function
+
+
+1. 15stepTeensyDAW3.ino :
+
+This is the main sketch. It is easier to look at it in chapters: 
+Including all the librarys and the .h file
+calibration and customizing
+initiate the modules
+Place for the PJRC GUItool for the internal plugins (audio Connections)
+
+void loop(), run, the sequencer, reading the inputs. Applying all the controls from the 	startscreen when touched(trackselection, transportcontrol, arrengmenttype).
+With each touch on one of the controls we switch all other functions to „false/LOW“ 	so the touches are not misinterpreted. After setting the state the code will open up 	the desired „window“.
+
+Touch XY input is mapped to a grid of x=20, y=15 frames! 		
+Each frame has a Frameheight and -width of 16 pixels.     		
+
+void savebutton() Initializing the card and if we hit the save button, do all the 	savings. Right now it saves the clip-array into one big junk of ascii´s, that is read 	when loading.
+void loadbutton() Loading the clips array from the sd card.
+void startUpScreen() here are all the graphical elements from the startupscreen 
+void showCoordinates() shows the actual touch-coordinates
+
+Head over to Pl31OSC.ino to see how to implement new plugins
+*/
+
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SerialFlash.h>
@@ -238,14 +280,16 @@ void loop() {
 
   //read Potentiometer1
   Potentiometer1 = analogRead(A13);
-Serial.println(track[0].MIDIchannel);
+  //Serial.println();
   //always show the coordinates
   showCoordinates();
 
   TS_Point p = ts.getPoint();
+  Serial.println(p.z);
   if (ts.touched()) {
     gridTouchX = map(p.x, 380, 3930, 0, 19);
     gridTouchY = map(p.y, 300, 3800, 0, 14);
+
     trackTouchY = map(p.y, 700, 3200, 0, 7);
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
 
@@ -335,8 +379,8 @@ Serial.println(track[0].MIDIchannel);
         for (byte others = 0; others <= MAX_PAGES; others++) {
           selectPage[others] = LOW;
         }
-        selectPage[SONGMODE] = HIGH;
-        gridSongModePage_1();
+        selectPage[SONGMODE_PAGE_1] = HIGH;
+        gridSongMode();
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Drumchannel
@@ -419,9 +463,21 @@ Serial.println(track[0].MIDIchannel);
   if (selectPage[SCALESELECT] == HIGH) {
     scaleSelector();
   }
-  //setting up the songMode-view
-  if (selectPage[SONGMODE] == HIGH) {
-    songModePage();
+  //setting up the songMode-view1
+  if (selectPage[SONGMODE_PAGE_1] == HIGH) {
+    songModePage(0);
+  }
+  //setting up the songMode-view2
+  if (selectPage[SONGMODE_PAGE_2] == HIGH) {
+    songModePage(1);
+  }
+  //setting up the songMode-view3
+  if (selectPage[SONGMODE_PAGE_3] == HIGH) {
+    songModePage(2);
+  }
+  //setting up the songMode-view4
+  if (selectPage[SONGMODE_PAGE_4] == HIGH) {
+    songModePage(3);
   }
 }
 
@@ -726,6 +782,21 @@ void drawbarV(byte XPos, byte YPos, byte value_rnd, char* fName, int color) {  /
   tft.print(fName);
   tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * YPos + 4);
   tft.print(value_rnd);
+}
+
+void drawPot(byte xPos, byte yPos, float fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+  float circlePos;  
+  circlePos = fvalue / 50;
+
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 21, ILI9341_DARKGREY);
+  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * xPos + 3, STEP_FRAME_H * (yPos + 1) + 6);
+  tft.print(dname);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
+  tft.print(dvalue);
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((3 * circlePos) + 1.37), STEP_FRAME_H * yPos + 16 * sin((3 * circlePos) + 1.37), 4, color);
 }
 
 void clearWorkSpace() {                                                                                  //clear the whole grid from Display

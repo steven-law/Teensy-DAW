@@ -60,12 +60,15 @@ int polyphony = 64;
 ////////////////////////////////////////////////////////////////////////////////////////////
 #define MAX_PLUGINS 6
 #define MAX_CHANNELS 22  //   = MAX_PLUGINS + 16 (Midichannels)
-char* pluginName[MAX_PLUGINS]{"Chrd", "SDrm", "1OSC", "MDrm", "Tast", "Tost"};
+char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Tast", "Tost" };
 
-#define MAX_PAGES 26
+
 #define DRUMTRACK 0
-#define SONGMODE 9
 #define SCALESELECT 8
+#define SONGMODE_PAGE_1 9
+#define SONGMODE_PAGE_2 10
+#define SONGMODE_PAGE_3 11
+#define SONGMODE_PAGE_4 12
 
 #define PLUGIN1_PAGE1 20
 #define PLUGIN2_PAGE1 21
@@ -76,8 +79,12 @@ char* pluginName[MAX_PLUGINS]{"Chrd", "SDrm", "1OSC", "MDrm", "Tast", "Tost"};
 #define PLUGIN6_PAGE1 25
 
 
-#define PLUGIN1_PAGE2 12
+#define PLUGIN1_PAGE2 30
+#define PLUGIN1_PAGE3 31
+#define PLUGIN1_PAGE4 32
 
+
+#define MAX_PAGES 33
 int selectPage[MAX_PAGES] = {
   0,   //drumtrackSelect
   1,   //track[1].select
@@ -88,26 +95,33 @@ int selectPage[MAX_PAGES] = {
   6,   //track[6].select
   7,   //track[7].select
   8,   //scaleSelect
-  9,   //songSelectPage_1
+  9,   //SONGMODE_PAGE_1
   10,  //songSelectPage_2
 
-  11,  
+  11,
   12,  //Plugin_1_Select_Page_2
   13,  //Plugin_1_Select_Page_3
   14,  //Plugin_1_Select_Page_4
 
-  15,  
+  15,
   16,  //Plugin_2_Select_Page_2
   17,  //Plugin_2_Select_Page_3
   18,  //Plugin_2_Select_Page_4
 
-  19,  
+  19,
   20,  //Plugin_1_Select_Page_1
   21,  //Plugin_2_Select_Page_1
   22,  //Plugin_3_Select_Page_1
   23,  //Plugin_4_Select_Page_1
   24,
-  25
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,  //PLUGIN1_PAGE2
+  31,  //PLUGIN1_PAGE3
+  32   //PLUGIN1_PAGE4
 };
 // Plugin 1 variables
 
@@ -135,20 +149,32 @@ float note4_Velo_rnd;
 
 int Pl2Vol_rnd[12];
 float Pl2Vol[12];
-char* Pl2Controls[12]{"Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12"};
+char* Pl2Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 
 //plugin 3 variables
 
 int pl3Filter1_Frequency = 260;
+float pl3Filter1_Frequency_graph;
 float pl3Filter1_Resonance_rnd;
 float pl3Filter1_Resonance = 1;
+byte pl3Filter1_Resonance_graph;
 float pl3Filter1_Sweep_rnd;
 float pl3Filter1_Sweep = 2;
+byte pl3Filter1_Sweep_graph;
 int pl3Env1_Attack = 50;
+byte pl3Env1_Attack_graph;
+int pl3Env1_Decay = 50;
+byte pl3Env1_Decay_graph;
+float pl3Env1_Sustain = 1;
+byte pl3Env1_Sustain_graph;
 int pl3Env1_Release = 150;
+float pl3Env1_Release_graph;
 float pl3note1_Velo = 1;
 float pl3note1_Velo_rnd;
-
+byte pl3wfSelect;
+byte pl3wfSelect_graph;
+byte pl3Volume_graph;
+float pl3Volume;
 
 
 
@@ -156,7 +182,7 @@ float pl3note1_Velo_rnd;
 
 int Pl4Vol_rnd[12];
 float Pl4Vol[12];
-char* Pl4Controls[12]{"Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12"};
+char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 
 
 
@@ -170,7 +196,7 @@ char* Pl4Controls[12]{"Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "V
 bool clipSelector = LOW;
 bool songArranger = HIGH;
 bool clipNumberSelector = LOW;
-int clip_to_change;
+
 
 //songmode variables
 short arrangment1[8][64]{
@@ -185,13 +211,14 @@ short arrangment1[8][64]{
   { 0, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },  //channel 7
   { 0, 1, 0, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 8 },  //channel 8
 };
-bool songSelectPage_1 = LOW;    // a handler to keep the mode active after selecting
-bool songSelectPage_2 = LOW;    // a handler to keep the mode active after selecting
-bool songSelectPage_3 = LOW;    // a handler to keep the mode active after selecting
-bool songSelectPage_4 = LOW;    // a handler to keep the mode active after selecting
+bool songSelectPage_1 = LOW;  // a handler to keep the mode active after selecting
+bool songSelectPage_2 = LOW;  // a handler to keep the mode active after selecting
+bool songSelectPage_3 = LOW;  // a handler to keep the mode active after selecting
+bool songSelectPage_4 = LOW;  // a handler to keep the mode active after selecting
+byte pageNr = 0;
 byte phraseSegmentLength = 16;  // a variable for the zoomfactor in songmode
 byte tempoSelect = 120;         //variable to select the tempo
-byte pageNumber = 0;
+//byte pageNumber = 0;
 byte pixelbarClock = 0;  // a counter for the positionpointers
 byte phrase = 0;         // the main unit in songmode 1phrase = 16 bars
 byte end_of_loop = 255;
