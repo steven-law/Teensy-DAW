@@ -2,16 +2,13 @@
 
 Hello. Here i will show you how to implement new stuff easily.
 
-There are some things left to be made at this point, but feel free to add your features, tho.
+There are some things left to be made at this point, but feel free to add your features.
 
 toDo´s:
     • add polyphony
-    • add display stabilty 
-    • also how i update my screencontent, deletes are not always shown 
     • internal plugins 
     • if in the stepsequencer of a track, i would like to hear the selected clip. when in songmode, only play the arrangment 
     • Adding the audioboard. for teensy 4.1
-    • replace the clip-array with a struct 
     • make a PCB 
     • make a housing 
     • implement Record-function
@@ -31,7 +28,7 @@ With each touch on one of the controls we switch all other functions to „false
 Touch XY input is mapped to a grid of x=20, y=15 frames! 		
 Each frame has a Frameheight and -width of 16 pixels.     		
 
-void savebutton() Initializing the card and if we hit the save button, do all the 	savings. Right now it saves the clip-array into one big junk of ascii´s, that is read 	when loading.
+void savebutton() if we hit the save button, do all the savings. Right now it saves the clip-array into one big junk of ascii´s, that is read when loading.
 void loadbutton() Loading the clips array from the sd card.
 void startUpScreen() here are all the graphical elements from the startupscreen 
 void showCoordinates() shows the actual touch-coordinates
@@ -48,8 +45,10 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 #include <SD.h>
+#include <TeensyVariablePlayback.h>
 #include "FifteenStep.h"
 #include "variables.h"
+#include <Bounce2.h>
 
 // WAV files converted to code by wav2sketch
 #include "AudioSampleSnare.h"         // http://www.freesound.org/people/KEVOY/sounds/82583/
@@ -60,6 +59,29 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include "AudioSampleP2.h"
 
 //calibration and customizing
+//Teensy 3.5 PINOUT
+//Pinout for screen
+#define TIRQ_PIN 2   //alternate Pins: any digital pin
+#define CS_PIN 8     //alternate Pins: any digital pin
+#define TFT_DC 15    //alternate Pins 9, 10, 20, 21
+#define TFT_CS 10    //alternate Pins 9, 15, 20, 21
+#define TFT_RST 255  // 255 = unused, connect to 3.3V
+#define TFT_MOSI 11  //shareable
+#define TFT_SCLK 13  //shareable
+#define TFT_MISO 12  //shareable
+//button Pins
+#define LEFTBUTTON 30
+#define RIGHTBUTTON 28
+#define UPBUTTON 27
+#define DOWNBUTTON 29
+#define STARTBUTTON 26
+#define STOPBUTTON 24
+#define ENTERBUTTON 25
+//Potentiometer Pins
+#define POTENTIOMETER_1_PIN 31
+#define POTENTIOMETER_2_PIN 32
+
+/*//Teensy 4.1 PINOUT
 //Pinout for screen
 #define TIRQ_PIN 2   //alternate Pins: any digital pin
 #define CS_PIN 8     //alternate Pins: any digital pin
@@ -70,15 +92,27 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #define TFT_SCLK 13  //shareable
 #define TFT_MISO 12  //shareable
 
+//button Pins
+#define STARTBUTTON 26
+#define STOPBUTTON 24
+#define ENTERBUTTON 25
+#define LEFTBUTTON 30
+#define RIGHTBUTTON 28
+#define UPBUTTON 27
+#define DOWNBUTTON 29
+//Potentiometer Pins
+#define POTENTIOMETER_1_PIN 38
+*/
+
 //calibrate your Screen
 // This is calibration data for the raw touch data to the screen coordinates
 #define TS_MINX 180
 #define TS_MINY 260
 #define TS_MAXX 3730
-#define TS_MAXY 3800
+#define TS_MAXY 3600
 
 //touchscreen response; to be changed
-const long interval = 120;
+const long interval = 150;
 
 //pinout for SD CARD
 const int chipSelect = BUILTIN_SDCARD;
@@ -96,7 +130,8 @@ int tempo = 120;
 int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
 //end of calibration and custumizing
 
-
+//initiate bounce
+Bounce* buttons = new Bounce[NUM_BUTTONS];
 
 //initiate the modules
 FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                     //initiate Sequencer
@@ -106,139 +141,238 @@ XPT2046_Touchscreen ts(CS_PIN);                                                 
 
 
 
+
+
+
+//please use this Audio GUI from Newdigate
+//https://newdigate.github.io/teensy-eurorack-audio-gui/
+
+
 //Place for the Pluginconnections
 
 
-
 // GUItool: begin automatically generated code
-AudioPlayMemory playMem9;             //xy=65,1075
-AudioPlayMemory playMem10;            //xy=70,1106
-AudioPlayMemory playMem7;             //xy=75,1005
-AudioPlayMemory playMem8;             //xy=75,1042
-AudioSynthWaveform waveform3;         //xy=81,176
-AudioSynthWaveform waveform1;         //xy=84,80
-AudioSynthWaveform waveform2;         //xy=85,129
-AudioPlayMemory playMem5;             //xy=85,929
-AudioPlayMemory playMem6;             //xy=86,967
-AudioSynthWaveformDc dc2;             //xy=90.14286041259766,270.1428737640381
-AudioPlayMemory playMem1;             //xy=90,789.0000114440918
-AudioPlaySdWav playSdWav12;           //xy=90.65714645385742,740.7142810821533
-AudioPlayMemory playMem2;             //xy=91,825
-AudioPlaySdWav playSdWav7;            //xy=92.65715026855469,559.7142786979675
-AudioSynthWaveform waveform4;         //xy=94,226
-AudioPlaySdWav playSdWav9;            //xy=92.65714645385742,631.714280128479
-AudioPlaySdWav playSdWav3;            //xy=93.65714645385742,404.71427631378174
-AudioPlaySdWav playSdWav10;           //xy=92.65714645385742,665.714280128479
-AudioPlaySdWav playSdWav4;            //xy=93.65715026855469,440.71427726745605
-AudioPlaySdWav playSdWav11;           //xy=92.65714645385742,704.714280128479
-AudioPlaySdWav playSdWav8;            //xy=93.65714645385742,596.7142791748047
-AudioPlayMemory playMem11;            //xy=92,1145
-AudioPlaySdWav playSdWav2;            //xy=96.65714645385742,367.71427631378174
-AudioPlaySdWav playSdWav5;            //xy=96.65714836120605,480.71427726745605
-AudioPlaySdWav playSdWav6;            //xy=96.65715026855469,520.7142782211304
-AudioPlaySdWav playSdWav1;            //xy=99.85715103149414,328.71427631378174
-AudioPlayMemory playMem12;            //xy=97,1183
-AudioPlayMemory playMem3;             //xy=100,859
-AudioPlayMemory playMem4;             //xy=107,895
-AudioEffectEnvelope envelope1;        //xy=232.4285659790039,267.1428518295288
-AudioMixer4 mixer1;                   //xy=244,117
-AudioSynthWaveformDc pl3dc1;          //xy=280.00000381469727,656.666708946228
-AudioMixer4 drummixer1;               //xy=300.8571548461914,352.85713386535645
-AudioMixer4 drummixer2;               //xy=302.8571548461914,441.85713386535645
-AudioMixer4 drummixer3;               //xy=311.8571548461914,533.8571338653564
-AudioMixer4 pl4drummixer1;            //xy=312,806
-AudioMixer4 pl4drummixer2;            //xy=314,895
-AudioSynthWaveform pl3waveform1;      //xy=317,593.1112384796143
-AudioMixer4 pl4drummixer3;            //xy=323,987
-AudioFilterStateVariable filter1;     //xy=397.0000114440918,113.42856979370117
-AudioEffectEnvelope pl3envelope2;     //xy=423.00000381469727,653.0000095367432
-AudioEffectEnvelope envelope2;        //xy=457.7142868041992,162.1428565979004
-AudioMixer4 drummixer4;               //xy=485.85716247558594,462.00000762939453
-AudioFilterStateVariable pl3filter1;  //xy=504.44439125061035,602.3334541320801
-AudioMixer4 pl4drummixer4;            //xy=540.0000076293945,815.1428833007812
-AudioEffectBitcrusher bitcrusher1;    //xy=577.7142486572266,111.71430587768555
-AudioEffectEnvelope pl3envelope1;     //xy=681.6667098999023,589.3334550857544
-AudioEffectDelay delay1;              //xy=726.5713958740234,249.42859268188477
-AudioMixer4 mixer3;                   //xy=730.5713958740234,66.42859268188477
-AudioFilterStateVariable filter3;     //xy=730.5713958740234,141.42859268188477
-AudioMixer4 mixer5;                   //xy=875.1429252624512,468.85719871520996
-AudioOutputPT8211 pt8211_1;           //xy=1035.535629272461,470.2500305175781
-AudioConnection patchCord1(playMem9, 0, pl4drummixer3, 0);
-AudioConnection patchCord2(playMem10, 0, pl4drummixer3, 1);
-AudioConnection patchCord3(playMem7, 0, pl4drummixer2, 2);
-AudioConnection patchCord4(playMem8, 0, pl4drummixer2, 3);
-AudioConnection patchCord5(waveform3, 0, mixer1, 2);
-AudioConnection patchCord6(waveform1, 0, mixer1, 0);
-AudioConnection patchCord7(waveform2, 0, mixer1, 1);
-AudioConnection patchCord8(playMem5, 0, pl4drummixer2, 0);
-AudioConnection patchCord9(playMem6, 0, pl4drummixer2, 1);
-AudioConnection patchCord10(dc2, envelope1);
-AudioConnection patchCord11(playMem1, 0, pl4drummixer1, 0);
-AudioConnection patchCord12(playSdWav12, 0, drummixer3, 3);
-AudioConnection patchCord13(playMem2, 0, pl4drummixer1, 1);
-AudioConnection patchCord14(playSdWav7, 0, drummixer2, 2);
-AudioConnection patchCord15(waveform4, 0, mixer1, 3);
-AudioConnection patchCord16(playSdWav9, 0, drummixer3, 0);
-AudioConnection patchCord17(playSdWav3, 0, drummixer1, 2);
-AudioConnection patchCord18(playSdWav10, 0, drummixer3, 1);
-AudioConnection patchCord19(playSdWav4, 0, drummixer1, 3);
-AudioConnection patchCord20(playSdWav11, 0, drummixer3, 2);
-AudioConnection patchCord21(playSdWav8, 0, drummixer2, 3);
-AudioConnection patchCord22(playMem11, 0, pl4drummixer3, 2);
-AudioConnection patchCord23(playSdWav2, 0, drummixer1, 1);
-AudioConnection patchCord24(playSdWav5, 0, drummixer2, 0);
-AudioConnection patchCord25(playSdWav6, 0, drummixer2, 1);
-AudioConnection patchCord26(playSdWav1, 0, drummixer1, 0);
-AudioConnection patchCord27(playMem12, 0, pl4drummixer3, 3);
-AudioConnection patchCord28(playMem3, 0, pl4drummixer1, 2);
-AudioConnection patchCord29(playMem4, 0, pl4drummixer1, 3);
-AudioConnection patchCord30(envelope1, 0, filter1, 1);
-AudioConnection patchCord31(mixer1, 0, filter1, 0);
-AudioConnection patchCord32(pl3dc1, pl3envelope2);
-AudioConnection patchCord33(drummixer1, 0, drummixer4, 0);
-AudioConnection patchCord34(drummixer2, 0, drummixer4, 1);
-AudioConnection patchCord35(drummixer3, 0, drummixer4, 2);
-AudioConnection patchCord36(pl4drummixer1, 0, pl4drummixer4, 0);
-AudioConnection patchCord37(pl4drummixer2, 0, pl4drummixer4, 1);
-AudioConnection patchCord38(pl3waveform1, 0, pl3filter1, 0);
-AudioConnection patchCord39(pl4drummixer3, 0, pl4drummixer4, 2);
-AudioConnection patchCord40(filter1, 0, envelope2, 0);
-AudioConnection patchCord41(pl3envelope2, 0, pl3filter1, 1);
-AudioConnection patchCord42(envelope2, bitcrusher1);
-AudioConnection patchCord43(drummixer4, 0, mixer5, 1);
-AudioConnection patchCord44(pl3filter1, 0, pl3envelope1, 0);
-AudioConnection patchCord45(pl4drummixer4, 0, mixer5, 3);
-AudioConnection patchCord46(bitcrusher1, 0, mixer3, 0);
-AudioConnection patchCord47(pl3envelope1, 0, mixer5, 2);
-AudioConnection patchCord48(delay1, 0, filter3, 0);
-AudioConnection patchCord49(mixer3, delay1);
-AudioConnection patchCord50(mixer3, 0, mixer5, 0);
-AudioConnection patchCord51(filter3, 2, mixer3, 1);
-AudioConnection patchCord52(mixer5, 0, pt8211_1, 0);
-AudioConnection patchCord53(mixer5, 0, pt8211_1, 1);
+AudioSynthWaveformDc pl5dc1;                  //xy=95,1290
+AudioPlayMemory playMem9;                     //xy=96,1074
+AudioSynthWaveformDc pl6dc1;                  //xy=97,1394
+AudioSynthNoiseWhite pl7noise1;               //xy=98,1572
+AudioPlayMemory playMem10;                    //xy=101,1105
+AudioPlayMemory playMem7;                     //xy=106,1004
+AudioPlayMemory playMem8;                     //xy=106,1041
+AudioSynthWaveform waveform3;                 //xy=112,175
+AudioSynthWaveform waveform1;                 //xy=115,79
+AudioSynthWaveform waveform2;                 //xy=116,128
+AudioPlayMemory playMem5;                     //xy=116,928
+AudioPlayMemory playMem6;                     //xy=117,966
+AudioSynthWaveformDc dc2;                     //xy=121,269
+AudioPlaySdWav playSdWav12;                   //xy=121,739
+AudioPlayMemory playMem1;                     //xy=121,788
+AudioPlaySdWav playSdWav7;                    //xy=123,558
+AudioPlayMemory playMem2;                     //xy=122,824
+AudioPlaySdWav playSdWav9;                    //xy=123,630
+AudioPlaySdWav playSdWav3;                    //xy=124,403
+AudioPlaySdWav playSdWav10;                   //xy=123,664
+AudioPlaySdWav playSdWav4;                    //xy=124,439
+AudioPlaySdWav playSdWav11;                   //xy=123,703
+AudioSynthWaveform waveform4;                 //xy=125,225
+AudioPlaySdWav playSdWav8;                    //xy=124,595
+AudioPlayMemory playMem11;                    //xy=123,1144
+AudioPlaySdWav playSdWav2;                    //xy=127,366
+AudioPlaySdWav playSdWav5;                    //xy=127,479
+AudioPlaySdWav playSdWav6;                    //xy=127,519
+AudioPlaySdWav playSdWav1;                    //xy=130,327
+AudioPlayMemory playMem12;                    //xy=128,1182
+AudioPlayMemory playMem3;                     //xy=131,858
+AudioPlayMemory playMem4;                     //xy=138,894
+AudioSynthWaveformSine pl7waveformMod3;       //xy=151,1663
+AudioSynthNoiseWhite pl7noise2;               //xy=202,1715
+AudioSynthNoisePink pl7pink1;                 //xy=202,1755
+AudioPlaySdResmp playSdPitch1;                //xy=230,1235
+AudioEffectEnvelope pl5envelope2;             //xy=243,1289
+AudioPlaySdResmp playSdPitch2;                //xy=243.75000762939453,1342.5000400543213
+AudioEffectEnvelope pl6envelope2;             //xy=245,1393
+AudioEffectEnvelope envelope1;                //xy=263,266
+AudioMixer4 mixer1;                           //xy=275,116
+AudioSynthWaveformDc pl3dc1;                  //xy=311,655
+AudioSynthSimpleDrum pl7drum1;                //xy=309,1494
+AudioSynthWaveformModulated pl7waveformMod1;  //xy=316,1575
+AudioEffectEnvelope pl7envelope2;             //xy=325,1663
+AudioMixer4 drummixer1;                       //xy=331,351
+AudioMixer4 drummixer2;                       //xy=333,440
+AudioMixer4 drummixer3;                       //xy=342,532
+AudioMixer4 pl4drummixer1;                    //xy=343,805
+AudioMixer4 pl7mixer4;                        //xy=341,1743
+AudioMixer4 pl4drummixer2;                    //xy=345,894
+AudioSynthWaveform pl3waveform1;              //xy=348,592
+AudioMixer4 pl4drummixer3;                    //xy=354,986
+AudioFilterStateVariable pl5filter1;          //xy=407,1255
+AudioFilterStateVariable pl6filter1;          //xy=409,1359
+AudioFilterStateVariable filter1;             //xy=428,112
+AudioEffectEnvelope pl3envelope2;             //xy=454,652
+AudioFilterStateVariable pl7filter1;          //xy=479,1494
+AudioFilterStateVariable pl7filter2;          //xy=480,1584
+AudioSynthWaveformDc pl7dc1;                  //xy=482,1538
+AudioEffectEnvelope envelope2;                //xy=488,161
+AudioFilterBiquad pl7biquad1;                 //xy=483,1735
+AudioSynthWaveformModulated waveformMod2;     //xy=497,1670
+AudioMixer4 drummixer4;                       //xy=516,461
+AudioFilterStateVariable pl3filter1;          //xy=535,601
+AudioMixer4 pl4drummixer4;                    //xy=571,814
+AudioEffectEnvelope pl5envelope1;             //xy=572,1243
+AudioEffectEnvelope pl6envelope1;             //xy=574,1346
+AudioEffectBitcrusher bitcrusher1;            //xy=608,110
+AudioEffectEnvelope pl7envelope1;             //xy=633,1569
+AudioEffectEnvelope pl7envelope4;             //xy=671,1733
+AudioEffectEnvelope pl7envelope3;             //xy=677,1670
+AudioEffectWaveFolder pl7wavefolder1;         //xy=687,1486
+AudioEffectEnvelope pl3envelope1;             //xy=692,589
+AudioEffectDelay delay1;                      //xy=757,248
+AudioMixer4 mixer3;                           //xy=761,65
+AudioFilterStateVariable filter3;             //xy=761,140
+AudioMixer4 pl7mixer2;                        //xy=874,1761
+AudioMixer4 pl7mixer1;                        //xy=876,1680
+AudioMixer4 mixer5;                           //xy=906,467
+AudioMixer4 mixer6;                           //xy=975,1394
+AudioMixer4 pl7mixer3;                        //xy=1026,1684
+AudioMixer4 mixer8;                           //xy=1089,764
+AudioOutputPT8211 pt8211_1;                   //xy=1260,755
+AudioConnection patchCord1(pl5dc1, pl5envelope2);
+AudioConnection patchCord2(playMem9, 0, pl4drummixer3, 0);
+AudioConnection patchCord3(pl6dc1, pl6envelope2);
+AudioConnection patchCord4(pl7noise1, 0, pl7waveformMod1, 0);
+AudioConnection patchCord5(playMem10, 0, pl4drummixer3, 1);
+AudioConnection patchCord6(playMem7, 0, pl4drummixer2, 2);
+AudioConnection patchCord7(playMem8, 0, pl4drummixer2, 3);
+AudioConnection patchCord8(waveform3, 0, mixer1, 2);
+AudioConnection patchCord9(waveform1, 0, mixer1, 0);
+AudioConnection patchCord10(waveform2, 0, mixer1, 1);
+AudioConnection patchCord11(playMem5, 0, pl4drummixer2, 0);
+AudioConnection patchCord12(playMem6, 0, pl4drummixer2, 1);
+AudioConnection patchCord13(dc2, envelope1);
+AudioConnection patchCord14(playSdWav12, 0, drummixer3, 3);
+AudioConnection patchCord15(playMem1, 0, pl4drummixer1, 0);
+AudioConnection patchCord16(playSdWav7, 0, drummixer2, 2);
+AudioConnection patchCord17(playMem2, 0, pl4drummixer1, 1);
+AudioConnection patchCord18(playSdWav9, 0, drummixer3, 0);
+AudioConnection patchCord19(playSdWav3, 0, drummixer1, 2);
+AudioConnection patchCord20(playSdWav10, 0, drummixer3, 1);
+AudioConnection patchCord21(playSdWav4, 0, drummixer1, 3);
+AudioConnection patchCord22(playSdWav11, 0, drummixer3, 2);
+AudioConnection patchCord23(waveform4, 0, mixer1, 3);
+AudioConnection patchCord24(playSdWav8, 0, drummixer2, 3);
+AudioConnection patchCord25(playMem11, 0, pl4drummixer3, 2);
+AudioConnection patchCord26(playSdWav2, 0, drummixer1, 1);
+AudioConnection patchCord27(playSdWav5, 0, drummixer2, 0);
+AudioConnection patchCord28(playSdWav6, 0, drummixer2, 1);
+AudioConnection patchCord29(playSdWav1, 0, drummixer1, 0);
+AudioConnection patchCord30(playMem12, 0, pl4drummixer3, 3);
+AudioConnection patchCord31(playMem3, 0, pl4drummixer1, 2);
+AudioConnection patchCord32(playMem4, 0, pl4drummixer1, 3);
+AudioConnection patchCord33(pl7waveformMod3, pl7envelope2);
+AudioConnection patchCord34(pl7noise2, 0, pl7mixer4, 0);
+AudioConnection patchCord35(pl7pink1, 0, pl7mixer4, 1);
+AudioConnection patchCord36(playSdPitch1, 0, pl5filter1, 0);
+AudioConnection patchCord37(pl5envelope2, 0, pl5filter1, 1);
+AudioConnection patchCord38(playSdPitch2, 0, pl6filter1, 0);
+AudioConnection patchCord39(pl6envelope2, 0, pl6filter1, 1);
+AudioConnection patchCord40(envelope1, 0, filter1, 1);
+AudioConnection patchCord41(mixer1, 0, filter1, 0);
+AudioConnection patchCord42(pl3dc1, pl3envelope2);
+AudioConnection patchCord43(pl7drum1, 0, pl7filter1, 0);
+AudioConnection patchCord44(pl7waveformMod1, 0, pl7filter2, 0);
+AudioConnection patchCord45(pl7envelope2, 0, waveformMod2, 0);
+AudioConnection patchCord46(drummixer1, 0, drummixer4, 0);
+AudioConnection patchCord47(drummixer2, 0, drummixer4, 1);
+AudioConnection patchCord48(drummixer3, 0, drummixer4, 2);
+AudioConnection patchCord49(pl4drummixer1, 0, pl4drummixer4, 0);
+AudioConnection patchCord50(pl7mixer4, pl7biquad1);
+AudioConnection patchCord51(pl4drummixer2, 0, pl4drummixer4, 1);
+AudioConnection patchCord52(pl3waveform1, 0, pl3filter1, 0);
+AudioConnection patchCord53(pl4drummixer3, 0, pl4drummixer4, 2);
+AudioConnection patchCord54(pl5filter1, 0, pl5envelope1, 0);
+AudioConnection patchCord55(pl6filter1, 0, pl6envelope1, 0);
+AudioConnection patchCord56(filter1, 0, envelope2, 0);
+AudioConnection patchCord57(pl3envelope2, 0, pl3filter1, 1);
+AudioConnection patchCord58(pl7filter1, 0, pl7wavefolder1, 0);
+AudioConnection patchCord59(pl7filter2, 0, pl7envelope1, 0);
+AudioConnection patchCord60(pl7dc1, 0, pl7wavefolder1, 1);
+AudioConnection patchCord61(envelope2, bitcrusher1);
+AudioConnection patchCord62(pl7biquad1, pl7envelope4);
+AudioConnection patchCord63(waveformMod2, pl7envelope3);
+AudioConnection patchCord64(drummixer4, 0, mixer5, 1);
+AudioConnection patchCord65(pl3filter1, 0, pl3envelope1, 0);
+AudioConnection patchCord66(pl4drummixer4, 0, mixer5, 3);
+AudioConnection patchCord67(pl5envelope1, 0, mixer6, 0);
+AudioConnection patchCord68(pl6envelope1, 0, mixer6, 1);
+AudioConnection patchCord69(bitcrusher1, 0, mixer3, 0);
+AudioConnection patchCord70(pl7envelope1, 0, pl7mixer1, 1);
+AudioConnection patchCord71(pl7envelope4, 0, pl7mixer1, 3);
+AudioConnection patchCord72(pl7envelope3, 0, pl7mixer1, 2);
+AudioConnection patchCord73(pl7wavefolder1, 0, pl7mixer1, 0);
+AudioConnection patchCord74(pl3envelope1, 0, mixer5, 2);
+AudioConnection patchCord75(delay1, 0, filter3, 0);
+AudioConnection patchCord76(mixer3, delay1);
+AudioConnection patchCord77(mixer3, 0, mixer5, 0);
+AudioConnection patchCord78(filter3, 2, mixer3, 1);
+AudioConnection patchCord79(pl7mixer2, 0, pl7mixer3, 1);
+AudioConnection patchCord80(pl7mixer1, 0, pl7mixer3, 0);
+AudioConnection patchCord81(mixer5, 0, mixer8, 0);
+AudioConnection patchCord82(mixer6, 0, mixer8, 1);
+AudioConnection patchCord83(pl7mixer3, 0, mixer6, 2);
+AudioConnection patchCord84(mixer8, 0, pt8211_1, 0);
+AudioConnection patchCord85(mixer8, 0, pt8211_1, 1);
 // GUItool: end automatically generated code
 
 
 
-
-
+AudioMixer4* mixers[] = { &mixer5, &mixer6 };
 
 void setup() {
   Serial.begin(9600);  // set MIDI baud
+
+  //initialize the TFT- and Touchscreen
+  tft.begin();
+  tft.setRotation(3);
+  tft.fillScreen(ILI9341_BLACK);
+  ts.begin();
+  ts.setRotation(1);
+  while (!Serial && (millis() <= 1000))
+    ;
+  tft.fillScreen(ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 3);
+  Serial.println("Initializing Touchscreen...");
+  tft.println("Initializing Touchscreen...");
+  delay(100);
+
   AudioMemory(200);
+  Serial.println("Initializing AudioMemory = 200");
+  tft.println("Initializing AudioMemory = 200");
+  delay(100);
+
+
 
   //initialize SD Card
   Serial.print("Initializing SD card...");
+  tft.println("Initializing SD card...");
+  delay(100);
   if (!SD.begin(chipSelect)) {
     Serial.println("initialization failed!");
+    tft.println("initialization failed!");
     return;
   }
   Serial.println("initialization done.");
+  tft.println("initialization done.");
+  delay(100);
 
   // start sequencer and set callbacks
   seq.begin(tempo, steps);
   seq.setStepHandler(step);
   seq.stop();
+  Serial.println("Initializing Sequencer");
+  tft.println("Initializing Sequencer");
+  delay(100);
 
   /// set the default channel of each track
   track[0].MIDIchannel = 10;
@@ -249,50 +383,118 @@ void setup() {
   track[5].MIDIchannel = 6;
   track[6].MIDIchannel = 7;
   track[7].MIDIchannel = 8;
-
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //load the pluginsettings
   Plugin_1_Settings();
   Plugin_2_Settings();
   Plugin_3_Settings();
   Plugin_4_Settings();
+  Plugin_5_Settings();
+  Plugin_6_Settings();
+  Plugin_7_Settings();
+  Mixer_Settings();
+  Serial.println("Initializing Track- and Pluginsettings");
+  tft.println("Initializing Track- and Pluginsettings");
+  delay(100);
 
-  //initialize the TFT- and Touchscreen
-  tft.begin();
-  tft.setRotation(3);
-  tft.fillScreen(ILI9341_BLACK);
-  ts.begin();
-  ts.setRotation(1);
-  while (!Serial && (millis() <= 1000))
-    ;
 
+  //initiate Buttons
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    buttons[i].attach(BUTTON_PINS[i], INPUT_PULLUP);  //setup the bounce instance for the current button
+    buttons[i].interval(100);                         // interval in ms
+  }
+
+  Serial.println("Initializing Buttons");
+  tft.println("Initializing Buttons");
+  delay(100);
+  //initiate variablePlayback
+  playSdPitch1.enableInterpolation(true);
+  playSdPitch2.enableInterpolation(true);
+  Serial.println("Initializing VariablePlayback");
+  tft.println("Initializing VariablePlayback");
+  delay(100);
+  Serial.println("Complete...");
+  tft.println("Complete...");
+  delay(400);
   //load the startupScreen
   startUpScreen();
+  delay(500);
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX, pixelY);
+    }
+  }
 }
 
 
 void loop() {
-
+  //Serial.println("==== start of loop ====");
   usbMIDI.read();
   // this is needed to keep the sequencer
   // running. there are other methods for
   // start, stop, and pausing the steps
   seq.run();
 
+  //Serial.print(last_button_X);
+  //Serial.print(":---:");
+
   //read Potentiometer1
-  Potentiometer1 = analogRead(A13);
-  //Serial.println();
+  Potentiometer1 = 1023 - analogRead(POTENTIOMETER_1_PIN);
+  //unsigned long currentMillis = millis();
+  //if (currentMillis - previousMillis >= interval) {
+  //  previousMillis = currentMillis;
+  //  Serial.println(track[0].solo_state);
+  //}
+
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    // Update the Bounce instance :
+    buttons[i].update();
+  }
+  // If it fell, flag the need to toggle the LED
+  if (buttons[0].fell()) {
+    leftbutton();
+  }
+  if (buttons[1].fell()) {
+    rightbutton();
+  }
+  if (buttons[2].fell()) {
+    upbutton();
+  }
+  if (buttons[3].fell()) {
+    downbutton();
+    //something_was_pressed = true;
+  }
+  if (buttons[4].fell()) {
+    seq.start();
+    for (int i = 1; i <= 7; i++) {
+      track[i].clip_songMode = track[i].arrangment1[0];
+    }
+  }
+  if (buttons[5].fell()) {
+    seq.stop();
+    seq.panic();
+    barClock = 0;
+    phrase = -1;
+    //clear the songposition pointers
+    tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+    tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+  }
+
+
+
   //always show the coordinates
   showCoordinates();
 
   TS_Point p = ts.getPoint();
-  Serial.println(p.z);
-  if (ts.touched()) {
+  if (ts.touched() && !buttons[6].changed()) {
     gridTouchX = map(p.x, 380, 3930, 0, 19);
     gridTouchY = map(p.y, 300, 3800, 0, 14);
 
     trackTouchY = map(p.y, 700, 3200, 0, 7);
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
-
+  }
+  if (ts.touched() || !buttons[6].read()) {
 
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Save, Load, Arrangment select
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,9 +511,10 @@ void loop() {
       if (gridTouchX == POSITION_PLAY_BUTTON || gridTouchX == POSITION_PLAY_BUTTON + 1) {
         seq.start();
         for (int i = 1; i <= 7; i++) {
-          track[i].clip_songMode = arrangment1[i][0];
+          track[i].clip_songMode = track[i].arrangment1[0];
         }
       }
+
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Stop button
       if (gridTouchX == POSITION_STOP_BUTTON) {
@@ -324,6 +527,7 @@ void loop() {
         tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
         tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
       }
+
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //arrangmentSelect button ; not used right now
       if (gridTouchX == POSITION_ARR_BUTTON || gridTouchX == POSITION_ARR_BUTTON + 1) {
@@ -339,7 +543,7 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //TempoSelect button
       if (gridTouchX == POSITION_BPM_BUTTON || gridTouchX == POSITION_BPM_BUTTON + 1) {
-        tempoSelect = map(Potentiometer1, 0, 1023, 50, 250);
+        tempoSelect = map(Potentiometer1, 0, 1023, 50, 200);
         seq.setTempo(tempoSelect);
         tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
@@ -351,10 +555,7 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Scale Select
       if (gridTouchX == POSITION_SCALE_BUTTON || gridTouchX == POSITION_SCALE_BUTTON + 1) {
-        for (byte others = 0; others <= MAX_PAGES; others++) {
-          selectPage[others] = LOW;
-        }
-        selectPage[SCALESELECT] = HIGH;
+        select_page(SCALESELECT);
         gridScaleSelector();
         scaleSelector();
         for (int i = 0; i < scalesQuant; i++) {
@@ -376,31 +577,30 @@ void loop() {
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Songarranger
       if (gridTouchY == 0) {
-        for (byte others = 0; others <= MAX_PAGES; others++) {
-          selectPage[others] = LOW;
-        }
-        selectPage[SONGMODE_PAGE_1] = HIGH;
-        gridSongMode();
+        select_page(10);
+        gridSongMode(songpageNumber);
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Drumchannel
       if (trackTouchY == 0) {
-        for (byte others = 0; others <= MAX_PAGES; others++) {
-          selectPage[others] = LOW;
-        }
-        selectPage[DRUMTRACK] = HIGH;
+        select_page(DRUMTRACK);
+        desired_track = 0;
         griddrumStepSequencer();
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select channel2-8
       for (int tracks = 1; tracks < 8; tracks++) {
         if (trackTouchY == tracks) {
-          for (byte others = 0; others <= MAX_PAGES; others++) {
-            selectPage[others] = LOW;
-          }
-          selectPage[tracks] = HIGH;
+          desired_track = tracks;
+          select_page(tracks);
           gridStepSequencer(tracks);
         }
+      }
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //  select Mixer
+      if (gridTouchY == 13) {
+        select_page(MIXER_PAGE_1);
+        mixerPage1_Static(0);
       }
     }
   }
@@ -411,74 +611,189 @@ void loop() {
   //we create:
 
   //  //setting up the Plugin3 Page1-view
-  //if (selectPage[PLUGIN3_PAGE1] == HIGH) {
+  //if (selectPage[PLUGIN3_PAGE1]) {
   //Plugin3_Page1_Dynamic();
   //}
 
   // after adding the active state statement
   // now head over to the "midi.ino"
   //look for *****************************************************************************************
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////////////////////
 
-  //THIS IS IMPORTANT!!!!!; set your different plugin (or whatever) views in here
-  // every view you create has to be set to active here!!!!
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //-----------------------------------------
   //setting up the Plugin1 Page1-view
-  if (selectPage[PLUGIN1_PAGE1] == HIGH) {
+  if (selectPage[PLUGIN1_PAGE1]) {
     Plugin1_Page1_Dynamic();
   }
   //setting up the Plugin1 Page2-view
-  if (selectPage[PLUGIN1_PAGE2] == HIGH) {
+  if (selectPage[PLUGIN1_PAGE2]) {
     Plugin1_Page2_Dynamic();
   }
+
   //setting up the Plugin2 Page1-view
-  if (selectPage[PLUGIN2_PAGE1] == HIGH) {
+  if (selectPage[PLUGIN2_PAGE1]) {
     Plugin2_Page1_Dynamic();
   }
-  //setting up the Plugin3 Page1-view
-  if (selectPage[PLUGIN3_PAGE1] == HIGH) {
-    Plugin3_Page1_Dynamic();
-  }
 
-  if (selectPage[PLUGIN4_PAGE1] == HIGH) {
+
+  /////////////////////////////////////////////////////////////////////////////
+  //setting up the Plugin3 Page1-view
+  if (selectPage[PLUGIN3_PAGE1]) {
+    Plugin3_Page1_Dynamic(desired_instrument);
+  }
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  //setting up the Plugin4 Page1-view
+  if (selectPage[PLUGIN4_PAGE1]) {
     Plugin4_Page1_Dynamic();
   }
 
+  //setting up the Plugin5 Page1-view
+  if (selectPage[PLUGIN5_PAGE1]) {
+    Plugin5_Page1_Dynamic();
+  }
+  //setting up the Plugin6 Page1-view
+  if (selectPage[PLUGIN6_PAGE1]) {
+    Plugin6_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page1-view
+  if (selectPage[PLUGIN7_PAGE1]) {
+    Plugin7_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page2-view
+  if (selectPage[PLUGIN7_PAGE2]) {
+    Plugin7_Page2_Dynamic();
+  }
+  //setting up the Plugin8 Page1-view
+  if (selectPage[PLUGIN8_PAGE1]) {
+    Plugin8_Page1_Dynamic();
+  }
+  //setting up the Plugin9 Page1-view
+  if (selectPage[PLUGIN9_PAGE1]) {
+    Plugin9_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage[PLUGIN10_PAGE1]) {
+    Plugin10_Page1_Dynamic();
+  }
+
+
 
   //setting up the StepSequencer-view for drumtrack #1
-  if (selectPage[DRUMTRACK] == HIGH) {
+  if (selectPage[DRUMTRACK]) {
     drumStepSequencer();
   }
   //setting up the melodicStepSequencer-view for #2-8
   for (int i = 1; i < 8; i++) {
-    if (selectPage[i] == HIGH) {
+    if (selectPage[i]) {
       melodicStepSequencer(i);
     }
   }
   //setting up the scaleSelector-view
-  if (selectPage[SCALESELECT] == HIGH) {
+  if (selectPage[SCALESELECT]) {
     scaleSelector();
   }
+  //setting up the songmode full zoom-view
+  //if (selectPage[9]) {
+  //songModePage(16);
+   //}
   //setting up the songMode-view1
-  if (selectPage[SONGMODE_PAGE_1] == HIGH) {
-    songModePage(0);
+  for (byte pagenr = 0; pagenr < 16; pagenr++) {
+    if (selectPage[pagenr + 10]) {
+      songModePage(pagenr);
+    }
   }
-  //setting up the songMode-view2
-  if (selectPage[SONGMODE_PAGE_2] == HIGH) {
-    songModePage(1);
+
+  //setting up the Mixer Page 1
+  if (selectPage[MIXER_PAGE_1]) {
+    MixerPage1_Dynamic();
   }
-  //setting up the songMode-view3
-  if (selectPage[SONGMODE_PAGE_3] == HIGH) {
-    songModePage(2);
+  //setting up the Mixer Page 2
+  if (selectPage[MIXER_PAGE_2]) {
+    MixerPage2_Dynamic();
   }
-  //setting up the songMode-view4
-  if (selectPage[SONGMODE_PAGE_4] == HIGH) {
-    songModePage(3);
+  //setting up the Mixer Page 2
+  if (selectPage[MIDICC_PAGE_1]) {
+    midiCCpage1_Dynamic(desired_track);
   }
+  //if (something_was_pressed) {
+  //Serial.println("==== end of loop ====");
+  //delay(2000);
+  //}
+}
+
+void leftbutton() {
+
+
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tft.drawPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * last_button_Y), tftRAM[pixelX][pixelY]);
+    }
+  }
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX + (STEP_FRAME_W * (last_button_X - 1)), pixelY + (STEP_FRAME_H * (last_button_Y)));
+    }
+  }
+  tft.drawRect((STEP_FRAME_W * (last_button_X - 1)) + 1, (STEP_FRAME_H * (last_button_Y)) + 1, 15, 15, ILI9341_WHITE);
+  last_button_X -= 1;
+  gridTouchX = last_button_X;
+  gridTouchY = last_button_Y;
+}
+void rightbutton() {
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tft.drawPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * last_button_Y), tftRAM[pixelX][pixelY]);
+    }
+  }
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX + (STEP_FRAME_W * (last_button_X + 1)), pixelY + (STEP_FRAME_H * (last_button_Y)));
+    }
+  }
+  tft.drawRect((STEP_FRAME_W * (last_button_X + 1)) + 1, (STEP_FRAME_H * (last_button_Y)) + 1, 15, 15, ILI9341_WHITE);
+  last_button_X += 1;
+  gridTouchX = last_button_X;
+  gridTouchY = last_button_Y;
+}
+void upbutton() {
+  //i have pushed the upbutton now:
+  //draw the last grid´s pixels
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tft.drawPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * last_button_Y), tftRAM[pixelX][pixelY]);
+    }
+  }
+  //read the new grid´s pixels
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * (last_button_Y - 1)));
+    }
+  }
+  //draw a rect(marker) to the new grid
+  tft.drawRect((STEP_FRAME_W * last_button_X) + 1, (STEP_FRAME_H * (last_button_Y - 1)) + 1, 15, 15, ILI9341_WHITE);
+  last_button_Y -= 1;
+  gridTouchX = last_button_X;
+  gridTouchY = last_button_Y;
+}
+void downbutton() {
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tft.drawPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * last_button_Y), tftRAM[pixelX][pixelY]);
+    }
+  }
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
+      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX + (STEP_FRAME_W * last_button_X), pixelY + (STEP_FRAME_H * (last_button_Y + 1)));
+    }
+  }
+  tft.drawRect((STEP_FRAME_W * last_button_X) + 1, (STEP_FRAME_H * (last_button_Y + 1)) + 1, 15, 15, ILI9341_WHITE);
+  last_button_Y += 1;
+  gridTouchX = last_button_X;
+  gridTouchY = last_button_Y;
 }
 
 void savebutton() {
@@ -564,6 +879,13 @@ void loadbutton() {
     Serial.println("error opening test.txt");
   }
 }
+void select_page(byte selectedPage) {
+  for (byte others = 0; others <= MAX_PAGES; others++) {
+    selectPage[others] = LOW;
+  }
+  selectPage[selectedPage] = HIGH;
+}
+
 
 void startUpScreen() {  //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
@@ -587,6 +909,10 @@ void startUpScreen() {  //static Display rendering
     tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
     tft.print(otherTracks);
   }
+  //Mixer button
+  tft.fillRect(1, STEP_FRAME_H * 13, 15, TRACK_FRAME_H, ILI9341_LIGHTGREY);  //Xmin, Ymin, Xlength, Ylength, color
+  tft.setCursor(3, STEP_FRAME_H * 13 + 6);
+  tft.print("M");
 
   //scale Select
   tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON + 1, 0, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
@@ -677,12 +1003,14 @@ void scaleSelector() {
     }
   }
 }
-
 void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
   for (int i = 0; i < 17; i++) {  //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
-    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, 16, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
+    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, STEP_FRAME_H, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
+    if (i % 4 == 0) {
+      tft.drawFastVLine((i * STEP_FRAME_W) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, ILI9341_LIGHTGREY);  //(x, y-start, y-length, color)
+    }
   }
   for (int i = 0; i < 13; i++) {  //hor lines
     step_Frame_Y = i * 16;
@@ -699,7 +1027,7 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.print(ClipNr + 1);
   }
   for (int i = 0; i < 12; i++) {
-    if (scales[scaleSelected][i] == HIGH) {
+    if (scales[scaleSelected][i]) {
       tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
   }
@@ -738,71 +1066,61 @@ void drawStepSequencerStatic(int desired_instrument) {
 
   //Pluginbutton
   tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
+  drawActiveSteps();
+  drawMIDIchannel();
 }
-
-void Plugin_View_Static() {
-  clearWorkSpace();
-  //show pageselector
-  for (byte pages = 0; pages < 4; pages++) {
-    tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
-    tft.setFont(Arial_12);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H + 12);
-    tft.print(pages + 1);
+void drawActiveSteps() {
+  byte tone_start = track[desired_instrument].shown_octaves * 12;
+  //draw active steps
+  for (byte steps = 0; steps < STEP_QUANT; steps++) {
+    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
+      int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
+      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + track[desired_track].clip_selector * 20);
+    }
+  }
+}
+void drawActiveDrumSteps() {
+  for (byte tone = 0; tone < 12; tone++) {
+    for (byte steps = 0; steps < STEP_QUANT; steps++) {
+      if (channel1Clip[ch1Clip][tone][steps]) {
+        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + track[0].clip_selector * 20);
+      }
+    }
+  }
+}
+void drawMIDIchannel() {
+  //show midichannel
+  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+  tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
+  tft.setFont(Arial_10);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setTextSize(1);
+  tft.print(track[desired_track].MIDIchannel);
+  //draw MidiCC
+  for (int plugintext = 0; plugintext <= 16; plugintext++) {
+    if (track[desired_instrument].MIDIchannel == plugintext) {
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+      tft.setFont(Arial_8);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print("CC");
+    }
+  }
+  //draw Plugin
+  for (int plugintext = 0; plugintext <= MAX_PLUGINS; plugintext++) {
+    if (track[desired_track].MIDIchannel == plugintext + 17) {
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+      tft.setFont(Arial_8);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print(pluginName[plugintext]);
+    }
   }
 }
 
-void drawbarH(byte XPos, byte YPos, byte value_rnd, char* fName, int color) {  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
-  int value_Pix;
-  int valueI_Pix;
-  value_Pix = map(value_rnd, 0, 100, 0, 32);
-  valueI_Pix = 32 - value_Pix;
-  tft.drawRect(STEP_FRAME_W * XPos - 1, STEP_FRAME_H * YPos, STEP_FRAME_W * 2 + 3, STEP_FRAME_H, ILI9341_WHITE);
-  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * YPos + 1, value_Pix, STEP_FRAME_H - 2, color);
-  tft.fillRect(STEP_FRAME_W * (XPos + 2) - valueI_Pix + 1, STEP_FRAME_H * YPos + 1, valueI_Pix, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * (YPos - 1) + 4);
-  tft.print(fName);
-  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * YPos + 4);
-  tft.print(value_rnd);
-}
-
-void drawbarV(byte XPos, byte YPos, byte value_rnd, char* fName, int color) {  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
-  int value_Pix;
-  int valueI_Pix;
-  value_Pix = map(value_rnd, 0, 100, 0, 32);
-  valueI_Pix = 32 - value_Pix;
-  tft.drawRect(STEP_FRAME_W * XPos, STEP_FRAME_H * (YPos - 1), STEP_FRAME_W, STEP_FRAME_H * 2, ILI9341_WHITE);
-  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * (YPos - 1) + 1, STEP_FRAME_W - 2, valueI_Pix - 2, ILI9341_DARKGREY);
-  tft.fillRect(STEP_FRAME_W * XPos + 1, STEP_FRAME_H * (YPos + 1) - value_Pix + 1, STEP_FRAME_W - 2, value_Pix - 2, color);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * XPos - 3, STEP_FRAME_H * (YPos + 1) + 4);
-  tft.print(fName);
-  tft.setCursor(STEP_FRAME_W * XPos + 3, STEP_FRAME_H * YPos + 4);
-  tft.print(value_rnd);
-}
-
-void drawPot(byte xPos, byte yPos, float fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  float circlePos;  
-  circlePos = fvalue / 50;
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 21, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 3, STEP_FRAME_H * (yPos + 1) + 6);
-  tft.print(dname);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((3 * circlePos) + 1.37), STEP_FRAME_H * yPos + 16 * sin((3 * circlePos) + 1.37), 4, color);
-}
-
-void clearWorkSpace() {                                                                                  //clear the whole grid from Display
-  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H * 12, ILI9341_DARKGREY);
-}
 void clearStepsGrid() {  // clear all Steps from Display
   for (int T = 0; T < 12; T++) {
     for (int S = 0; S < 16; S++) {

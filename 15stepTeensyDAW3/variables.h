@@ -32,7 +32,7 @@
 #define STEP_POSITION_POINTER_Y 236
 #define GRID_POSITION_POINTER_Y 232
 #define POSITION_POINTER_THICKNESS 3
-
+#define POTPICKUP 10
 //potentiomernames
 int Potentiometer1;
 
@@ -54,127 +54,142 @@ int polyphony = 64;
 // 6)add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
 // for the tutorial we add "1OSC"
 // 7)and define our first Plugin page  -> #define PLUGIN3_PAGE1 22   pluginstartpage has to be in order with the midi (plugin-)channel
-// 8)scroll down and add your variables there
+// 8)scroll down and add your plugin variables there
 // now we head over to the 15stepTeensyDAW3.ino"
 //look for *************************************************************************
 ////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_PLUGINS 6
-#define MAX_CHANNELS 22  //   = MAX_PLUGINS + 16 (Midichannels)
-char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Tast", "Tost" };
+#define MAX_PLUGINS 10
+#define MAX_CHANNELS 26  //   = MAX_PLUGINS + 16 (Midichannels)
+char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "8", "9", "10" };
 
 
 #define DRUMTRACK 0
+// 1-7 are the Sequencer-Tracks: 2-8
 #define SCALESELECT 8
-#define SONGMODE_PAGE_1 9
-#define SONGMODE_PAGE_2 10
-#define SONGMODE_PAGE_3 11
-#define SONGMODE_PAGE_4 12
+#define SONGMODE_PAGE_ZOOM 9
+#define SONGMODE_PAGE_1 10
+#define SONGMODE_PAGE_2 11
+#define SONGMODE_PAGE_3 12
+#define SONGMODE_PAGE_4 13
+#define SONGMODE_PAGE_5 14
+#define SONGMODE_PAGE_6 15
+#define SONGMODE_PAGE_7 16
+#define SONGMODE_PAGE_8 17
+#define SONGMODE_PAGE_9 18
+#define SONGMODE_PAGE_10 19
+#define SONGMODE_PAGE_11 20
+#define SONGMODE_PAGE_12 21
+#define SONGMODE_PAGE_13 22
+#define SONGMODE_PAGE_14 23
+#define SONGMODE_PAGE_15 24
+#define SONGMODE_PAGE_16 25
 
-#define PLUGIN1_PAGE1 20
-#define PLUGIN2_PAGE1 21
-#define PLUGIN3_PAGE1 22
-#define PLUGIN4_PAGE1 23
-
-#define PLUGIN5_PAGE1 24
-#define PLUGIN6_PAGE1 25
+#define MIXER_PAGE_1 30
+#define MIXER_PAGE_2 31
 
 
-#define PLUGIN1_PAGE2 30
-#define PLUGIN1_PAGE3 31
-#define PLUGIN1_PAGE4 32
+#define MIDICC_PAGE_1 35
+#define MIDICC_PAGE_2 36
+
+#define PLUGIN1_PAGE1 40
+#define PLUGIN2_PAGE1 41
+#define PLUGIN3_PAGE1 42
+#define PLUGIN4_PAGE1 43
+#define PLUGIN5_PAGE1 44
+#define PLUGIN6_PAGE1 45
+#define PLUGIN7_PAGE1 46
+#define PLUGIN8_PAGE1 47
+#define PLUGIN9_PAGE1 48
+#define PLUGIN10_PAGE1 49
 
 
-#define MAX_PAGES 33
-int selectPage[MAX_PAGES] = {
-  0,   //drumtrackSelect
-  1,   //track[1].select
-  2,   //track[2].select
-  3,   //track[3].select
-  4,   //track[4].select
-  5,   //track[5].select
-  6,   //track[6].select
-  7,   //track[7].select
-  8,   //scaleSelect
-  9,   //SONGMODE_PAGE_1
-  10,  //songSelectPage_2
 
-  11,
-  12,  //Plugin_1_Select_Page_2
-  13,  //Plugin_1_Select_Page_3
-  14,  //Plugin_1_Select_Page_4
+#define PLUGIN1_PAGE2 60
+#define PLUGIN1_PAGE3 61
+#define PLUGIN1_PAGE4 62
+#define PLUGIN7_PAGE2 63
 
-  15,
-  16,  //Plugin_2_Select_Page_2
-  17,  //Plugin_2_Select_Page_3
-  18,  //Plugin_2_Select_Page_4
 
-  19,
-  20,  //Plugin_1_Select_Page_1
-  21,  //Plugin_2_Select_Page_1
-  22,  //Plugin_3_Select_Page_1
-  23,  //Plugin_4_Select_Page_1
-  24,
-  25,
-  26,
-  27,
-  28,
-  29,
-  30,  //PLUGIN1_PAGE2
-  31,  //PLUGIN1_PAGE3
-  32   //PLUGIN1_PAGE4
+#define MAX_PAGES 128
+bool selectPage[MAX_PAGES];
+
+//Overall Pluginvariables
+struct plugins {
+  byte Volume_graph = 50;
+  int Volume_rnd = 100;
+  float Volume = 1;
 };
-// Plugin 1 variables
+plugins plugin[MAX_PLUGINS];
 
-int Filter1_Frequency = 560;
-float Filter1_Resonance_rnd;
-float Filter1_Resonance = 1;
-float Filter1_Sweep_rnd;
-float Filter1_Sweep = 2;
-int Env1_Attack = 50;
-int Env1_Release = 150;
-int note1_Offset = 0;
-int note2_Offset = 4;
-int note3_Offset = 7;
-int note4_Offset = 11;
-float note1_Velo = 1;
-float note1_Velo_rnd;
-float note2_Velo = 1;
-float note2_Velo_rnd;
-float note3_Velo = 1;
-float note3_Velo_rnd;
-float note4_Velo = 1;
-float note4_Velo_rnd;
+// plugin[].Volume_graph;
+// plugin[].Volume_rnd;
+// plugin[].Volume;
+// Plugin 1 variables
+char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+
+
+/*struct envelopes {
+  //plugin 1 variables
+  int Attack = 50;
+  byte Attack_graph = 10;
+  int Release = 150;
+  byte Release_graph = 15;
+};
+envelopes envelope[?];
+*/
+
+//plugin 1 variables
+int pl1Filter1_Frequency = 560;
+byte pl1Filter1_Frequency_graph = 20;
+byte pl1Filter1_Resonance_graph = 25;
+byte pl1Filter1_Resonance_rnd = 25;
+float pl1Filter1_Resonance = 1;
+byte pl1Filter1_Sweep_graph = 80;
+byte pl1Filter1_Sweep_rnd = 80;
+float pl1Filter1_Sweep = 2;
+int pl1Env1_Attack = 50;
+byte pl1Env1_Attack_graph = 10;
+int pl1Env1_Release = 150;
+byte pl1Env1_Release_graph = 15;
+int pl1note_Offset[4] = { 0, 4, 7, 11 };
+byte pl1note_Offset_graph[4] = { 50, 65, 80, 95 };
+float pl1note_Velo[4] = { 1, 1, 1, 1 };
+byte pl1note_Velo_graph[4] = { 100, 100, 100, 100 };
+byte pl1wfSelect[4] = { 0, 0, 0, 0 };
+byte pl1wfSelect_graph[4] = { 0, 0, 0, 0 };
+
+
+
 
 //plugin 2 variables
 
 int Pl2Vol_rnd[12];
 float Pl2Vol[12];
-char* Pl2Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+
 
 //plugin 3 variables
 
 int pl3Filter1_Frequency = 260;
-float pl3Filter1_Frequency_graph;
+float pl3Filter1_Frequency_graph = 50;
 float pl3Filter1_Resonance_rnd;
 float pl3Filter1_Resonance = 1;
-byte pl3Filter1_Resonance_graph;
+byte pl3Filter1_Resonance_graph = 50;
 float pl3Filter1_Sweep_rnd;
 float pl3Filter1_Sweep = 2;
-byte pl3Filter1_Sweep_graph;
+byte pl3Filter1_Sweep_graph = 50;
 int pl3Env1_Attack = 50;
-byte pl3Env1_Attack_graph;
+byte pl3Env1_Attack_graph = 50;
 int pl3Env1_Decay = 50;
-byte pl3Env1_Decay_graph;
+byte pl3Env1_Decay_graph = 50;
 float pl3Env1_Sustain = 1;
-byte pl3Env1_Sustain_graph;
+byte pl3Env1_Sustain_graph = 50;
 int pl3Env1_Release = 150;
-float pl3Env1_Release_graph;
+float pl3Env1_Release_graph = 50;
 float pl3note1_Velo = 1;
 float pl3note1_Velo_rnd;
 byte pl3wfSelect;
 byte pl3wfSelect_graph;
-byte pl3Volume_graph;
-float pl3Volume;
+
 
 
 
@@ -182,13 +197,108 @@ float pl3Volume;
 
 int Pl4Vol_rnd[12];
 float Pl4Vol[12];
-char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+//char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+
+
+//plugin 5 variables
+int pl5Filter1_Frequency = 260;
+float pl5Filter1_Frequency_graph = 50;
+float pl5Filter1_Resonance_rnd;
+float pl5Filter1_Resonance = 1;
+byte pl5Filter1_Resonance_graph = 50;
+float pl5Filter1_Sweep_rnd;
+float pl5Filter1_Sweep = 2;
+byte pl5Filter1_Sweep_graph = 50;
+int pl5Env1_Attack = 50;
+byte pl5Env1_Attack_graph = 50;
+int pl5Env1_Decay = 50;
+byte pl5Env1_Decay_graph = 50;
+float pl5Env1_Sustain = 1;
+byte pl5Env1_Sustain_graph = 50;
+int pl5Env1_Release = 150;
+float pl5Env1_Release_graph = 50;
+byte selected_file;
+byte selected_file_graph = 50;
+byte pl5Volume_graph = 50;
+float pl5Volume;
+#define MAX_WAV_FILES 11
+#define SAMPLE_ROOT 69
+const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
+
+//plugin 6 variables
+int pl6Filter1_Frequency = 260;
+float pl6Filter1_Frequency_graph = 50;
+float pl6Filter1_Resonance_rnd;
+float pl6Filter1_Resonance = 1;
+byte pl6Filter1_Resonance_graph = 50;
+float pl6Filter1_Sweep_rnd;
+float pl6Filter1_Sweep = 2;
+byte pl6Filter1_Sweep_graph = 50;
+int pl6Env1_Attack = 50;
+byte pl6Env1_Attack_graph = 50;
+int pl6Env1_Decay = 50;
+byte pl6Env1_Decay_graph = 50;
+float pl6Env1_Sustain = 1;
+byte pl6Env1_Sustain_graph = 50;
+int pl6Env1_Release = 150;
+byte pl6Env1_Release_graph = 50;
+byte selected_raw_file;
+byte selected_file_raw_graph = 50;
+byte pl6Volume_graph = 50;
+float pl6Volume_rnd;
+float pl6Volume;
+#define MAX_RAW_FILES 11
+#define SAMPLE_ROOT 69
+const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW" };
+
+//plugin7 variables
+//drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum 1
+int pl7drum1_frequency;
+byte pl7drum1_frequency_graph = 50;
+byte pl7drum1_length;
+byte pl7drum1_length_graph = 50;
+float pl7drum1_pitchMod;  //max 2 !!
+byte pl7drum1_pitchMod_graph = 50;
+int pl7drum1_pitchMod_rnd;
+float pl7drum1_secondMix;
+byte pl7drum1_secondMixgraph = 50;
+float pl7dc1_amplitude = 0.06;
+byte pl7dc1_amplitude_graph = 10;
+//noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
+byte pl7noise1_amplitude = 1;
+byte pl7noise1_amplitude_graph = 800;
+
+byte pl7waveformMod1_begin;
+byte pl7waveformMod1_begin_graph;
+
+float pl7waveformMod1_amplitude;
+byte pl7waveformMod1_amplitude_graph;
+
+int pl7waveformMod1_frequency;
+byte pl7waveformMod1_frequency_graph;
+
+float pl7waveformMod1_frequencyModulation;
+byte pl7waveformMod1_frequencyModulation_graph;
+int pl7waveformMod1_frequencyModulation_rnd;
+
+int pl7filter2_frequency;
+byte pl7filter2_frequency_graph;
+float pl7filter2_resonance;
+byte pl7filter2_resonance_graph;
+byte pl7filter2_resonance_rnd;
+float pl7filter2_octaveControl;
+byte pl7filter2_octaveControl_graph;
+
+byte pl7Env1_Attack;
+byte pl7Env1_Attack_graph;
+byte pl7Env1_Decay;
+byte pl7Env1_Decay_graph;
+byte pl7Env1_Release;
+byte pl7Env1_Release_graph;
 
 
 
-
-
-
+//FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
 
 
 
@@ -199,30 +309,18 @@ bool clipNumberSelector = LOW;
 
 
 //songmode variables
-short arrangment1[8][64]{
-  //1 2  3  4   5  6  7  8   9  10 11 12  13 14 15 16  17 18 19 20  21 22 23 24  25 26 27 28  29 30 32 33  34 35 36 37  38 39 40 41  42 43 44 45  46 47 48 49  50 51 52 53  54 55 56 57  58 59 60 61  62 63 64 65  //phrases
-  //1 5  9 13   17 21 25 29  33 37 41 45  49 53 57 61  65 69 73 77  81 85 89 93  97 101 5 9   13 17 21 25  29 33 37 41  45 49 53 57  61 65 69 73  77 81 85 89  93 97  201    5  9 13 17  21 25 29 33 237 41 45 49  //bars
-  { 0, 1, 8, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8 },  //channel 1
-  { 0, 0, 8, 8, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8 },  //channel 2
-  { 1, 8, 8, 8, 1, 8, 8, 8, 1, 8, 8, 8, 1, 8, 8, 8, 2, 2, 8, 8, 2, 2, 8, 8, 2, 2, 8, 8, 2, 2, 8, 8, 3, 3, 3, 8, 3, 3, 3, 8, 3, 3, 3, 8, 3, 3, 3, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 },  //channel 3
-  { 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 8 },  //channel 4
-  { 0, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 8 },  //channel 5
-  { 0, 8, 1, 8, 8, 8, 1, 8, 8, 8, 8, 8, 8, 8, 1, 8, 8, 8, 1, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 8 },  //channel 6
-  { 0, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },  //channel 7
-  { 0, 1, 0, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1, 8 },  //channel 8
-};
-bool songSelectPage_1 = LOW;  // a handler to keep the mode active after selecting
-bool songSelectPage_2 = LOW;  // a handler to keep the mode active after selecting
-bool songSelectPage_3 = LOW;  // a handler to keep the mode active after selecting
-bool songSelectPage_4 = LOW;  // a handler to keep the mode active after selecting
-byte pageNr = 0;
+
+byte page_phrase_start;
+byte page_phrase_end;
+byte songpageNumber = 10;
 byte phraseSegmentLength = 16;  // a variable for the zoomfactor in songmode
 byte tempoSelect = 120;         //variable to select the tempo
-//byte pageNumber = 0;
-byte pixelbarClock = 0;  // a counter for the positionpointers
-byte phrase = 0;         // the main unit in songmode 1phrase = 16 bars
+byte pixelbarClock = 0;         // a counter for the positionpointers
+byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte end_of_loop = 255;
 byte start_of_loop = 0;
+byte end_of_loop_old = 255;
+byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 
 int step_Frame_X;
@@ -234,6 +332,34 @@ int gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15
 int trackTouchY;
 int constrainedtrackTouchY;
 unsigned long previousMillis = 0;
+
+//button variables
+#define NUM_BUTTONS 7
+const uint8_t BUTTON_PINS[NUM_BUTTONS] = { 30, 28, 27, 29, 26, 24, 25 };  //left, right, up, down, start, stop, enter
+bool something_was_pressed = false;
+byte last_button_X = 0;
+byte last_button_Y = 0;
+uint16_t tftRAM[16][16];
+int Button_Pos_X_last = (last_button_X)*STEP_FRAME_W;
+int Button_Pos_Y_last = (last_button_Y)*STEP_FRAME_H;
+int Button_Pos_X_new = (last_button_X - 1) * STEP_FRAME_W;
+int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
+
+//drawPot Variables
+float circlePos;
+float circlePos_old;
+int dvalue_old;
+
+//drawPotcc Variables
+float circlePoscc;
+float circlePos_oldcc;
+int dvalue_oldcc;
+int dname_oldcc;
+
+//drawPotLine Variables
+float drawPotLinePos;
+float drawPotLinePos_old;
+int drawPotLine_dvalue_old;
 
 //clip handling variables
 byte desired_step;
@@ -379,16 +505,32 @@ int button_last = 0;
 //clock variables
 byte barClock = 0;
 
+//Track Variables
+byte desired_track;
+//track 2-8 variables
 
-//channel 2-8 variables
 struct tracks {
   bool select = false;
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
-  byte clip_songMode;      //clipselection from the arrangement
+  byte clip_songMode = 1;  //clipselection from the arrangement
   byte tone = 0;
-  byte shown_octaves = 3;  //
+  byte shown_octaves = 5;  //
+  byte velocity_ON = 96;
+  byte velocity_ON_graph = 80;
+  bool mute_state = LOW;
+  bool solo_state = LOW;
+  bool solo_mutes_state = LOW;
+  char* trackNames_short[8]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8" };
   bool held_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  byte midicc_value_row_1[4];
+  byte midicc_number_row_1[4];
+  byte midicc_value_row_2[4];
+  byte midicc_number_row_2[4];
+  byte midicc_value_row_3[4];
+  byte midicc_number_row_3[4];
+  bool sendCC = false;
+  byte arrangment1[256];
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];
@@ -398,22 +540,23 @@ tracks track[8];
 //track[].clip_songMode;
 //track[].tone;
 //track[].shown_octaves;
-//track[].held_notes
+//track[].held_notes;
+//track[].velocity_ON;
 
 
 //channel 1 variables
 bool channel1Select = LOW;  // a handler to keep the mode active after selecting
 
-byte ch1Clip = 0;
+byte ch1Clip = 1;
 byte ch1tone;
 byte ch1Octaves = 3;
 byte ch1songModePlayedClip;
-bool held_Drum_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 bool channel1Clip[NUM_CLIPS][12][STEP_QUANT]{
+
   { //Clip 0
-    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
-    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
-    { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -424,9 +567,9 @@ bool channel1Clip[NUM_CLIPS][12][STEP_QUANT]{
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
   { //Clip 1
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
