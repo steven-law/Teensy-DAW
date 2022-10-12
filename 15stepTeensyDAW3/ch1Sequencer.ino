@@ -91,7 +91,7 @@ void drumStepSequencer() {
     for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
       if (track[0].MIDIchannel == pluginSelection + 17) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
-          select_page(pluginSelection + 50);
+          select_page(pluginSelection + 40);
           Plugin_View_Static(0);
         }
       }

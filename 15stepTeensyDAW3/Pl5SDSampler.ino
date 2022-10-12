@@ -20,6 +20,7 @@ void Plugin_5_Settings() {
   pl5envelope2.decay(500);
   pl5envelope2.sustain(0.8);
   pl5envelope2.release(pl5Env1_Release);
+  pl5amp.gain(1);
 }
 
 

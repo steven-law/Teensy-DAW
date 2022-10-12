@@ -87,6 +87,7 @@ void Plugin_3_Settings() {
   pl3envelope2.decay(500);
   pl3envelope2.sustain(0.8);
   pl3envelope2.release(pl3Env1_Release);
+  pl3amp.gain(1);
 }
 
 //Plugin3_Page_Static(n) to show your control values

@@ -24,6 +24,7 @@ void Plugin_4_Settings() {
   pl4drummixer4.gain(1, 1);
   pl4drummixer4.gain(2, 1);
   pl4drummixer4.gain(3, 1);
+  pl4amp.gain(1);
 }
 void Plugin4_Page_Static(byte Pagenumber) {
     //draw selecting pages buttons

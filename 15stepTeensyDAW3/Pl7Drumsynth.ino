@@ -88,6 +88,7 @@ void Plugin_7_Settings() {
   pl7mixer3.gain(1, 1);
   pl7mixer3.gain(2, 1);
   pl7mixer3.gain(3, 1);
+  pl7amp.gain(1);
 }
 
 void Plugin7_Page_Static(byte Pagenumber) {

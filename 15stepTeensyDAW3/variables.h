@@ -86,7 +86,8 @@ char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "
 
 #define MIXER_PAGE_1 30
 #define MIXER_PAGE_2 31
-
+#define MIXER_PAGE_3 32
+#define MIXER_PAGE_4 33
 
 #define MIDICC_PAGE_1 35
 #define MIDICC_PAGE_2 36
@@ -110,33 +111,12 @@ char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "
 #define PLUGIN7_PAGE2 63
 
 
+#define FX1_PAGE1 120
+#define FX2_PAGE1 123
+#define FX3_PAGE1 126
+
 #define MAX_PAGES 128
 bool selectPage[MAX_PAGES];
-
-//Overall Pluginvariables
-struct plugins {
-  byte Volume_graph = 50;
-  int Volume_rnd = 100;
-  float Volume = 1;
-};
-plugins plugin[MAX_PLUGINS];
-
-// plugin[].Volume_graph;
-// plugin[].Volume_rnd;
-// plugin[].Volume;
-// Plugin 1 variables
-char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
-
-
-/*struct envelopes {
-  //plugin 1 variables
-  int Attack = 50;
-  byte Attack_graph = 10;
-  int Release = 150;
-  byte Release_graph = 15;
-};
-envelopes envelope[?];
-*/
 
 //plugin 1 variables
 int pl1Filter1_Frequency = 560;
@@ -300,7 +280,55 @@ byte pl7Env1_Release_graph;
 
 //FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
 
+//Overall Pluginvariables
+struct plugins {
+  byte Volume_graph = 50;
+  int Volume_rnd = 100;
+  float Volume = 1;
 
+  byte FXDryVolume_graph = 100;
+  int FXDryVolume_rnd = 100;
+  float FXDryVolume = 1;
+
+  byte FX1Volume_graph = 0;
+  int FX1Volume_rnd = 0;
+  float FX1Volume = 0;
+
+  byte FX2Volume_graph = 0;
+  int FX2Volume_rnd = 0;
+  float FX2Volume = 0;
+
+  byte FX3Volume_graph = 0;
+  int FX3Volume_rnd = 0;
+  float FX3Volume = 0;
+};
+plugins plugin[MAX_PLUGINS];
+
+// plugin[].Volume_graph;
+// plugin[].Volume_rnd;
+// plugin[].Volume;
+// Plugin 1 variables
+char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+
+//mixer variables
+#define MixerPage2_Dynamic_ROW_0 3
+#define MixerPage2_Dynamic_ROW_1 6
+#define MixerPage2_Dynamic_ROW_2 9
+#define MixerPage2_Dynamic_ROW_3 12
+//FX variables
+//FX1
+//reverb variables
+float fx1reverbtime = 0;
+int fx1reverbtime_rnd = 0;
+byte fx1reverbtime_graph = 0;
+
+//FX2
+//bitcrusher variables
+int fx2bitcrush = 8;
+int fx2bitcrush_graph = 100;
+
+int fx2samplerate = 22050;
+int fx2samplerate_graph = 100;
 
 //structure variables
 bool clipSelector = LOW;
@@ -521,7 +549,8 @@ struct tracks {
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
-  char* trackNames_short[8]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8" };
+  char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
+  //char* FXNames_short[8]{ "Send1", "Send2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8" };
   bool held_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte midicc_value_row_1[4];
   byte midicc_number_row_1[4];

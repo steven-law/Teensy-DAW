@@ -1,3 +1,5 @@
+
+
 void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   desired_track = desired_instrument;
   byte tone_start = track[desired_instrument].shown_octaves * 12;

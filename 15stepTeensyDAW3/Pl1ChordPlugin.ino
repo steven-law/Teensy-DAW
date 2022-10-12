@@ -38,7 +38,7 @@ void Plugin_1_Settings() {
   envelope1.sustain(0.8);
   envelope1.release(pl1Env1_Release);
 
-  dc2.amplitude(1);
+  pl1dc1.amplitude(1);
 
   envelope2.delay(0);
   envelope2.attack(pl1Env1_Attack);
@@ -48,23 +48,25 @@ void Plugin_1_Settings() {
   envelope2.release(pl1Env1_Release);
 
   //bitcrusher1 controlled by startKnob on page 3
-  bitcrusher1.bits(16);
-  bitcrusher1.sampleRate(44100);
+  pl1bitcrusher1.bits(16);
+  pl1bitcrusher1.sampleRate(44100);
 
   //delay1 time controlled by stationKnob; feedback controlled by startKnob on page 4
-  delay1.delay(0, 3);  //set Delay(OutChannel, saved Samples) (0-7, 3-449*) *maximum
+  pl1delay1.delay(0, 3);  //set Delay(OutChannel, saved Samples) (0-7, 3-449*) *maximum
 
   //filter3 HighPassfilter to get rid of the muddy sound in feedbackloop
-  filter3.frequency(200);  //set initial Filter3 freq to 16000Hz
-  filter3.resonance(0);    //set Resonance to 0
+  pl1filter3.frequency(200);  //set initial Filter3 freq to 16000Hz
+  pl1filter3.resonance(0);    //set Resonance to 0
 
   //mixer3 for feedback controlled by startKnob on page 4
-  mixer3.gain(0, 1);  //setze Mixer2(Kanal, Gain) (0-3, 0-1)
-  mixer3.gain(1, 0);
+  pl1mixer3.gain(0, 1);  //setze Mixer2(Kanal, Gain) (0-3, 0-1)
+  pl1mixer3.gain(1, 0);
+
+  pl1amp.gain(1);
 }
 
 void Plugin1_Page_Static(byte Pagenumber) {
-  
+
   //draw selecting pages buttons
   draw_sub_page_buttons(2);
 
@@ -140,33 +142,29 @@ void Plugin1_Page1_Dynamic() {
 
 
 
-    unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
 
 
-      //page selection
-      if (gridTouchX >= 18) {
-        //page1
-        if (gridTouchY == 3 || gridTouchY == 4) {
-          select_page(PLUGIN1_PAGE1);
-          Plugin_View_Static(desired_instrument);
-        }
-        //page2
-        if (gridTouchY == 5 || gridTouchY == 6) {
-          select_page(PLUGIN1_PAGE2);
-          Plugin_View_Static(desired_instrument);
-        }
-        //page3
-        if (gridTouchY == 7 || gridTouchY == 8) {
-          select_page(PLUGIN1_PAGE3);
-          Plugin_View_Static(desired_instrument);
-        }
-        //page4
-        if (gridTouchY == 9 || gridTouchY == 10) {
-          select_page(PLUGIN1_PAGE4);
-          Plugin_View_Static(desired_instrument);
-        }
+    //page selection
+    if (gridTouchX >= 18) {
+      //page1
+      if (gridTouchY == 3 || gridTouchY == 4) {
+        select_page(PLUGIN1_PAGE1);
+        Plugin_View_Static(desired_instrument);
+      }
+      //page2
+      if (gridTouchY == 5 || gridTouchY == 6) {
+        select_page(PLUGIN1_PAGE2);
+        Plugin_View_Static(desired_instrument);
+      }
+      //page3
+      if (gridTouchY == 7 || gridTouchY == 8) {
+        select_page(PLUGIN1_PAGE3);
+        Plugin_View_Static(desired_instrument);
+      }
+      //page4
+      if (gridTouchY == 9 || gridTouchY == 10) {
+        select_page(PLUGIN1_PAGE4);
+        Plugin_View_Static(desired_instrument);
       }
     }
   }
@@ -233,33 +231,29 @@ void Plugin1_Page2_Dynamic() {
         }
       }
     }
-    unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
 
 
-      //page selection
-      if (gridTouchX >= 18) {
-        //page1
-        if (gridTouchY == 3 || gridTouchY == 4) {
-          select_page(PLUGIN1_PAGE1);
-          Plugin_View_Static(0);
-        }
-        //page2
-        if (gridTouchY == 5 || gridTouchY == 6) {
-          select_page(PLUGIN1_PAGE2);
-          Plugin_View_Static(0);
-        }
-        //page3
-        if (gridTouchY == 7 || gridTouchY == 8) {
-          select_page(PLUGIN1_PAGE3);
-          Plugin_View_Static(0);
-        }
-        //page4
-        if (gridTouchY == 9 || gridTouchY == 10) {
-          select_page(PLUGIN1_PAGE4);
-          Plugin_View_Static(0);
-        }
+    //page selection
+    if (gridTouchX >= 18) {
+      //page1
+      if (gridTouchY == 3 || gridTouchY == 4) {
+        select_page(PLUGIN1_PAGE1);
+        Plugin_View_Static(0);
+      }
+      //page2
+      if (gridTouchY == 5 || gridTouchY == 6) {
+        select_page(PLUGIN1_PAGE2);
+        Plugin_View_Static(0);
+      }
+      //page3
+      if (gridTouchY == 7 || gridTouchY == 8) {
+        select_page(PLUGIN1_PAGE3);
+        Plugin_View_Static(0);
+      }
+      //page4
+      if (gridTouchY == 9 || gridTouchY == 10) {
+        select_page(PLUGIN1_PAGE4);
+        Plugin_View_Static(0);
       }
     }
   }

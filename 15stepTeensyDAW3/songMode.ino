@@ -65,9 +65,8 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
   page_phrase_end = (songpageNumber + 1) * 16;
   clearWorkSpace();
   drawsongmodepageselector();
-  //start of loop
+  drawActiveSquare(18, 3, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
-  //end of loop
   draw_end_of_loop();
   //occationally working on a full arrangment view
   //drawActiveSquare(18, 3, 2, selectPage[10], "zoom", ILI9341_LIGHTGREY);
@@ -79,8 +78,6 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
     if (f % 4 == 0) {
       tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  //(x, y-start, y-length, color)
     }
-    //last vertical gridline
-    tft.drawFastVLine(288, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  // last vertical line(x, y-start, y-length, color)
   }
 
   if (songpageNumber == 16) {
@@ -93,8 +90,7 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
 void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
-  Serial.println("zoom-dynamic");
-
+  //Serial.println("zoom-dynamic");
 
 
   if (ts.touched()) {
@@ -134,7 +130,16 @@ void songModePage(byte songpageNumber) {
         }
       }
     }
-    
+    //clear arrangment selection
+    if (gridTouchX >= 18) {
+      if (gridTouchY == 3 || gridTouchY == 4) {
+        for (byte ctrack = 0; ctrack < 8; ctrack++) {
+          for (byte cphrase = 0; cphrase < 255; cphrase++) {
+            track[ctrack].arrangment1[cphrase] = 0;
+          }
+        }
+      }
+    }
     /** //zoom selection
     if (gridTouchX >= 18) {
       if (gridTouchY == 3 || gridTouchY == 4) {

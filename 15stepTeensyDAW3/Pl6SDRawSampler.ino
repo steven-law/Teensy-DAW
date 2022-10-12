@@ -20,6 +20,7 @@ void Plugin_6_Settings() {
   pl6envelope2.decay(500);
   pl6envelope2.sustain(0.8);
   pl6envelope2.release(pl6Env1_Release);
+  pl6amp.gain(1);
 }
 
 void Plugin6_Page_Static(byte Pagenumber) {

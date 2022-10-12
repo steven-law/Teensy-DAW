@@ -24,6 +24,8 @@ void Plugin_2_Settings() {
   drummixer4.gain(1, 1);
   drummixer4.gain(2, 1);
   drummixer4.gain(3, 1);
+
+   pl2amp.gain(1);
 }
 void Plugin2_Page_Static(byte Pagenumber) {
   for (int touchX = 1; touchX < 5; touchX++) {
