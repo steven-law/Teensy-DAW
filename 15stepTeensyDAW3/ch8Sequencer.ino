@@ -1,5 +1,3 @@
-
-
 void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   desired_track = desired_instrument;
   byte tone_start = track[desired_instrument].shown_octaves * 12;
@@ -22,9 +20,10 @@ void melodicStepSequencer(byte desired_instrument) {
     }
   }
   if (ts.touched() || !buttons[6].read()) {
+
     drawActiveSteps();
     //octave selection
-    if (gridTouchX == OCTAVE_CHANGE_LEFTMOST || gridTouchX == OCTAVE_CHANGE_RIGHTMOST - 1) {
+    if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
       unsigned long currentMillis = millis();
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
@@ -37,8 +36,8 @@ void melodicStepSequencer(byte desired_instrument) {
           clearStepsGrid();
         }
         //draw the octave number
-        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 4, STEP_FRAME_W * 2, STEP_FRAME_H * 3 + 1, ILI9341_DARKGREY);
-        tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * 5);
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
         tft.setFont(Arial_16);
         tft.setTextColor(ILI9341_WHITE);
         tft.setTextSize(1);
@@ -46,10 +45,16 @@ void melodicStepSequencer(byte desired_instrument) {
       }
     }
 
+    
+
     //midichannel selection
     if (gridTouchX >= 18 && gridTouchY == 11) {
       int MIDIChannelAssign = Potentiometer1;
-      track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 1023, 1, MAX_CHANNELS);
+      tft.setCursor(STEP_FRAME_W * 18 + 12, STEP_FRAME_H * OCTAVE_CHANGE_TEXT + 8);
+      tft.setFont(Arial_16);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 127, 1, MAX_CHANNELS);
       //draw MIDIchannel number
       drawMIDIchannel();
     }
@@ -57,6 +62,8 @@ void melodicStepSequencer(byte desired_instrument) {
     //manually assigning steps to the grid;
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds
     if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
+      drawCursor();
+
       unsigned long currentMillis = millis();
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
@@ -93,9 +100,11 @@ void melodicStepSequencer(byte desired_instrument) {
         }
       }
     }
+    
+  
 
     //plugin_1_view
-    for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+    for (int pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
       if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
           select_page(pluginSelection + 40);

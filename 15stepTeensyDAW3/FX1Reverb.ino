@@ -36,16 +36,25 @@ void FX1reverb_static() {
 void FX1reverb_dynamic() {
   if (ts.touched() || !buttons[6].read()) {
 
-
+    if (gridTouchY == 0) {
+      //Save button
+      if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
+        saveFX1();
+      }
+      //Load button
+      if (gridTouchX == POSITION_LOAD_BUTTON) {
+        loadFX1();
+      }
+    }
     if (gridTouchY == 3) {
 
       //reverbTime
       if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime, "Reverb", ILI9341_RED);
-        if ((abs(map(Potentiometer1, 0, 1023, 0, 100) - fx1reverbtime_graph) < POTPICKUP)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          fx1reverbtime_rnd = map(Potentiometer1, 0, 1023, 0, 500);
+        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_rnd, "Reverb", ILI9341_RED);
+        if (abs(Potentiometer1 - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          fx1reverbtime_graph = Potentiometer1;
+          fx1reverbtime_rnd = map(fx1reverbtime_graph, 0, 127, 0, 5000);
           fx1reverbtime = fx1reverbtime_rnd / 100.00;
-          fx1reverbtime_graph = map(Potentiometer1, 0, 1023, 0, 100);
           reverb1.reverbTime(fx1reverbtime);
         }
       }
@@ -79,5 +88,68 @@ void FX1reverb_dynamic() {
         FX2Bitcrush_static();
       }
     }
+  }
+}
+
+
+
+void saveFX1() {
+
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
+  // delete the file:
+  tft.print("Removing FX1.txt...");
+  SD.remove("FX1.txt");
+  tft.println("Done");
+
+  // open the file.
+  tft.print("Creating and opening FX1.txt...");
+  myFile = SD.open("FX1.txt", FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+
+    tft.print("Writing plugin 1 to FX1.txt...");
+    //save plugin 1 variables
+    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      myFile.print((char)fx1reverbtime_graph);
+    }
+    tft.println("Done");
+    // close the file:
+    myFile.close();
+    tft.println("Saving done.");
+    startUpScreen();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening FX1.txt");
+  }
+}
+void loadFX1() {
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open("FX1.txt");
+  if (myFile) {
+    tft.println("opening FX1.txt:");
+
+    //load plugin 1 variables
+    tft.print("reading plugin 1 from FX1.txt...");
+    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      fx1reverbtime_graph = myFile.read();
+    }
+    tft.println("Done");
+
+
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening FX1.txt");
   }
 }

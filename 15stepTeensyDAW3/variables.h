@@ -14,7 +14,6 @@
 #define POSITION_SCALE_BUTTON 16
 #define POSITION_LOAD_BUTTON 15
 #define POSITION_SAVE_BUTTON 13
-#define POSITION_BPM_BUTTON 11
 #define POSITION_STOP_BUTTON 10
 #define POSITION_PLAY_BUTTON 8
 #define POSITION_RECORD_BUTTON 7
@@ -22,19 +21,20 @@
 #define DOT_OFFSET_X 40  //STEP_FRAME_W * 2 + 8
 #define DOT_OFFSET_Y 24  //STEP_FRAME_H + 8
 #define DOT_RADIUS 5
+#define OCTAVE_CHANGE_TEXT 3
 #define OCTAVE_CHANGE_LEFTMOST 18
 #define OCTAVE_CHANGE_RIGHTMOST 20
 #define OCTAVE_CHANGE_UP_TOPMOST 2
-#define OCTAVE_CHANGE_UP_BOTTOMMOST 4
-#define OCTAVE_CHANGE_DOWN_TOPMOST 7
-#define OCTAVE_CHANGE_DOWN_BOTTOMMOST 9
+#define OCTAVE_CHANGE_UP_BOTTOMMOST 3
+#define OCTAVE_CHANGE_DOWN_TOPMOST 4
+#define OCTAVE_CHANGE_DOWN_BOTTOMMOST 5
 #define SONG_POSITION_POINTER_Y 228
 #define STEP_POSITION_POINTER_Y 236
 #define GRID_POSITION_POINTER_Y 232
 #define POSITION_POINTER_THICKNESS 3
 #define POTPICKUP 10
-//potentiomernames
-int Potentiometer1;
+#define SPI_FREQUENCY 40000000
+#define SPI_READ_FREQUENCY 10000000
 
 #define VELOCITYOFF 0
 #define VALUE_NOTEOFF 0
@@ -51,16 +51,18 @@ int polyphony = 64;
 
 
 //****************************************************************************
-// 6)add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
-// for the tutorial we add "1OSC"
-// 7)and define our first Plugin page  -> #define PLUGIN3_PAGE1 22   pluginstartpage has to be in order with the midi (plugin-)channel
-// 8)scroll down and add your plugin variables there
-// now we head over to the 15stepTeensyDAW3.ino"
+// 3) add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
+//    for the tutorial we add "1OSC"
+//    and define our first Plugin page  -> #define PLUGIN3_PAGE1 42   pluginstartpage has to be in order with the midi (plugin-)channel
+//    scroll down and add your plugin variables there, please use one struct for all your variables so things can be handled a bit more easier
+//    now we head over to the 15stepTeensyDAW3.ino"
 //look for *************************************************************************
 ////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_PLUGINS 10
-#define MAX_CHANNELS 26  //   = MAX_PLUGINS + 16 (Midichannels)
-char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "8", "9", "10" };
+#define MAX_PRESETS 8  //max presets per plugin
+#define MAX_CLIPS 8    //max cliips per track
+#define MAX_PLUGINS 16
+#define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
+char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "MogL", "9", "10", "11", "12", "13", "14", "15", "16" };
 
 
 #define DRUMTRACK 0
@@ -109,8 +111,9 @@ char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "
 #define PLUGIN1_PAGE3 61
 #define PLUGIN1_PAGE4 62
 #define PLUGIN7_PAGE2 63
+#define PLUGIN7_PAGE3 64
 
-
+#define SQ1_PAGE1 119
 #define FX1_PAGE1 120
 #define FX2_PAGE1 123
 #define FX3_PAGE1 126
@@ -118,115 +121,128 @@ char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "
 #define MAX_PAGES 128
 bool selectPage[MAX_PAGES];
 
+
 //plugin 1 variables
-int pl1Filter1_Frequency = 560;
-byte pl1Filter1_Frequency_graph = 20;
-byte pl1Filter1_Resonance_graph = 25;
-byte pl1Filter1_Resonance_rnd = 25;
-float pl1Filter1_Resonance = 1;
-byte pl1Filter1_Sweep_graph = 80;
-byte pl1Filter1_Sweep_rnd = 80;
-float pl1Filter1_Sweep = 2;
-int pl1Env1_Attack = 50;
-byte pl1Env1_Attack_graph = 10;
-int pl1Env1_Release = 150;
-byte pl1Env1_Release_graph = 15;
-int pl1note_Offset[4] = { 0, 4, 7, 11 };
-byte pl1note_Offset_graph[4] = { 50, 65, 80, 95 };
-float pl1note_Velo[4] = { 1, 1, 1, 1 };
-byte pl1note_Velo_graph[4] = { 100, 100, 100, 100 };
-byte pl1wfSelect[4] = { 0, 0, 0, 0 };
-byte pl1wfSelect_graph[4] = { 0, 0, 0, 0 };
+struct plugin1 {
 
-
-
+  int Filter1_Frequency = 560;
+  byte Filter1_Frequency_graph = 20;
+  byte Filter1_Resonance_graph = 25;
+  byte Filter1_Resonance_rnd = 25;
+  float Filter1_Resonance = 1;
+  byte Filter1_Sweep_graph = 80;
+  byte Filter1_Sweep_rnd = 80;
+  float Filter1_Sweep = 2;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 10;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 15;
+  int note_Offset[4] = { 0, 4, 7, 11 };
+  byte note_Offset_graph[4] = { 50, 65, 80, 95 };
+  float note_Velo[4] = { 1, 1, 1, 1 };
+  byte note_Velo_graph[4] = { 100, 100, 100, 100 };
+  byte wfSelect[4] = { 0, 0, 0, 0 };
+  byte wfSelect_graph[4] = { 0, 0, 0, 0 };
+};
+plugin1 pl1[MAX_PRESETS];
+byte pl1presetNr = 0;
 
 //plugin 2 variables
-
-int Pl2Vol_rnd[12];
-float Pl2Vol[12];
-
+struct plugin2 {
+  byte Vol_rnd[12];
+  float Vol[12];
+};
+plugin2 pl2[MAX_PRESETS];
+byte pl2presetNr = 0;
 
 //plugin 3 variables
-
-int pl3Filter1_Frequency = 260;
-float pl3Filter1_Frequency_graph = 50;
-float pl3Filter1_Resonance_rnd;
-float pl3Filter1_Resonance = 1;
-byte pl3Filter1_Resonance_graph = 50;
-float pl3Filter1_Sweep_rnd;
-float pl3Filter1_Sweep = 2;
-byte pl3Filter1_Sweep_graph = 50;
-int pl3Env1_Attack = 50;
-byte pl3Env1_Attack_graph = 50;
-int pl3Env1_Decay = 50;
-byte pl3Env1_Decay_graph = 50;
-float pl3Env1_Sustain = 1;
-byte pl3Env1_Sustain_graph = 50;
-int pl3Env1_Release = 150;
-float pl3Env1_Release_graph = 50;
-float pl3note1_Velo = 1;
-float pl3note1_Velo_rnd;
-byte pl3wfSelect;
-byte pl3wfSelect_graph;
-
-
-
+struct plugin3 {
+  int Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance_rnd;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep_rnd;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 50;
+  float note1_Velo = 1;
+  byte note1_Velo_rnd;
+  byte wfSelect;
+  byte wfSelect_graph;
+};
+plugin3 pl3[MAX_PRESETS];
+byte pl3presetNr = 0;
 
 //plugin 4 variables
-
-int Pl4Vol_rnd[12];
-float Pl4Vol[12];
-//char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
-
+struct plugin4 {
+  byte Vol_rnd[12];
+  float Vol[12];
+  //char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+};
+plugin4 pl4[MAX_PRESETS];
+byte pl4presetNr = 0;
 
 //plugin 5 variables
-int pl5Filter1_Frequency = 260;
-float pl5Filter1_Frequency_graph = 50;
-float pl5Filter1_Resonance_rnd;
-float pl5Filter1_Resonance = 1;
-byte pl5Filter1_Resonance_graph = 50;
-float pl5Filter1_Sweep_rnd;
-float pl5Filter1_Sweep = 2;
-byte pl5Filter1_Sweep_graph = 50;
-int pl5Env1_Attack = 50;
-byte pl5Env1_Attack_graph = 50;
-int pl5Env1_Decay = 50;
-byte pl5Env1_Decay_graph = 50;
-float pl5Env1_Sustain = 1;
-byte pl5Env1_Sustain_graph = 50;
-int pl5Env1_Release = 150;
-float pl5Env1_Release_graph = 50;
-byte selected_file;
-byte selected_file_graph = 50;
-byte pl5Volume_graph = 50;
-float pl5Volume;
-#define MAX_WAV_FILES 11
-#define SAMPLE_ROOT 69
-const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
+struct plugin5 {
+  int Filter1_Frequency = 260;
+  float Filter1_Frequency_graph = 50;
+  float Filter1_Resonance_rnd;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep_rnd;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  float Env1_Release_graph = 50;
+  byte selected_file;
+  byte selected_file_graph = 50;
+  byte Volume_graph = 50;
+  float Volume;
+};
+plugin5 pl5[MAX_PRESETS];
+byte pl5presetNr = 0;
 
 //plugin 6 variables
-int pl6Filter1_Frequency = 260;
-float pl6Filter1_Frequency_graph = 50;
-float pl6Filter1_Resonance_rnd;
-float pl6Filter1_Resonance = 1;
-byte pl6Filter1_Resonance_graph = 50;
-float pl6Filter1_Sweep_rnd;
-float pl6Filter1_Sweep = 2;
-byte pl6Filter1_Sweep_graph = 50;
-int pl6Env1_Attack = 50;
-byte pl6Env1_Attack_graph = 50;
-int pl6Env1_Decay = 50;
-byte pl6Env1_Decay_graph = 50;
-float pl6Env1_Sustain = 1;
-byte pl6Env1_Sustain_graph = 50;
-int pl6Env1_Release = 150;
-byte pl6Env1_Release_graph = 50;
-byte selected_raw_file;
-byte selected_file_raw_graph = 50;
-byte pl6Volume_graph = 50;
-float pl6Volume_rnd;
-float pl6Volume;
+struct plugin6 {
+  int Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance_rnd;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep_rnd;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 50;
+  byte selected_raw_file;
+  byte selected_file_raw_graph = 50;
+  byte Volume_graph = 50;
+  float Volume_rnd;
+  float Volume;
+};
+plugin6 pl6[MAX_PRESETS];
+byte pl6presetNr = 0;
+
 #define MAX_RAW_FILES 11
 #define SAMPLE_ROOT 69
 const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW" };
@@ -246,17 +262,15 @@ float pl7dc1_amplitude = 0.06;
 byte pl7dc1_amplitude_graph = 10;
 //noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
 byte pl7noise1_amplitude = 1;
-byte pl7noise1_amplitude_graph = 800;
+byte pl7noise1_amplitude_rnd = 100;
+byte pl7noise1_amplitude_graph = 100;
 
 byte pl7waveformMod1_begin;
 byte pl7waveformMod1_begin_graph;
-
 float pl7waveformMod1_amplitude;
 byte pl7waveformMod1_amplitude_graph;
-
 int pl7waveformMod1_frequency;
 byte pl7waveformMod1_frequency_graph;
-
 float pl7waveformMod1_frequencyModulation;
 byte pl7waveformMod1_frequencyModulation_graph;
 int pl7waveformMod1_frequencyModulation_rnd;
@@ -279,6 +293,86 @@ byte pl7Env1_Release_graph;
 
 
 //FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
+float pl7_3_waveformMod3_amplitude;
+byte pl7_3_waveformMod3_amplitude_rnd;
+byte pl7_3_waveformMod3_amplitude_graph;
+int pl7_3_waveformMod3_frequency;
+byte pl7_3_waveformMod3_frequency_graph;
+
+
+byte pl7_3_Env2_Attack;
+byte pl7_3_Env2_Attack_graph;
+byte pl7_3_Env2_Decay;
+byte pl7_3_Env2_Decay_graph;
+byte pl7_3_Env2_Release;
+byte pl7_3_Env2_Release_graph;
+
+
+byte pl7_3_waveformMod2_begin;
+byte pl7_3_waveformMod2_begin_graph;
+float pl7_3_waveformMod2_amplitude;
+byte pl7_3_waveformMod2_amplitude_graph;
+int pl7_3_waveformMod2_frequency;
+byte pl7_3_waveformMod2_frequency_graph;
+float pl7_3_waveformMod2_frequencyModulation;
+byte pl7_3_waveformMod2_frequencyModulation_graph;
+int pl7_3_waveformMod2_frequencyModulation_rnd;
+
+byte pl7_3_Env3_Attack;
+byte pl7_3_Env3_Attack_graph;
+byte pl7_3_Env3_Decay;
+byte pl7_3_Env3_Decay_graph;
+byte pl7_3_Env3_Release;
+byte pl7_3_Env3_Release_graph;
+
+//4444444444444444444444444444444444444444444444444444444444444444444444444444 noise
+float pl7_4_noise2_amplitude = 1;
+int pl7_4_noise2_amplitude_rnd = 100;
+byte pl7_4_noise2_amplitude_graph = 100;
+
+float pl7_4_pink1_amplitude = 1;
+int pl7_4_pink1_amplitude_rnd = 100;
+byte pl7_4_pink1_amplitude_graph = 100;
+
+int pl7_4_biquad1_frequency = 400;
+byte pl7_4_biquad1_frequency_graph;
+float pl7_4_biquad1_resonance;
+byte pl7_4_biquad1_resonance_graph;
+byte pl7_4_biquad1_resonance_rnd;
+
+byte pl7_4_Env4_Attack;
+byte pl7_4_Env4_Attack_graph;
+byte pl7_4_Env4_Decay;
+byte pl7_4_Env4_Decay_graph;
+byte pl7_4_Env4_Release;
+byte pl7_4_Env4_Release_graph;
+
+//plugin 8 variables
+struct plugin8 {
+  int Filter1_Frequency = 260;
+  float Filter1_Frequency_graph = 50;
+  float Filter1_Resonance_rnd;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep_rnd;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  float Env1_Release_graph = 50;
+  float note1_Velo = 1;
+  float note1_Velo_rnd;
+  byte wfSelect;
+  byte wfSelect_graph;
+};
+plugin8 pl8[MAX_PLUGINS];
+byte pl8presetNr = 0;
+
 
 //Overall Pluginvariables
 struct plugins {
@@ -304,17 +398,13 @@ struct plugins {
 };
 plugins plugin[MAX_PLUGINS];
 
-// plugin[].Volume_graph;
-// plugin[].Volume_rnd;
-// plugin[].Volume;
-// Plugin 1 variables
 char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+#define MAX_WAV_FILES 11
+#define SAMPLE_ROOT 69
+const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 
 //mixer variables
-#define MixerPage2_Dynamic_ROW_0 3
-#define MixerPage2_Dynamic_ROW_1 6
-#define MixerPage2_Dynamic_ROW_2 9
-#define MixerPage2_Dynamic_ROW_3 12
+
 //FX variables
 //FX1
 //reverb variables
@@ -329,6 +419,11 @@ int fx2bitcrush_graph = 100;
 
 int fx2samplerate = 22050;
 int fx2samplerate_graph = 100;
+
+
+
+
+
 
 //structure variables
 bool clipSelector = LOW;
@@ -360,6 +455,16 @@ int gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15
 int trackTouchY;
 int constrainedtrackTouchY;
 unsigned long previousMillis = 0;
+
+#define CONTROL_ROW_0 3
+#define CONTROL_ROW_1 6
+#define CONTROL_ROW_2 9
+#define CONTROL_ROW_3 12
+
+//potentiomer variables
+int Potentiometer1;
+int Potentiometer2;
+
 
 //button variables
 #define NUM_BUTTONS 7
@@ -419,92 +524,6 @@ float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 1
                            4186.01, 4434.92, 4698.64, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13,
                            8372.02, 8869.84, 9397.27, 9956.06, 10548.08, 11175.30, 11839.82, 12543.85 };
 
-
-byte clip[NUM_TRACKS][NUM_CLIPS][NUM_STEPS]{
-  { //channel1
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel2
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel3
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel4
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel5
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel6
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel7
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-  { //channel8
-    { 36, 0, 0, 0, 36, 0, 0, 0, 37, 0, 0, 0, 39, 0, 0, 0 },
-    { 0, 0, 36, 0, 0, 0, 36, 0, 0, 0, 36, 0, 0, 0, 36, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-};
-
-
-
 //Scales
 bool scaleSelect = LOW;
 const int scalesQuant = 9;  //how many scales do we have
@@ -527,8 +546,7 @@ char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmon
 char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
 
 
-// save button state
-int button_last = 0;
+
 
 //clock variables
 byte barClock = 0;
@@ -553,29 +571,22 @@ struct tracks {
   //char* FXNames_short[8]{ "Send1", "Send2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8" };
   bool held_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte midicc_value_row_1[4];
-  byte midicc_number_row_1[4];
+  byte midicc_number_row_1[4]{20, 21, 22, 23};
   byte midicc_value_row_2[4];
-  byte midicc_number_row_2[4];
+  byte midicc_number_row_2[4]{24, 25, 26, 27};
   byte midicc_value_row_3[4];
   byte midicc_number_row_3[4];
-  bool sendCC = false;
+  bool sendCC = true;
   byte arrangment1[256];
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];
-//track[].select;
-//track[].MIDIchannel;
-//track[].clip_selector;
-//track[].clip_songMode;
-//track[].tone;
-//track[].shown_octaves;
-//track[].held_notes;
-//track[].velocity_ON;
+
 
 
 //channel 1 variables
 bool channel1Select = LOW;  // a handler to keep the mode active after selecting
-
+byte tr1ClipNr = 0;
 byte ch1Clip = 1;
 byte ch1tone;
 byte ch1Octaves = 3;

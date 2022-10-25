@@ -29,10 +29,10 @@ void Plugin_2_Settings() {
 }
 void Plugin2_Page_Static(byte Pagenumber) {
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawbarH(touchX * 3, 3, Pl2Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
+    drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
     //drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", ILI9341_RED);
-    drawbarH(touchX * 3, 7, Pl2Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
-    drawbarH(touchX * 3, 11, Pl2Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
+    drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
+    drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
   }
 }
 
@@ -41,33 +41,33 @@ void Plugin2_Page1_Dynamic() {
 
   if (ts.touched() || !buttons[6].read()) {
     //Volume
-    if (gridTouchY == 3) {
+    if (gridTouchY == CONTROL_ROW_0) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        drawbarH(touchX * 3, 3, Pl2Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
+        drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
-          Pl2Vol_rnd[touchX - 1] = map(Potentiometer1, 0, 1023, 0, 99.00);
-          Pl2Vol[touchX - 1] = Pl2Vol_rnd[touchX - 1] / 100.00;
-          drummixer1.gain(touchX - 1, Pl2Vol[touchX - 1]);
+          pl4[0].Vol_rnd[touchX - 1] = map(Potentiometer1, 0, 127, 0, 99.00);
+          pl4[0].Vol[touchX - 1] = pl4[0].Vol_rnd[touchX - 1] / 100.00;
+          drummixer1.gain(touchX - 1, pl4[0].Vol[touchX - 1]);
         }
       }
     }
-    if (gridTouchY == 7) {
+    if (gridTouchY == CONTROL_ROW_1) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        drawbarH(touchX * 3, 7, Pl2Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
+        drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
-          Pl2Vol_rnd[touchX + 3] = map(Potentiometer1, 0, 1023, 0, 99.00);
-          Pl2Vol[touchX + 3] = Pl2Vol_rnd[touchX + 3] / 100.00;
-          drummixer2.gain(touchX - 1, Pl2Vol[touchX + 3]);
+          pl4[0].Vol_rnd[touchX + 3] = map(Potentiometer1, 0, 127, 0, 99.00);
+          pl4[0].Vol[touchX + 3] = pl4[0].Vol_rnd[touchX + 3] / 100.00;
+          drummixer2.gain(touchX - 1, pl4[0].Vol[touchX + 3]);
         }
       }
     }
-    if (gridTouchY == 11) {
+    if (gridTouchY == CONTROL_ROW_2) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        drawbarH(touchX * 3, 11, Pl2Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
+        drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
-          Pl2Vol_rnd[touchX + 7] = map(Potentiometer1, 0, 1023, 0, 99.00);
-          Pl2Vol[touchX + 7] = Pl2Vol_rnd[touchX + 7] / 100.00;
-          drummixer3.gain(touchX - 1, Pl2Vol[touchX + 7]);
+          pl4[0].Vol_rnd[touchX + 7] = map(Potentiometer1, 0, 127, 0, 99.00);
+          pl4[0].Vol[touchX + 7] = pl4[0].Vol_rnd[touchX + 7] / 100.00;
+          drummixer3.gain(touchX - 1, pl4[0].Vol[touchX + 7]);
         }
       }
     }
