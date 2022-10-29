@@ -6,34 +6,88 @@
 
 
 
+void drawbarPosition() {
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
+    //
+    tft.drawPixel(barClock + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
+    //
+    tft.drawFastHLine(pixelbarClock * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
+    tft.drawFastHLine((pixelbarClock - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
+  }
+  if (barClock % 16 == 0) {
+    pixelbarClock = 0;
+    tft.fillRect(STEP_FRAME_W * 15, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 4, 4, ILI9341_DARKGREY);
+    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 1, 4, ILI9341_GREEN);
+  }
+}
+
+void drawstepPosition(byte current) {
+  //draw the songpointer positions
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
+    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
+      tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
+      tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+    }
+  }
+}
+
 
 
 // called when the step position changes. both the current
 // position and last are passed to the callback
 void step(int current, int last) {
-  //usbMIDI.sendControlChange(123, 127, 2);
-if (track[desired_instrument].sendCC) {
-    for (int desired_i = 0; desired_i < 8; desired_i++) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte mixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        usbMIDI.sendControlChange(track[desired_i].midicc_number_row_1[MixerColumn], track[desired_i].midicc_value_row_1[MixerColumn], track[desired_i].MIDIchannel);
-        usbMIDI.sendControlChange(track[desired_i].midicc_number_row_3[MixerColumn], track[desired_i].midicc_value_row_3[MixerColumn], track[desired_i].MIDIchannel);
-        usbMIDI.sendControlChange(track[desired_i].midicc_number_row_2[MixerColumn], track[desired_i].midicc_value_row_2[MixerColumn], track[desired_i].MIDIchannel);
+
+
+
+
+  //differnt things happening while the clock is running
+  if (current == 0) {
+    barClock++;
+    pixelbarClock++;
+    phrase++;
+    drawbarPosition();
+    //draw phrasenumber
+    tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setFont(Arial_9);
+    tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
+    tft.print(phrase);
+
+
+    //assigning the current clip from the arrangment array for each track
+    for (int instruments = 0; instruments < 8; instruments++) {
+      if (track[instruments].arrangment1[phrase] == 8) {
+        track[instruments].clip_songMode = 8;
       }
+      track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
+    }
+
+
+
+
+
+    if (barClock == 255) {
+      seq.stop();
+      seq.panic();
+      barClock = 0;
+      pixelbarClock = 0;
+      phrase = 0;
+      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+    }
+    if (phrase == end_of_loop-1) {
+      phrase = -1;
+      pixelbarClock = 0;
+      barClock = -1;
+      //      tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      //      tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+      //      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
     }
   }
 
 
-  /*Serial.print("all=");
-  Serial.print(AudioProcessorUsage());
-  Serial.print(",");
-  Serial.print(AudioProcessorUsageMax());
-  Serial.print("    ");
-  Serial.print("Memory: ");
-  Serial.print(AudioMemoryUsage());
-  Serial.print(",");
-  Serial.print(AudioMemoryUsageMax());
-  Serial.println();*/
+
+
+
 
   //send midinotes for drumtrack #1
   if (!track[0].solo_mutes_state) {
@@ -231,75 +285,25 @@ if (track[desired_instrument].sendCC) {
   }
 
 
+  drawstepPosition(current);
 
-  //draw the songpointer positions
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
-      tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
-      tft.drawFastHLine(last * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
-    }
-  }
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     if (current == 0) {
       tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
 
-  //differnt things happening while the clock is running
-  if (current == 0) {
 
-    barClock++;
-    pixelbarClock++;
-    tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setFont(Arial_9);
-    tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-    tft.print(phrase + 1);
-    for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-      tft.drawPixel(barClock + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
-      tft.drawFastHLine(pixelbarClock * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
-      tft.drawFastHLine((pixelbarClock - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
-    }
-
-    if (barClock % 1 == 0) {
-      phrase++;
-      for (int instruments = 0; instruments < 8; instruments++) {
-        if (track[instruments].arrangment1[phrase] == 8) {
-          track[instruments].clip_songMode = 8;
-        }
-        track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
-      }
-      if (pixelbarClock == end_of_loop / phraseSegmentLength) {
-        pixelbarClock = 0;
-        tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 20, 4, ILI9341_DARKGREY);
-      }
-    }
-    if (barClock == 255) {
-      seq.stop();
-      seq.panic();
-      barClock = 0;
-      phrase = 0;
-      tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-    }
-    if (phrase >= end_of_loop) {
-      phrase = 0;
-      barClock = 0;
-      //      tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      //      tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-      //      tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-    }
-  }
-  usbMIDI.sendControlChange(123, 0, 2);
+  //usbMIDI.sendControlChange(123, 0, 2);
 }
+
 
 
 
 void midiCC_view_Static(byte mixerpage, byte desired_instrument) {
   clearWorkSpace();
   draw_sub_page_buttons(1);
-  drawActiveSquare(18, 3, 2, track[desired_instrument].sendCC, "Send", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 3, 2, 2, track[desired_instrument].sendCC, "Send", ILI9341_LIGHTGREY);
 
   for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     byte mixerColumnPos = ((MixerColumn + 1) * 4) - 1;
@@ -316,7 +320,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       unsigned long currentMillis = millis();
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-        drawActiveSquare(18, 3, 2, track[desired_instrument].sendCC, "Send", ILI9341_LIGHTGREY);
+        drawActiveRect(18, 3, 2, 2, track[desired_instrument].sendCC, "Send", ILI9341_LIGHTGREY);
         if (track[desired_instrument].sendCC) {
           track[desired_instrument].sendCC = false;
         } else if (!track[desired_instrument].sendCC) {
@@ -331,6 +335,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
         byte mixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (gridTouchX == mixerColumnPos || gridTouchX == mixerColumnPos + 1) {
           drawPotCC(mixerColumnPos, 3, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_number_row_1[MixerColumn], trackColor[desired_instrument]);
+          usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].MIDIchannel);
           if (abs(Potentiometer1 - track[desired_instrument].midicc_value_row_1[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             track[desired_instrument].midicc_value_row_1[MixerColumn] = Potentiometer1;
           }
@@ -355,6 +360,8 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
         byte mixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (gridTouchX == mixerColumnPos || gridTouchX == mixerColumnPos + 1) {
           drawPotCC(mixerColumnPos, 7, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_number_row_2[MixerColumn], trackColor[desired_instrument]);
+          usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].MIDIchannel);
+
           if (abs(Potentiometer1 - track[desired_instrument].midicc_value_row_2[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             track[desired_instrument].midicc_value_row_2[MixerColumn] = Potentiometer1;
           }
@@ -378,6 +385,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
         byte mixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (gridTouchX == mixerColumnPos || gridTouchX == mixerColumnPos + 1) {
           drawPotCC(mixerColumnPos, 11, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_number_row_3[MixerColumn], trackColor[desired_instrument]);
+          usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].MIDIchannel);
           if (abs(Potentiometer1 - track[desired_instrument].midicc_value_row_3[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             track[desired_instrument].midicc_value_row_3[MixerColumn] = Potentiometer1;
           }

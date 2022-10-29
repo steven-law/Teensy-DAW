@@ -458,7 +458,7 @@ void setup() {
   delay(100);
 
   // start sequencer and set callbacks
-  seq.begin(tempo, steps);
+  seq.begin(tempo, steps_15);
   seq.setStepHandler(step);
   seq.stop();
   Serial.println("Initializing Sequencer");
@@ -487,6 +487,7 @@ void setup() {
   Mixer_Settings();
   FX1reverb_settings();
   FX2Bitcrush_settings();
+  clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
   delay(100);
@@ -529,16 +530,17 @@ void loop() {
   // start, stop, and pausing the steps
   seq.run();
 
-  
+
   //read Potentiometer1
   Potentiometer1 = 127 - map(analogRead(POTENTIOMETER_1_PIN), 0, 1023, 0, 127);
   Potentiometer2 = 127 - map(analogRead(POTENTIOMETER_2_PIN), 0, 1023, 0, 127);
-  unsigned long currentMillis = millis();
-  /*if (currentMillis - previousMillis >= interval) {
+   unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    //Serial.println(desired_instrument);
-  }*/
+    //Serial.println(track[1].clip_selector);
+  
 
+}
   for (int i = 0; i < NUM_BUTTONS; i++) {
     // Update the Bounce instance :
     buttons[i].update();
@@ -563,19 +565,20 @@ void loop() {
   }
   if (buttons[4].fell()) {
     seq.start();
+    pixelbarClock = 0;
     for (int i = 1; i <= 7; i++) {
       track[i].clip_songMode = track[i].arrangment1[0];
     }
   }
   if (buttons[5].fell()) {
+    barClock = 0;
+    pixelbarClock = 0;
+    phrase = -1;
     seq.stop();
     seq.panic();
-    barClock = 0;
-    phrase = -1;
+
     //clear the songposition pointers
-    tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-    tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+    tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
   }
 
 
@@ -592,7 +595,7 @@ void loop() {
     constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
   }
   if (ts.touched() || !buttons[6].read()) {
-    //getPixels();
+
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Arrangment select
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -610,6 +613,7 @@ void loop() {
         seq.stop();
         seq.panic();
         barClock = 0;
+        pixelbarClock = 0;
         phrase = 0;
         //clear the songposition pointers
         tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
@@ -644,7 +648,7 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Scale Select
       if (gridTouchX == POSITION_SCALE_BUTTON || gridTouchX == POSITION_SCALE_BUTTON + 1) {
-        select_page(SCALESELECT);
+        selectPage = SCALESELECT;
         gridScaleSelector();
         scaleSelector();
         for (int i = 0; i < scalesQuant; i++) {
@@ -666,13 +670,13 @@ void loop() {
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Songarranger
       if (gridTouchY == 0) {
-        select_page(10);
+        selectPage = 10;
         gridSongMode(songpageNumber);
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Drumchannel
       if (trackTouchY == 0) {
-        select_page(DRUMTRACK);
+        selectPage = DRUMTRACK;
         desired_instrument = 0;
         desired_track = 0;
         drumStepSequencer_Static();
@@ -683,14 +687,14 @@ void loop() {
         if (trackTouchY == tracks) {
           desired_instrument = tracks;
           desired_track = tracks;
-          select_page(tracks);
+          selectPage = tracks;
           gridStepSequencer(tracks);
         }
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select Mixer
       if (gridTouchY == 13) {
-        select_page(MIXER_PAGE_1);
+        selectPage = MIXER_PAGE_1;
         mixerPage1_Static(0);
       }
     }
@@ -702,7 +706,7 @@ void loop() {
   //    we create:
 
   //  //setting up the Plugin3 Page1-view
-  //    if (selectPage[PLUGIN3_PAGE1]) {
+  //    if (selectPage == PLUGIN3_PAGE1) {
   //      Plugin3_Page1_Dynamic();
   //    }
 
@@ -715,111 +719,108 @@ void loop() {
 
   //-----------------------------------------
   //setting up the Plugin1 Page1-view
-  if (selectPage[PLUGIN1_PAGE1]) {
+  if (selectPage == PLUGIN1_PAGE1) {
     Plugin1_Page1_Dynamic();
   }
   //setting up the Plugin1 Page2-view
-  if (selectPage[PLUGIN1_PAGE2]) {
+  if (selectPage == PLUGIN1_PAGE2) {
     Plugin1_Page2_Dynamic();
   }
 
   //setting up the Plugin2 Page1-view
-  if (selectPage[PLUGIN2_PAGE1]) {
+  if (selectPage == PLUGIN2_PAGE1) {
     Plugin2_Page1_Dynamic();
   }
 
 
   /////////////////////////////////////////////////////////////////////////////
   //setting up the Plugin3 Page1-view
-  if (selectPage[PLUGIN3_PAGE1]) {
+  if (selectPage == PLUGIN3_PAGE1) {
     Plugin3_Page1_Dynamic(desired_instrument);
   }
   /////////////////////////////////////////////////////////////////////////////
 
 
   //setting up the Plugin4 Page1-view
-  if (selectPage[PLUGIN4_PAGE1]) {
+  if (selectPage == PLUGIN4_PAGE1) {
     Plugin4_Page1_Dynamic();
   }
 
   //setting up the Plugin5 Page1-view
-  if (selectPage[PLUGIN5_PAGE1]) {
+  if (selectPage == PLUGIN5_PAGE1) {
     Plugin5_Page1_Dynamic();
   }
   //setting up the Plugin6 Page1-view
-  if (selectPage[PLUGIN6_PAGE1]) {
+  if (selectPage == PLUGIN6_PAGE1) {
     Plugin6_Page1_Dynamic();
   }
   //setting up the Plugin7 Page1-view
-  if (selectPage[PLUGIN7_PAGE1]) {
+  if (selectPage == PLUGIN7_PAGE1) {
     Plugin7_Page1_Dynamic();
   }
   //setting up the Plugin7 Page2-view
-  if (selectPage[PLUGIN7_PAGE2]) {
+  if (selectPage == PLUGIN7_PAGE2) {
     Plugin7_Page2_Dynamic();
   }
   //setting up the Plugin8 Page1-view
-  if (selectPage[PLUGIN8_PAGE1]) {
+  if (selectPage == PLUGIN8_PAGE1) {
     Plugin8_Page1_Dynamic();
   }
   //setting up the Plugin9 Page1-view
-  if (selectPage[PLUGIN9_PAGE1]) {
+  if (selectPage == PLUGIN9_PAGE1) {
     Plugin9_Page1_Dynamic();
   }
   //setting up the Plugin10 Page1-view
-  if (selectPage[PLUGIN10_PAGE1]) {
+  if (selectPage == PLUGIN10_PAGE1) {
     Plugin10_Page1_Dynamic();
   }
 
 
 
   //setting up the StepSequencer-view for drumtrack #1
-  if (selectPage[DRUMTRACK]) {
+  if (selectPage == DRUMTRACK) {
     drumStepSequencer();
   }
   //setting up the melodicStepSequencer-view for #2-8
   for (int i = 1; i < 8; i++) {
-    if (selectPage[i]) {
+    if (selectPage == i) {
       melodicStepSequencer(i);
     }
   }
   //setting up the scaleSelector-view
-  if (selectPage[SCALESELECT]) {
+  if (selectPage == SCALESELECT) {
     scaleSelector();
   }
-  //setting up the songmode full zoom-view
-  //if (selectPage[9]) {
-  //songModePage(16);
-  //}
+
   //setting up the songMode-view1
   for (byte pagenr = 0; pagenr < 16; pagenr++) {
-    if (selectPage[pagenr + 10]) {
+    if (selectPage == pagenr + 10) {
       songModePage(pagenr);
     }
   }
 
   //setting up the Mixer Page 1
-  if (selectPage[MIXER_PAGE_1]) {
+  if (selectPage == MIXER_PAGE_1) {
     MixerPage1_Dynamic();
   }
   //setting up the Mixer Page 2
-  if (selectPage[MIXER_PAGE_2]) {
+  if (selectPage == MIXER_PAGE_2) {
     MixerPage2_Dynamic();
   }
   //setting up the Mixer Page 3
-  if (selectPage[MIXER_PAGE_3]) {
+  if (selectPage == MIXER_PAGE_3) {
     MixerPage3_Dynamic();
   }
   //setting up the Mixer Page 3
-  if (selectPage[FX1_PAGE1]) {
+  if (selectPage == FX1_PAGE1) {
     FX1reverb_dynamic();
   }
   //setting up the Mixer Page 3
-  if (selectPage[FX2_PAGE1]) {
+  if (selectPage == FX2_PAGE1) {
     FX2Bitcrush_dynamic();
   }
   //setting up the Mixer Page 2
-  if (selectPage[MIDICC_PAGE_1]) {
+  if (selectPage == MIDICC_PAGE_1) {
     midiCCpage1_Dynamic(desired_track);
   }
   //if (something_was_pressed) {
@@ -852,19 +853,8 @@ void drawCursor() {
   last_button_Y = gridTouchY;
 }
 
-void getPixels() {
-  for (int pixelX = 0; pixelX < 16; pixelX++) {
-    for (int pixelY = 0; pixelY < 16; pixelY++) {
-      tftRAM[pixelX][pixelY] = tft.readPixel(pixelX + (STEP_FRAME_W * gridTouchX), pixelY + (STEP_FRAME_H * gridTouchY));
-    }
-  }
-}
-void select_page(byte selectedPage) {
-  for (byte others = 0; others < MAX_PAGES; others++) {
-    selectPage[others] = LOW;
-  }
-  selectPage[selectedPage] = HIGH;
-}
+
+
 
 void startUpScreen() {  //static Display rendering
   tft.fillScreen(ILI9341_DARKGREY);
@@ -984,6 +974,7 @@ void scaleSelector() {
     }
   }
 }
+
 void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
   for (int i = 0; i < 17; i++) {  //vert Lines
@@ -1005,7 +996,7 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.setTextColor(ILI9341_BLACK);
     tft.setTextSize(1);
     tft.print("Clip ");
-    tft.print(ClipNr + 1);
+    tft.print(ClipNr);
   }
   for (int i = 0; i < 12; i++) {
     if (scales[scaleSelected][i]) {
@@ -1059,26 +1050,8 @@ void drawStepSequencerStatic(int desired_instrument) {
   drawActiveSteps();
   drawMIDIchannel();
 }
-void drawActiveSteps() {
-  byte tone_start = track[desired_instrument].shown_octaves * 12;
-  //draw active steps
-  for (byte steps = 0; steps < STEP_QUANT; steps++) {
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
-      int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + track[desired_track].clip_selector * 20);
-    }
-  }
-}
-void drawActiveDrumSteps() {
-  for (byte tone = 0; tone < 12; tone++) {
-    for (byte steps = 0; steps < STEP_QUANT; steps++) {
-      if (channel1Clip[ch1Clip][tone][steps]) {
-        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + track[0].clip_selector * 20);
-      }
-    }
-  }
-}
+
+
 void drawMIDIchannel() {
   //show midichannel
   tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);

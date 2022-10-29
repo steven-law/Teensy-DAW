@@ -1,7 +1,7 @@
 void drawsongmodepageselector() {
   //draw 16 rects of 16x16px in the 13th row
   for (byte pages = 2; pages < 18; pages++) {
-    drawActiveSquare(pages, 13, 1, selectPage[pages + 8], "", ILI9341_LIGHTGREY);
+    drawActiveRect(pages, 13, 1, 1, selectPage == pages + 8, "", ILI9341_LIGHTGREY);
     tft.drawRect(STEP_FRAME_W * pages, STEP_FRAME_H * 13, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_WHITE);
@@ -16,10 +16,10 @@ void drawarrengmentLines(byte songpageNumber) {
   //draw horizontal song arrangment Lines
   for (byte phrase = page_phrase_start; phrase < page_phrase_end; phrase++) {
     for (byte trackss = 0; trackss < 8; trackss++) {
-      if (track[trackss].arrangment1[phrase] > 0) {
+      if (track[trackss].arrangment1[phrase] < 8) {
         for (int thickness = -8; thickness < 8; thickness++) {
           tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss]);  //(x-start, y, length, color)
-          if (track[trackss].arrangment1[phrase] == 0) {
+          if (track[trackss].arrangment1[phrase] == 8) {
             tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, ILI9341_DARKGREY);  //(x-start, y, length, color)
           }
         }
@@ -31,7 +31,13 @@ void drawarrengmentLines(byte songpageNumber) {
     }
   }
 }
-
+void clearArrangment() {
+  for (byte ctrack = 0; ctrack < 8; ctrack++) {
+    for (byte cphrase = 0; cphrase < 255; cphrase++) {
+      track[ctrack].arrangment1[cphrase] = 8;
+    }
+  }
+}
 
 void draw_start_of_loop() {
   tft.setFont(Arial_8);
@@ -65,11 +71,10 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
   page_phrase_end = (songpageNumber + 1) * 16;
   clearWorkSpace();
   drawsongmodepageselector();
-  drawActiveSquare(18, 3, 2, false, "clear", ILI9341_RED);
+  drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
   draw_end_of_loop();
   //occationally working on a full arrangment view
-  //drawActiveSquare(18, 3, 2, selectPage[10], "zoom", ILI9341_LIGHTGREY);
 
   //vertical pointer Lines
   int shownLines = 257 / phraseSegmentLength;
@@ -90,12 +95,17 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
 void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
-  //Serial.println("zoom-dynamic");
-
+  /*
+    unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    drawarrengmentLines(songpageNumber);
+    previousMillis = currentMillis;
+  }
+  */
+  //drawarrengmentLines(songpageNumber);
 
   if (ts.touched()) {
     drawarrengmentLines(songpageNumber);
-    //getPixels();
     int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
     byte touched_track = trackTouchY;
 
@@ -130,7 +140,7 @@ void songModePage(byte songpageNumber) {
     }
     //end of loop
     if (gridTouchX >= 18 && gridTouchY == 2) {
-      end_of_loop = map(Potentiometer1, 0, 127, 1, 255);
+      end_of_loop = map(Potentiometer1, 0, 127, 1, 255) - 1;
       draw_end_of_loop();
     }
     //page selection
@@ -138,7 +148,7 @@ void songModePage(byte songpageNumber) {
       for (int songpages = 0; songpages < 16; songpages++) {
         if (gridTouchX == (songpages + 2)) {
           //phraseSegmentLength = 16;
-          select_page(SONGMODE_PAGE_1 + songpages);
+          selectPage = SONGMODE_PAGE_1 + songpages;
           gridSongMode(songpages);
           songModePage(songpages);
         }
@@ -147,22 +157,9 @@ void songModePage(byte songpageNumber) {
     //clear arrangment selection
     if (gridTouchX >= 18) {
       if (gridTouchY == 3 || gridTouchY == 4) {
-        for (byte ctrack = 0; ctrack < 8; ctrack++) {
-          for (byte cphrase = 0; cphrase < 255; cphrase++) {
-            track[ctrack].arrangment1[cphrase] = 0;
-          }
-        }
+        clearArrangment();
       }
     }
-    /** //zoom selection
-    if (gridTouchX >= 18) {
-      if (gridTouchY == 3 || gridTouchY == 4) {
-        //phraseSegmentLength = 1;
-        select_page(9);
-        gridSongMode(16);
-        songModePage(16);
-      }
-    }*/
   }
 }
 

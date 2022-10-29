@@ -101,7 +101,7 @@ void Plugin7_Page_Static(byte Pagenumber) {
 
   drawPot(3, 3, pl7drum1_frequency_graph, pl7drum1_frequency, "1Freq", ILI9341_RED);
   drawPot(7, 3, pl7drum1_length_graph, pl7drum1_length, "1Decay", ILI9341_RED);
-  drawPot(11, 3, pl7drum1_pitchMod_graph, pl7drum1_pitchMod_rnd, "1Sweep", ILI9341_RED);
+  drawPot(11, 3, pl7drum1_pitchMod_graph, pl7drum1_pitchMod_graph, "1Sweep", ILI9341_RED);
   drawPot(15, 3, pl7dc1_amplitude_graph, pl7dc1_amplitude_graph, "1Fold", ILI9341_RED);
 
   drawPot(3, 7, pl7noise1_amplitude_graph, pl7noise1_amplitude_graph, "2Noise", ILI9341_BLUE);
@@ -143,11 +143,12 @@ void Plugin7_Page1_Dynamic() {
       }
       //drum1 PitchMod
       if (gridTouchX == 11 || gridTouchX == 12) {
-        drawPot(11, 3, pl7drum1_pitchMod_graph, pl7drum1_pitchMod_rnd, "1Sweep", ILI9341_RED);
+        drawPot(11, 3, pl7drum1_pitchMod_graph, pl7drum1_pitchMod_graph, "1Sweep", ILI9341_RED);
         if (abs(Potentiometer1 - pl7drum1_pitchMod_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          pl7drum1_pitchMod_graph = Potentiometer1;
           pl7drum1_pitchMod_rnd = map(Potentiometer1, 0, 127, 6, 200);
           pl7drum1_pitchMod = pl7drum1_pitchMod_rnd / 100;
-          pl7drum1_pitchMod_graph = Potentiometer1;
+          
           pl7drum1.pitchMod(pl7drum1_pitchMod);
         }
       }
@@ -156,7 +157,7 @@ void Plugin7_Page1_Dynamic() {
         drawPot(15, 3, pl7dc1_amplitude_graph, pl7dc1_amplitude_graph, "1Fold", ILI9341_RED);
         if (abs(Potentiometer1 - pl7dc1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl7dc1_amplitude_graph = Potentiometer1;
-          pl7dc1_amplitude = pl7dc1_amplitude_graph / 100.00;
+          pl7dc1_amplitude = pl7dc1_amplitude_graph / 127.00;
           pl7dc1.amplitude(pl7dc1_amplitude);
         }
       }
@@ -168,7 +169,7 @@ void Plugin7_Page1_Dynamic() {
         drawPot(3, 7, pl7noise1_amplitude_graph, pl7noise1_amplitude_graph, "2Noise", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl7noise1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl7drum1_frequency_graph = Potentiometer1;
-          pl7noise1_amplitude = pl7noise1_amplitude_graph / 100.00;
+          pl7noise1_amplitude = pl7noise1_amplitude_graph / 127.00;
           pl7noise1.amplitude(pl7noise1_amplitude);
         }
       }
@@ -196,8 +197,7 @@ void Plugin7_Page1_Dynamic() {
         drawPot(15, 7, pl7waveformMod1_frequencyModulation_graph, pl7waveformMod1_frequencyModulation_graph, "2N-FM", ILI9341_RED);
         if (abs(Potentiometer1 - pl7waveformMod1_frequencyModulation_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl7waveformMod1_frequencyModulation_graph = Potentiometer1;
-          pl7waveformMod1_frequencyModulation_rnd = map(Potentiometer1, 0, 127, 0, 1200);
-          pl7waveformMod1_frequencyModulation = pl7waveformMod1_frequencyModulation_rnd / 100.00;
+          pl7waveformMod1_frequencyModulation = pl7waveformMod1_frequencyModulation_graph / 10.60;
           pl7waveformMod1.frequencyModulation(pl7waveformMod1_frequencyModulation);
         }
       }
@@ -208,8 +208,9 @@ void Plugin7_Page1_Dynamic() {
       if (gridTouchX == 3 || gridTouchX == 4) {
         drawPot(3, 11, pl7filter2_frequency_graph, pl7filter2_frequency, "2Freq", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl7filter2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl7filter2_frequency = map(Potentiometer1, 0, 127, 40, 5900.00);
           pl7filter2_frequency_graph = Potentiometer1;
+          pl7filter2_frequency = map(pl7filter2_frequency_graph, 0, 127, 40, 5900.00);
+          
           pl7filter2.frequency(pl7filter2_frequency);
         }
       }
@@ -217,9 +218,9 @@ void Plugin7_Page1_Dynamic() {
       if (gridTouchX == 7 || gridTouchX == 8) {
         drawPot(7, 11, pl7filter2_resonance_graph, pl7filter2_resonance_graph, "2Res", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl7filter2_resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl7filter2_resonance_rnd = map(Potentiometer1, 0, 127, 70, 500.00);
-          pl7filter2_resonance = pl7filter2_resonance_rnd / 100.00;
           pl7filter2_resonance_graph = Potentiometer1;
+          pl7filter2_resonance = pl7filter2_resonance_graph / 25.40;
+          
           pl7filter2.resonance(pl7filter2_resonance);
         }
       }
@@ -249,17 +250,17 @@ void Plugin7_Page1_Dynamic() {
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY >= 3 && gridTouchY <= 4) {
-        select_page(PLUGIN7_PAGE1);
+        selectPage = PLUGIN7_PAGE1;
         Plugin7_Page_Static(0);
         Plugin7_Page1_Dynamic();
       }
       if (gridTouchY >= 5 && gridTouchY <= 6) {
-        select_page(PLUGIN7_PAGE2);
+        selectPage = PLUGIN7_PAGE2;
         Plugin7_Page_Static(1);
         Plugin7_Page2_Dynamic();
       }
       /* if (gridTouchY >= 7 && gridTouchY <= 8) {
-        select_page(PLUGIN7_PAGE3);
+        selectPage = PLUGIN7_PAGE3);
         Plugin7_Page_Static(2);
         Plugin7_Page3_Dynamic();
       }*/
@@ -397,17 +398,17 @@ void Plugin7_Page2_Dynamic() {
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY >= 3 && gridTouchY <= 4) {
-        select_page(PLUGIN7_PAGE1);
+        selectPage = PLUGIN7_PAGE1;
         Plugin7_Page_Static(0);
         Plugin7_Page1_Dynamic();
       }
       if (gridTouchY >= 5 && gridTouchY <= 6) {
-        select_page(PLUGIN7_PAGE2);
+        selectPage = PLUGIN7_PAGE2;
         Plugin7_Page_Static(1);
         Plugin7_Page2_Dynamic();
       }
       /*if (gridTouchY >= 7 && gridTouchY <= 8) {
-        select_page(PLUGIN7_PAGE3);
+        selectPage = PLUGIN7_PAGE3;
         Plugin7_Page_Static(2);
         Plugin7_Page3_Dynamic();
       }*/

@@ -110,8 +110,7 @@ void Plugin8_Page1_Dynamic() {
         drawPot(7, CONTROL_ROW_1, pl8[pl8presetNr].Filter1_Resonance_graph, pl8[pl8presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
         if (abs(Potentiometer1 - pl8[pl8presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl8[pl8presetNr].Filter1_Resonance_graph = Potentiometer1;
-          pl8[pl8presetNr].Filter1_Resonance_rnd = map(pl8[pl8presetNr].Filter1_Resonance_graph, 0, 127, 70, 500.00);
-          pl8[pl8presetNr].Filter1_Resonance = pl8[pl8presetNr].Filter1_Resonance_rnd / 100.00;
+          pl8[pl8presetNr].Filter1_Resonance = pl8[pl8presetNr].Filter1_Resonance_graph / 25.40;
           pl8filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
         }
       }
@@ -120,8 +119,7 @@ void Plugin8_Page1_Dynamic() {
         drawPot(11, CONTROL_ROW_1, pl8[pl8presetNr].Filter1_Sweep_graph, pl8[pl8presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
         if (abs(Potentiometer1 - pl8[pl8presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl8[pl8presetNr].Filter1_Sweep_graph = Potentiometer1;
-          pl8[pl8presetNr].Filter1_Sweep_rnd = map(pl8[pl8presetNr].Filter1_Sweep_graph, 0, 127, 0, 700);
-          pl8[pl8presetNr].Filter1_Sweep = pl8[pl8presetNr].Filter1_Sweep_rnd / 100.00;
+          pl8[pl8presetNr].Filter1_Sweep = pl8[pl8presetNr].Filter1_Sweep_graph / 18.14;
           pl8filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
         }
       }

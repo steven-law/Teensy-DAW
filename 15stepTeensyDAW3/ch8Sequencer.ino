@@ -95,7 +95,7 @@ void melodicStepSequencer(byte desired_instrument) {
     for (int midiccSelection = 0; midiccSelection <= 16; midiccSelection++) {
       if (track[0].MIDIchannel == midiccSelection) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
-          select_page(MIDICC_PAGE_1);
+          selectPage = MIDICC_PAGE_1;
           midiCC_view_Static(0, desired_track);
         }
       }
@@ -107,10 +107,26 @@ void melodicStepSequencer(byte desired_instrument) {
     for (int pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
       if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
-          select_page(pluginSelection + 40);
+          selectPage = pluginSelection + 40;
           Plugin_View_Static(desired_track);
         }
       }
+    }
+  }
+}
+
+void drawActiveSteps() {
+  byte tone_start = track[desired_instrument].shown_octaves * 12;
+  //draw active steps
+  for (byte steps = 0; steps < STEP_QUANT; steps++) {
+    int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
+      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
+      
+      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector) * 20);
+    }
+    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] == VALUE_NOTEOFF) {
+       tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);
     }
   }
 }

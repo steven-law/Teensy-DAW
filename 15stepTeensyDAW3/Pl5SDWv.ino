@@ -67,7 +67,7 @@ void Plugin5_Page1_Dynamic() {
       if (gridTouchX == 3 || gridTouchX == 4) {
         drawPot(3, CONTROL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "WAV", ILI9341_PURPLE);
         if (abs(Potentiometer1 - pl5[pl5presetNr].selected_file_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-        pl5[pl5presetNr].selected_file_graph = Potentiometer1;
+          pl5[pl5presetNr].selected_file_graph = Potentiometer1;
           pl5[pl5presetNr].selected_file = map(pl5[pl5presetNr].selected_file_graph, 0, 127, 0, MAX_WAV_FILES);
         }
       }
@@ -96,9 +96,8 @@ void Plugin5_Page1_Dynamic() {
       if (gridTouchX == 7 || gridTouchX == 8) {
         drawPot(7, CONTROL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Res", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl5[pl5presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl5[pl5presetNr].Filter1_Resonance_rnd = map(Potentiometer1, 0, 127, 70, 500.00);
-          pl5[pl5presetNr].Filter1_Resonance = pl5[pl5presetNr].Filter1_Resonance_rnd / 100.00;
           pl5[pl5presetNr].Filter1_Resonance_graph = Potentiometer1;
+          pl5[pl5presetNr].Filter1_Resonance = pl5[pl5presetNr].Filter1_Resonance_graph / 25.40;
           pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance);
         }
       }
@@ -106,9 +105,8 @@ void Plugin5_Page1_Dynamic() {
       if (gridTouchX == 11 || gridTouchX == 12) {
         drawPot(11, CONTROL_ROW_1, pl5[pl5presetNr].Filter1_Sweep_graph, pl5[pl5presetNr].Filter1_Sweep_graph, "Swp", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl5[pl5presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl5[pl5presetNr].Filter1_Sweep_rnd = map(Potentiometer1, 0, 127, 0, 700);
           pl5[pl5presetNr].Filter1_Sweep_graph = Potentiometer1;
-          pl5[pl5presetNr].Filter1_Sweep = pl5[pl5presetNr].Filter1_Sweep_rnd / 100.00;
+          pl5[pl5presetNr].Filter1_Sweep = pl5[pl5presetNr].Filter1_Sweep_graph / 18.14;
           pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep);
         }
       }
@@ -121,7 +119,7 @@ void Plugin5_Page1_Dynamic() {
         if (abs(Potentiometer1 - pl5[pl5presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl5[pl5presetNr].Env1_Attack_graph = Potentiometer1;
           pl5[pl5presetNr].Env1_Attack = map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-          
+
           pl5envelope1.attack(pl5[pl5presetNr].Env1_Attack);
           pl5envelope2.attack(pl5[pl5presetNr].Env1_Attack);
         }

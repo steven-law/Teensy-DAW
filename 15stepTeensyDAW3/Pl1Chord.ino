@@ -167,22 +167,22 @@ void Plugin1_Page1_Dynamic() {
     if (gridTouchX >= 18) {
       //page1
       if (gridTouchY == 3 || gridTouchY == 4) {
-        select_page(PLUGIN1_PAGE1);
+        selectPage = PLUGIN1_PAGE1;
         Plugin_View_Static(desired_instrument);
       }
       //page2
       if (gridTouchY == 5 || gridTouchY == 6) {
-        select_page(PLUGIN1_PAGE2);
+        selectPage = PLUGIN1_PAGE2;
         Plugin_View_Static(desired_instrument);
       }
       //page3
       if (gridTouchY == 7 || gridTouchY == 8) {
-        select_page(PLUGIN1_PAGE3);
+        selectPage = PLUGIN1_PAGE3;
         Plugin_View_Static(desired_instrument);
       }
       //page4
       if (gridTouchY == 9 || gridTouchY == 10) {
-        select_page(PLUGIN1_PAGE4);
+        selectPage = PLUGIN1_PAGE4;
         Plugin_View_Static(desired_instrument);
       }
     }
@@ -225,8 +225,7 @@ void Plugin1_Page2_Dynamic() {
         drawPot(7, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Res", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer1;
-          pl1[pl1presetNr].Filter1_Resonance_rnd = map(pl1[pl1presetNr].Filter1_Resonance_graph, 0, 127, 70, 500.00);
-          pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_rnd / 100.00;
+          pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_graph / 25.40;
           filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
         }
       }
@@ -236,8 +235,7 @@ void Plugin1_Page2_Dynamic() {
         drawPot(11, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", ILI9341_BLUE);
         if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer1;
-          pl1[pl1presetNr].Filter1_Sweep_rnd = map(pl1[pl1presetNr].Filter1_Sweep_graph, 0, 127, 0, 700);
-          pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_rnd / 100.00;
+          pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_graph / 18.14;
           filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
         }
       }
@@ -273,22 +271,22 @@ void Plugin1_Page2_Dynamic() {
     if (gridTouchX >= 18) {
       //page1
       if (gridTouchY == 3 || gridTouchY == 4) {
-        select_page(PLUGIN1_PAGE1);
+        selectPage = PLUGIN1_PAGE1;
         Plugin_View_Static(desired_instrument);
       }
       //page2
       if (gridTouchY == 5 || gridTouchY == 6) {
-        select_page(PLUGIN1_PAGE2);
+        selectPage = PLUGIN1_PAGE2;
         Plugin_View_Static(desired_instrument);
       }
       //page3
       if (gridTouchY == 7 || gridTouchY == 8) {
-        select_page(PLUGIN1_PAGE3);
+        selectPage = PLUGIN1_PAGE3;
         Plugin_View_Static(desired_instrument);
       }
       //page4
       if (gridTouchY == 9 || gridTouchY == 10) {
-        select_page(PLUGIN1_PAGE4);
+        selectPage = PLUGIN1_PAGE4;
         Plugin_View_Static(desired_instrument);
       }
     }

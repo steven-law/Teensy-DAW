@@ -22,13 +22,13 @@ void FX2Bitcrush_settings() {
 
 void FX2Bitcrush_static() {
   clearWorkSpace();
-  drawActiveSquare(18, 3, 2, false, "Main", ILI9341_LIGHTGREY);
-  drawActiveSquare(18, 5, 2, false, "D-4", ILI9341_LIGHTGREY);
-  drawActiveSquare(18, 7, 2, false, "5-8", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 3, 2, 2, false, "Main", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 7, 2, 2, false, "5-8", ILI9341_LIGHTGREY);
 
-  drawActiveSquare(1, 5, 2, false, "Rvrb", ILI9341_LIGHTGREY);
-  drawActiveSquare(1, 8, 2, true, "BitC", ILI9341_LIGHTGREY);
-  drawActiveSquare(1, 11, 2, false, "Dly", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 5, 2, 2, false, "Rvrb", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 8, 2, 2, true, "BitC", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
   drawPot(3, 3, fx2samplerate_graph, fx2samplerate, "SRate", ILI9341_RED);
   drawPot(7, 3, fx2bitcrush_graph, fx2bitcrush, "Crush", ILI9341_RED);
@@ -63,17 +63,17 @@ void FX2Bitcrush_dynamic() {
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY >= 3 && gridTouchY <= 4) {
-        select_page(MIXER_PAGE_1);
+        selectPage = MIXER_PAGE_1;
         mixerPage1_Static(0);
         MixerPage1_Dynamic();
       }
       if (gridTouchY >= 5 && gridTouchY <= 6) {
-        select_page(MIXER_PAGE_2);
+        selectPage = MIXER_PAGE_2;
         mixerPage2_Static();
         MixerPage2_Dynamic();
       }
       if (gridTouchY >= 7 && gridTouchY <= 8) {
-        select_page(MIXER_PAGE_3);
+        selectPage = MIXER_PAGE_3;
         mixerPage3_Static();
         MixerPage3_Dynamic();
       }
@@ -81,11 +81,11 @@ void FX2Bitcrush_dynamic() {
     if (gridTouchX == 1 || gridTouchX == 2) {
 
       if (gridTouchY == 5 || gridTouchY == 6) {
-        select_page(FX2_PAGE1);
+        selectPage = FX2_PAGE1;
         FX1reverb_static();
       }
       if (gridTouchY == 8 || gridTouchY == 9) {
-        select_page(FX2_PAGE1);
+        selectPage = FX2_PAGE1;
         FX2Bitcrush_static();
       }
     }

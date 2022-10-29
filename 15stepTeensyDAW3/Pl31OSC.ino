@@ -89,15 +89,12 @@
 
 
 //    some value showing functions are implemented. Just call
-//    drawbarH(XPos, YPos, value_rnd, Name, int color)  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
+//    drawbarH(XPos, YPos, value, Name, int color)  //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
 //    or
-//    drawbarV(XPos, YPos, value_rnd, Name, int color) //gridPosX, gridPosY, value 0-100, valuename, backgroundcolor of bargraph
-//    or
+
 //    drawPot(xPos, yPos, fvalue, dvalue, dname, color) { //xposition, yposition, value 0-100, value to draw, name to draw, color of circle
-//    or
-//    drawPotLine(xPos, yPos, fvalue, dvalue, dname, color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-//    to change pages always use this function, it sets other pages-states to low
-//    selectPage["your-pageNr-here"];
+
+
 
 // 7) add your amp.gain() control to the volume-functions in "functions.ino"
 
@@ -213,8 +210,7 @@ void Plugin3_Page1_Dynamic(byte desired_instrument) {
         drawPot(7, CONTROL_ROW_1, pl3[pl3presetNr].Filter1_Resonance_graph, pl3[pl3presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
         if (abs(Potentiometer1 - pl3[pl3presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl3[pl3presetNr].Filter1_Resonance_graph = Potentiometer1;
-          pl3[pl3presetNr].Filter1_Resonance_rnd = map(pl3[pl3presetNr].Filter1_Resonance_graph, 0, 127, 70, 500.00);
-          pl3[pl3presetNr].Filter1_Resonance = pl3[pl3presetNr].Filter1_Resonance_rnd / 100.00;
+          pl3[pl3presetNr].Filter1_Resonance = pl3[pl3presetNr].Filter1_Resonance_graph / 25.40;
           pl3filter1.resonance(pl3[pl3presetNr].Filter1_Resonance);
         }
       }
@@ -223,8 +219,7 @@ void Plugin3_Page1_Dynamic(byte desired_instrument) {
         drawPot(11, CONTROL_ROW_1, pl3[pl3presetNr].Filter1_Sweep_graph, pl3[pl3presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
         if (abs(Potentiometer1 - pl3[pl3presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           pl3[pl3presetNr].Filter1_Sweep_graph = Potentiometer1;
-          pl3[pl3presetNr].Filter1_Sweep_rnd = map(pl3[pl3presetNr].Filter1_Sweep_graph, 0, 127, 0, 700);
-          pl3[pl3presetNr].Filter1_Sweep = pl3[pl3presetNr].Filter1_Sweep_rnd / 100.00;
+          pl3[pl3presetNr].Filter1_Sweep = pl3[pl3presetNr].Filter1_Sweep_graph / 18.14;
           pl3filter1.octaveControl(pl3[pl3presetNr].Filter1_Sweep);
         }
       }

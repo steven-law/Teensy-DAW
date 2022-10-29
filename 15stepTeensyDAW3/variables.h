@@ -45,9 +45,8 @@
 #define NUM_TRACKS 8
 #define NUM_VOICES 4
 #define NUM_STEPS 16
-#define NUM_PHRASES 64
-int steps = 16;
-int polyphony = 64;
+#define NUM_PHRASES 256
+#define steps_15 16
 
 
 //****************************************************************************
@@ -118,9 +117,16 @@ char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "
 #define FX2_PAGE1 123
 #define FX3_PAGE1 126
 
-#define MAX_PAGES 128
-bool selectPage[MAX_PAGES];
+byte selectPage;
 
+#define MAX_RAW_FILES 11
+#define SAMPLE_ROOT 69
+#define MAX_WAV_FILES 11
+const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW" };
+const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
+const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 
 //plugin 1 variables
 struct plugin1 {
@@ -128,10 +134,8 @@ struct plugin1 {
   int Filter1_Frequency = 560;
   byte Filter1_Frequency_graph = 20;
   byte Filter1_Resonance_graph = 25;
-  byte Filter1_Resonance_rnd = 25;
   float Filter1_Resonance = 1;
   byte Filter1_Sweep_graph = 80;
-  byte Filter1_Sweep_rnd = 80;
   float Filter1_Sweep = 2;
   int Env1_Attack = 50;
   byte Env1_Attack_graph = 10;
@@ -159,10 +163,8 @@ byte pl2presetNr = 0;
 struct plugin3 {
   int Filter1_Frequency = 260;
   byte Filter1_Frequency_graph = 50;
-  float Filter1_Resonance_rnd;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
-  float Filter1_Sweep_rnd;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
   int Env1_Attack = 50;
@@ -185,7 +187,6 @@ byte pl3presetNr = 0;
 struct plugin4 {
   byte Vol_rnd[12];
   float Vol[12];
-  //char* Pl4Controls[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 };
 plugin4 pl4[MAX_PRESETS];
 byte pl4presetNr = 0;
@@ -194,10 +195,8 @@ byte pl4presetNr = 0;
 struct plugin5 {
   int Filter1_Frequency = 260;
   float Filter1_Frequency_graph = 50;
-  float Filter1_Resonance_rnd;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
-  float Filter1_Sweep_rnd;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
   int Env1_Attack = 50;
@@ -220,10 +219,8 @@ byte pl5presetNr = 0;
 struct plugin6 {
   int Filter1_Frequency = 260;
   byte Filter1_Frequency_graph = 50;
-  float Filter1_Resonance_rnd;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
-  float Filter1_Sweep_rnd;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
   int Env1_Attack = 50;
@@ -243,9 +240,7 @@ struct plugin6 {
 plugin6 pl6[MAX_PRESETS];
 byte pl6presetNr = 0;
 
-#define MAX_RAW_FILES 11
-#define SAMPLE_ROOT 69
-const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW" };
+
 
 //plugin7 variables
 //drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum 1
@@ -351,10 +346,8 @@ byte pl7_4_Env4_Release_graph;
 struct plugin8 {
   int Filter1_Frequency = 260;
   float Filter1_Frequency_graph = 50;
-  float Filter1_Resonance_rnd;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
-  float Filter1_Sweep_rnd;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
   int Env1_Attack = 50;
@@ -377,58 +370,39 @@ byte pl8presetNr = 0;
 //Overall Pluginvariables
 struct plugins {
   byte Volume_graph = 50;
-  int Volume_rnd = 100;
   float Volume = 1;
 
   byte FXDryVolume_graph = 100;
-  int FXDryVolume_rnd = 100;
   float FXDryVolume = 1;
 
   byte FX1Volume_graph = 0;
-  int FX1Volume_rnd = 0;
   float FX1Volume = 0;
 
   byte FX2Volume_graph = 0;
-  int FX2Volume_rnd = 0;
   float FX2Volume = 0;
 
   byte FX3Volume_graph = 0;
-  int FX3Volume_rnd = 0;
   float FX3Volume = 0;
 };
 plugins plugin[MAX_PLUGINS];
 
-char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
-#define MAX_WAV_FILES 11
-#define SAMPLE_ROOT 69
-const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
-
-//mixer variables
 
 //FX variables
 //FX1
 //reverb variables
 float fx1reverbtime = 0;
-int fx1reverbtime_rnd = 0;
 byte fx1reverbtime_graph = 0;
 
 //FX2
 //bitcrusher variables
 int fx2bitcrush = 8;
-int fx2bitcrush_graph = 100;
+byte fx2bitcrush_graph = 100;
 
 int fx2samplerate = 22050;
-int fx2samplerate_graph = 100;
+byte fx2samplerate_graph = 100;
 
 
 
-
-
-
-//structure variables
-bool clipSelector = LOW;
-bool songArranger = HIGH;
-bool clipNumberSelector = LOW;
 
 
 //songmode variables
@@ -436,7 +410,7 @@ bool clipNumberSelector = LOW;
 byte page_phrase_start;
 byte page_phrase_end;
 byte songpageNumber = 10;
-byte phraseSegmentLength = 16;  // a variable for the zoomfactor in songmode
+#define phraseSegmentLength 16  // a variable for the zoomfactor in songmode
 byte tempoSelect = 120;         //variable to select the tempo
 byte pixelbarClock = 0;         // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
@@ -494,10 +468,7 @@ float drawPotLinePos;
 float drawPotLinePos_old;
 int drawPotLine_dvalue_old;
 
-//clip handling variables
-byte desired_step;
-byte desired_clip;
-byte desired_instrument;
+
 
 struct sequence_t {
   byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
@@ -506,9 +477,7 @@ struct sequence_t {
 struct track_t {
   byte midi_channel;               // stores the MIDI channel that this track should output on; 10 is drums
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
-  byte arrangement[NUM_PHRASES];   // stores the INDEX of the sequence-clip to play at each phrase-number
 };
-
 track_t ctrack[NUM_TRACKS];
 
 //notenumber to frequency chart
@@ -528,8 +497,8 @@ float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 1
 bool scaleSelect = LOW;
 const int scalesQuant = 9;  //how many scales do we have
 int scaleSelected = 0;      //variable for scale selecting
-char* noteNames[12] =       //notenames that are printed on the left
-  { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+
 int scales[scalesQuant][12]{
   //bool array for greying out notes that are not in the scale
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },  //Chromatic
@@ -553,6 +522,7 @@ byte barClock = 0;
 
 //Track Variables
 byte desired_track;
+byte desired_instrument;
 //track 2-8 variables
 
 struct tracks {
@@ -567,16 +537,15 @@ struct tracks {
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
-  char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
-  //char* FXNames_short[8]{ "Send1", "Send2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8" };
   bool held_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   byte midicc_value_row_1[4];
-  byte midicc_number_row_1[4]{20, 21, 22, 23};
+  byte midicc_number_row_1[4]{ 20, 21, 22, 23 };
   byte midicc_value_row_2[4];
-  byte midicc_number_row_2[4]{24, 25, 26, 27};
+  byte midicc_number_row_2[4]{ 24, 25, 26, 27 };
   byte midicc_value_row_3[4];
   byte midicc_number_row_3[4];
   bool sendCC = true;
+  byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
 };
 // make an array of 8 channel_types, numbered 0-7

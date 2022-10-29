@@ -20,17 +20,17 @@ void FX1reverb_settings() {
 
 void FX1reverb_static() {
   clearWorkSpace();
-  drawActiveSquare(18, 3, 2, false, "Main", ILI9341_LIGHTGREY);
-  drawActiveSquare(18, 5, 2, false, "D-4", ILI9341_LIGHTGREY);
-  drawActiveSquare(18, 7, 2, false, "5-8", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 3, 2, 2, false, "Main", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 7, 2, 2, false, "5-8", ILI9341_LIGHTGREY);
 
-  drawActiveSquare(1, 5, 2, true, "Rvrb", ILI9341_LIGHTGREY);
-  drawActiveSquare(1, 8, 2, false, "BitC", ILI9341_LIGHTGREY);
-  drawActiveSquare(1, 11, 2, false, "Dly", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 5, 2, 2, true, "Rvrb", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
 
 
-  drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_rnd, "Reverb", ILI9341_RED);
+  drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_RED);
 }
 
 void FX1reverb_dynamic() {
@@ -50,11 +50,10 @@ void FX1reverb_dynamic() {
 
       //reverbTime
       if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_rnd, "Reverb", ILI9341_RED);
+        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_RED);
         if (abs(Potentiometer1 - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           fx1reverbtime_graph = Potentiometer1;
-          fx1reverbtime_rnd = map(fx1reverbtime_graph, 0, 127, 0, 5000);
-          fx1reverbtime = fx1reverbtime_rnd / 100.00;
+          fx1reverbtime = fx1reverbtime_graph / 25.40;
           reverb1.reverbTime(fx1reverbtime);
         }
       }
@@ -62,17 +61,17 @@ void FX1reverb_dynamic() {
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY == 3 || gridTouchY == 4) {
-        select_page(MIXER_PAGE_1);
+        selectPage = MIXER_PAGE_1;
         mixerPage1_Static(0);
         MixerPage1_Dynamic();
       }
       if (gridTouchY >= 5 && gridTouchY <= 6) {
-        select_page(MIXER_PAGE_2);
+        selectPage = MIXER_PAGE_2;
         mixerPage2_Static();
         MixerPage2_Dynamic();
       }
       if (gridTouchY >= 7 && gridTouchY <= 8) {
-        select_page(MIXER_PAGE_3);
+        selectPage = MIXER_PAGE_3;
         mixerPage3_Static();
         MixerPage3_Dynamic();
       }
@@ -80,11 +79,11 @@ void FX1reverb_dynamic() {
     if (gridTouchX == 1 || gridTouchX == 2) {
 
       if (gridTouchY == 5 || gridTouchY == 6) {
-        select_page(FX1_PAGE1);
+        selectPage = FX1_PAGE1;
         FX1reverb_static();
       }
       if (gridTouchY == 8 || gridTouchY == 9) {
-        select_page(FX2_PAGE1);
+        selectPage = FX2_PAGE1;
         FX2Bitcrush_static();
       }
     }
