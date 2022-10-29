@@ -14338,6 +14338,7 @@ const unsigned int AudioSampleKick[2561] = {
 
 
 // Converted from P2.WAV, using 44100 Hz, u-law encoding
+PROGMEM
 const unsigned int AudioSampleP2[929] = {
   0x01000E08,
   0x812B3AA2,

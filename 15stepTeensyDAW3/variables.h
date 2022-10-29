@@ -544,7 +544,6 @@ struct tracks {
   byte midicc_number_row_2[4]{ 24, 25, 26, 27 };
   byte midicc_value_row_3[4];
   byte midicc_number_row_3[4];
-  bool sendCC = true;
   byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
 };
@@ -556,7 +555,6 @@ tracks track[8];
 //channel 1 variables
 bool channel1Select = LOW;  // a handler to keep the mode active after selecting
 byte tr1ClipNr = 0;
-byte ch1Clip = 1;
 byte ch1tone;
 byte ch1Octaves = 3;
 byte ch1songModePlayedClip;

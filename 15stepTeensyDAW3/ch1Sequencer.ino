@@ -4,7 +4,6 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawActiveDrumSteps();
 }
 
-
 void drumStepSequencer() {
 
   //drawActiveDrumSteps();
@@ -72,11 +71,11 @@ void drumStepSequencer() {
         ch1tone = (gridTouchY - 1);
         byte step_number = gridTouchX - 2;
 
-        if (!channel1Clip[ch1Clip][ch1tone][step_number]) {
-          channel1Clip[ch1Clip][ch1tone][step_number] = true;
+        if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+          channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector)) * 20);  //draw the active steps circles
-        } else if (channel1Clip[ch1Clip][ch1tone][step_number]) {
-          channel1Clip[ch1Clip][ch1tone][step_number] = false;
+        } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+          channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
         }
       }
@@ -84,7 +83,7 @@ void drumStepSequencer() {
 
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
-      ch1Clip = (gridTouchX / 2) - 1;
+      track[0].clip_selector = (gridTouchX / 2) - 1;
       clearStepsGrid();
       //draw active steps
       drawActiveDrumSteps();
@@ -114,17 +113,15 @@ void drumStepSequencer() {
   }
 }
 
-
 void drawActiveDrumSteps() {
   for (byte tone = 0; tone < 12; tone++) {
     for (byte steps = 0; steps < STEP_QUANT; steps++) {
-      if (channel1Clip[ch1Clip][tone][steps]) {
+      if (channel1Clip[track[0].clip_selector][tone][steps]) {
         tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + (track[0].clip_selector) * 20);
       }
     }
   }
 }
-
 
 void saveTrack1() {
 
@@ -168,7 +165,6 @@ void saveTrack1() {
     tft.println("error opening track1.txt");
   }
 }
-
 void loadTrack1() {
   tft.fillScreen(ILI9341_DARKGREY);
   tft.setFont(Arial_8);
