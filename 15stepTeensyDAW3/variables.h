@@ -40,7 +40,7 @@
 #define VALUE_NOTEOFF 0
 
 //variables for 15step sequencer
-#define SEQUENCER_MEMORY 32768
+#define SEQUENCER_MEMORY 200
 #define NUM_CLIPS 9
 #define NUM_TRACKS 8
 #define NUM_VOICES 4
@@ -57,11 +57,11 @@
 //    now we head over to the 15stepTeensyDAW3.ino"
 //look for *************************************************************************
 ////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_PRESETS 8  //max presets per plugin
+#define MAX_PRESETS 2  //max presets per plugin
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "MogL", "9", "10", "11", "12", "13", "14", "15", "16" };
+const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "MogL", "9", "10", "11", "12", "13", "14", "15", "16" };
 
 
 #define DRUMTRACK 0
@@ -420,15 +420,16 @@ byte end_of_loop_old = 255;
 byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 
-int step_Frame_X;
-int step_Frame_Y;
+byte step_Frame_X;
+byte step_Frame_Y;
 
 //touchscreen variables
-int gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
-int gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
-int trackTouchY;
-int constrainedtrackTouchY;
+byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
+byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
+byte trackTouchY;
 unsigned long previousMillis = 0;
+//DMAMEM uint16_t fb1[320 * 240];
+//PROGMEM uint16_t fb1[320 * 240];
 
 #define CONTROL_ROW_0 3
 #define CONTROL_ROW_1 6
@@ -511,8 +512,8 @@ int scales[scalesQuant][12]{
   { 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0 },  //Phrygian
   { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 }   //Lydian
 };
-char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
-char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
+const char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
+const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
 
 
 
@@ -526,7 +527,6 @@ byte desired_instrument;
 //track 2-8 variables
 
 struct tracks {
-  bool select = false;
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
   byte clip_songMode = 1;  //clipselection from the arrangement
@@ -537,7 +537,7 @@ struct tracks {
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
-  bool held_notes[STEP_QUANT]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  bool send_noteOff;
   byte midicc_value_row_1[4];
   byte midicc_number_row_1[4]{ 20, 21, 22, 23 };
   byte midicc_value_row_2[4];
@@ -554,10 +554,9 @@ tracks track[8];
 
 //channel 1 variables
 bool channel1Select = LOW;  // a handler to keep the mode active after selecting
-byte tr1ClipNr = 0;
 byte ch1tone;
 byte ch1Octaves = 3;
-byte ch1songModePlayedClip;
+bool dsend_noteOff[12];
 bool channel1Clip[NUM_CLIPS][12][STEP_QUANT]{
 
   { //Clip 0

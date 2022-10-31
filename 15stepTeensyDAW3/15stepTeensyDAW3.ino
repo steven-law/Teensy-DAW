@@ -40,8 +40,11 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <Audio.h>
 #include <Wire.h>
 #include <SerialFlash.h>
+
 #include <ILI9341_t3.h>
 #include <font_Arial.h>  // from ILI9341_t3
+//#include <ILI9341_t3n.h>
+//#include <ILI9341_t3n_font_Arial.h>
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 #include <SD.h>
@@ -139,10 +142,10 @@ int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 129431
 Bounce* buttons = new Bounce[NUM_BUTTONS];
 
 //initiate the modules
-FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                     //initiate Sequencer
-File myFile;                                                                         //initiate SDCard Reader
+FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                      //initiate Sequencer
+File myFile;                                                                          //initiate SDCard Reader
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
-XPT2046_Touchscreen ts(CS_PIN);                                                      //initiate Touchscreen
+XPT2046_Touchscreen ts(CS_PIN);                                                       //initiate Touchscreen
 
 
 
@@ -155,11 +158,7 @@ XPT2046_Touchscreen ts(CS_PIN);                                                 
 
 //Place for the Pluginconnections
 
-#include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <SD.h>
-#include <SerialFlash.h>
+
 
 // GUItool: begin automatically generated code
 AudioSynthWaveformDc pl5dc1;                  //xy=95,1290
@@ -427,6 +426,8 @@ void setup() {
   tft.fillScreen(ILI9341_BLACK);
   ts.begin();
   ts.setRotation(1);
+  //tft.setFrameBuffer(fb1);
+  //tft.useFrameBuffer(true);
   while (!Serial && (millis() <= 1000))
     ;
   tft.fillScreen(ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
@@ -435,11 +436,13 @@ void setup() {
   tft.setCursor(0, 3);
   Serial.println("Initializing Touchscreen...");
   tft.println("Initializing Touchscreen...");
+  //tft.updateScreen();
   delay(100);
 
   AudioMemory(200);
   Serial.println("Initializing AudioMemory = 200");
   tft.println("Initializing AudioMemory = 200");
+  //tft.updateScreen();
   delay(100);
 
 
@@ -447,14 +450,17 @@ void setup() {
   //initialize SD Card
   Serial.print("Initializing SD card...");
   tft.println("Initializing SD card...");
+  //tft.updateScreen();
   delay(100);
   if (!SD.begin(chipSelect)) {
     Serial.println("initialization failed!");
     tft.println("initialization failed!");
+    //tft.updateScreen();
     return;
   }
   Serial.println("initialization done.");
   tft.println("initialization done.");
+  //tft.updateScreen();
   delay(100);
 
   // start sequencer and set callbacks
@@ -463,6 +469,7 @@ void setup() {
   seq.stop();
   Serial.println("Initializing Sequencer");
   tft.println("Initializing Sequencer");
+ //tft.updateScreen();
   delay(100);
 
   /// set the default channel of each track
@@ -490,35 +497,40 @@ void setup() {
   clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
+  //tft.updateScreen();
   delay(100);
 
 
   //initiate Buttons
-  for (int i = 0; i < NUM_BUTTONS; i++) {
+  for (byte i = 0; i < NUM_BUTTONS; i++) {
     buttons[i].attach(BUTTON_PINS[i], INPUT_PULLUP);  //setup the bounce instance for the current button
     buttons[i].interval(100);                         // interval in ms
   }
 
   Serial.println("Initializing Buttons");
   tft.println("Initializing Buttons");
+ //tft.updateScreen();
   delay(100);
   //initiate variablePlayback
   playSdPitch1.enableInterpolation(true);
   playSdPitch2.enableInterpolation(true);
   Serial.println("Initializing VariablePlayback");
   tft.println("Initializing VariablePlayback");
+ //tft.updateScreen();
   delay(100);
   Serial.println("Complete...");
   tft.println("Complete...");
+  //tft.updateScreen();
   delay(400);
   //load the startupScreen
   startUpScreen();
   delay(500);
-  for (int pixelX = 0; pixelX < 16; pixelX++) {
-    for (int pixelY = 0; pixelY < 16; pixelY++) {
+  for (byte pixelX = 0; pixelX < 16; pixelX++) {
+    for (byte pixelY = 0; pixelY < 16; pixelY++) {
       tftRAM[pixelX][pixelY] = tft.readPixel(pixelX, pixelY);
     }
   }
+  //tft.updateScreen();
 }
 
 
@@ -529,19 +541,22 @@ void loop() {
   // running. there are other methods for
   // start, stop, and pausing the steps
   seq.run();
-
+  //tft.updateScreen();
 
   //read Potentiometer1
   Potentiometer1 = 127 - map(analogRead(POTENTIOMETER_1_PIN), 0, 1023, 0, 127);
   Potentiometer2 = 127 - map(analogRead(POTENTIOMETER_2_PIN), 0, 1023, 0, 127);
-   unsigned long currentMillis = millis();
+  //assigning the current clip from the arrangment array for each track
+  for (byte instruments = 0; instruments < 8; instruments++) {
+    track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
+  }
+  /* unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    //Serial.println(track[1].clip_selector);
-  
-
-}
-  for (int i = 0; i < NUM_BUTTONS; i++) {
+    Serial.println(digitalRead(2));
+  }
+  */
+  for (byte i = 0; i < NUM_BUTTONS; i++) {
     // Update the Bounce instance :
     buttons[i].update();
   }
@@ -565,14 +580,14 @@ void loop() {
   }
   if (buttons[4].fell()) {
     seq.start();
-    pixelbarClock = 0;
-    for (int i = 1; i <= 7; i++) {
+
+    for (byte i = 1; i <= 7; i++) {
       track[i].clip_songMode = track[i].arrangment1[0];
     }
   }
   if (buttons[5].fell()) {
-    barClock = 0;
-    pixelbarClock = 0;
+    barClock = -1;
+    pixelbarClock = -1;
     phrase = -1;
     seq.stop();
     seq.panic();
@@ -592,7 +607,6 @@ void loop() {
     gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
 
     trackTouchY = map(p.y, 700, 3200, 0, 7);
-    constrainedtrackTouchY = constrain(trackTouchY, 0, 7);
   }
   if (ts.touched() || !buttons[6].read()) {
 
@@ -602,7 +616,7 @@ void loop() {
       //Play button
       if (gridTouchX == POSITION_PLAY_BUTTON || gridTouchX == POSITION_PLAY_BUTTON + 1) {
         seq.start();
-        for (int i = 1; i <= 7; i++) {
+        for (byte i = 1; i <= 7; i++) {
           track[i].clip_songMode = track[i].arrangment1[0];
         }
       }
@@ -636,7 +650,7 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //TempoSelect button
       if (gridTouchX == POSITION_BPM_BUTTON || gridTouchX == POSITION_BPM_BUTTON + 1) {
-        tempoSelect = map(Potentiometer1, 0, 127, 50, 200);
+        tempoSelect = map(Potentiometer1, 0, 127, 55, 200);
         seq.setTempo(tempoSelect);
         tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
@@ -651,7 +665,7 @@ void loop() {
         selectPage = SCALESELECT;
         gridScaleSelector();
         scaleSelector();
-        for (int i = 0; i < scalesQuant; i++) {
+        for (byte i = 0; i < scalesQuant; i++) {
           tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
           tft.setFont(Arial_8);
           tft.setTextColor(ILI9341_WHITE);
@@ -683,7 +697,7 @@ void loop() {
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //  select channel2-8
-      for (int tracks = 1; tracks < 8; tracks++) {
+      for (byte tracks = 1; tracks < 8; tracks++) {
         if (trackTouchY == tracks) {
           desired_instrument = tracks;
           desired_track = tracks;
@@ -782,7 +796,7 @@ void loop() {
     drumStepSequencer();
   }
   //setting up the melodicStepSequencer-view for #2-8
-  for (int i = 1; i < 8; i++) {
+  for (byte i = 1; i < 8; i++) {
     if (selectPage == i) {
       melodicStepSequencer(i);
     }
@@ -833,7 +847,7 @@ void loop() {
 
 void drawCursor() {
 
-  for (int pixel = 0; pixel < 16; pixel++) {
+  for (byte pixel = 0; pixel < 16; pixel++) {
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 1, tftRAM[0][pixel]);
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 15, tftRAM[1][pixel]);
     tft.drawPixel((STEP_FRAME_W * last_button_X) + 1, pixel + (STEP_FRAME_H * last_button_Y), tftRAM[2][pixel]);
@@ -841,7 +855,7 @@ void drawCursor() {
   }
 
 
-  for (int pixel = 0; pixel < 16; pixel++) {
+  for (byte pixel = 0; pixel < 16; pixel++) {
     tftRAM[0][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 1);
     tftRAM[1][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 15);
     tftRAM[2][pixel] = tft.readPixel((STEP_FRAME_W * gridTouchX) + 1, pixel + (STEP_FRAME_H * gridTouchY));
@@ -873,7 +887,7 @@ void startUpScreen() {  //static Display rendering
   tft.print("D");
 
   //other tracks buttons
-  for (int otherTracks = 2; otherTracks <= 8; otherTracks++) {
+  for (byte otherTracks = 2; otherTracks <= 8; otherTracks++) {
     tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
     tft.print(otherTracks);
@@ -955,7 +969,7 @@ void scaleSelector() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    for (int i = 0; i < scalesQuant; i++) {
+    for (byte i = 0; i < scalesQuant; i++) {
       tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
       tft.setFont(Arial_8);
       tft.setTextColor(ILI9341_WHITE);
@@ -977,19 +991,19 @@ void scaleSelector() {
 
 void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
-  for (int i = 0; i < 17; i++) {  //vert Lines
+  for (byte i = 0; i < 17; i++) {  //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
     tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, STEP_FRAME_H, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
     if (i % 4 == 0) {
       tft.drawFastVLine((i * STEP_FRAME_W) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, ILI9341_LIGHTGREY);  //(x, y-start, y-length, color)
     }
   }
-  for (int i = 0; i < 13; i++) {  //hor lines
+  for (byte i = 0; i < 13; i++) {  //hor lines
     step_Frame_Y = i * 16;
     tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE);  //(x-start, y, length, color)
   }
   //draw Clipselector
-  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
+  for (byte ClipNr = 0; ClipNr < 8; ClipNr++) {
     tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + ClipNr * 20);
     tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
     tft.setFont(Arial_8);
@@ -998,7 +1012,7 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.print("Clip ");
     tft.print(ClipNr);
   }
-  for (int i = 0; i < 12; i++) {
+  for (byte i = 0; i < 12; i++) {
     if (scales[scaleSelected][i]) {
       tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
@@ -1030,7 +1044,7 @@ void drawStepSequencerStatic(int desired_instrument) {
 
 
   //draw Notenames
-  for (int n = 0; n < 12; n++) {  //hor notes
+  for (byte n = 0; n < 12; n++) {  //hor notes
     tft.setCursor(18, STEP_FRAME_H * n + 18);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
@@ -1061,7 +1075,7 @@ void drawMIDIchannel() {
   tft.setTextSize(1);
   tft.print(track[desired_track].MIDIchannel);
   //draw MidiCC
-  for (int plugintext = 0; plugintext <= 16; plugintext++) {
+  for (byte plugintext = 0; plugintext <= 16; plugintext++) {
     if (track[desired_instrument].MIDIchannel == plugintext) {
       tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
       tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
@@ -1072,7 +1086,7 @@ void drawMIDIchannel() {
     }
   }
   //draw Plugin
-  for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
+  for (byte plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
     if (track[desired_track].MIDIchannel == plugintext + 17) {
       tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
       tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
@@ -1085,14 +1099,14 @@ void drawMIDIchannel() {
 }
 
 void clearStepsGrid() {  // clear all Steps from Display
-  for (int T = 0; T < 12; T++) {
-    for (int S = 0; S < 16; S++) {
+  for (byte T = 0; T < 12; T++) {
+    for (byte S = 0; S < 16; S++) {
       tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
     }
   }
 }
 void clearStepsGridY() {  // clear all Steps in the same column
-  for (int T = 0; T < 12; T++) {
+  for (byte T = 0; T < 12; T++) {
 
     tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
   }

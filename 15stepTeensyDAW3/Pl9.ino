@@ -11,7 +11,10 @@ void Plugin9_Page_Static(byte Pagenumber) {
 void Plugin9_Page1_Dynamic() {
   /*
   
-   if (ts.touched() || !buttons[6].read()) {
+    TS_Point p = ts.getPoint();
+  if (ts.touched() || !buttons[6].read()) {
+    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
+    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
      
      if (gridTouchY == 3) {
 

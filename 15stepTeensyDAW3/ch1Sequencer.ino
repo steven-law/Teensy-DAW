@@ -7,7 +7,7 @@ void drumStepSequencer_Static() {  //static Display rendering
 void drumStepSequencer() {
 
   //drawActiveDrumSteps();
-  for (int i = 0; i < 7; i++) {
+  for (byte i = 0; i < 7; i++) {
     if (buttons[i].changed()) {
       drawActiveSteps();
     }
@@ -19,8 +19,10 @@ void drumStepSequencer() {
   gridTouchY = map(Potentiometer1, 0, 127, 0, 19);
   drawCursor();
   }*/
-
+  TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
+    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
+    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
     drawActiveDrumSteps();
 
 
@@ -48,7 +50,7 @@ void drumStepSequencer() {
     //assign drumnotes on the left
     if (gridTouchX == 1) {
       int noteselector = Potentiometer1;
-      for (int i = 0; i < 12; i++) {
+      for (byte i = 0; i < 12; i++) {
         drumnote[gridTouchY - 1] = map(noteselector, 0, 127, 0, 48);
         tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
         tft.setCursor(18, STEP_FRAME_H * i + 18);
@@ -91,7 +93,7 @@ void drumStepSequencer() {
 
 
     //midicc_view
-    for (int midiccSelection = 0; midiccSelection <= 16; midiccSelection++) {
+    for (byte midiccSelection = 0; midiccSelection <= 16; midiccSelection++) {
       if (track[0].MIDIchannel == midiccSelection) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
           selectPage = MIDICC_PAGE_1;
@@ -102,7 +104,7 @@ void drumStepSequencer() {
 
 
     //plugin_view
-    for (int pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
+    for (byte pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
       if (track[0].MIDIchannel == pluginSelection + 17) {
         if (gridTouchX >= 18 && gridTouchY == 12) {
           selectPage = pluginSelection + 40;

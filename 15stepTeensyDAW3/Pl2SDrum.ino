@@ -28,7 +28,7 @@ void Plugin_2_Settings() {
    pl2amp.gain(1);
 }
 void Plugin2_Page_Static(byte Pagenumber) {
-  for (int touchX = 1; touchX < 5; touchX++) {
+  for (byte touchX = 1; touchX < 5; touchX++) {
     drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
     //drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", ILI9341_RED);
     drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
@@ -39,10 +39,13 @@ void Plugin2_Page_Static(byte Pagenumber) {
 
 void Plugin2_Page1_Dynamic() {
 
+    TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
+    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
+    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
     //Volume
     if (gridTouchY == CONTROL_ROW_0) {
-      for (int touchX = 1; touchX < 5; touchX++) {
+      for (byte touchX = 1; touchX < 5; touchX++) {
         drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
           pl4[0].Vol_rnd[touchX - 1] = map(Potentiometer1, 0, 127, 0, 99.00);
@@ -52,7 +55,7 @@ void Plugin2_Page1_Dynamic() {
       }
     }
     if (gridTouchY == CONTROL_ROW_1) {
-      for (int touchX = 1; touchX < 5; touchX++) {
+      for (byte touchX = 1; touchX < 5; touchX++) {
         drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
           pl4[0].Vol_rnd[touchX + 3] = map(Potentiometer1, 0, 127, 0, 99.00);
@@ -62,7 +65,7 @@ void Plugin2_Page1_Dynamic() {
       }
     }
     if (gridTouchY == CONTROL_ROW_2) {
-      for (int touchX = 1; touchX < 5; touchX++) {
+      for (byte touchX = 1; touchX < 5; touchX++) {
         drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
           pl4[0].Vol_rnd[touchX + 7] = map(Potentiometer1, 0, 127, 0, 99.00);

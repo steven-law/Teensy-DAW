@@ -103,8 +103,10 @@ void songModePage(byte songpageNumber) {
   }
   */
   //drawarrengmentLines(songpageNumber);
-
+  TS_Point p = ts.getPoint();
   if (ts.touched()) {
+    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
+    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
     drawarrengmentLines(songpageNumber);
     int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
     byte touched_track = trackTouchY;
