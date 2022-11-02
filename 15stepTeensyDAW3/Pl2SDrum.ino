@@ -29,9 +29,9 @@ void Plugin_2_Settings() {
 }
 void Plugin2_Page_Static(byte Pagenumber) {
   for (byte touchX = 1; touchX < 5; touchX++) {
-    drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
-    //drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", ILI9341_RED);
-    drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
+    drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+    //drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", trackColor[desired_instrument]);
+    drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
     drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
   }
 }
@@ -46,7 +46,7 @@ void Plugin2_Page1_Dynamic() {
     //Volume
     if (gridTouchY == CONTROL_ROW_0) {
       for (byte touchX = 1; touchX < 5; touchX++) {
-        drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], ILI9341_BLUE);
+        drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
           pl4[0].Vol_rnd[touchX - 1] = map(Potentiometer1, 0, 127, 0, 99.00);
           pl4[0].Vol[touchX - 1] = pl4[0].Vol_rnd[touchX - 1] / 100.00;
@@ -56,7 +56,7 @@ void Plugin2_Page1_Dynamic() {
     }
     if (gridTouchY == CONTROL_ROW_1) {
       for (byte touchX = 1; touchX < 5; touchX++) {
-        drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], ILI9341_RED);
+        drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
         if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) +1) {
           pl4[0].Vol_rnd[touchX + 3] = map(Potentiometer1, 0, 127, 0, 99.00);
           pl4[0].Vol[touchX + 3] = pl4[0].Vol_rnd[touchX + 3] / 100.00;

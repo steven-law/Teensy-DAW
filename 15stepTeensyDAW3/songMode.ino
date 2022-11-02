@@ -19,9 +19,9 @@ void drawarrengmentLines(byte songpageNumber) {
       if (track[trackss].arrangment1[phrase] < 8) {
         for (int thickness = -8; thickness < 8; thickness++) {
           tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss]);  //(x-start, y, length, color)
-          if (track[trackss].arrangment1[phrase] == 8) {
+                                                                                                                                                                                                    /* if (track[trackss].arrangment1[phrase] == 8) {
             tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, ILI9341_DARKGREY);  //(x-start, y, length, color)
-          }
+          }*/
         }
         tft.setFont(Arial_10);
         tft.setTextColor(ILI9341_WHITE);
@@ -30,6 +30,28 @@ void drawarrengmentLines(byte songpageNumber) {
       }
     }
   }
+}
+
+void drawarrengmentLine(byte songpageNumber, byte touched_track, byte touched_phrase) {
+  page_phrase_start = songpageNumber * 16;
+  page_phrase_end = (songpageNumber + 1) * 16;
+
+  //draw horizontal song arrangment Lines
+  // for (byte phrase = page_phrase_start; phrase < page_phrase_end; phrase++) {
+  //for (byte trackss = 0; trackss < 8; trackss++) {
+  //if (track[trackss].arrangment1[phrase] < 8) {
+  for (int thickness = -8; thickness < 8; thickness++) {
+    tft.drawFastHLine((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((touched_track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[touched_track]);  //(x-start, y, length, color)
+  }
+
+
+  tft.setFont(Arial_10);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H - 1);
+  tft.print(track[touched_track].arrangment1[touched_phrase]);
+  //}
+  //}
+  //}
 }
 void clearArrangment() {
   for (byte ctrack = 0; ctrack < 8; ctrack++) {
@@ -49,8 +71,8 @@ void draw_start_of_loop() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
   tft.print("S");
-  tft.print(start_of_loop);
-  start_of_loop_old = start_of_loop;
+  tft.print(start_of_loop+1);
+  start_of_loop_old = start_of_loop+1;
 }
 void draw_end_of_loop() {
   tft.setFont(Arial_8);
@@ -84,55 +106,26 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
       tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  //(x, y-start, y-length, color)
     }
   }
-
-  if (songpageNumber == 16) {
-    //drawarrengmentLinesZoom();
-  } else {
-    drawarrengmentLines(songpageNumber);
-  }
+  drawarrengmentLines(songpageNumber);
 }
 
 void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
-  /*
-    unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    drawarrengmentLines(songpageNumber);
-    previousMillis = currentMillis;
-  }
-  */
-  //drawarrengmentLines(songpageNumber);
-  TS_Point p = ts.getPoint();
+
+
   if (ts.touched()) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-    drawarrengmentLines(songpageNumber);
+
     int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
     byte touched_track = trackTouchY;
 
-    if (gridTouchY == 0) {
-      //Save button
-      if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savebutton();
-      }
-      //Load button
-      if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadbutton();
-      }
+    //Assigning clips to the arranger
+    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
+      track[touched_track].arrangment1[touched_phrase] = map(Potentiometer1, 0, 127, 0, 8);
+      //draw horizontal song arrangment Lines
+      drawarrengmentLine(songpageNumber, touched_track, touched_phrase);
     }
 
-
-    if (songpageNumber == 16) {
-      //drawarrengmentLinesZoom();
-    } else {
-      //Clip Selector
-      if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
-        track[touched_track].arrangment1[touched_phrase] = map(Potentiometer1, 0, 127, 0, 8);
-        //draw horizontal song arrangment Lines
-        drawarrengmentLines(songpageNumber);
-      }
-    }
 
 
     //Start of loop
@@ -142,7 +135,7 @@ void songModePage(byte songpageNumber) {
     }
     //end of loop
     if (gridTouchX >= 18 && gridTouchY == 2) {
-      end_of_loop = map(Potentiometer1, 0, 127, 1, 255) - 1;
+      end_of_loop = map(Potentiometer1, 0, 127, 1, 255);
       draw_end_of_loop();
     }
     //page selection
@@ -160,6 +153,17 @@ void songModePage(byte songpageNumber) {
     if (gridTouchX >= 18) {
       if (gridTouchY == 3 || gridTouchY == 4) {
         clearArrangment();
+      }
+    }
+    //save and load
+    if (gridTouchY == 0) {
+      //Save button
+      if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
+        savebutton();
+      }
+      //Load button
+      if (gridTouchX == POSITION_LOAD_BUTTON) {
+        loadbutton();
       }
     }
   }

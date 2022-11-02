@@ -6,26 +6,48 @@ void drumStepSequencer_Static() {  //static Display rendering
 
 void drumStepSequencer() {
 
-  //drawActiveDrumSteps();
   for (byte i = 0; i < 7; i++) {
     if (buttons[i].changed()) {
       drawActiveSteps();
     }
   }
 
-  /*
-  if (!buttons[6].read()) {
-  gridTouchX = map(Potentiometer2, 0, 127, 0, 19);
-  gridTouchY = map(Potentiometer1, 0, 127, 0, 19);
-  drawCursor();
-  }*/
+  //assign drumsteps on the grid
+  //for better behaviour here we wait for "interval, unless it would switch within micrseconds
+  //tho, this leads to a drop of the sequencertempo
   TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-    drawActiveDrumSteps();
+    unsigned long currentMillis = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
 
 
+      if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
+        drawCursor();
+
+        int dot_on_X = (gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X;
+        int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
+        ch1tone = (gridTouchY - 1);
+        byte step_number = gridTouchX - 2;
+
+        if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+
+          channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector)) * 20);  //draw the active steps circles
+
+        } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+          channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
+        }
+      }
+    }
+    //midichannel selection
+    //draw MIDIchannel number
+    if (gridTouchX >= 18 && gridTouchY == 11) {
+      track[0].MIDIchannel = map(Potentiometer1, 0, 127, 1, MAX_CHANNELS);
+      drawMIDIchannel();
+    }
+    //load and save
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
@@ -36,17 +58,6 @@ void drumStepSequencer() {
         loadTrack1();
       }
     }
-    //draw active steps
-
-
-    //midichannel selection
-    //draw MIDIchannel number
-    if (gridTouchX >= 18 && gridTouchY == 11) {
-      int MIDIChannelAssign = Potentiometer1;
-      track[0].MIDIchannel = map(Potentiometer1, 0, 127, 1, MAX_CHANNELS);
-      drawMIDIchannel();
-    }
-
     //assign drumnotes on the left
     if (gridTouchX == 1) {
       int noteselector = Potentiometer1;
@@ -60,29 +71,6 @@ void drumStepSequencer() {
         tft.print(drumnote[i]);
       }
     }
-    //assign drumsteps on the grid
-    //for better behaviour here we wait for "interval, unless it would switch within micrseconds
-    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
-      drawCursor();
-
-      unsigned long currentMillis = millis();
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-        int dot_on_X = (gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X;
-        int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
-        ch1tone = (gridTouchY - 1);
-        byte step_number = gridTouchX - 2;
-
-        if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
-          channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector)) * 20);  //draw the active steps circles
-        } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
-          channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
-        }
-      }
-    }
-
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
       track[0].clip_selector = (gridTouchX / 2) - 1;
@@ -90,19 +78,6 @@ void drumStepSequencer() {
       //draw active steps
       drawActiveDrumSteps();
     }
-
-
-    //midicc_view
-    for (byte midiccSelection = 0; midiccSelection <= 16; midiccSelection++) {
-      if (track[0].MIDIchannel == midiccSelection) {
-        if (gridTouchX >= 18 && gridTouchY == 12) {
-          selectPage = MIDICC_PAGE_1;
-          midiCC_view_Static(0, 0);
-        }
-      }
-    }
-
-
     //plugin_view
     for (byte pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
       if (track[0].MIDIchannel == pluginSelection + 17) {
@@ -112,8 +87,18 @@ void drumStepSequencer() {
         }
       }
     }
+    //midicc_view
+    for (byte midiccSelection = 0; midiccSelection <= 16; midiccSelection++) {
+      if (track[0].MIDIchannel == midiccSelection) {
+        if (gridTouchX >= 18 && gridTouchY == 12) {
+          selectPage = MIDICC_PAGE_1;
+          midiCC_view_Static(0, 0);
+        }
+      }
+    }
   }
 }
+
 
 void drawActiveDrumSteps() {
   for (byte tone = 0; tone < 12; tone++) {

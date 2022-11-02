@@ -30,7 +30,7 @@ void FX1reverb_static() {
 
 
 
-  drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_RED);
+  drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", trackColor[desired_instrument]);
 }
 
 void FX1reverb_dynamic() {
@@ -54,7 +54,7 @@ void FX1reverb_dynamic() {
 
       //reverbTime
       if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_RED);
+        drawPot(3, 3, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", trackColor[desired_instrument]);
         if (abs(Potentiometer1 - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           fx1reverbtime_graph = Potentiometer1;
           fx1reverbtime = fx1reverbtime_graph / 25.40;

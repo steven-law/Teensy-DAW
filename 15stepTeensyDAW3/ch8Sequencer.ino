@@ -1,6 +1,5 @@
 void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   desired_track = desired_instrument;
-  byte tone_start = track[desired_instrument].shown_octaves * 12;
   clearWorkSpace();
   drawStepSequencerStatic(desired_instrument);
   drawActiveSteps();
@@ -12,8 +11,6 @@ void melodicStepSequencer(byte desired_instrument) {
   desired_track = desired_instrument;
   int touched_step = gridTouchX - 2;
   byte touched_note = gridTouchY - 1;
-  byte tone_start = track[desired_instrument].shown_octaves * 12;
-  byte tone_end = (track[desired_instrument].shown_octaves + 1) * 12;
   for (byte i = 0; i < 7; i++) {
     if (buttons[i].changed()) {
       drawActiveSteps();
@@ -21,14 +18,35 @@ void melodicStepSequencer(byte desired_instrument) {
   }
   TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-    drawActiveSteps();
-    //octave selection
-    if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
-      unsigned long currentMillis = millis();
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
+
+    //manually assigning steps to the grid;
+    //for better behaviour here we wait for "interval, unless it would switch within micrseconds
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+
+
+      if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
+        drawCursor();
+        track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
+        int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
+        int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
+        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
+
+        if (notevalue_on_step == VALUE_NOTEOFF) {
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
+          clearStepsGridY();
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + track[desired_instrument].clip_selector * 20);  //draw the active steps circles
+
+        } else if (notevalue_on_step > VALUE_NOTEOFF) {
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
+        }
+      }
+      //}
+
+      //octave selection
+      if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
         if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
           track[desired_instrument].shown_octaves--;
           clearStepsGrid();
@@ -47,8 +65,6 @@ void melodicStepSequencer(byte desired_instrument) {
       }
     }
 
-
-
     //midichannel selection
     if (gridTouchX >= 18 && gridTouchY == 11) {
       int MIDIChannelAssign = Potentiometer1;
@@ -59,32 +75,6 @@ void melodicStepSequencer(byte desired_instrument) {
       track[desired_instrument].MIDIchannel = map(MIDIChannelAssign, 0, 127, 1, MAX_CHANNELS);
       //draw MIDIchannel number
       drawMIDIchannel();
-    }
-
-    //manually assigning steps to the grid;
-    //for better behaviour here we wait for "interval, unless it would switch within micrseconds
-    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
-      drawCursor();
-
-      unsigned long currentMillis = millis();
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-
-        track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
-        int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
-        int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
-        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
-
-        if (notevalue_on_step == VALUE_NOTEOFF) {
-          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
-          clearStepsGridY();
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + track[desired_instrument].clip_selector * 20);  //draw the active steps circles
-
-        } else if (notevalue_on_step > VALUE_NOTEOFF) {
-          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
-        }
-      }
     }
 
     //clipselecting
@@ -102,9 +92,6 @@ void melodicStepSequencer(byte desired_instrument) {
         }
       }
     }
-
-
-
     //plugin_1_view
     for (byte pluginSelection = 0; pluginSelection < MAX_PLUGINS; pluginSelection++) {
       if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
@@ -124,7 +111,6 @@ void drawActiveSteps() {
     int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
     int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
     if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
-
       tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector) * 20);
     }
     if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] == VALUE_NOTEOFF) {

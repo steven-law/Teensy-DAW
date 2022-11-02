@@ -23,28 +23,28 @@ void Plugin9_Page1_Dynamic() {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(3, 3, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(3, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //2
       if (gridTouchX == 7 || gridTouchX == 8) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(7, 3, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(7, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //3
       if (gridTouchX == 11 || gridTouchX == 12) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(11, 3, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(11, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //4
       if (gridTouchX == 15 || gridTouchX == 16) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(15, 3, fvalue, dvalue, "dname", ILI9341_RED);
+        drawPot(15, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
     }
   if (gridTouchY == 7) {
@@ -54,28 +54,28 @@ void Plugin9_Page1_Dynamic() {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(3, 7, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(3, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //2
       if (gridTouchX == 7 || gridTouchX == 8) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(7, 7, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(7, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //3
       if (gridTouchX == 11 || gridTouchX == 12) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(11, 7, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(11, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //4
       if (gridTouchX == 15 || gridTouchX == 16) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(15, 7, fvalue, dvalue, "dname", ILI9341_RED);
+        drawPot(15, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
     }
 
@@ -86,28 +86,28 @@ void Plugin9_Page1_Dynamic() {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(3, 11, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(3, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //2
       if (gridTouchX == 7 || gridTouchX == 8) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(7, 11, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(7, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //3
       if (gridTouchX == 11 || gridTouchX == 12) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(11, 11, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(11, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
       //4
       if (gridTouchX == 15 || gridTouchX == 16) {
         dvalue = map(Potentiometer1, 0, 127, 0, 12);
         fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(15, 11, fvalue, dvalue, "dname", ILI9341_BLUE);
+        drawPot(15, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
       }
     }*/
 }

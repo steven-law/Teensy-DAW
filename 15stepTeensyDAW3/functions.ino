@@ -293,10 +293,6 @@ void drawNrInRect(byte xPos, byte yPos, byte dvalue, int color) {
 
 
 
-
-
-
-
 void clearWorkSpace() {                                                                                  //clear the whole grid from Display
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
   tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H * 12, ILI9341_DARKGREY);

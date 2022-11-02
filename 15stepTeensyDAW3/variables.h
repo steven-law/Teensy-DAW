@@ -39,15 +39,21 @@
 #define VELOCITYOFF 0
 #define VALUE_NOTEOFF 0
 
-//variables for 15step sequencer
-#define SEQUENCER_MEMORY 200
+
+//variables for own clock
 #define NUM_CLIPS 9
 #define NUM_TRACKS 8
-#define NUM_VOICES 4
+
 #define NUM_STEPS 16
 #define NUM_PHRASES 256
-#define steps_15 16
-
+#define FS_MIN_TEMPO 55
+#define FS_MAX_TEMPO 200
+unsigned long _next_clock = 0;
+unsigned long _clock = 0;
+unsigned long MIDItick = 0;
+byte tick_16 = 0;
+bool seq_run = false;
+byte tempo = 120;
 
 //****************************************************************************
 // 3) add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
@@ -411,8 +417,7 @@ byte page_phrase_start;
 byte page_phrase_end;
 byte songpageNumber = 10;
 #define phraseSegmentLength 16  // a variable for the zoomfactor in songmode
-byte tempoSelect = 120;         //variable to select the tempo
-byte pixelbarClock = 0;         // a counter for the positionpointers
+byte pixelphrase = 0;         // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte end_of_loop = 255;
 byte start_of_loop = 0;
@@ -464,12 +469,6 @@ float circlePos_oldcc;
 int dvalue_oldcc;
 int dname_oldcc;
 
-//drawPotLine Variables
-float drawPotLinePos;
-float drawPotLinePos_old;
-int drawPotLine_dvalue_old;
-
-
 
 struct sequence_t {
   byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
@@ -518,8 +517,7 @@ const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi",
 
 
 
-//clock variables
-byte barClock = 0;
+
 
 //Track Variables
 byte desired_track;

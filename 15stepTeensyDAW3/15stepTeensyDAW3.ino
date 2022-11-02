@@ -1,5 +1,10 @@
 /*Contributing Manual:
 
+Many Thanks to Tristan Rowley, without his immense efforts and time to explain things to me, 
+this project would have never reached this amount of functions and still have a more or less readable code. 
+For more Informations on him, please take a look at www.github.com/doctea and www.doctea.co.uk!!  
+Very Interesting stuff to find and try out!!!
+
 Hello. Here i will show you how to implement new stuff easily.
 
 There are some things left to be made at this point, but feel free to add your features.
@@ -49,7 +54,7 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <SPI.h>
 #include <SD.h>
 #include <TeensyVariablePlayback.h>
-#include "FifteenStep.h"
+//#include "FifteenStep.h"
 #include "variables.h"
 #include <Bounce2.h>
 
@@ -120,7 +125,7 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #define TS_MAXY 3800
 
 //touchscreen response; to be changed
-const long interval = 300;
+const long interval = 200;
 
 //pinout for SD CARD
 const int chipSelect = BUILTIN_SDCARD;
@@ -131,8 +136,7 @@ byte drumnote[12]{ 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 };
 //noteOn velocity for all tracks
 #define VELOCITY 96
 
-// set initial tempo
-int tempo = 120;
+
 
 //individual trackcolors
 int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
@@ -142,10 +146,10 @@ int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 129431
 Bounce* buttons = new Bounce[NUM_BUTTONS];
 
 //initiate the modules
-FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                      //initiate Sequencer
-File myFile;                                                                          //initiate SDCard Reader
+//FifteenStep seq = FifteenStep(SEQUENCER_MEMORY);                                     //initiate Sequencer
+File myFile;                                                                         //initiate SDCard Reader
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
-XPT2046_Touchscreen ts(CS_PIN);                                                       //initiate Touchscreen
+XPT2046_Touchscreen ts(CS_PIN);                                                      //initiate Touchscreen
 
 
 
@@ -418,7 +422,7 @@ AudioConnection patchCord138(mixer9, 0, pt8211_1, 1);
 
 
 void setup() {
-  Serial.begin(9600);  // set MIDI baud
+  Serial.begin(115200);  // set MIDI baud
 
   //initialize the TFT- and Touchscreen
   tft.begin();
@@ -464,12 +468,10 @@ void setup() {
   delay(100);
 
   // start sequencer and set callbacks
-  seq.begin(tempo, steps_15);
-  seq.setStepHandler(step);
-  seq.stop();
+
   Serial.println("Initializing Sequencer");
   tft.println("Initializing Sequencer");
- //tft.updateScreen();
+  //tft.updateScreen();
   delay(100);
 
   /// set the default channel of each track
@@ -509,14 +511,14 @@ void setup() {
 
   Serial.println("Initializing Buttons");
   tft.println("Initializing Buttons");
- //tft.updateScreen();
+  //tft.updateScreen();
   delay(100);
   //initiate variablePlayback
   playSdPitch1.enableInterpolation(true);
   playSdPitch2.enableInterpolation(true);
   Serial.println("Initializing VariablePlayback");
   tft.println("Initializing VariablePlayback");
- //tft.updateScreen();
+  //tft.updateScreen();
   delay(100);
   Serial.println("Complete...");
   tft.println("Complete...");
@@ -533,16 +535,14 @@ void setup() {
   //tft.updateScreen();
 }
 
+elapsedMicros msecs;
+
+
 
 void loop() {
   //Serial.println("==== start of loop ====");
   usbMIDI.read();
-  // this is needed to keep the sequencer
-  // running. there are other methods for
-  // start, stop, and pausing the steps
-  seq.run();
-  //tft.updateScreen();
-
+  sendClock();
   //read Potentiometer1
   Potentiometer1 = 127 - map(analogRead(POTENTIOMETER_1_PIN), 0, 1023, 0, 127);
   Potentiometer2 = 127 - map(analogRead(POTENTIOMETER_2_PIN), 0, 1023, 0, 127);
@@ -550,12 +550,14 @@ void loop() {
   for (byte instruments = 0; instruments < 8; instruments++) {
     track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
   }
-  /* unsigned long currentMillis = millis();
+  /*unsigned long currentMillis_2 = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     Serial.println(digitalRead(2));
-  }
-  */
+    //Potentiometer1 = 127 - map(analogRead(POTENTIOMETER_1_PIN), 0, 1023, 0, 127);
+    //Potentiometer2 = 127 - map(analogRead(POTENTIOMETER_2_PIN), 0, 1023, 0, 127);
+  }*/
+
   for (byte i = 0; i < NUM_BUTTONS; i++) {
     // Update the Bounce instance :
     buttons[i].update();
@@ -579,20 +581,20 @@ void loop() {
     //something_was_pressed = true;
   }
   if (buttons[4].fell()) {
-    seq.start();
+    seq_run = true;
+    msecs = 0;
+    //seq.start();
 
     for (byte i = 1; i <= 7; i++) {
       track[i].clip_songMode = track[i].arrangment1[0];
     }
   }
   if (buttons[5].fell()) {
-    barClock = -1;
-    pixelbarClock = -1;
+    seq_run = false;
     phrase = -1;
-    seq.stop();
-    seq.panic();
-
-    //clear the songposition pointers
+    pixelphrase = -1;
+    phrase = 0;
+    msecs = 0;
     tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
   }
 
@@ -605,17 +607,21 @@ void loop() {
   if (ts.touched() && !buttons[6].changed()) {
     gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
     gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-
-    trackTouchY = map(p.y, 700, 3200, 0, 7);
+    trackTouchY = map(p.y, 800, 3200, 0, 7);
   }
   if (ts.touched() || !buttons[6].read()) {
+    int start_at = millis();
+
+
 
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Arrangment select
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Play button
       if (gridTouchX == POSITION_PLAY_BUTTON || gridTouchX == POSITION_PLAY_BUTTON + 1) {
-        seq.start();
+        seq_run = true;
+        msecs = 0;
+        //seq.start();
         for (byte i = 1; i <= 7; i++) {
           track[i].clip_songMode = track[i].arrangment1[0];
         }
@@ -624,15 +630,12 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Stop button
       if (gridTouchX == POSITION_STOP_BUTTON) {
-        seq.stop();
-        seq.panic();
-        barClock = 0;
-        pixelbarClock = 0;
+        seq_run = false;
+        phrase = -1;
+        pixelphrase = -1;
         phrase = 0;
-        //clear the songposition pointers
-        tft.fillRect(STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-        tft.fillRect(STEP_FRAME_W * 2, SONG_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
-        tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 16, 4, ILI9341_DARKGREY);
+        msecs = 0;
+        tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
       }
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -650,14 +653,16 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //TempoSelect button
       if (gridTouchX == POSITION_BPM_BUTTON || gridTouchX == POSITION_BPM_BUTTON + 1) {
-        tempoSelect = map(Potentiometer1, 0, 127, 55, 200);
-        seq.setTempo(tempoSelect);
+        tempo = map(Potentiometer1, 0, 127, 55, 200);
+        setTempo(tempo);
+        //tempoSelect = map(Potentiometer1, 0, 127, 55, 200);
+        //seq.setTempo(tempoSelect);
         tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
         tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
         tft.setFont(Arial_10);
         tft.setTextColor(ILI9341_WHITE);
         tft.setTextSize(1);
-        tft.print(tempoSelect);
+        tft.print(tempo);
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Scale Select
@@ -841,6 +846,7 @@ void loop() {
   //Serial.println("==== end of loop ====");
   //delay(2000);
   //}
+  //Serial.printf("processing touch took %i millis!", millis () - start_at);
 }
 
 
@@ -938,9 +944,7 @@ void startUpScreen() {  //static Display rendering
   tft.print("L");
 }
 void showCoordinates() {
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
+  if (millis() % 100 == 0) {
     tft.fillRect(20, 0, 50, 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setTextColor(ILI9341_GREEN);
     tft.setFont(Arial_10);
@@ -950,14 +954,6 @@ void showCoordinates() {
     tft.setCursor(45, 3);
     tft.print("Y");
     tft.print(gridTouchY);
-
-
-
-    //    tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON, 3, STEP_FRAME_W * 2 - 3, 10, ILI9341_DARKGREY);
-    //    tft.setTextColor(ILI9341_WHITE);
-    //    tft.setFont(Arial_9);
-    //    tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
-    //    tft.print(tempoSelect);
   }
 }
 

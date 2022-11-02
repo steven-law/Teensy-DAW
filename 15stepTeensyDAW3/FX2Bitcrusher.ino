@@ -30,8 +30,8 @@ void FX2Bitcrush_static() {
   drawActiveRect(1, 8, 2, 2, true, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
-  drawPot(3, 3, fx2samplerate_graph, fx2samplerate, "SRate", ILI9341_RED);
-  drawPot(7, 3, fx2bitcrush_graph, fx2bitcrush, "Crush", ILI9341_RED);
+  drawPot(3, 3, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
+  drawPot(7, 3, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
 }
 
 void FX2Bitcrush_dynamic() {
@@ -45,7 +45,7 @@ void FX2Bitcrush_dynamic() {
 
       //samplerate
       if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, 3, fx2samplerate_graph, fx2samplerate, "SRate", ILI9341_RED);
+        drawPot(3, 3, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
         if (abs(Potentiometer1 - fx2samplerate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           fx2samplerate_graph = Potentiometer1;
           fx2samplerate = map(fx2samplerate_graph, 0, 127, 0, 44200);
@@ -55,7 +55,7 @@ void FX2Bitcrush_dynamic() {
 
       //samplerate
       if (gridTouchX == 7 || gridTouchX == 8) {
-        drawPot(7, 3, fx2bitcrush_graph, fx2bitcrush, "Crush", ILI9341_RED);
+        drawPot(7, 3, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
         if (abs(Potentiometer1 - fx2bitcrush_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           fx2bitcrush_graph = Potentiometer1;
           fx2bitcrush = map(fx2bitcrush_graph, 0, 127, 0, 12);
