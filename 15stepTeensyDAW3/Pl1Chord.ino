@@ -90,8 +90,9 @@ void Plugin1_Page_Static(byte Pagenumber) {
 
 void Plugin1_Page1_Dynamic() {
 
-    TS_Point p = ts.getPoint();
+  TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
+
     gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
     gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
 
@@ -113,55 +114,55 @@ void Plugin1_Page1_Dynamic() {
         pl1presetNr = map(Potentiometer1, 0, 127, 0, MAX_PRESETS - 1);
       }
     }
+    if (millis() % 20 > 15) {
+      if (gridTouchY == CONTROL_ROW_0) {
 
-    if (gridTouchY == CONTROL_ROW_0) {
+        //1 Row 1 note Offset
 
-      //1 Row 1 note Offset
+        for (byte voice = 0; voice < 4; voice++) {
+          byte voicePos = ((voice + 1) * 4) - 1;
+          if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
+            drawPot(voicePos, CONTROL_ROW_0, pl1[pl1presetNr].note_Offset_graph[voice], pl1[pl1presetNr].note_Offset[voice], "Offset", trackColor[desired_instrument]);
+            if (abs(Potentiometer1 - pl1[pl1presetNr].note_Offset_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+              pl1[pl1presetNr].note_Offset_graph[voice] = Potentiometer1;
+              pl1[pl1presetNr].note_Offset[voice] = map(pl1[pl1presetNr].note_Offset_graph[voice], 0, 127, -18, 18);
+            }
+          }
+        }
+      }
 
-      for (byte voice = 0; voice < 4; voice++) {
-        byte voicePos = ((voice + 1) * 4) - 1;
-        if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
-          drawPot(voicePos, CONTROL_ROW_0, pl1[pl1presetNr].note_Offset_graph[voice], pl1[pl1presetNr].note_Offset[voice], "Offset", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl1[pl1presetNr].note_Offset_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl1[pl1presetNr].note_Offset_graph[voice] = Potentiometer1;
-            pl1[pl1presetNr].note_Offset[voice] = map(pl1[pl1presetNr].note_Offset_graph[voice], 0, 127, -18, 18);
+      if (gridTouchY == CONTROL_ROW_1) {
+
+        //1 Row 2 Waveform
+
+        for (byte voice = 0; voice < 4; voice++) {
+          byte voicePos = ((voice + 1) * 4) - 1;
+          if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
+            drawPot(voicePos, CONTROL_ROW_1, pl1[pl1presetNr].wfSelect_graph[voice], pl1[pl1presetNr].wfSelect[voice], "W~F", trackColor[desired_instrument]);
+            if (abs(Potentiometer1 - pl1[pl1presetNr].wfSelect_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+              pl1[pl1presetNr].wfSelect_graph[voice] = Potentiometer1;
+              pl1[pl1presetNr].wfSelect[voice] = map(pl1[pl1presetNr].wfSelect_graph[voice], 0, 127, 0, 12);
+            }
+          }
+        }
+      }
+
+      if (gridTouchY == CONTROL_ROW_2) {
+
+        //1 Row 2 note Velocity
+
+        for (byte voice = 0; voice < 4; voice++) {
+          byte voicePos = ((voice + 1) * 4) - 1;
+          if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
+            drawPot(voicePos, CONTROL_ROW_2, pl1[pl1presetNr].note_Velo_graph[voice], pl1[pl1presetNr].note_Velo_graph[voice], "Vel", trackColor[desired_instrument]);
+            if (abs(Potentiometer1 - pl1[pl1presetNr].note_Velo_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+              pl1[pl1presetNr].note_Velo_graph[voice] = Potentiometer1;
+              pl1[pl1presetNr].note_Velo[voice] = pl1[pl1presetNr].note_Velo_graph[voice] / 127.00;
+            }
           }
         }
       }
     }
-
-    if (gridTouchY == CONTROL_ROW_1) {
-
-      //1 Row 2 Waveform
-
-      for (byte voice = 0; voice < 4; voice++) {
-        byte voicePos = ((voice + 1) * 4) - 1;
-        if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
-          drawPot(voicePos, CONTROL_ROW_1, pl1[pl1presetNr].wfSelect_graph[voice], pl1[pl1presetNr].wfSelect[voice], "W~F", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl1[pl1presetNr].wfSelect_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl1[pl1presetNr].wfSelect_graph[voice] = Potentiometer1;
-            pl1[pl1presetNr].wfSelect[voice] = map(pl1[pl1presetNr].wfSelect_graph[voice], 0, 127, 0, 12);
-          }
-        }
-      }
-    }
-
-    if (gridTouchY == CONTROL_ROW_2) {
-
-      //1 Row 2 note Velocity
-
-      for (byte voice = 0; voice < 4; voice++) {
-        byte voicePos = ((voice + 1) * 4) - 1;
-        if (gridTouchX == voicePos || gridTouchX == voicePos + 1) {
-          drawPot(voicePos, CONTROL_ROW_2, pl1[pl1presetNr].note_Velo_graph[voice], pl1[pl1presetNr].note_Velo_graph[voice], "Vel", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl1[pl1presetNr].note_Velo_graph[voice]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl1[pl1presetNr].note_Velo_graph[voice] = Potentiometer1;
-            pl1[pl1presetNr].note_Velo[voice] = pl1[pl1presetNr].note_Velo_graph[voice] / 127.00;
-          }
-        }
-      }
-    }
-
 
 
 
@@ -194,7 +195,7 @@ void Plugin1_Page1_Dynamic() {
 
 void Plugin1_Page2_Dynamic() {
 
-    TS_Point p = ts.getPoint();
+  TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
     gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
     gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
@@ -216,58 +217,60 @@ void Plugin1_Page2_Dynamic() {
         pl1presetNr = map(Potentiometer1, 0, 127, 0, MAX_PRESETS);
       }
     }
-    if (gridTouchY == CONTROL_ROW_0) {
-      //filter frequency
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Frequency_graph, pl1[pl1presetNr].Filter1_Frequency, "Frq", trackColor[desired_instrument]);
-        if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl1[pl1presetNr].Filter1_Frequency_graph = Potentiometer1;
-          pl1[pl1presetNr].Filter1_Frequency = map(pl1[pl1presetNr].Filter1_Frequency_graph, 0, 127, 40, 4000);
-          filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
+    if (millis() % 20 > 15) {
+      if (gridTouchY == CONTROL_ROW_0) {
+        //filter frequency
+        if (gridTouchX == 3 || gridTouchX == 4) {
+          drawPot(3, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Frequency_graph, pl1[pl1presetNr].Filter1_Frequency, "Frq", trackColor[desired_instrument]);
+          if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl1[pl1presetNr].Filter1_Frequency_graph = Potentiometer1;
+            pl1[pl1presetNr].Filter1_Frequency = map(pl1[pl1presetNr].Filter1_Frequency_graph, 0, 127, 40, 4000);
+            filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
+          }
         }
-      }
-      //Resonance
-      if (gridTouchX == 7 || gridTouchX == 8) {
-        drawPot(7, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_instrument]);
-        if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer1;
-          pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_graph / 25.40;
-          filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
+        //Resonance
+        if (gridTouchX == 7 || gridTouchX == 8) {
+          drawPot(7, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_instrument]);
+          if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer1;
+            pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_graph / 25.40;
+            filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
+          }
         }
-      }
 
-      //Sweep
-      if (gridTouchX == 11 || gridTouchX == 12) {
-        drawPot(11, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
-        if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer1;
-          pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_graph / 18.14;
-          filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-        }
-      }
-    }
-
-    if (gridTouchY == CONTROL_ROW_1) {
-
-      //Attack
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        drawPot(3, CONTROL_ROW_1, pl1[pl1presetNr].Env1_Attack_graph, pl1[pl1presetNr].Env1_Attack, "Att", trackColor[desired_instrument]);
-        if (abs(Potentiometer1 - pl1[pl1presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl1[pl1presetNr].Env1_Attack_graph = Potentiometer1;
-          pl1[pl1presetNr].Env1_Attack = map(pl1[pl1presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-          envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-          envelope2.attack(pl1[pl1presetNr].Env1_Attack);
+        //Sweep
+        if (gridTouchX == 11 || gridTouchX == 12) {
+          drawPot(11, CONTROL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+          if (abs(Potentiometer1 - pl1[pl1presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer1;
+            pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_graph / 18.14;
+            filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
+          }
         }
       }
 
-      //Release
-      if (gridTouchX == 7 || gridTouchX == 8) {
-        drawPot(7, CONTROL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
-        if (abs(Potentiometer1 - pl1[pl1presetNr].Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl1[pl1presetNr].Env1_Release_graph = Potentiometer1;
-          pl1[pl1presetNr].Env1_Release = map(pl1[pl1presetNr].Env1_Release_graph, 0, 127, 100, 1200);
-          envelope1.release(pl1[pl1presetNr].Env1_Release);
-          envelope2.release(pl1[pl1presetNr].Env1_Release);
+      if (gridTouchY == CONTROL_ROW_1) {
+
+        //Attack
+        if (gridTouchX == 3 || gridTouchX == 4) {
+          drawPot(3, CONTROL_ROW_1, pl1[pl1presetNr].Env1_Attack_graph, pl1[pl1presetNr].Env1_Attack, "Att", trackColor[desired_instrument]);
+          if (abs(Potentiometer1 - pl1[pl1presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl1[pl1presetNr].Env1_Attack_graph = Potentiometer1;
+            pl1[pl1presetNr].Env1_Attack = map(pl1[pl1presetNr].Env1_Attack_graph, 0, 127, 10, 700);
+            envelope1.attack(pl1[pl1presetNr].Env1_Attack);
+            envelope2.attack(pl1[pl1presetNr].Env1_Attack);
+          }
+        }
+
+        //Release
+        if (gridTouchX == 7 || gridTouchX == 8) {
+          drawPot(7, CONTROL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+          if (abs(Potentiometer1 - pl1[pl1presetNr].Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl1[pl1presetNr].Env1_Release_graph = Potentiometer1;
+            pl1[pl1presetNr].Env1_Release = map(pl1[pl1presetNr].Env1_Release_graph, 0, 127, 100, 1200);
+            envelope1.release(pl1[pl1presetNr].Env1_Release);
+            envelope2.release(pl1[pl1presetNr].Env1_Release);
+          }
         }
       }
     }

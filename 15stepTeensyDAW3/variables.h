@@ -432,6 +432,7 @@ byte step_Frame_Y;
 byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
 byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
 byte trackTouchY;
+bool is_held = true;
 unsigned long previousMillis = 0;
 //DMAMEM uint16_t fb1[320 * 240];
 //PROGMEM uint16_t fb1[320 * 240];

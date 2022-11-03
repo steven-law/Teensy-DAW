@@ -114,7 +114,7 @@ void songModePage(byte songpageNumber) {
   page_phrase_end = (songpageNumber + 1) * 16;
 
 
-  if (ts.touched()) {
+  if (ts.touched() || !buttons[6].read()) {
 
     int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
     byte touched_track = trackTouchY;
