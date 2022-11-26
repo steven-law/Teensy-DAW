@@ -138,45 +138,45 @@ void Plugin7_Page1_Dynamic() {
 
 
 
-  if (ts.touched() || !buttons[6].read()) {
-    if (millis() % 20 > 15) {
+  if (ts.touched() || enter_button) {
+    if (msecs % 11 == 0) {
       if (gridTouchY == CTRL_ROW_0) {
 
         //drum1 root frequency
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
           drawPot(CTRL_COL_0, CTRL_ROW_0, pl7drum1_frequency_graph, pl7drum1_frequency, "1Freq", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7drum1_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7drum1_frequency = map(Potentiometer1, 0, 127, 20, 460);
-            pl7drum1_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7drum1_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7drum1_frequency = map(Potentiometer[0], 0, 127, 20, 460);
+            pl7drum1_frequency_graph = Potentiometer[0];
             pl7drum1.frequency(pl7drum1_frequency);
           }
         }
 
         //drum1 lenght
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, CTRL_ROW_0, pl7drum1_length_graph, pl7drum1_length, "1Decay", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7drum1_length_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7drum1_length = map(Potentiometer1, 0, 127, 80, 255);
-            pl7drum1_length_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7drum1_length_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7drum1_length = map(Potentiometer[0], 0, 127, 80, 255);
+            pl7drum1_length_graph = Potentiometer[0];
             pl7drum1.length(pl7drum1_length);
           }
         }
         //drum1 PitchMod
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, CTRL_ROW_0, pl7drum1_pitchMod_graph, pl7drum1_pitchMod_graph, "1Sweep", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7drum1_pitchMod_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7drum1_pitchMod_graph = Potentiometer1;
-            pl7drum1_pitchMod_rnd = map(Potentiometer1, 0, 127, 6, 200);
+          if (abs(Potentiometer[0] - pl7drum1_pitchMod_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7drum1_pitchMod_graph = Potentiometer[0];
+            pl7drum1_pitchMod_rnd = map(Potentiometer[0], 0, 127, 6, 200);
             pl7drum1_pitchMod = pl7drum1_pitchMod_rnd / 100;
 
             pl7drum1.pitchMod(pl7drum1_pitchMod);
           }
         }
         //Wavefolder
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, CTRL_ROW_0, pl7dc1_amplitude_graph, pl7dc1_amplitude_graph, "1Fold", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7dc1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7dc1_amplitude_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7dc1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7dc1_amplitude_graph = Potentiometer[0];
             pl7dc1_amplitude = pl7dc1_amplitude_graph / 127.00;
             pl7dc1.amplitude(pl7dc1_amplitude);
           }
@@ -185,38 +185,38 @@ void Plugin7_Page1_Dynamic() {
       if (gridTouchY == CTRL_ROW_1) {
 
         //noisemod noise level
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
           drawPot(CTRL_COL_0, CTRL_ROW_1, pl7noise1_amplitude_graph, pl7noise1_amplitude_graph, "2Noise", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7noise1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7noise1_amplitude_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7noise1_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7noise1_amplitude_graph = Potentiometer[0];
             pl7noise1_amplitude = pl7noise1_amplitude_graph / 127.00;
             pl7noise1.amplitude(pl7noise1_amplitude);
           }
         }
 
         //noisemod modwaveform
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, CTRL_ROW_1, pl7waveformMod1_begin_graph, pl7waveformMod1_begin, "2W~F", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7waveformMod1_begin_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7waveformMod1_begin = map(Potentiometer1, 0, 127, 0, 11);
-            pl7waveformMod1_begin_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7waveformMod1_begin_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7waveformMod1_begin = map(Potentiometer[0], 0, 127, 0, 11);
+            pl7waveformMod1_begin_graph = Potentiometer[0];
             pl7waveformMod1.begin(pl7waveformMod1_begin);
           }
         }
         //noisemod frequency
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, CTRL_ROW_1, pl7waveformMod1_frequency_graph, pl7waveformMod1_frequency, "2Freq", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7waveformMod1_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7waveformMod1_frequency = map(Potentiometer1, 0, 127, 200, 4000);
-            pl7waveformMod1_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7waveformMod1_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7waveformMod1_frequency = map(Potentiometer[0], 0, 127, 200, 4000);
+            pl7waveformMod1_frequency_graph = Potentiometer[0];
             pl7waveformMod1.frequency(pl7waveformMod1_frequency);
           }
         }
         //noisemod frequencyModulation
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, CTRL_ROW_1, pl7waveformMod1_frequencyModulation_graph, pl7waveformMod1_frequencyModulation_graph, "2N-FM", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7waveformMod1_frequencyModulation_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7waveformMod1_frequencyModulation_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7waveformMod1_frequencyModulation_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7waveformMod1_frequencyModulation_graph = Potentiometer[0];
             pl7waveformMod1_frequencyModulation = pl7waveformMod1_frequencyModulation_graph / 10.60;
             pl7waveformMod1.frequencyModulation(pl7waveformMod1_frequencyModulation);
           }
@@ -225,42 +225,42 @@ void Plugin7_Page1_Dynamic() {
       if (gridTouchY == CTRL_ROW_2) {
 
         //Filter Frequency
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
           drawPot(CTRL_COL_0, CTRL_ROW_2, pl7filter2_frequency_graph, pl7filter2_frequency, "2Freq", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7filter2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7filter2_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7filter2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7filter2_frequency_graph = Potentiometer[0];
             pl7filter2_frequency = map(pl7filter2_frequency_graph, 0, 127, 40, 5900.00);
 
             pl7filter2.frequency(pl7filter2_frequency);
           }
         }
         //Resonance
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, CTRL_ROW_2, pl7filter2_resonance_graph, pl7filter2_resonance_graph, "2Res", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7filter2_resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7filter2_resonance_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7filter2_resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7filter2_resonance_graph = Potentiometer[0];
             pl7filter2_resonance = pl7filter2_resonance_graph / 25.40;
 
             pl7filter2.resonance(pl7filter2_resonance);
           }
         }
         //Attack
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, CTRL_ROW_2, pl7Env1_Attack_graph, pl7Env1_Attack, "2Att", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7Env1_Attack = map(Potentiometer1, 0, 127, 0, 20);
-            pl7Env1_Attack_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7Env1_Attack = map(Potentiometer[0], 0, 127, 0, 20);
+            pl7Env1_Attack_graph = Potentiometer[0];
             pl7envelope1.attack(pl7Env1_Attack);
             //pl7envelope2.attack(pl7Env1_Attack);
           }
         }
 
         //Release
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, CTRL_ROW_2, pl7Env1_Release_graph, pl7Env1_Release, "2Rel", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7Env1_Release = map(Potentiometer1, 0, 127, 10, 250);
-            pl7Env1_Release_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7Env1_Release = map(Potentiometer[0], 0, 127, 10, 250);
+            pl7Env1_Release_graph = Potentiometer[0];
             pl7envelope1.release(pl7Env1_Release);
             //pl7envelope2.release(pl7Env1_Release);
           }
@@ -291,45 +291,45 @@ void Plugin7_Page1_Dynamic() {
 
 void Plugin7_Page2_Dynamic() {
 
-  if (ts.touched() || !buttons[6].read()) {
-    if (millis() % 20 > 15) {
+  if (ts.touched() || enter_button) {
+    if (msecs % 11 == 0) {
       if (gridTouchY == CTRL_ROW_0) {
 
         //3 modulator amplitude
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
           drawPot(CTRL_COL_0, CTRL_ROW_0, pl7_3_waveformMod3_amplitude_graph, pl7_3_waveformMod3_amplitude_rnd, "3M-Le", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_waveformMod3_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_waveformMod3_amplitude_rnd = map(Potentiometer1, 0, 127, 0, 100);
+          if (abs(Potentiometer[0] - pl7_3_waveformMod3_amplitude_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_waveformMod3_amplitude_rnd = map(Potentiometer[0], 0, 127, 0, 100);
             pl7_3_waveformMod3_amplitude = pl7_3_waveformMod3_amplitude_rnd / 100.00;
-            pl7_3_waveformMod3_amplitude_graph = Potentiometer1;
+            pl7_3_waveformMod3_amplitude_graph = Potentiometer[0];
             pl7waveformMod3.amplitude(pl7_3_waveformMod3_amplitude);
           }
         }
 
         //3 modulator frequency
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, CTRL_ROW_0, pl7_3_waveformMod3_frequency_graph, pl7_3_waveformMod3_frequency, "3M-Fr", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_waveformMod3_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_waveformMod3_frequency = map(Potentiometer1, 0, 127, 80, 999);
-            pl7_3_waveformMod3_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7_3_waveformMod3_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_waveformMod3_frequency = map(Potentiometer[0], 0, 127, 80, 999);
+            pl7_3_waveformMod3_frequency_graph = Potentiometer[0];
             pl7waveformMod3.frequency(pl7_3_waveformMod3_frequency);
           }
         }
         //3 modulator attack
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, CTRL_ROW_0, pl7_3_Env2_Attack_graph, pl7_3_Env2_Attack, "3M-At", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_Env2_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_Env2_Attack = map(Potentiometer1, 0, 127, 6, 100);
-            pl7_3_Env2_Attack_graph = map(Potentiometer1, 0, 127, 0, 800);
+          if (abs(Potentiometer[0] - pl7_3_Env2_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_Env2_Attack = map(Potentiometer[0], 0, 127, 6, 100);
+            pl7_3_Env2_Attack_graph = map(Potentiometer[0], 0, 127, 0, 800);
             pl7envelope2.attack(pl7_3_Env2_Attack);
           }
         }
         //3 modulator release
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, CTRL_ROW_0, pl7_3_Env2_Release_graph, pl7_3_Env2_Release, "3M-Rl", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_Env2_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_Env2_Release_graph = Potentiometer1;
-            pl7_3_Env2_Release = map(Potentiometer1, 0, 127, 20, 800);
+          if (abs(Potentiometer[0] - pl7_3_Env2_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_Env2_Release_graph = Potentiometer[0];
+            pl7_3_Env2_Release = map(Potentiometer[0], 0, 127, 20, 800);
             pl7envelope2.release(pl7_3_Env2_Release);
           }
         }
@@ -337,39 +337,39 @@ void Plugin7_Page2_Dynamic() {
       if (gridTouchY == CTRL_ROW_1) {
 
         //3 Carrier Frequency Modulation
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_0, CTRL_ROW_1, pl7_3_waveformMod2_frequencyModulation_graph, pl7_3_waveformMod2_frequencyModulation, "3C-Fr", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_waveformMod2_frequencyModulation_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_waveformMod2_frequencyModulation_rnd = map(Potentiometer1, 0, 127, 0, 1200);
+          if (abs(Potentiometer[0] - pl7_3_waveformMod2_frequencyModulation_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_waveformMod2_frequencyModulation_rnd = map(Potentiometer[0], 0, 127, 0, 1200);
             pl7_3_waveformMod2_frequencyModulation = pl7_3_waveformMod2_frequencyModulation_rnd / 100.00;
             pl7waveformMod2.frequencyModulation(pl7_3_waveformMod2_frequencyModulation);
           }
         }
 
         //3 carrier frequency
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, CTRL_ROW_1, pl7_3_waveformMod2_frequency_graph, pl7_3_waveformMod2_frequency, "3C-Fr", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_waveformMod2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_waveformMod2_frequency = map(Potentiometer1, 0, 127, 80, 999);
-            pl7_3_waveformMod2_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7_3_waveformMod2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_waveformMod2_frequency = map(Potentiometer[0], 0, 127, 80, 999);
+            pl7_3_waveformMod2_frequency_graph = Potentiometer[0];
             pl7waveformMod2.frequency(pl7_3_waveformMod2_frequency);
           }
         }
         //3 carrier attack
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, CTRL_ROW_1, pl7_3_Env3_Attack_graph, pl7_3_Env3_Attack, "3M-At", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_Env3_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_Env3_Attack = map(Potentiometer1, 0, 127, 6, 100);
-            pl7_3_Env3_Attack_graph = map(Potentiometer1, 0, 127, 0, 800);
+          if (abs(Potentiometer[0] - pl7_3_Env3_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_Env3_Attack = map(Potentiometer[0], 0, 127, 6, 100);
+            pl7_3_Env3_Attack_graph = map(Potentiometer[0], 0, 127, 0, 800);
             pl7envelope2.attack(pl7_3_Env3_Attack);
           }
         }
         //3 carrier release
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, CTRL_ROW_1, pl7_3_Env3_Release_graph, pl7_3_Env3_Release, "3M-Rl", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7_3_Env3_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7_3_Env3_Release_graph = Potentiometer1;
-            pl7_3_Env3_Release = map(Potentiometer1, 0, 127, 20, 800);
+          if (abs(Potentiometer[0] - pl7_3_Env3_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7_3_Env3_Release_graph = Potentiometer[0];
+            pl7_3_Env3_Release = map(Potentiometer[0], 0, 127, 20, 800);
             pl7envelope2.release(pl7_3_Env3_Release);
           }
         }
@@ -377,41 +377,41 @@ void Plugin7_Page2_Dynamic() {
       if (gridTouchY == 11) {
 
         //4 noise mix
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
           drawPot(CTRL_COL_0, 11, pl7filter2_frequency_graph, pl7filter2_frequency, "2Freq", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7filter2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7filter2_frequency = map(Potentiometer1, 0, 127, 40, 5900.00);
-            pl7filter2_frequency_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7filter2_frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7filter2_frequency = map(Potentiometer[0], 0, 127, 40, 5900.00);
+            pl7filter2_frequency_graph = Potentiometer[0];
             pl7filter2.frequency(pl7filter2_frequency);
           }
         }
         //Resonance
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
           drawPot(CTRL_COL_1, 11, pl7filter2_resonance_graph, pl7filter2_resonance_graph, "2Res", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7filter2_resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7filter2_resonance_rnd = map(Potentiometer1, 0, 127, 70, 500.00);
+          if (abs(Potentiometer[0] - pl7filter2_resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7filter2_resonance_rnd = map(Potentiometer[0], 0, 127, 70, 500.00);
             pl7filter2_resonance = pl7filter2_resonance_rnd / 100.00;
-            pl7filter2_resonance_graph = Potentiometer1;
+            pl7filter2_resonance_graph = Potentiometer[0];
             pl7filter2.resonance(pl7filter2_resonance);
           }
         }
         //Attack
-        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
           drawPot(CTRL_COL_2, 11, pl7Env1_Attack_graph, pl7Env1_Attack, "2Att", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7Env1_Attack = map(Potentiometer1, 0, 127, 0, 20);
-            pl7Env1_Attack_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7Env1_Attack = map(Potentiometer[0], 0, 127, 0, 20);
+            pl7Env1_Attack_graph = Potentiometer[0];
             pl7envelope1.attack(pl7Env1_Attack);
             //pl7envelope2.attack(pl7Env1_Attack);
           }
         }
 
         //Release
-        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3 + 1) {
           drawPot(CTRL_COL_3, 11, pl7Env1_Release_graph, pl7Env1_Release, "2Rel", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - pl7Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            pl7Env1_Release = map(Potentiometer1, 0, 127, 10, 250);
-            pl7Env1_Release_graph = Potentiometer1;
+          if (abs(Potentiometer[0] - pl7Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl7Env1_Release = map(Potentiometer[0], 0, 127, 10, 250);
+            pl7Env1_Release_graph = Potentiometer[0];
             pl7envelope1.release(pl7Env1_Release);
             //pl7envelope2.release(pl7Env1_Release);
           }

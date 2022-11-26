@@ -258,8 +258,8 @@ void step(int current) {
             }
             if (track[track_number].MIDIchannel == 19) {
               pl3waveform1.frequency(note_frequency[noteNumber]);
-              envelope1.noteOn();
-              envelope2.noteOn();
+              pl3envelope1.noteOn();
+              pl3envelope2.noteOn();
             }
             if (track[track_number].MIDIchannel == 21) {
               double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
@@ -276,9 +276,12 @@ void step(int current) {
               pl6envelope2.noteOn();
             }
             if (track[track_number].MIDIchannel == 24) {
-              pl3waveform1.frequency(note_frequency[noteNumber]);
-              envelope1.noteOn();
-              envelope2.noteOn();
+              pl8waveform1.frequency(note_frequency[noteNumber]);
+              pl8envelope1.noteOn();
+              pl8envelope2.noteOn();
+            }
+            if (track[track_number].MIDIchannel == 25) {
+              pl9string1.noteOn(note_frequency[noteNumber], 1);
             }
             track[track_number].send_noteOff = true;
           }
@@ -295,6 +298,7 @@ void step(int current) {
             pl6envelope2.noteOff();
             pl8envelope1.noteOff();
             pl8envelope2.noteOff();
+            pl9string1.noteOff(VELOCITYOFF);
             track[track_number].send_noteOff = false;
           }
         }

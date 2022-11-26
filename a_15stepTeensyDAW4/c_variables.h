@@ -53,6 +53,7 @@ unsigned long _clock = 0;
 unsigned long MIDItick = 0;
 byte tick_16 = 0;
 bool seq_run = false;
+bool seq_rec = false;
 byte tempo = 120;
 
 //****************************************************************************
@@ -63,7 +64,7 @@ byte tempo = 120;
 //    now we head over to the 15stepTeensyDAW3.ino"
 //look for *************************************************************************
 ////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_PRESETS 2  //max presets per plugin
+#define MAX_PRESETS 8  //max presets per plugin
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
@@ -133,6 +134,7 @@ const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
+const char* filterType[3] = {"LPF", "BPF", "HPF"};
 
 //plugin 1 variables
 struct plugin1 {
@@ -143,8 +145,14 @@ struct plugin1 {
   float Filter1_Resonance = 1;
   byte Filter1_Sweep_graph = 80;
   float Filter1_Sweep = 2;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
   int Env1_Attack = 50;
   byte Env1_Attack_graph = 10;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
   int Env1_Release = 150;
   byte Env1_Release_graph = 15;
   int note_Offset[4] = { 0, 4, 7, 11 };
@@ -173,6 +181,8 @@ struct plugin3 {
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
   int Env1_Attack = 50;
   byte Env1_Attack_graph = 50;
   int Env1_Decay = 50;
@@ -205,6 +215,8 @@ struct plugin5 {
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
   int Env1_Attack = 50;
   byte Env1_Attack_graph = 50;
   int Env1_Decay = 50;
@@ -229,6 +241,8 @@ struct plugin6 {
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
   byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
   int Env1_Attack = 50;
   byte Env1_Attack_graph = 50;
   int Env1_Decay = 50;
@@ -406,7 +420,8 @@ struct plugins {
   float FX3Volume = 0;
 };
 plugins plugin[MAX_PLUGINS];
-
+float MasterVol = 0.12;
+byte MasterVol_graph = 15;
 
 //FX variables
 //FX1
@@ -462,13 +477,19 @@ unsigned long previousMillis = 0;
 #define CTRL_COL_3 15
 
 //potentiomer variables
-int Potentiometer1;
-int Potentiometer2;
 
+int lastPotRow = 0;
+int Potentiometer[4];
 
 //button variables
-#define NUM_BUTTONS 7
-const uint8_t BUTTON_PINS[NUM_BUTTONS] = { 30, 28, 27, 29, 26, 24, 25 };  //left, right, up, down, start, stop, enter
+bool enter_button = false;
+bool button_9 = false;
+bool button_10 = false;
+bool button_11 = false;
+bool button_12 = false;
+bool button_13 = false;
+bool button_14 = false;
+bool button_15 = false;
 bool something_was_pressed = false;
 byte last_button_X = 0;
 byte last_button_Y = 0;
@@ -482,7 +503,19 @@ int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 float circlePos;
 float circlePos_old;
 int dvalue_old;
-
+char* dvalue_old_char;
+//drawPot Variables
+float circlePos_2;
+float circlePos_old_2;
+int dvalue_old_2;
+//drawPot Variables
+float circlePos_3;
+float circlePos_old_3;
+int dvalue_old_3;
+//drawPot Variables
+float circlePos_4;
+float circlePos_old_4;
+int dvalue_old_4;
 //drawPotcc Variables
 float circlePoscc;
 float circlePos_oldcc;
@@ -562,6 +595,8 @@ struct tracks {
   byte midicc_number_row_2[4]{ 24, 25, 26, 27 };
   byte midicc_value_row_3[4];
   byte midicc_number_row_3[4];
+  byte midicc_value_row_4[4];
+  byte midicc_number_row_4[4];
   byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
 };

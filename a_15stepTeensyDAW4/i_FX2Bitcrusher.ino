@@ -4,25 +4,25 @@ void FX2Bitcrush_settings() {
   bitcrusher2.sampleRate(11025);
 
   //mixer1 for FX2
-  FX2mixer1.gain(0, 1);
-  FX2mixer1.gain(1, 1);
-  FX2mixer1.gain(2, 1);
-  FX2mixer1.gain(3, 1);
+  FX2mixer1.gain(0, 0);
+  FX2mixer1.gain(1, 0);
+  FX2mixer1.gain(2, 0);
+  FX2mixer1.gain(3, 0);
   //mixer2 for FX2
-  FX2mixer2.gain(0, 1);
-  FX2mixer2.gain(1, 1);
-  FX2mixer2.gain(2, 1);
-  FX2mixer2.gain(3, 1);
+  FX2mixer2.gain(0, 0);
+  FX2mixer2.gain(1, 0);
+  FX2mixer2.gain(2, 0);
+  FX2mixer2.gain(3, 0);
   //mixer2 for FX2
   FX2mixer3.gain(0, 1);
   FX2mixer3.gain(1, 1);
   FX2mixer3.gain(2, 1);
   FX2mixer3.gain(3, 1);
   //mixer2 for FX2
-  FX2mixer4.gain(0, 1);
-  FX2mixer4.gain(1, 1);
-  FX2mixer4.gain(2, 1);
-  FX2mixer4.gain(3, 1);
+  FX2mixer4.gain(0, 0);
+  FX2mixer4.gain(1, 0);
+  FX2mixer4.gain(2, 0);
+  FX2mixer4.gain(3, 0);
 }
 
 void FX2Bitcrush_static() {
@@ -31,7 +31,7 @@ void FX2Bitcrush_static() {
   drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
   drawActiveRect(18, 7, 2, 2, false, "5-8", ILI9341_LIGHTGREY);
 
-  drawActiveRect(1, 5, 2, 2, false, "Rvrb", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 5, 2, 2, false, "Rvrb", ILI9341_YELLOW);
   drawActiveRect(1, 8, 2, 2, true, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
@@ -40,35 +40,30 @@ void FX2Bitcrush_static() {
 }
 
 void FX2Bitcrush_dynamic() {
+  if (msecs % 11 == 0) {
 
-
-  TS_Point p = ts.getPoint();
-  if (ts.touched() || !buttons[6].read()) {
-
-    if (millis() % 20 > 15) {
-      if (gridTouchY == CTRL_ROW_0) {
-
-        //samplerate
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
-          drawPot(CTRL_COL_0, CTRL_ROW_0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - fx2samplerate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            fx2samplerate_graph = Potentiometer1;
-            fx2samplerate = map(fx2samplerate_graph, 0, 127, 0, 44200);
-            bitcrusher2.sampleRate(fx2samplerate);
-          }
-        }
-
-        //samplerate
-        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
-          drawPot(CTRL_COL_1, CTRL_ROW_0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - fx2bitcrush_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            fx2bitcrush_graph = Potentiometer1;
-            fx2bitcrush = map(fx2bitcrush_graph, 0, 127, 0, 12);
-            bitcrusher2.bits(fx2bitcrush);
-          }
-        }
+    if (abs(Potentiometer[0] - fx2samplerate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+      if (fx2samplerate_graph != Potentiometer[0]) {
+        drawPot(CTRL_COL_0, CTRL_ROW_0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
+        fx2samplerate_graph = Potentiometer[0];
+        fx2samplerate = map(fx2samplerate_graph, 0, 127, 0, 44200);
+        bitcrusher2.sampleRate(fx2samplerate);
       }
     }
+    if (abs(Potentiometer[1] - fx2bitcrush_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+      if (fx2bitcrush_graph != Potentiometer[1]) {
+        drawPot(CTRL_COL_1, CTRL_ROW_0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
+        fx2bitcrush_graph = Potentiometer[1];
+        fx2bitcrush = map(fx2bitcrush_graph, 0, 127, 0, 12);
+        bitcrusher2.bits(fx2bitcrush);
+      }
+    }
+  }
+
+  TS_Point p = ts.getPoint();
+  if (ts.touched() || enter_button) {
+
+
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY >= 3 && gridTouchY <= 4) {

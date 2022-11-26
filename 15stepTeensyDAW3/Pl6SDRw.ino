@@ -27,24 +27,23 @@ void Plugin6_Page_Static(byte Pagenumber) {
   //draw selecting pages buttons
   //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
-  drawPot(3, CONTROL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
-  drawPot(15, CONTROL_ROW_0, plugin[6].Volume_graph, plugin[6].Volume_graph, "MIX", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
+  drawPot(CTRL_COL_3, CTRL_ROW_0, plugin[6].Volume_graph, plugin[6].Volume_graph, "MIX", trackColor[desired_instrument]);
 
-  drawPot(3, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
-  drawPot(7, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
-  drawPot(11, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
 
-  drawPot(3, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
-  drawPot(7, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
-  drawPot(11, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
-  drawPot(15, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
 }
 void Plugin6_Page1_Dynamic() {
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
+
 
     if (gridTouchY == 0) {
       //Save button
@@ -64,11 +63,11 @@ void Plugin6_Page1_Dynamic() {
       }
     }
     if (millis() % 20 > 15) {
-      if (gridTouchY == CONTROL_ROW_0) {
+      if (gridTouchY == CTRL_ROW_0) {
 
         //RAW select
-        if (gridTouchX == 3 || gridTouchX == 4) {
-          drawPot(3, CONTROL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+          drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
           if (abs(Potentiometer1 - pl6[pl6presetNr].selected_file_raw_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].selected_raw_file = map(Potentiometer1, 0, 127, 0, MAX_RAW_FILES);
             pl6[pl6presetNr].selected_file_raw_graph = Potentiometer1;
@@ -76,8 +75,8 @@ void Plugin6_Page1_Dynamic() {
         }
 
         //Volume
-        if (gridTouchX == 15 || gridTouchX == 16) {
-          drawPot(15, CONTROL_ROW_0, plugin[6].Volume_graph, plugin[6].Volume_graph, "MIX", trackColor[desired_instrument]);
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+          drawPot(CTRL_COL_3, CTRL_ROW_0, plugin[6].Volume_graph, plugin[6].Volume_graph, "MIX", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - plugin[6].Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             plugin[6].Volume_graph = Potentiometer1;
             plugin[6].Volume = plugin[6].Volume_graph / 25.40;
@@ -85,12 +84,12 @@ void Plugin6_Page1_Dynamic() {
           }
         }
       }
-      if (gridTouchY == CONTROL_ROW_1) {
+      if (gridTouchY == CTRL_ROW_1) {
 
         //Filter Frequency
-        if (gridTouchX == 3 || gridTouchX == 4) {
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
 
-          drawPot(3, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Filter1_Frequency_graph = Potentiometer1;
             pl6[pl6presetNr].Filter1_Frequency = map(pl6[pl6presetNr].Filter1_Frequency_graph, 0, 127, 40, 5900.00);
@@ -98,9 +97,9 @@ void Plugin6_Page1_Dynamic() {
           }
         }
         //Resonance
-        if (gridTouchX == 7 || gridTouchX == 8) {
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
 
-          drawPot(7, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Filter1_Resonance_graph = Potentiometer1;
             pl6[pl6presetNr].Filter1_Resonance = pl6[pl6presetNr].Filter1_Resonance_graph / 25.40;  //   127/5
@@ -108,9 +107,9 @@ void Plugin6_Page1_Dynamic() {
           }
         }
         //Sweep
-        if (gridTouchX == 11 || gridTouchX == 12) {
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
 
-          drawPot(11, CONTROL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Filter1_Sweep_graph = Potentiometer1;
             pl6[pl6presetNr].Filter1_Sweep = pl6[pl6presetNr].Filter1_Sweep_graph / 18.14;  //     127/7
@@ -118,11 +117,11 @@ void Plugin6_Page1_Dynamic() {
           }
         }
       }
-      if (gridTouchY == CONTROL_ROW_2) {
+      if (gridTouchY == CTRL_ROW_2) {
 
         //Attack
-        if (gridTouchX == 3 || gridTouchX == 4) {
-          drawPot(3, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0+1) {
+          drawPot(CTRL_COL_0, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Env1_Attack_graph = Potentiometer1;
             pl6[pl6presetNr].Env1_Attack = map(pl6[pl6presetNr].Env1_Attack_graph, 0, 127, 10, 700);
@@ -132,8 +131,8 @@ void Plugin6_Page1_Dynamic() {
           }
         }
         //Decay
-        if (gridTouchX == 7 || gridTouchX == 8) {
-          drawPot(7, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1+1) {
+          drawPot(CTRL_COL_1, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Env1_Decay_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Env1_Decay = map(Potentiometer1, 0, 127, 10, 700);
             pl6[pl6presetNr].Env1_Decay_graph = Potentiometer1;
@@ -142,8 +141,8 @@ void Plugin6_Page1_Dynamic() {
           }
         }
         //Sustain
-        if (gridTouchX == 11 || gridTouchX == 12) {
-          drawPot(11, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2+1) {
+          drawPot(CTRL_COL_2, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Env1_Sustain_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Env1_Sustain_graph = Potentiometer1;
             pl6[pl6presetNr].Env1_Sustain = pl6[pl6presetNr].Env1_Sustain_graph / 100.00;
@@ -152,8 +151,8 @@ void Plugin6_Page1_Dynamic() {
           }
         }
         //Release
-        if (gridTouchX == 15 || gridTouchX == 16) {
-          drawPot(15, CONTROL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+        if (gridTouchX == CTRL_COL_3 || gridTouchX == CTRL_COL_3+1) {
+          drawPot(CTRL_COL_3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
           if (abs(Potentiometer1 - pl6[pl6presetNr].Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             pl6[pl6presetNr].Env1_Release = map(Potentiometer1, 0, 127, 180, 1200);
             pl6[pl6presetNr].Env1_Release_graph = Potentiometer1;

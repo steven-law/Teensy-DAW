@@ -29,10 +29,10 @@ void Plugin_2_Settings() {
 }
 void Plugin2_Page_Static(byte Pagenumber) {
   for (byte touchX = 1; touchX < 5; touchX++) {
-    drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-    //drawPot(15, 3, pl3Volume_graph, pl3Volume_graph, "MIX", trackColor[desired_instrument]);
-    drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-    drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
+    drawbarH(touchX * 3, CTRL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+    //drawPot(CTRL_COL_3, 3, pl3Volume_graph, pl3Volume_graph, "MIX", trackColor[desired_instrument]);
+    drawbarH(touchX * 3, CTRL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+    drawbarH(touchX * 3, CTRL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
   }
 }
 
@@ -41,13 +41,12 @@ void Plugin2_Page1_Dynamic() {
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || !buttons[6].read()) {
+    
     if (millis() % 20 > 15) {
-      gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-      gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
       //Volume
-      if (gridTouchY == CONTROL_ROW_0) {
+      if (gridTouchY == CTRL_ROW_0) {
         for (byte touchX = 1; touchX < 5; touchX++) {
-          drawbarH(touchX * 3, CONTROL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+          drawbarH(touchX * 3, CTRL_ROW_0, pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
           if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) + 1) {
             pl4[0].Vol_rnd[touchX - 1] = map(Potentiometer1, 0, 127, 0, 99.00);
             pl4[0].Vol[touchX - 1] = pl4[0].Vol_rnd[touchX - 1] / 100.00;
@@ -55,9 +54,9 @@ void Plugin2_Page1_Dynamic() {
           }
         }
       }
-      if (gridTouchY == CONTROL_ROW_1) {
+      if (gridTouchY == CTRL_ROW_1) {
         for (byte touchX = 1; touchX < 5; touchX++) {
-          drawbarH(touchX * 3, CONTROL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+          drawbarH(touchX * 3, CTRL_ROW_1, pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
           if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) + 1) {
             pl4[0].Vol_rnd[touchX + 3] = map(Potentiometer1, 0, 127, 0, 99.00);
             pl4[0].Vol[touchX + 3] = pl4[0].Vol_rnd[touchX + 3] / 100.00;
@@ -65,9 +64,9 @@ void Plugin2_Page1_Dynamic() {
           }
         }
       }
-      if (gridTouchY == CONTROL_ROW_2) {
+      if (gridTouchY == CTRL_ROW_2) {
         for (byte touchX = 1; touchX < 5; touchX++) {
-          drawbarH(touchX * 3, CONTROL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
+          drawbarH(touchX * 3, CTRL_ROW_2, pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], ILI9341_MAGENTA);
           if (gridTouchX == touchX * 3 || gridTouchX == (touchX * 3) + 1) {
             pl4[0].Vol_rnd[touchX + 7] = map(Potentiometer1, 0, 127, 0, 99.00);
             pl4[0].Vol[touchX + 7] = pl4[0].Vol_rnd[touchX + 7] / 100.00;

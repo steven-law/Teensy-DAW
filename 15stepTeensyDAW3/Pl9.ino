@@ -1,113 +1,119 @@
 void Plugin_9_Settings() {
   //place here the Audio settings for your plugin
+  pl9bpinput.begin(WAVEFORM_SINE);
+  pl9bpinput.frequency(1);
+  pl9bpinput.amplitude(1);
+  pl9bpfilter.frequency(130);
+  pl9bpfilter.resonance(3);
+  pl9bpfilter.octaveControl(4);
+
+  pl9dc1.amplitude(0.06);
 }
 
 void Plugin9_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate, "Rate", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
 }
 
 void Plugin9_Page1_Dynamic() {
-  /*
-  
-    TS_Point p = ts.getPoint();
+
   if (ts.touched() || !buttons[6].read()) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-     
-     if (gridTouchY == 3) {
 
-      //1
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(3, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+    if (gridTouchY == 0) {
+      //Save button
+      if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
+        //savePlugin9();
       }
-      //2
-      if (gridTouchX == 7 || gridTouchX == 8) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(7, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //3
-      if (gridTouchX == 11 || gridTouchX == 12) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(11, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //4
-      if (gridTouchX == 15 || gridTouchX == 16) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(15, 3, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+      //Load button
+      if (gridTouchX == POSITION_LOAD_BUTTON) {
+        //loadPlugin9();
       }
     }
-  if (gridTouchY == 7) {
-
-      //1
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(3, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //2
-      if (gridTouchX == 7 || gridTouchX == 8) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(7, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //3
-      if (gridTouchX == 11 || gridTouchX == 12) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(11, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //4
-      if (gridTouchX == 15 || gridTouchX == 16) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(15, 7, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+    //change preset
+    if (gridTouchX >= 18 && gridTouchY == 1) {
+      drawNrInRect(18, 1, pl8presetNr, ILI9341_PURPLE);
+      if ((abs(map(Potentiometer1, 0, 127, 0, MAX_PRESETS - 1) - pl8presetNr) < 2)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+        pl9presetNr = map(Potentiometer1, 0, 127, 0, MAX_PRESETS - 1);
       }
     }
 
-    if (gridTouchY == 11) {
+    if (millis() % 20 > 15) {
+      //wah-wah
+      if (gridTouchY == CTRL_ROW_0) {
 
-      //1
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
-
-        drawPot(3, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+        //Waveform
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
+          drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wah_form_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wah_form_graph = Potentiometer1;
+            pl9[pl9presetNr].wah_form = pl9[pl9presetNr].wah_form_graph / 10;
+            pl9bpinput.begin(pl9[pl9presetNr].wah_form);
+          }
+        }
+        //Rate
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
+          drawPot(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate, "Rate", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wah_rate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wah_rate_graph = Potentiometer1;
+            pl9[pl9presetNr].wah_rate = pl9[pl9presetNr].wah_rate_graph / 16.00;
+            pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
+          }
+        }
+        //Amount
+        if (gridTouchX == CTRL_COL_2 || gridTouchX == CTRL_COL_2 + 1) {
+          drawPot(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wah_sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wah_sweep_graph = Potentiometer1;
+            pl9[pl9presetNr].wah_sweep = pl9[pl9presetNr].wah_sweep_graph / 18.30;
+            pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
+          }
+        }
       }
-      //2
-      if (gridTouchX == 7 || gridTouchX == 8) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
+      if (gridTouchY == CTRL_ROW_1) {
 
-        drawPot(7, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+        //Freq
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
+          drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wah_freq_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wah_freq_graph = Potentiometer1;
+            pl9[pl9presetNr].wah_freq = map(pl9[pl9presetNr].wah_freq_graph, 0, 127, 20, 2000);
+            pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
+          }
+        }
+        //Reso
+        if (gridTouchX == CTRL_COL_1 || gridTouchX == CTRL_COL_1 + 1) {
+          drawPot(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wah_reso_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wah_reso_graph = Potentiometer1;
+            pl9[pl9presetNr].wah_reso = pl9[pl9presetNr].wah_reso_graph / 25.40;
+            pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
+          }
+        }
       }
-      //3
-      if (gridTouchX == 11 || gridTouchX == 12) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
 
-        drawPot(11, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
-      }
-      //4
-      if (gridTouchX == 15 || gridTouchX == 16) {
-        dvalue = map(Potentiometer1, 0, 127, 0, 12);
-        fvalue = map(Potentiometer1, 0, 127, 0, 100);
+      if (gridTouchY == CTRL_ROW_2) {
 
-        drawPot(15, 11, fvalue, dvalue, "dname", trackColor[desired_instrument]);
+        //Wavefold
+        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
+          drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
+          if (abs(Potentiometer1 - pl9[pl9presetNr].wavefold_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+            pl9[pl9presetNr].wavefold_graph = Potentiometer1;
+            pl9[pl9presetNr].wavefold = (pl9[pl9presetNr].wavefold_graph / 64.00) + 0.06;
+            pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
+          }
+        }
       }
-    }*/
+    }
+  }
 }

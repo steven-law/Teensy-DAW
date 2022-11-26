@@ -17,10 +17,10 @@ void FX1reverb_settings() {
   FX1mixer3.gain(2, 1);
   FX1mixer3.gain(3, 1);
   //mixer2 for FX1
-  FX1mixer4.gain(0, 1);
-  FX1mixer4.gain(1, 1);
-  FX1mixer4.gain(2, 1);
-  FX1mixer4.gain(3, 1);
+  FX1mixer4.gain(0, 0);
+  FX1mixer4.gain(1, 0);
+  FX1mixer4.gain(2, 0);
+  FX1mixer4.gain(3, 0);
 }
 
 void FX1reverb_static() {
@@ -29,18 +29,29 @@ void FX1reverb_static() {
   drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
   drawActiveRect(18, 7, 2, 2, false, "5-8", ILI9341_LIGHTGREY);
 
-  drawActiveRect(1, 5, 2, 2, true, "Rvrb", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 5, 2, 2, true, "Rvrb", ILI9341_YELLOW);
   drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
 
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
 }
 
 void FX1reverb_dynamic() {
+  if (msecs % 10 == 0) {
+
+    if (abs(Potentiometer[0] - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+      if (fx1reverbtime_graph != Potentiometer[0]) {
+        drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
+        fx1reverbtime_graph = Potentiometer[0];
+        fx1reverbtime = fx1reverbtime_graph / 25.40;
+        reverb1.reverbTime(fx1reverbtime);
+      }
+    }
+  }
   TS_Point p = ts.getPoint();
-  if (ts.touched() || !buttons[6].read()) {
+  if (ts.touched() || enter_button) {
 
 
 
@@ -54,19 +65,7 @@ void FX1reverb_dynamic() {
         loadFX1();
       }
     }
-    if (millis() % 20 > 15) {
-      if (gridTouchY == CTRL_ROW_0) {
-        //reverbTime
-        if (gridTouchX == CTRL_COL_0 || gridTouchX == CTRL_COL_0 + 1) {
-          drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", trackColor[desired_instrument]);
-          if (abs(Potentiometer1 - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-            fx1reverbtime_graph = Potentiometer1;
-            fx1reverbtime = fx1reverbtime_graph / 25.40;
-            reverb1.reverbTime(fx1reverbtime);
-          }
-        }
-      }
-    }
+
     if (gridTouchX >= 18) {
       //page selection
       if (gridTouchY == 3 || gridTouchY == 4) {
