@@ -69,15 +69,15 @@ void Mixer_Settings() {
   FX3mixer2.gain(2, 0);
   FX3mixer2.gain(3, 0);
   //mixer2 for FX3
-  FX3mixer3.gain(0, 1);
-  FX3mixer3.gain(1, 1);
-  FX3mixer3.gain(2, 1);
-  FX3mixer3.gain(3, 1);
+  FX3mixer3.gain(0, 0);
+  FX3mixer3.gain(1, 0);
+  FX3mixer3.gain(2, 0);
+  FX3mixer3.gain(3, 0);
   //mixer2 for FX3
-  FX3mixer4.gain(0, 1);
-  FX3mixer4.gain(1, 1);
-  FX3mixer4.gain(2, 1);
-  FX3mixer4.gain(3, 1);
+  FX3mixer4.gain(0, 0);
+  FX3mixer4.gain(1, 0);
+  FX3mixer4.gain(2, 0);
+  FX3mixer4.gain(3, 0);
 }
 
 void mixerPage1_Static(byte mixerpage) {

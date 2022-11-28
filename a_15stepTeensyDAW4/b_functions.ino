@@ -199,7 +199,32 @@ void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channe
     FX3mixer4.gain(0, volume);
   }
 }
-
+void selectFilterType(byte pluginchannel, byte mixerchannel) {
+  if (pluginchannel == 17) {
+    pl1mixer2.gain(0, 0);
+    pl1mixer2.gain(1, 0);
+    pl1mixer2.gain(2, 0);
+    pl1mixer2.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 19) {
+    pl3mixer1.gain(0, 0);
+    pl3mixer1.gain(1, 0);
+    pl3mixer1.gain(2, 0);
+    pl3mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 22) {
+    pl6mixer1.gain(0, 0);
+    pl6mixer1.gain(1, 0);
+    pl6mixer1.gain(2, 0);
+    pl6mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 25) {
+    pl9mixer1.gain(0, 0);
+    pl9mixer1.gain(1, 0);
+    pl9mixer1.gain(2, 0);
+    pl9mixer1.gain(mixerchannel, 1);
+  }
+}
 
 //draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended
 void draw_sub_page_buttons(byte maxpages) {

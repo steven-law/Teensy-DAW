@@ -31,6 +31,11 @@ void Plugin_1_Settings() {
   filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
   filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
 
+  pl1mixer2.gain(0, 1);
+  pl1mixer2.gain(1, 0);
+  pl1mixer2.gain(2, 0);
+  pl1mixer2.gain(3, 0);
+
   envelope1.delay(0);
   envelope1.attack(pl1[pl1presetNr].Env1_Attack);
   envelope1.hold(0);
@@ -246,7 +251,7 @@ void Plugin1_Page2_Dynamic() {
           if (pl1[pl1presetNr].Filter1_Type_graph != Potentiometer[3]) {
             pl1[pl1presetNr].Filter1_Type_graph = Potentiometer[3];
             pl1[pl1presetNr].Filter1_Type = pl1[pl1presetNr].Filter1_Type_graph / 43;
-            AudioConnection patchCord57(filter1, pl1[pl1presetNr].Filter1_Type, envelope1, 0);
+            selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
             drawPot(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
             drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
           }

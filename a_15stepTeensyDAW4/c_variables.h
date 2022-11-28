@@ -68,7 +68,7 @@ byte tempo = 120;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "SDWv", "SDRw", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
+const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
 
 #define DRUMTRACK 0
@@ -134,7 +134,7 @@ const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
-const char* filterType[3] = {"LPF", "BPF", "HPF"};
+const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
 //plugin 1 variables
 struct plugin1 {
@@ -232,6 +232,7 @@ struct plugin5 {
 };
 plugin5 pl5[MAX_PRESETS];
 byte pl5presetNr = 0;
+bool enter_was_pushed = true;
 
 //plugin 6 variables
 struct plugin6 {
@@ -398,6 +399,14 @@ struct plugin9 {
   byte wah_reso_graph;
   float wah_sweep;
   byte wah_sweep_graph;
+  int Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
 };
 plugin9 pl9[MAX_PLUGINS];
 byte pl9presetNr = 0;
@@ -465,7 +474,7 @@ byte trackTouchY;
 bool is_held = true;
 unsigned long previousMillis = 0;
 //DMAMEM uint16_t fb1[320 * 240];
-//PROGMEM uint16_t fb1[320 * 240];
+
 
 #define CTRL_ROW_0 3
 #define CTRL_ROW_1 6

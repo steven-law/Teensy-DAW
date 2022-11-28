@@ -4,7 +4,10 @@ void Plugin_6_Settings() {
   pl6filter1.frequency(pl6[pl6presetNr].Filter1_Frequency);
   pl6filter1.resonance(pl6[pl6presetNr].Filter1_Resonance);
   pl6filter1.octaveControl(pl6[pl6presetNr].Filter1_Sweep);
-
+  pl6mixer1.gain(0, 1);
+  pl6mixer1.gain(1, 0);
+  pl6mixer1.gain(2, 0);
+  pl6mixer1.gain(3, 0);
   pl6envelope1.delay(0);
   pl6envelope1.attack(pl6[pl6presetNr].Env1_Attack);
   pl6envelope1.hold(0);
@@ -28,7 +31,7 @@ void Plugin6_Page_Static(byte Pagenumber) {
   //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
   drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
-  drawPot(CTRL_COL_3, CTRL_ROW_0, plugin[6].Volume_graph, plugin[6].Volume_graph, "MIX", trackColor[desired_instrument]);
+
 
   drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
   drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
@@ -45,39 +48,48 @@ void Plugin6_Page1_Dynamic() {
   switch (lastPotRow) {
     case 0:
       if (msecs % 11 == 0) {
+        
         if (abs(Potentiometer[0] - pl6[pl6presetNr].selected_file_raw_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].selected_raw_file = map(Potentiometer[0], 0, 127, 0, MAX_RAW_FILES);
-          pl6[pl6presetNr].selected_file_raw_graph = Potentiometer[0];
-          drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
+          if (pl6[pl6presetNr].selected_file_raw_graph != Potentiometer[0]) {
+            pl6[pl6presetNr].selected_file_raw_graph = Potentiometer[0];
+            pl6[pl6presetNr].selected_raw_file = map(Potentiometer[0], 0, 127, 0, MAX_RAW_FILES);
+            drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_raw_graph, pl6[pl6presetNr].selected_raw_file, "RAW", ILI9341_BLACK);
+          }
         }
       }
       break;
     case 1:
       if (msecs % 11 == 0) {
         if (abs(Potentiometer[0] - pl6[pl6presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Filter1_Frequency = map(Potentiometer[0], 0, 127, 40, 5900.00);
-          pl6[pl6presetNr].Filter1_Frequency_graph = Potentiometer[0];
-          pl6filter1.frequency(pl6[pl6presetNr].Filter1_Frequency);
-          drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Frq", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
+            pl6[pl6presetNr].Filter1_Frequency_graph = Potentiometer[0];
+            pl6filter1.frequency(pl6[pl6presetNr].Filter1_Frequency);
+            pl6[pl6presetNr].Filter1_Frequency = map(Potentiometer[0], 0, 127, 40, 5900.00);
+            drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, pl6[pl6presetNr].Filter1_Frequency, "Frq", trackColor[desired_instrument]);
+          }
         }
         if (abs(Potentiometer[1] - pl6[pl6presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Filter1_Resonance_graph = Potentiometer[1];
-          pl6[pl6presetNr].Filter1_Resonance = pl6[pl6presetNr].Filter1_Resonance_graph / 25.40;
-          pl6filter1.resonance(pl6[pl6presetNr].Filter1_Resonance);
-          drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
+            pl6[pl6presetNr].Filter1_Resonance_graph = Potentiometer[1];
+            pl6[pl6presetNr].Filter1_Resonance = pl6[pl6presetNr].Filter1_Resonance_graph / 25.40;
+            pl6filter1.resonance(pl6[pl6presetNr].Filter1_Resonance);
+            drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_instrument]);
+          }
         }
         if (abs(Potentiometer[2] - pl6[pl6presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Filter1_Sweep_graph = Potentiometer[2];
-          pl6[pl6presetNr].Filter1_Sweep = pl6[pl6presetNr].Filter1_Sweep_graph / 18.14;
-          pl6filter1.octaveControl(pl6[pl6presetNr].Filter1_Sweep);
-          drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
+            pl6[pl6presetNr].Filter1_Sweep_graph = Potentiometer[2];
+            pl6[pl6presetNr].Filter1_Sweep = pl6[pl6presetNr].Filter1_Sweep_graph / 18.14;
+            pl6filter1.octaveControl(pl6[pl6presetNr].Filter1_Sweep);
+            drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+          }
         }
         //Filtertype
         if (abs(Potentiometer[3] - pl6[pl6presetNr].Filter1_Type_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (pl6[pl6presetNr].Filter1_Type_graph != Potentiometer[3]) {
             pl6[pl6presetNr].Filter1_Type_graph = Potentiometer[3];
             pl6[pl6presetNr].Filter1_Type = pl6[pl6presetNr].Filter1_Type_graph / 43;
-            AudioConnection patchCord56(pl6filter1, pl6[pl6presetNr].Filter1_Type, envelope1, 0);
+            selectFilterType(22, pl6[pl6presetNr].Filter1_Type);
             drawPot(CTRL_COL_3, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Type_graph, pl6[pl6presetNr].Filter1_Type, "", trackColor[desired_track]);
             drawChar(CTRL_COL_3, 7, filterType[pl6[pl6presetNr].Filter1_Type], ILI9341_WHITE);
           }
@@ -87,32 +99,40 @@ void Plugin6_Page1_Dynamic() {
     case 2:
       if (msecs % 11 == 0) {
         if (abs(Potentiometer[0] - pl6[pl6presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Env1_Attack_graph = Potentiometer[0];
-          pl6[pl6presetNr].Env1_Attack = map(pl6[pl6presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-          pl6envelope1.attack(pl6[pl6presetNr].Env1_Attack);
-          pl6envelope2.attack(pl6[pl6presetNr].Env1_Attack);
-          drawPot(3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Att", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Env1_Attack_graph != Potentiometer[0]) {
+            pl6[pl6presetNr].Env1_Attack_graph = Potentiometer[0];
+            pl6[pl6presetNr].Env1_Attack = map(pl6[pl6presetNr].Env1_Attack_graph, 0, 127, 10, 700);
+            pl6envelope1.attack(pl6[pl6presetNr].Env1_Attack);
+            pl6envelope2.attack(pl6[pl6presetNr].Env1_Attack);
+            drawPot(3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Att", trackColor[desired_instrument]);
+          }
         }
         if (abs(Potentiometer[1] - pl6[pl6presetNr].Env1_Decay_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Env1_Decay_graph = Potentiometer[1];
-          pl6[pl6presetNr].Env1_Decay = map(pl6[pl6presetNr].Env1_Decay_graph, 0, 127, 10, 700);
-          pl6envelope1.decay(pl6[pl6presetNr].Env1_Decay);
-          pl6envelope2.decay(pl6[pl6presetNr].Env1_Decay);
-          drawPot(7, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Env1_Decay_graph != Potentiometer[1]) {
+            pl6[pl6presetNr].Env1_Decay_graph = Potentiometer[1];
+            pl6[pl6presetNr].Env1_Decay = map(pl6[pl6presetNr].Env1_Decay_graph, 0, 127, 10, 700);
+            pl6envelope1.decay(pl6[pl6presetNr].Env1_Decay);
+            pl6envelope2.decay(pl6[pl6presetNr].Env1_Decay);
+            drawPot(7, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+          }
         }
         if (abs(Potentiometer[2] - pl6[pl6presetNr].Env1_Sustain_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Env1_Sustain_graph = Potentiometer[2];
-          pl6[pl6presetNr].Env1_Sustain = pl6[pl6presetNr].Env1_Sustain_graph / 127.00;
-          pl6envelope1.sustain(pl6[pl6presetNr].Env1_Sustain);
-          pl6envelope2.sustain(pl6[pl6presetNr].Env1_Sustain);
-          drawPot(11, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Env1_Sustain_graph != Potentiometer[2]) {
+            pl6[pl6presetNr].Env1_Sustain_graph = Potentiometer[2];
+            pl6[pl6presetNr].Env1_Sustain = pl6[pl6presetNr].Env1_Sustain_graph / 127.00;
+            pl6envelope1.sustain(pl6[pl6presetNr].Env1_Sustain);
+            pl6envelope2.sustain(pl6[pl6presetNr].Env1_Sustain);
+            drawPot(11, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+          }
         }
         if (abs(Potentiometer[3] - pl6[pl6presetNr].Env1_Release_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-          pl6[pl6presetNr].Env1_Release_graph = Potentiometer[3];
-          pl6[pl6presetNr].Env1_Release = map(pl6[pl6presetNr].Env1_Release_graph, 0, 127, 180, 1200);
-          pl6envelope1.release(pl6[pl6presetNr].Env1_Release);
-          pl6envelope2.release(pl6[pl6presetNr].Env1_Release);
-          drawPot(15, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+          if (pl6[pl6presetNr].Env1_Release_graph != Potentiometer[3]) {
+            pl6[pl6presetNr].Env1_Release_graph = Potentiometer[3];
+            pl6[pl6presetNr].Env1_Release = map(pl6[pl6presetNr].Env1_Release_graph, 0, 127, 180, 1200);
+            pl6envelope1.release(pl6[pl6presetNr].Env1_Release);
+            pl6envelope2.release(pl6[pl6presetNr].Env1_Release);
+            drawPot(15, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+          }
         }
       }
       break;

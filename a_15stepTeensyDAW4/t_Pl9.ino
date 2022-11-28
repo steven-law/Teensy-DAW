@@ -6,7 +6,12 @@ void Plugin_9_Settings() {
   pl9bpfilter.frequency(130);
   pl9bpfilter.resonance(3);
   pl9bpfilter.octaveControl(4);
-
+  pl9filter2.frequency(130);
+  pl9filter2.resonance(3);
+  pl9filter2.octaveControl(4);
+  pl9mixer1.gain(0, 1);
+  pl9mixer1.gain(1, 0);
+  pl9mixer1.gain(2, 0);
   pl9dc1.amplitude(0.06);
 }
 
@@ -23,6 +28,12 @@ void Plugin9_Page_Static(byte Pagenumber) {
   drawPot(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
 
   drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Frq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
 }
 
 void Plugin9_Page1_Dynamic() {
@@ -93,6 +104,47 @@ void Plugin9_Page1_Dynamic() {
           }
         }
       }
+      break;
+    case 3:
+      if (msecs % 11 == 0) {
+        //Filter Frequency
+        if (abs(Potentiometer[0] - pl9[pl9presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          if (pl9[pl9presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
+            pl9[pl9presetNr].Filter1_Frequency_graph = Potentiometer[0];
+            pl9[pl9presetNr].Filter1_Frequency = map(pl9[pl9presetNr].Filter1_Frequency_graph, 0, 127, 40, 5900.00);
+            pl9filter2.frequency(pl9[pl9presetNr].Filter1_Frequency);
+            drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Frq", trackColor[desired_track]);
+          }
+        }
+        //Resonance
+        if (abs(Potentiometer[1] - pl9[pl9presetNr].Filter1_Resonance_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          if (pl9[pl9presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
+            pl9[pl9presetNr].Filter1_Resonance_graph = Potentiometer[1];
+            pl9[pl9presetNr].Filter1_Resonance = pl9[pl9presetNr].Filter1_Resonance_graph / 25.40;
+            pl9filter2.resonance(pl9[pl9presetNr].Filter1_Resonance);
+            drawPot(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
+          }
+        }
+        //Sweep
+        if (abs(Potentiometer[2] - pl9[pl9presetNr].Filter1_Sweep_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          if (pl9[pl9presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
+            pl9[pl9presetNr].Filter1_Sweep_graph = Potentiometer[2];
+            pl9[pl9presetNr].Filter1_Sweep = pl9[pl9presetNr].Filter1_Sweep_graph / 18.14;
+            pl9filter2.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
+            drawPot(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+          }
+        }
+        //Filtertype
+        if (abs(Potentiometer[3] - pl9[pl9presetNr].Filter1_Type_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
+          if (pl9[pl9presetNr].Filter1_Type_graph != Potentiometer[3]) {
+            pl9[pl9presetNr].Filter1_Type_graph = Potentiometer[3];
+            pl9[pl9presetNr].Filter1_Type = pl9[pl9presetNr].Filter1_Type_graph / 43;
+            selectFilterType(25, pl9[pl1presetNr].Filter1_Type);
+            drawPot(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
+            drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
+          }
+        }
+      }      
       break;
   }
 

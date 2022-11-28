@@ -39,13 +39,13 @@ void FX1reverb_static() {
 }
 
 void FX1reverb_dynamic() {
-  if (msecs % 10 == 0) {
+  if (msecs % 11 == 0) {
 
     if (abs(Potentiometer[0] - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
       if (fx1reverbtime_graph != Potentiometer[0]) {
         drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
         fx1reverbtime_graph = Potentiometer[0];
-        fx1reverbtime = fx1reverbtime_graph / 25.40;
+        fx1reverbtime = fx1reverbtime_graph / 10;
         reverb1.reverbTime(fx1reverbtime);
       }
     }
