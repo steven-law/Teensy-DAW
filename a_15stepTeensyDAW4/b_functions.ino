@@ -337,7 +337,7 @@ void drawPot_3(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int c
   tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_3) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_3) + 2.25), 4, color);
   circlePos_old_3 = circlePos_3;
   dvalue_old_3 = dvalue;
-}
+}*/
 void drawPot_4(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos_4 = fvalue / 63.5;
@@ -357,7 +357,7 @@ void drawPot_4(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int c
   tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_4) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_4) + 2.25), 4, color);
   circlePos_old_4 = circlePos_4;
   dvalue_old_4 = dvalue;
-}*/
+}
 void drawPotCC(byte xPos, byte yPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
 
   circlePoscc = fvaluecc / 63.5;

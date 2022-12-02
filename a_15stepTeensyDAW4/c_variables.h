@@ -96,7 +96,7 @@ const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Ra
 #define MIXER_PAGE_2 31
 #define MIXER_PAGE_3 32
 #define MIXER_PAGE_4 33
-
+#define RECORDER_PAGE 34
 #define MIDICC_PAGE_1 35
 #define MIDICC_PAGE_2 36
 
@@ -126,10 +126,24 @@ const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Ra
 
 byte selectPage;
 
-#define MAX_RAW_FILES 11
+#define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
 #define MAX_WAV_FILES 11
-const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW" };
+const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
+                                         "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
+                                         "21.RAW", "22.RAW", "23.RAW", "24.RAW", "25.RAW", "26.RAW", "27.RAW", "28.RAW", "29.RAW", "30.RAW",
+                                         "31.RAW", "32.RAW", "33.RAW", "34.RAW", "35.RAW", "36.RAW", "37.RAW", "38.RAW", "39.RAW", "40.RAW",
+                                         "41.RAW", "42.RAW", "43.RAW", "44.RAW", "45.RAW", "46.RAW", "47.RAW", "48.RAW", "49.RAW", "50.RAW",
+                                         "51.RAW", "52.RAW", "53.RAW", "54.RAW", "55.RAW", "56.RAW", "57.RAW", "58.RAW", "59.RAW", "60.RAW",
+                                         "61.RAW", "62.RAW", "63.RAW", "64.RAW", "65.RAW", "66.RAW", "67.RAW", "68.RAW", "69.RAW", "70.RAW",
+                                         "71.RAW", "72.RAW", "73.RAW", "74.RAW", "75.RAW", "76.RAW", "77.RAW", "78.RAW", "79.RAW", "80.RAW",
+                                         "81.RAW", "82.RAW", "83.RAW", "84.RAW", "85.RAW", "86.RAW", "87.RAW", "88.RAW", "89.RAW", "90.RAW",
+                                         "91.RAW", "92.RAW", "93.RAW", "94.RAW", "95.RAW", "96.RAW", "97.RAW", "98.RAW", "99.RAW", "100.RAW",
+                                         "101.RAW", "102.RAW", "103.RAW", "104.RAW", "105.RAW", "106.RAW", "107.RAW", "108.RAW", "109.RAW", "110.RAW",
+                                         "111.RAW", "112.RAW", "113.RAW", "114.RAW", "115.RAW", "116.RAW", "117.RAW", "118.RAW", "119.RAW", "120.RAW",
+                                         "121.RAW", "122.RAW", "123.RAW", "124.RAW", "125.RAW", "126.RAW", "127.RAW" };
+
+
 const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
@@ -232,7 +246,7 @@ struct plugin5 {
 };
 plugin5 pl5[MAX_PRESETS];
 byte pl5presetNr = 0;
-bool enter_was_pushed = true;
+bool pl5enter_was_pushed = true;
 
 //plugin 6 variables
 struct plugin6 {
@@ -431,6 +445,29 @@ struct plugins {
 plugins plugin[MAX_PLUGINS];
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
+
+
+//audiorecorder variables
+
+// which input on the audio shield will be used?
+const int myInput = AUDIO_INPUT_LINEIN;
+//const int myInput = AUDIO_INPUT_MIC;
+bool audio_rec_rec = false;
+byte audio_rec_rec_graph = 0;
+bool audio_rec_now = false;
+bool audio_rec_listen = false;
+byte audio_rec_listen_graph = 0;
+byte audio_rec_volume_graph = 0;
+float audio_rec_volume = 0;
+byte audio_rec_selected_file;
+byte audio_rec_selected_file_graph = 50;
+
+byte audio_rec_peak_graph;
+// The file where data is recorded
+File frec;
+
+
+
 
 //FX variables
 //FX1

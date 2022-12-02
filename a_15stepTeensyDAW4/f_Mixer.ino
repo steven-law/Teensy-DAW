@@ -25,6 +25,8 @@ void selectMute(byte tracknumber) {
 
 void Mixer_Settings() {
   sgtl5000_1.enable();
+  sgtl5000_1.inputSelect(myInput);
+  sgtl5000_1.lineInLevel(8);
   sgtl5000_1.volume(0.12);
   //mixer5 for plugins 1-4
   mixer5.gain(0, 1);
@@ -56,6 +58,9 @@ void Mixer_Settings() {
   mixer10.gain(2, 1);
   mixer10.gain(3, 1);
 
+//mixer for Audiorecorder
+mixer11.gain(0, 1);
+mixer11.gain(1, 0);
 
 
   //mixer1 for FX3

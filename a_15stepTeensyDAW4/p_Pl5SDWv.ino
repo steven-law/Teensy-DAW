@@ -29,7 +29,8 @@ void Plugin5_Page_Static(byte Pagenumber) {
   //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl5presetNr, ILI9341_PURPLE);
   drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
-  tft.setFont(Arial_8);
+  drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
+
 
   drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Frequency_graph, pl5[pl5presetNr].Filter1_Frequency, "Freq", trackColor[desired_instrument]);
   drawPot(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
@@ -53,9 +54,18 @@ void Plugin5_Page1_Dynamic() {
             pl5[pl5presetNr].selected_file_graph = Potentiometer[0];
             pl5[pl5presetNr].selected_file = map(pl5[pl5presetNr].selected_file_graph, 0, 127, 0, MAX_RAW_FILES);
             drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
+            pl5enter_was_pushed = false;
+            drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
           }
         }
+        if (enter_button) {
+          newdigate::flashloader loader;
+          pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
+          pl5enter_was_pushed = true;
+          drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
+        }
       }
+
       break;
     case 1:
       if (msecs % 11 == 0) {

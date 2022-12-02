@@ -274,7 +274,8 @@ void step(int current) {
             if (track[track_number].MIDIchannel == 21) {
               double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
               playSdPitch1.setPlaybackRate(note_ratio);
-              playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
+              //playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
+              playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
               pl5envelope1.noteOn();
               pl5envelope2.noteOn();
               Serial.println("listen?");
@@ -619,7 +620,8 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     if (track[channel - 1].MIDIchannel == 21) {
       double note_ratio = pow(2.0, ((double)(note - SAMPLE_ROOT) / 12.0));
       playSdPitch1.setPlaybackRate(note_ratio);
-      playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
+      //playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
+      playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
       pl5envelope1.noteOn();
       pl5envelope2.noteOn();
       Serial.println("listen?");
