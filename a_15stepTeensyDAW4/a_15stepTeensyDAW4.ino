@@ -144,6 +144,12 @@ USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
 MIDIDevice midi1(myusb);
+MIDIDevice midi2(myusb);
+MIDIDevice midi3(myusb);
+MIDIDevice midi4(myusb);
+MIDIDevice midi5(myusb);
+MIDIDevice midi6(myusb);
+
 
 
 
@@ -532,6 +538,21 @@ void setup() {
   midi1.setHandleNoteOn(myNoteOn);
   midi1.setHandleNoteOff(myNoteOff);
   midi1.setHandleControlChange(myControlChange);
+  midi2.setHandleNoteOn(myNoteOn);
+  midi2.setHandleNoteOff(myNoteOff);
+  midi2.setHandleControlChange(myControlChange);
+  midi3.setHandleNoteOn(myNoteOn);
+  midi3.setHandleNoteOff(myNoteOff);
+  midi3.setHandleControlChange(myControlChange);
+  midi4.setHandleNoteOn(myNoteOn);
+  midi4.setHandleNoteOff(myNoteOff);
+  midi4.setHandleControlChange(myControlChange);
+  midi5.setHandleNoteOn(myNoteOn);
+  midi5.setHandleNoteOff(myNoteOff);
+  midi5.setHandleControlChange(myControlChange);
+  midi6.setHandleNoteOn(myNoteOn);
+  midi6.setHandleNoteOff(myNoteOff);
+  midi6.setHandleControlChange(myControlChange);
   midi1.setHandleClock(myClock);
   midi1.setHandleStart(myStart);
   midi1.setHandleStop(myStop);
@@ -972,17 +993,18 @@ void readMainButtons() {
 
       //playbutton
       if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
+        phrase = start_of_loop;
         seq_run = true;
         msecs = 0;
         for (byte i = 1; i <= 7; i++) {
-          track[i].clip_songMode = track[i].arrangment1[0];
+          track[i].clip_songMode = track[i].arrangment1[start_of_loop];
         }
       }
       //stopbutton
       if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
         seq_run = false;
         tick_16 = -1;
-        phrase = -1;
+        phrase = start_of_loop - 1;
         pixelphrase = -1;
         phrase = 0;
         msecs = 0;
@@ -1070,6 +1092,11 @@ void loop() {
   usbMIDI.read();
   myusb.Task();
   midi1.read();
+  midi2.read();
+  midi3.read();
+  midi4.read();
+  midi5.read();
+  midi6.read();
   sendClock();
   kpd.tick();
   readMainButtons();
@@ -1100,7 +1127,9 @@ void loop() {
   }
 
   if (msecs % 100 == 0) {
-    //Serial.println(peak1.read());
+    //Serial.println(midi1.idProduct());
+    tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+    tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
     drawCursor();
     showCoordinates();
   }
@@ -1131,11 +1160,12 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Play button
       if (gridTouchX == POSITION_PLAY_BUTTON || gridTouchX == POSITION_PLAY_BUTTON + 1) {
+        phrase = start_of_loop;
         seq_run = true;
         msecs = 0;
         //seq.start();
         for (byte i = 1; i <= 7; i++) {
-          track[i].clip_songMode = track[i].arrangment1[0];
+          track[i].clip_songMode = track[i].arrangment1[start_of_loop];
         }
       }
 
@@ -1144,7 +1174,7 @@ void loop() {
       if (gridTouchX == POSITION_STOP_BUTTON) {
         seq_run = false;
         tick_16 = -1;
-        phrase = -1;
+        phrase = start_of_loop - 1;
         pixelphrase = -1;
         phrase = 0;
         msecs = 0;

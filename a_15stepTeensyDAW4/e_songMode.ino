@@ -19,7 +19,7 @@ void drawarrengmentLines(byte songpageNumber) {
       if (track[trackss].arrangment1[phrase] < 8) {
         for (int thickness = -8; thickness < 8; thickness++) {
           tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));  //(x-start, y, length, color)
-                                                                                                                                                                                                    /* if (track[trackss].arrangment1[phrase] == 8) {
+                                                                                                                                                                                                                                                /* if (track[trackss].arrangment1[phrase] == 8) {
             tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, ILI9341_DARKGREY);  //(x-start, y, length, color)
           }*/
         }
@@ -71,8 +71,8 @@ void draw_start_of_loop() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
   tft.print("S");
-  tft.print(start_of_loop + 1);
-  start_of_loop_old = start_of_loop + 1;
+  tft.print(start_of_loop);
+  start_of_loop_old = start_of_loop;
 }
 void draw_end_of_loop() {
   tft.setFont(Arial_8);
@@ -113,24 +113,53 @@ void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
   //end of loop
-  if (!ts.touched() && !enter_button) {
-    if (msecs % 50 == 0) {
-      if (abs(map(Potentiometer[3], 0, 127, 1, 255) - end_of_loop) < 10) {
+  if (button_15) {
+    //if (msecs % 20 == 0) {
+    //end of loop
+    if (abs(map(Potentiometer[3], 0, 127, 1, 255) - end_of_loop) < POTPICKUP) {
+      if (end_of_loop != map(Potentiometer[3], 0, 127, 1, 255)) {
         end_of_loop = map(Potentiometer[3], 0, 127, 1, 255);
         draw_end_of_loop();
       }
     }
-
-    if (abs(map(Potentiometer[2], 0, 127, 55, 200) - tempo) < 10) {
-      tempo = map(Potentiometer[2], 0, 127, 55, 200);
-      setTempo(tempo);
+    //Start of loop
+    if (abs(map(Potentiometer[2], 0, 127, 0, 254) - start_of_loop) < POTPICKUP) {
+      if (start_of_loop != map(Potentiometer[2], 0, 127, 0, 254)) {
+        start_of_loop = map(Potentiometer[2], 0, 127, 0, 254);
+        draw_start_of_loop();
+      }
     }
+    //pageselection
+    /*if (abs(map(Potentiometer[1], 0, 127, 0, 15) - songpages) < POTPICKUP) {
+      if (songpages != map(Potentiometer[1], 0, 127, 0, 15)) {
+        songpages = Potentiometer[1] / 10;
+        selectPage = SONGMODE_PAGE_1 + songpages;
+        gridSongMode(songpages);
+        songModePage(songpages);
+      }
+    }*/
+    //set Tempo
+    if (abs(map(Potentiometer[0], 0, 127, 55, 200) - tempo) < POTPICKUP) {
+      if (tempo != map(Potentiometer[0], 0, 127, 55, 200)) {
+        tempo = map(Potentiometer[0], 0, 127, 55, 200);
+        setTempo(tempo);
+      }
+    }
+    // }
   }
 
   if (ts.touched() || enter_button) {
 
     int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
-    byte touched_track = trackTouchY;
+    byte touched_track;
+    if (gridTouchY == 1) touched_track = 0;
+    if (gridTouchY == 3) touched_track = 1;
+    if (gridTouchY == 4) touched_track = 2;
+    if (gridTouchY == 6) touched_track = 3;
+    if (gridTouchY == 7) touched_track = 4;
+    if (gridTouchY == 9) touched_track = 5;
+    if (gridTouchY == 10) touched_track = 6;
+    if (gridTouchY == 12) touched_track = 7;
 
     //Assigning clips to the arranger
     if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
@@ -139,13 +168,6 @@ void songModePage(byte songpageNumber) {
       drawarrengmentLine(songpageNumber, touched_track, touched_phrase);
     }
 
-
-
-    //Start of loop
-    if (gridTouchX >= 18 && gridTouchY == 1) {
-      start_of_loop = map(Potentiometer[0], 0, 127, 0, 254);
-      draw_start_of_loop();
-    }
 
     //page selection
     if (gridTouchY == 13) {
@@ -213,6 +235,17 @@ void savebutton() {
     saveTrack1();
     tft.println("Done");
 
+    tft.print("Writing track 2-8 to project.txt...");
+    //save plugin 1 variables
+    saveTrack2();
+    saveTrack3();
+    saveTrack4();
+    saveTrack5();
+    saveTrack6();
+    saveTrack7();
+    saveTrack8();
+    tft.println("Done");
+
     tft.print("Writing plugin 1 to project.txt...");
     //save plugin 1 variables
     savePlugin1();
@@ -238,13 +271,18 @@ void savebutton() {
     savePlugin8();
     tft.println("Done");
 
+    tft.print("Writing plugin 9 to project.txt...");
+    //save plugin 9 variables
+    savePlugin9();
+    tft.println("Done");
+
     tft.print("Writing FX 1 to project.txt...");
-    //save plugin 8 variables
+    //save FX1 variables
     saveFX1();
     tft.println("Done");
 
     tft.print("Writing FX 2 to project.txt...");
-    //save plugin 8 variables
+    //save FX2 variables
     saveFX2();
     tft.println("Done");
 
@@ -288,6 +326,17 @@ void loadbutton() {
     tft.print("Reading track1 from project.txt...");
     loadTrack1();
     tft.println("Done");
+    //load track 2-8
+    tft.print("Reading track2-8 from project.txt...");
+    loadTrack2();
+    loadTrack3();
+    loadTrack4();
+    loadTrack5();
+    loadTrack6();
+    loadTrack7();
+    loadTrack8();
+    tft.println("Done");
+
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from project.txt...");
@@ -312,6 +361,11 @@ void loadbutton() {
     //load plugin 8 variables
     tft.print("reading plugin 8 from project.txt...");
     loadPlugin8();
+    tft.println("Done");
+
+    //load plugin 9 variables
+    tft.print("reading plugin 9 from project.txt...");
+    loadPlugin9();
     tft.println("Done");
 
 

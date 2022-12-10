@@ -100,7 +100,7 @@ void Plugin1_Page_Static(byte Pagenumber) {
 void Plugin1_Page1_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         //1 Row 1 note Offset
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
@@ -112,10 +112,10 @@ void Plugin1_Page1_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 1:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         //1 Row 2 Waveform
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
@@ -131,10 +131,10 @@ void Plugin1_Page1_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 2:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         //1 Row 2 note Velocity
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
@@ -150,7 +150,7 @@ void Plugin1_Page1_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
   }
 
@@ -218,7 +218,7 @@ void Plugin1_Page1_Dynamic() {
 void Plugin1_Page2_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         //Filter Frequency
         if (abs(Potentiometer[0] - pl1[pl1presetNr].Filter1_Frequency_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (pl1[pl1presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
@@ -234,7 +234,7 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer[1];
             pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_graph / 25.40;
             filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-            drawPot(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
+            drawPot_2(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Res", trackColor[desired_track]);
           }
         }
         //Sweep
@@ -243,7 +243,7 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer[2];
             pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_graph / 18.14;
             filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-            drawPot(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+            drawPot_3(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
           }
         }
         //Filtertype
@@ -252,14 +252,14 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Filter1_Type_graph = Potentiometer[3];
             pl1[pl1presetNr].Filter1_Type = pl1[pl1presetNr].Filter1_Type_graph / 43;
             selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
-            drawPot(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
+            drawPot_4(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
             drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
           }
         }
-      }
+      //}
       break;
     case 1:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         //Attack
         if (abs(Potentiometer[0] - pl1[pl1presetNr].Env1_Attack_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (pl1[pl1presetNr].Env1_Attack_graph != Potentiometer[0]) {
@@ -277,7 +277,7 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Env1_Decay = map(pl1[pl1presetNr].Env1_Decay_graph, 0, 127, 10, 700);
             envelope1.decay(pl1[pl1presetNr].Env1_Decay);
             envelope2.decay(pl1[pl1presetNr].Env1_Decay);
-            drawPot(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Env1_Decay_graph, pl1[pl1presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
+            drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Env1_Decay_graph, pl1[pl1presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
           }
         }
         //Sustain
@@ -287,7 +287,7 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Env1_Sustain = pl1[pl1presetNr].Env1_Sustain_graph / 127.00;
             envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
             envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
-            drawPot(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Env1_Sustain_graph, pl1[pl1presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
+            drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Env1_Sustain_graph, pl1[pl1presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
           }
         }
         //Release
@@ -297,10 +297,10 @@ void Plugin1_Page2_Dynamic() {
             pl1[pl1presetNr].Env1_Release = map(pl1[pl1presetNr].Env1_Release_graph, 0, 127, 180, 1200);
             envelope1.release(pl1[pl1presetNr].Env1_Release);
             envelope2.release(pl1[pl1presetNr].Env1_Release);
-            drawPot(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_track]);
+            drawPot_4(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_track]);
           }
         }
-      }
+      //}
       break;
   }
 

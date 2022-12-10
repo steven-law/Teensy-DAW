@@ -58,9 +58,9 @@ void Mixer_Settings() {
   mixer10.gain(2, 1);
   mixer10.gain(3, 1);
 
-//mixer for Audiorecorder
-mixer11.gain(0, 1);
-mixer11.gain(1, 0);
+  //mixer for Audiorecorder
+  mixer11.gain(0, 1);
+  mixer11.gain(1, 0);
 
 
   //mixer1 for FX3
@@ -123,7 +123,7 @@ void mixerPage1_Static(byte mixerpage) {
 void MixerPage1_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - track[MixerColumn].velocity_ON_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -140,10 +140,10 @@ void MixerPage1_Dynamic() {
             }
           }
         }
-      }
+      //}
       break;
     case 1:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - track[MixerColumn + 4].velocity_ON_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -160,17 +160,19 @@ void MixerPage1_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 2:
-      if (abs(Potentiometer[3] - MasterVol_graph) < POTPICKUP) {
-        if (MasterVol_graph != Potentiometer[3]) {
-          MasterVol_graph = Potentiometer[3];
-          MasterVol = MasterVol_graph / 127.00;
-          sgtl5000_1.volume(MasterVol);
-          drawPot(18, 12, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
+     // if (msecs % 20 == 0) {
+        if (abs(Potentiometer[3] - MasterVol_graph) < POTPICKUP) {
+          if (MasterVol_graph != Potentiometer[3]) {
+            MasterVol_graph = Potentiometer[3];
+            MasterVol = MasterVol_graph / 127.00;
+            sgtl5000_1.volume(MasterVol);
+            drawPot(18, 12, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
+          }
         }
-      }
+     // }
       break;
   }
   if (ts.touched() || enter_button) {
@@ -288,7 +290,7 @@ void mixerPage2_Static() {
 void MixerPage2_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn].MIDIchannel - 16].FXDryVolume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -300,10 +302,10 @@ void MixerPage2_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 1:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn].MIDIchannel - 16].FX1Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -315,10 +317,10 @@ void MixerPage2_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 2:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn].MIDIchannel - 16].FX2Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -330,10 +332,10 @@ void MixerPage2_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 3:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn].MIDIchannel - 16].FX3Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -345,7 +347,7 @@ void MixerPage2_Dynamic() {
             }
           }
         }
-      }
+      //}
       break;
   }
   if (ts.touched() || enter_button) {
@@ -429,7 +431,7 @@ void mixerPage3_Static() {
 void MixerPage3_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn + 4].MIDIchannel - 16].FXDryVolume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -441,10 +443,10 @@ void MixerPage3_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 1:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn + 4].MIDIchannel - 16].FX1Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -456,10 +458,10 @@ void MixerPage3_Dynamic() {
             }
           }
         }
-      }
+    //  }
       break;
     case 2:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn + 4].MIDIchannel - 16].FX2Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -471,10 +473,10 @@ void MixerPage3_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
     case 3:
-      if (msecs % 11 == 0) {
+     // if (msecs % 20 == 0) {
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           if (abs(Potentiometer[MixerColumn] - plugin[track[MixerColumn + 4].MIDIchannel - 16].FX3Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -486,7 +488,7 @@ void MixerPage3_Dynamic() {
             }
           }
         }
-      }
+     // }
       break;
   }
   if (ts.touched() || enter_button) {

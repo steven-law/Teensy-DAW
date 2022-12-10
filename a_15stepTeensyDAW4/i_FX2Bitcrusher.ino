@@ -40,7 +40,7 @@ void FX2Bitcrush_static() {
 }
 
 void FX2Bitcrush_dynamic() {
-  if (msecs % 11 == 0) {
+  //if (msecs % 20 == 0) {
 
     if (abs(Potentiometer[0] - fx2samplerate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
       if (fx2samplerate_graph != Potentiometer[0]) {
@@ -52,13 +52,13 @@ void FX2Bitcrush_dynamic() {
     }
     if (abs(Potentiometer[1] - fx2bitcrush_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
       if (fx2bitcrush_graph != Potentiometer[1]) {
-        drawPot(CTRL_COL_1, CTRL_ROW_0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
         fx2bitcrush_graph = Potentiometer[1];
         fx2bitcrush = map(fx2bitcrush_graph, 0, 127, 0, 12);
         bitcrusher2.bits(fx2bitcrush);
       }
     }
-  }
+ // }
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || enter_button) {

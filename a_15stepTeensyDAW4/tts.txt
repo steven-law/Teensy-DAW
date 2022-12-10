@@ -1,0 +1,114 @@
+Hello i´m the teensy touch D A W
+
+i will help you to make some cool sounds and Songs
+I am an easy D I Y Project consisting of 
+A teensy 4.1
+A teensy Audio shield
+A TFT Display
+4 Potentiometers
+An S D Card
+A custom P C B 
+A 3d printed housing
+some Buttons and diodes
+a and one resistor
+
+I have 8sequencer tracks,  the first is dedicated to drums, the others are meant to be played as melodic tracks. These 7tracks are monophonic.
+For each track i give you 8 , sixteenstep sequences. You can arrange the 8tracks, and its Clips, in songmode. 
+
+
+Lets start by making a drumbeat. Tap the , D, on the leftside , or use , Trackbutton, and button , one, to enter the drumtrack. 
+On the left side you can set the desired midi note to be played on this lane.
+
+On the right side you can set one of the 8 sequences and the desired midi channel. You can Control a , drummachine,  over u s b , with midi channel 1 to sixteen, or, If the channel is above sixteen you choose one of the internal Plug-ins. 
+
+You can set the active steps with a , touchpen, the Cursor Buttons and , enter button or with the first , 2 Potentiometers. 
+To Control with Potentiometers,  hit , shift, move the Cursor with the first two  Potentiometers and hit , enter.
+Good.
+
+Now make a first beat.
+
+Very Good.
+
+Hit the playbutton. Haha. 
+Hit the stopbutton
+
+You dont hear anything because you havent set the sequence into the songmode. 
+Hit song and any other button to enter one of the 16 songmodepages. 
+
+Hit ,song and the ,first button to enter the first page. 
+Alternatly you can also hit the , S on the top left.
+
+touch a drumlane  and choose a Clip with , shift,  button and the third potentiometer
+Good.
+
+Set the Tempo with the third Potentiometer.
+Values will only be changed when the potentiometer gets close to the last stored value.
+
+Hit the playbutton again.
+Now you hear your drumbeat boom chuck
+
+If you still dont hear anything try to adjust the Output volume on the first mixer page
+
+Select one of the , melodic  tracks. or use , Trackbutton, and button, two to 8,  to enter the melodictracks. 
+Select an , Octave,  with the Grey arrow Buttons on the Right or use the, second, potentiometer.
+Set your notes on the grid.
+To listen to the sequence, go to songmode and set your Arrangement there.
+Repeat this for the other tracks.
+Isnt that easy.
+
+Each rectangle stands for one bar, you can Play up to twohundredfiftysix bars with me. 
+Turn the, fourth, Potentiometer to set the end of the loop.
+In, songmode hit , Save or, L to save or load the whole project.
+In, any other page, you save or, load the respective content. 
+Isnt that awesome?
+
+If you have choosen one of the internal Plug-ins hit Plug-in and one of the 8 above Buttons to see the plug-ins page. Here you can Change several Parameters for Sound Control. 
+Some plug-ins have several pages. If the track channel is below 17, i have 16 midi cc controllers. Set the controller number by pressing the ,lower number and the equivalent Potentiometer.
+The controls of each row is automatically assigned to the 4 Potentiometers.
+Hit , row button, or touch the desired row, to remap the Potentiometers to the new row.
+
+If a track is to loud, hit the Grey ,M or press ,Mixer plus button , 1 to 3
+The first page controls the Volume of the tracks plug-in or the Velocity of the sent midi notes and set the mute and solo states.
+Mixerpage 2 and 3 gives you Control over the effects for the internal Plug-ins.
+
+At the Moment i can play 9 instruments.
+A Chord Plug-in
+A raw file drumplayer
+A one oscillator synthvoice
+A Memoryflash drumplayer
+A raw file sampleplayer
+A second raw file sampleplayer
+A drumengine with 8 different synthesis
+A one oscillator synthvoice with a Special filter
+A string Emulation with various effects
+For each Plug-in i can remember up to 8 different presets.
+
+I will make your music shine with these 3 effects
+A Reverb
+A Bitcrusher
+A Delay
+
+Connect a midi Keyboard to the usb host port to Play the plug-ins directly.
+The midi channel on your Keyboard connects to the correlating tracknumber, so channel ,one selects the drumtrack. channel , 8 selects the last track.
+While the sequencer is running, you can either Play along your arrangement, or, by Pressing , rec,  record the sixteen step sequence into last selected Clip.
+
+
+I Always listen to you, at least if you want me to.
+Press the ,sample, button to enter the Audio Recorder. 
+Choose a Raw file to overwrite, set a good volume Ratio, Plug in any line source into the Audio ,in jack, press listen and boom you hear your favourite synth. hit the , record, button once to start recording immediately and , again to stop the process. 
+You may want to load a , raw sampler plug-in, into one of the tracks. load the file and Play it instantly on your Keyboard and, pow wow.
+
+I am completly open source and also Beginners will be able to read , understand and add new Plug-ins to my code. Please refer to the Manual inside my Sketch for further informations. 
+All documents are on my creators Github. 
+There is also a Discord Server, where you can talk to me and my creator. 
+The Links are below in the description.
+I hope to meet many new people. You can just Play with me, add custom plug-ins or add new functionalitys. 
+
+Thanks to Paul Stoffregen and his immense efforts for the teensy community
+Thanks to Newdigate´s Teensy Variable Playback and flashloader library
+Thanks to the many other creators whose libraries I am reading
+And the most thanks goes to doc tea as a personal Mentor for my creator.
+without him I would not have such a nice voice  or even be alive
+More informations About him are in the descriptions
+
+Now go and build me

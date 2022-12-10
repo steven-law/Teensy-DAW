@@ -7,32 +7,37 @@ void drumStepSequencer_Static() {  //static Display rendering
 
 void drumStepSequencer() {
 
-  if (msecs % 50 == 0) {
-    //midichannel
-    if (abs(map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS) - track[0].MIDIchannel) < 2) {
-      if (track[0].MIDIchannel != map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS)) {
-        track[0].MIDIchannel = map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS);
-        drawMIDIchannel();
-      }
-    }
-    //clip
-    if (abs(map(Potentiometer[3], 0, 127, 0, 7) - track[desired_instrument].clip_selector) < 2) {
-      if (track[desired_instrument].clip_selector != map(Potentiometer[3], 0, 127, 0, 7)) {
-        track[desired_instrument].clip_selector = map(Potentiometer[3], 0, 127, 0, 7);
-        clearStepsGrid();
-        drawActiveDrumSteps();
-        drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
-      }
+  // if (msecs % 20 == 0) {
+  //midichannel
+  if (abs(map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS) - track[0].MIDIchannel) < 2) {
+    if (track[0].MIDIchannel != map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS)) {
+      track[0].MIDIchannel = map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS);
+      drawMIDIchannel();
     }
   }
+  //clip
+  if (abs(map(Potentiometer[3], 0, 127, 0, 7) - track[desired_instrument].clip_selector) < 2) {
+    if (track[desired_instrument].clip_selector != map(Potentiometer[3], 0, 127, 0, 7)) {
+      track[desired_instrument].clip_selector = map(Potentiometer[3], 0, 127, 0, 7);
+      clearStepsGrid();
+      drawActiveDrumSteps();
+      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+    }
+  }
+  // }
 
 
 
   //assign drumsteps on the grid
   //for better behaviour here we wait for "interval, unless it would switch within micrseconds
   //tho, this leads to a drop of the sequencertempo
+
   TS_Point p = ts.getPoint();
   if (ts.touched() || enter_button) {
+    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
+    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
+    
+
 
     unsigned long currentMillis = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
     if (currentMillis - previousMillis >= interval) {
@@ -134,7 +139,7 @@ void saveTrack1() {
         }
       }
     }
-
+    myFile.print((char)track[0].MIDIchannel);
 
     tft.println("Done");
     // close the file:
@@ -169,6 +174,7 @@ void loadTrack1() {
         }
       }
     }
+    track[0].MIDIchannel = myFile.read();
     tft.println("Done");
     startUpScreen();
     // close the file:

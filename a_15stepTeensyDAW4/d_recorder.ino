@@ -33,7 +33,7 @@ void recorder_Page1_Dynamic() {
 
   switch (lastPotRow) {
     case 0:
-      if (millis() % 11 == 0) {
+      //if (msecs % 20 == 0) {
         if (abs(Potentiometer[0] - audio_rec_selected_file_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (audio_rec_selected_file_graph != Potentiometer[0]) {
             audio_rec_selected_file_graph = Potentiometer[0];
@@ -47,14 +47,14 @@ void recorder_Page1_Dynamic() {
             audio_rec_volume_graph = Potentiometer[1];
             audio_rec_volume = audio_rec_volume_graph / 64.00;
             amp1.gain(audio_rec_volume);
-            drawPot(CTRL_COL_1, CTRL_ROW_0, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
+            drawPot_2(CTRL_COL_1, CTRL_ROW_0, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
           }
         }
-      }
+     // }
 
       break;
     case 1:
-      if (millis() % 11 == 0) {
+     // if (msecs % 20 == 0) {
         if (abs(Potentiometer[0] - audio_rec_listen_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (audio_rec_listen_graph != Potentiometer[0]) {
             audio_rec_listen_graph = Potentiometer[0];
@@ -84,15 +84,15 @@ void recorder_Page1_Dynamic() {
             }
           }
         }*/
-      }
+     // }
       break;
     case 2:
-      if (millis() % 11 == 0) {
-      }
+     // if (msecs % 20 == 0) {
+    //  }
       break;
     case 3:
-      if (millis() % 11 == 0) {
-      }
+     // if (msecs % 20 == 0) {
+     // }
       break;
   }
   if (ts.touched()) {

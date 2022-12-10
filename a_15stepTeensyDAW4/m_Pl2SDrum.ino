@@ -39,7 +39,7 @@ void Plugin2_Page_Static(byte Pagenumber) {
 void Plugin2_Page1_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[0].Vol_rnd[touchX - 1]) < POTPICKUP) {
             if (pl2[0].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
@@ -50,10 +50,10 @@ void Plugin2_Page1_Dynamic() {
             }
           }
         }
-      }
+      //}
       break;
     case 1:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[0].Vol_rnd[touchX + 3]) < POTPICKUP) {
             if (pl2[0].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
@@ -64,10 +64,10 @@ void Plugin2_Page1_Dynamic() {
             }
           }
         }
-      }
+      //}
       break;
     case 2:
-      if (msecs % 11 == 0) {
+      //if (msecs % 20 == 0) {
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[0].Vol_rnd[touchX + 7]) < POTPICKUP) {
             if (pl2[0].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
@@ -78,11 +78,11 @@ void Plugin2_Page1_Dynamic() {
             }
           }
         }
-      }
+      //}
       break;
     case 3:
-      if (msecs % 11 == 0) {
-      }
+      //if (msecs % 20 == 0) {
+      //}
       break;
   }
   TS_Point p = ts.getPoint();

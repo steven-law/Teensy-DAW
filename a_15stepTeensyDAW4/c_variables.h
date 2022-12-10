@@ -32,7 +32,7 @@
 #define STEP_POSITION_POINTER_Y 236
 #define GRID_POSITION_POINTER_Y 232
 #define POSITION_POINTER_THICKNESS 3
-#define POTPICKUP 10
+#define POTPICKUP 3
 #define SPI_FREQUENCY 40000000
 #define SPI_READ_FREQUENCY 10000000
 
@@ -51,6 +51,7 @@
 unsigned long _next_clock = 0;
 unsigned long _clock = 0;
 unsigned long MIDItick = 0;
+byte noteOff_tick = 0;
 byte tick_16 = 0;
 bool seq_run = false;
 bool seq_rec = false;
@@ -500,6 +501,7 @@ byte start_of_loop = 0;
 byte end_of_loop_old = 255;
 byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
+byte songpages;
 
 byte step_Frame_X;
 byte step_Frame_Y;
@@ -645,6 +647,7 @@ struct tracks {
   byte midicc_number_row_4[4];
   byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
+  byte transpose[256];
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];

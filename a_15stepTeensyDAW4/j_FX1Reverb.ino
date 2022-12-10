@@ -39,7 +39,7 @@ void FX1reverb_static() {
 }
 
 void FX1reverb_dynamic() {
-  if (msecs % 11 == 0) {
+  //if (msecs % 20 == 0) {
 
     if (abs(Potentiometer[0] - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
       if (fx1reverbtime_graph != Potentiometer[0]) {
@@ -49,7 +49,9 @@ void FX1reverb_dynamic() {
         reverb1.reverbTime(fx1reverbtime);
       }
     }
-  }
+  //}
+
+  
   TS_Point p = ts.getPoint();
   if (ts.touched() || enter_button) {
 

@@ -303,7 +303,7 @@ void Plugin7_Page1_Dynamic() {
 void Plugin7_Page2_Dynamic() {
 
   if (ts.touched() || enter_button) {
-    if (msecs % 11 == 0) {
+    if (msecs % 20 == 0) {
       if (gridTouchY == CTRL_ROW_0) {
 
         //3 modulator amplitude
