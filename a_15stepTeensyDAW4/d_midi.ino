@@ -312,9 +312,9 @@ void step(int current) {
             }
             track[track_number].send_noteOff = true;
           }
-        } else {
-          if (track[track_number].send_noteOff) {
-            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1], VELOCITYOFF, track[track_number].MIDIchannel);
+        } //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
+          //if (track[track_number].send_noteOff) {
+            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current], VELOCITYOFF, track[track_number].MIDIchannel);
             envelope1.noteOff();
             envelope2.noteOff();
             pl3envelope1.noteOff();
@@ -327,8 +327,8 @@ void step(int current) {
             pl8envelope2.noteOff();
             pl9string1.noteOff(VELOCITYOFF);
             track[track_number].send_noteOff = false;
-          }
-        }
+        //  }
+        //}
       }
     }
   }

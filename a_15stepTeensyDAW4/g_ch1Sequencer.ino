@@ -32,11 +32,10 @@ void drumStepSequencer() {
   //for better behaviour here we wait for "interval, unless it would switch within micrseconds
   //tho, this leads to a drop of the sequencertempo
 
-  TS_Point p = ts.getPoint();
+
   if (ts.touched() || enter_button) {
-    gridTouchX = map(p.x, TS_MINX, TS_MAXX, 0, 19);
-    gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
-    
+
+
 
 
     unsigned long currentMillis = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
