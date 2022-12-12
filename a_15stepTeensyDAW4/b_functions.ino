@@ -212,6 +212,12 @@ void selectFilterType(byte pluginchannel, byte mixerchannel) {
     pl3mixer1.gain(2, 0);
     pl3mixer1.gain(mixerchannel, 1);
   }
+  if (pluginchannel == 21) {
+    pl5mixer1.gain(0, 0);
+    pl5mixer1.gain(1, 0);
+    pl5mixer1.gain(2, 0);
+    pl5mixer1.gain(mixerchannel, 1);
+  }
   if (pluginchannel == 22) {
     pl6mixer1.gain(0, 0);
     pl6mixer1.gain(1, 0);

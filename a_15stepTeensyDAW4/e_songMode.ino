@@ -18,15 +18,27 @@ void drawarrengmentLines(byte songpageNumber) {
     for (byte trackss = 0; trackss < 8; trackss++) {
       if (track[trackss].arrangment1[phrase] < 8) {
         for (int thickness = -8; thickness < 8; thickness++) {
-          tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));  //(x-start, y, length, color)
-                                                                                                                                                                                                                                                /* if (track[trackss].arrangment1[phrase] == 8) {
-            tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, ILI9341_DARKGREY);  //(x-start, y, length, color)
-          }*/
+          tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));
         }
-        tft.setFont(Arial_10);
+        //draw clipnumber
+        tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
-        tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (trackss + 1) * TRACK_FRAME_H - 1);
+        tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (trackss + 1) * TRACK_FRAME_H - 4);
         tft.print(track[trackss].arrangment1[phrase]);
+
+        //draw noteOffset
+        tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (trackss + 1) * TRACK_FRAME_H + 4);
+        if (track[trackss].NoteOffset[phrase] < 0) {
+          tft.setTextColor(ILI9341_BLACK);
+          tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (trackss + 1) * TRACK_FRAME_H + 4);
+          tft.print("-");
+        } else {
+          tft.setTextColor(trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));
+          tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (trackss + 1) * TRACK_FRAME_H + 4);
+          tft.print("-");
+        }
+        tft.setTextColor(ILI9341_BLACK);
+        tft.print(abs(track[trackss].NoteOffset[phrase]));
       }
     }
   }
@@ -37,26 +49,37 @@ void drawarrengmentLine(byte songpageNumber, byte touched_track, byte touched_ph
   page_phrase_end = (songpageNumber + 1) * 16;
 
   //draw horizontal song arrangment Lines
-  // for (byte phrase = page_phrase_start; phrase < page_phrase_end; phrase++) {
-  //for (byte trackss = 0; trackss < 8; trackss++) {
-  //if (track[trackss].arrangment1[phrase] < 8) {
   for (int thickness = -8; thickness < 8; thickness++) {
     tft.drawFastHLine((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((touched_track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));  //(x-start, y, length, color)
   }
-
-
-  tft.setFont(Arial_10);
+  //draw clipnumber
+  tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H - 1);
+  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (touched_track + 1) * TRACK_FRAME_H - 4);
   tft.print(track[touched_track].arrangment1[touched_phrase]);
-  //}
-  //}
-  //}
+  //draw noteOffset
+  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H + 4);
+  if (track[touched_track].NoteOffset[touched_phrase] < 0) {
+    tft.setTextColor(ILI9341_BLACK);
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+    tft.print("-");
+  } else {
+    tft.setTextColor(trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+    tft.print("-");
+  }
+  tft.setTextColor(ILI9341_BLACK);
+  tft.print(abs(track[touched_track].NoteOffset[touched_phrase]));
 }
+
 void clearArrangment() {
   for (byte ctrack = 0; ctrack < 8; ctrack++) {
     for (byte cphrase = 0; cphrase < 255; cphrase++) {
       track[ctrack].arrangment1[cphrase] = 8;
+      track[ctrack].NoteOffset[cphrase] = 0;
+      track[ctrack].presetNr[cphrase] = 0;
+      track[ctrack].volume[cphrase] = 99;
+
     }
   }
 }
@@ -163,10 +186,36 @@ void songModePage(byte songpageNumber) {
 
     //Assigning clips to the arranger
     if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
-      track[touched_track].arrangment1[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 8);
+
+      if (abs(map(Potentiometer[0], 0, 127, 0, 8) - track[touched_track].arrangment1[touched_phrase]) < POTPICKUP) {
+        if (track[touched_track].arrangment1[touched_phrase] != map(Potentiometer[0], 0, 127, 0, 8)) {
+          track[touched_track].arrangment1[touched_phrase] = map(Potentiometer[0], 0, 127, 0, 8);
+        }
+      }
+      if (abs(map(Potentiometer[1], 0, 127, -32, 32) - track[touched_track].NoteOffset[touched_phrase]) < POTPICKUP) {
+        if (track[touched_track].NoteOffset[touched_phrase] != map(Potentiometer[1], 0, 127, -32, 32)) {
+          track[touched_track].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
+        }
+      }
+      if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[touched_track].presetNr[touched_phrase]) < POTPICKUP) {
+        if (track[touched_track].presetNr[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
+          track[touched_track].presetNr[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
+          drawChar(18, 9, "Prst:",trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+          drawNrInRect(18, 10, track[touched_track].presetNr[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));          
+        }
+      }
+      if (abs(Potentiometer[3] - track[touched_track].volume[touched_phrase]) < POTPICKUP) {
+        if (track[touched_track].volume[touched_phrase] != Potentiometer[3]) {
+          track[touched_track].volume[touched_phrase] = Potentiometer[3];
+          drawChar(18, 11, "Vol:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+          drawNrInRect(18, 12, track[touched_track].volume[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+          //pluginVolume(track[touched_track].MIDIchannel, Potentiometer[3] / 127.00);
+        }
+      }
       //draw horizontal song arrangment Lines
       drawarrengmentLine(songpageNumber, touched_track, touched_phrase);
     }
+
 
 
     //page selection
@@ -226,6 +275,9 @@ void savebutton() {
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
       for (byte cphrase = 0; cphrase < 255; cphrase++) {
         myFile.print((char)track[ctrack].arrangment1[cphrase]);
+        myFile.print((char)track[ctrack].NoteOffset[cphrase]);
+        myFile.print((char)track[ctrack].presetNr[cphrase]);
+        myFile.print((char)track[ctrack].volume[cphrase]);
       }
     }
     tft.println("Done");
@@ -318,6 +370,10 @@ void loadbutton() {
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
       for (byte cphrase = 0; cphrase < 255; cphrase++) {
         track[ctrack].arrangment1[cphrase] = myFile.read();
+        track[ctrack].NoteOffset[cphrase] = myFile.read();
+        track[ctrack].presetNr[cphrase] = myFile.read();
+        track[ctrack].volume[cphrase] = myFile.read();
+        
       }
     }
     tft.println("Done");

@@ -376,7 +376,7 @@ byte pl7_4_Env4_Decay;
 byte pl7_4_Env4_Decay_graph;
 byte pl7_4_Env4_Release;
 byte pl7_4_Env4_Release_graph;
-
+byte pl7presetNr;
 //plugin 8 variables
 struct plugin8 {
   int Filter1_Frequency = 260;
@@ -647,7 +647,9 @@ struct tracks {
   byte midicc_number_row_4[4];
   byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
-  byte transpose[256];
+  int NoteOffset[256];
+  int presetNr[256];
+  int volume[256];
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];

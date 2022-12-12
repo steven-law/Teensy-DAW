@@ -29,9 +29,9 @@ void Plugin_4_Settings() {
 }
 void Plugin4_Page_Static(byte Pagenumber) {
   for (byte touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 3, CTRL_ROW_0, pl4[0].Vol_rnd[touchX - 1], pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-    drawPot(touchX * 3, CTRL_ROW_1, pl4[0].Vol_rnd[touchX + 3], pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-    drawPot(touchX * 3, CTRL_ROW_2, pl4[0].Vol_rnd[touchX + 7], pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+    drawPot(touchX * 3, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+    drawPot(touchX * 3, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+    drawPot(touchX * 3, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
   }
 }
 
@@ -40,47 +40,46 @@ void Plugin4_Page1_Dynamic() {
   switch (lastPotRow) {
     case 0:
       //if (msecs % 20 == 0) {
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (abs(Potentiometer[touchX - 1] - pl4[0].Vol_rnd[touchX - 1]) < POTPICKUP) {
-            if (pl4[0].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
-              drawPot(touchX * 3, CTRL_ROW_0, pl4[0].Vol_rnd[touchX - 1], pl4[0].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-              pl4[0].Vol_rnd[touchX - 1] = Potentiometer[touchX - 1];
-              pl4[0].Vol[touchX - 1] = pl4[0].Vol_rnd[touchX - 1] / 127.00;
-              pl4drummixer1.gain(touchX - 1, pl4[0].Vol[touchX - 1]);
-            }
+      for (byte touchX = 1; touchX < 5; touchX++) {
+        if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX - 1]) < POTPICKUP) {
+          if (pl4[pl4presetNr].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
+            drawPot(touchX * 3, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+            pl4[pl4presetNr].Vol_rnd[touchX - 1] = Potentiometer[touchX - 1];
+            pl4[pl4presetNr].Vol[touchX - 1] = pl4[pl4presetNr].Vol_rnd[touchX - 1] / 127.00;
+            pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
           }
         }
+      }
       //}
       break;
     case 1:
-     // if (msecs % 20 == 0) {
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (abs(Potentiometer[touchX -1] - pl4[0].Vol_rnd[touchX + 3]) < POTPICKUP) {
-            if (pl4[0].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
-              drawPot(touchX * 3, CTRL_ROW_1, pl4[0].Vol_rnd[touchX + 3], pl4[0].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-              pl4[0].Vol_rnd[touchX + 3] = Potentiometer[touchX - 1];
-              pl4[0].Vol[touchX + 3] = pl4[0].Vol_rnd[touchX + 3] / 127.00;
-              pl4drummixer2.gain(touchX - 1, pl4[0].Vol[touchX + 3]);
-            }
+      // if (msecs % 20 == 0) {
+      for (byte touchX = 1; touchX < 5; touchX++) {
+        if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX + 3]) < POTPICKUP) {
+          if (pl4[pl4presetNr].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
+            drawPot(touchX * 3, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+            pl4[pl4presetNr].Vol_rnd[touchX + 3] = Potentiometer[touchX - 1];
+            pl4[pl4presetNr].Vol[touchX + 3] = pl4[pl4presetNr].Vol_rnd[touchX + 3] / 127.00;
+            pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
           }
         }
-     // }
+      }
+      // }
       break;
     case 2:
-     // if (msecs % 20 == 0) {
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (abs(Potentiometer[touchX -1] - pl4[0].Vol_rnd[touchX + 7]) < POTPICKUP) {
-            if (pl4[0].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
-              drawPot(touchX * 3, CTRL_ROW_2, pl4[0].Vol_rnd[touchX + 7], pl4[0].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
-              pl4[0].Vol_rnd[touchX + 7] = Potentiometer[touchX - 1];
-              pl4[0].Vol[touchX + 7] = pl4[0].Vol_rnd[touchX + 7] / 127.00;
-              pl4drummixer3.gain(touchX - 1, pl4[0].Vol[touchX + 7]);
-            }
+      // if (msecs % 20 == 0) {
+      for (byte touchX = 1; touchX < 5; touchX++) {
+        if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX + 7]) < POTPICKUP) {
+          if (pl4[pl4presetNr].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
+            drawPot(touchX * 3, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+            pl4[pl4presetNr].Vol_rnd[touchX + 7] = Potentiometer[touchX - 1];
+            pl4[pl4presetNr].Vol[touchX + 7] = pl4[pl4presetNr].Vol_rnd[touchX + 7] / 127.00;
+            pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
           }
         }
-     // }
-      break;
+      }
 
+      break;
   }
   TS_Point p = ts.getPoint();
   if (ts.touched() || enter_button) {

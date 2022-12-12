@@ -51,6 +51,8 @@ void Plugin2_Page1_Dynamic() {
           }
         }
       //}
+
+      
       break;
     case 1:
       //if (msecs % 20 == 0) {

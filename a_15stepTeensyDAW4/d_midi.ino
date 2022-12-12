@@ -264,70 +264,82 @@ void step(int current) {
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
-        if (!track[track_number].send_noteOff) {
-          byte noteNumber = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current];
-          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
 
-
-            if (track[track_number].MIDIchannel < 17) {
-              usbMIDI.sendNoteOn(noteNumber, track[track_number].velocity_ON, track[track_number].MIDIchannel);
-            }
-
-            if (track[track_number].MIDIchannel == 17) {
-              waveform1.frequency(note_frequency[noteNumber + pl1[pl1presetNr].note_Offset[0]]);
-              waveform2.frequency(note_frequency[noteNumber + pl1[pl1presetNr].note_Offset[1]]);
-              waveform3.frequency(note_frequency[noteNumber + pl1[pl1presetNr].note_Offset[2]]);
-              waveform4.frequency(note_frequency[noteNumber + pl1[pl1presetNr].note_Offset[3]]);
-              envelope1.noteOn();
-              envelope2.noteOn();
-            }
-            if (track[track_number].MIDIchannel == 19) {
-              pl3waveform1.frequency(note_frequency[noteNumber]);
-              pl3envelope1.noteOn();
-              pl3envelope2.noteOn();
-            }
-            if (track[track_number].MIDIchannel == 21) {
-              double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
-              playSdPitch1.setPlaybackRate(note_ratio);
-              //playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
-              playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
-              pl5envelope1.noteOn();
-              pl5envelope2.noteOn();
-              Serial.println("listen?");
-            }
-            if (track[track_number].MIDIchannel == 22) {
-              double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
-              playSdPitch2.setPlaybackRate(note_ratio);
-              playSdPitch2.playRaw(RAW_files[pl6[pl6presetNr].selected_raw_file], 1);
-              pl6envelope1.noteOn();
-              pl6envelope2.noteOn();
-            }
-            if (track[track_number].MIDIchannel == 24) {
-              pl8waveform1.frequency(note_frequency[noteNumber]);
-              pl8envelope1.noteOn();
-              pl8envelope2.noteOn();
-            }
-            if (track[track_number].MIDIchannel == 25) {
-              pl9string1.noteOn(note_frequency[noteNumber], 1);
-            }
-            track[track_number].send_noteOff = true;
+        byte noteNumber = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
+        if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
+          if (track[track_number].MIDIchannel < 17) {
+            usbMIDI.sendNoteOn(noteNumber, track[track_number].velocity_ON, track[track_number].MIDIchannel);
           }
-        } //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
-          //if (track[track_number].send_noteOff) {
-            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current], VELOCITYOFF, track[track_number].MIDIchannel);
-            envelope1.noteOff();
-            envelope2.noteOff();
-            pl3envelope1.noteOff();
-            pl3envelope2.noteOff();
-            pl5envelope1.noteOff();
-            pl5envelope2.noteOff();
-            pl6envelope1.noteOff();
-            pl6envelope2.noteOff();
-            pl8envelope1.noteOff();
-            pl8envelope2.noteOff();
-            pl9string1.noteOff(VELOCITYOFF);
-            track[track_number].send_noteOff = false;
-        //  }
+
+          if (track[track_number].MIDIchannel == 17) {
+            waveform1.frequency(note_frequency[noteNumber + pl1[track[desired_track].presetNr[phrase]].note_Offset[0]]);
+            waveform2.frequency(note_frequency[noteNumber + pl1[track[desired_track].presetNr[phrase]].note_Offset[1]]);
+            waveform3.frequency(note_frequency[noteNumber + pl1[track[desired_track].presetNr[phrase]].note_Offset[2]]);
+            waveform4.frequency(note_frequency[noteNumber + pl1[track[desired_track].presetNr[phrase]].note_Offset[3]]);
+            envelope1.noteOn();
+            envelope2.noteOn();
+          }
+          if (track[track_number].MIDIchannel == 19) {
+            pl3waveform1.frequency(note_frequency[noteNumber]);
+            pl3envelope1.noteOn();
+            pl3envelope2.noteOn();
+          }
+          if (track[track_number].MIDIchannel == 21) {
+            double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
+            playSdPitch1.setPlaybackRate(note_ratio);
+            //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
+            playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
+            pl5envelope1.noteOn();
+            pl5envelope2.noteOn();
+            Serial.println("listen?");
+          }
+          if (track[track_number].MIDIchannel == 22) {
+            double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
+            playSdPitch2.setPlaybackRate(note_ratio);
+            playSdPitch2.playRaw(RAW_files[pl6[track[desired_track].presetNr[phrase]].selected_raw_file], 1);
+            pl6envelope1.noteOn();
+            pl6envelope2.noteOn();
+          }
+          if (track[track_number].MIDIchannel == 24) {
+            pl8waveform1.frequency(note_frequency[noteNumber]);
+            pl8envelope1.noteOn();
+            pl8envelope2.noteOn();
+          }
+          if (track[track_number].MIDIchannel == 25) {
+            pl9string1.noteOn(note_frequency[noteNumber], 1);
+          }
+          track[track_number].send_noteOff = true;
+        }
+        //if (track[track_number].send_noteOff) {
+        //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
+        if (track[track_number].MIDIchannel < 17) {
+          usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current], VELOCITYOFF, track[track_number].MIDIchannel);
+        }
+        if (track[track_number].MIDIchannel == 17) {
+          envelope1.noteOff();
+          envelope2.noteOff();
+        }
+        if (track[track_number].MIDIchannel == 19) {
+          pl3envelope1.noteOff();
+          pl3envelope2.noteOff();
+        }
+        if (track[track_number].MIDIchannel == 21) {
+          pl5envelope1.noteOff();
+          pl5envelope2.noteOff();
+        }
+        if (track[track_number].MIDIchannel == 22) {
+          pl6envelope1.noteOff();
+          pl6envelope2.noteOff();
+        }
+        if (track[track_number].MIDIchannel == 24) {
+          pl8envelope1.noteOff();
+          pl8envelope2.noteOff();
+        }
+        if (track[track_number].MIDIchannel == 25) {
+          pl9string1.noteOff(VELOCITYOFF);
+        }
+        track[track_number].send_noteOff = false;
+        //}
         //}
       }
     }
@@ -340,8 +352,6 @@ void step(int current) {
       tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
-
-
 }
 
 
@@ -607,10 +617,10 @@ void myNoteOn(byte channel, byte note, byte velocity) {
       midi6.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
     }
     if (track[channel - 1].MIDIchannel == 17) {
-      waveform1.frequency(note_frequency[note + pl1[pl1presetNr].note_Offset[0]]);
-      waveform2.frequency(note_frequency[note + pl1[pl1presetNr].note_Offset[1]]);
-      waveform3.frequency(note_frequency[note + pl1[pl1presetNr].note_Offset[2]]);
-      waveform4.frequency(note_frequency[note + pl1[pl1presetNr].note_Offset[3]]);
+      waveform1.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[0]]);
+      waveform2.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[1]]);
+      waveform3.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[2]]);
+      waveform4.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[3]]);
       envelope1.noteOn();
       envelope2.noteOn();
       Serial.println(note);
@@ -623,7 +633,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     if (track[channel - 1].MIDIchannel == 21) {
       double note_ratio = pow(2.0, ((double)(note - SAMPLE_ROOT) / 12.0));
       playSdPitch1.setPlaybackRate(note_ratio);
-      //playSdPitch1.playRaw(RAW_files[pl5[pl5presetNr].selected_file], 1);
+      //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
       playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
       pl5envelope1.noteOn();
       pl5envelope2.noteOn();
@@ -632,7 +642,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     if (track[channel - 1].MIDIchannel == 22) {
       double note_ratio = pow(2.0, ((double)(note - SAMPLE_ROOT) / 12.0));
       playSdPitch2.setPlaybackRate(note_ratio);
-      playSdPitch2.playRaw(RAW_files[pl6[pl6presetNr].selected_raw_file], 1);
+      playSdPitch2.playRaw(RAW_files[pl6[track[desired_track].presetNr[phrase]].selected_raw_file], 1);
       pl6envelope1.noteOn();
       pl6envelope2.noteOn();
     }
