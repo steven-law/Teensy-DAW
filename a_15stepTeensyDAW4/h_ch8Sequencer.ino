@@ -27,42 +27,51 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
 
 void melodicStepSequencer(byte desired_instrument) {
 
- // if (msecs % 20 == 0) {
+
+
+  if (!button_15) {
+    //gridTouchX
+    if (enc_moved[0]) {
+      gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
+    }
+    //gridTouchY
+    if (enc_moved[1]) {
+      gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
+    }
+
+
     //midichannel
-    if (abs(map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS) - track[desired_instrument].MIDIchannel) < 2) {
-      if (track[desired_instrument].MIDIchannel != map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS)) {
-        track[desired_instrument].MIDIchannel = map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS);
-        drawMIDIchannel();
-      }
+    if (enc_moved[2]) {
+      track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[2]), 0, MAX_CHANNELS - 1);
+      drawMIDIchannel();
     }
+
     //clip
-    if (abs(map(Potentiometer[3], 0, 127, 0, 7) - track[desired_instrument].clip_selector) < 2) {
-      if (track[desired_instrument].clip_selector != map(Potentiometer[3], 0, 127, 0, 7)) {
-        track[desired_instrument].clip_selector = map(Potentiometer[3], 0, 127, 0, 7);
-        clearStepsGrid();
-        drawActiveSteps();
-        //Cliprect
-        drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
-      }
+    if (enc_moved[3]) {
+      track[desired_instrument].clip_selector = constrain((track[desired_instrument].clip_selector + encoded[3]), 0, MAX_CLIPS - 1);
+      clearStepsGrid();
+      drawActiveSteps();
+      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
     }
-    //octaves
-    if (!button_15) {
-      if (abs(map(Potentiometer[1], 0, 127, 0, 9) - track[desired_instrument].shown_octaves) < 2) {
-        if (track[desired_instrument].shown_octaves != map(Potentiometer[1], 0, 127, 0, 9)) {
-          track[desired_instrument].shown_octaves = map(Potentiometer[1], 0, 127, 0, 9);
-          clearStepsGrid();
-          drawActiveSteps();
-          //draw the octave number
-          tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
-          tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
-          tft.setFont(Arial_16);
-          tft.setTextColor(ILI9341_WHITE);
-          tft.setTextSize(1);
-          tft.print(track[desired_instrument].shown_octaves);
-        }
-      }
+  }
+
+  //octaves
+  if (button_15) {
+    if (enc_moved[0]) {
+      track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
+      clearStepsGrid();
+      drawActiveSteps();
+      //draw the octave number
+      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
+      tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
+      tft.setFont(Arial_16);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setTextSize(1);
+      tft.print(track[desired_instrument].shown_octaves);
     }
-  //}
+  }
+
+
 
 
 

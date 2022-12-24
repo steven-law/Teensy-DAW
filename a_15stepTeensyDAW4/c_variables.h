@@ -150,7 +150,7 @@ const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7",
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-
+//notenumber to frequency chart
 //plugin 1 variables
 struct plugin1 {
 
@@ -224,8 +224,8 @@ byte pl4presetNr = 0;
 
 //plugin 5 variables
 struct plugin5 {
-  int Filter1_Frequency = 260;
-  float Filter1_Frequency_graph = 50;
+  float Filter1_Frequency = 260;
+  int Filter1_Frequency_graph = 50;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
@@ -251,8 +251,8 @@ bool pl5enter_was_pushed = true;
 
 //plugin 6 variables
 struct plugin6 {
-  int Filter1_Frequency = 260;
-  byte Filter1_Frequency_graph = 50;
+  float Filter1_Frequency = 260;
+  int Filter1_Frequency_graph = 50;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
@@ -279,126 +279,130 @@ byte pl6presetNr = 0;
 
 
 //plugin7 variables
-//drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum 1
-int pl7drum1_frequency;
-byte pl7drum1_frequency_graph = 50;
-byte pl7drum1_length;
-byte pl7drum1_length_graph = 50;
-float pl7drum1_pitchMod;  //max 2 !!
-byte pl7drum1_pitchMod_graph = 50;
-int pl7drum1_pitchMod_rnd;
-float pl7drum1_secondMix;
-byte pl7drum1_secondMixgraph = 50;
-float pl7dc1_amplitude = 0.06;
-byte pl7dc1_amplitude_graph = 10;
-//noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
-float pl7noise1_amplitude = 1;
-byte pl7noise1_amplitude_graph = 100;
+struct plugin7 {
+  //drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum 1
+  int _1_frequency;
+  byte _1_frequency_graph = 50;
+  byte _1_length;
+  byte _1_length_graph = 50;
+  float _1_pitchMod;  //max 2 !!
+  byte _1_pitchMod_graph = 50;
+  int _1_pitchMod_rnd;
+  float _1_secondMix;
+  byte _1_secondMixgraph = 50;
+  float _1_dc1_wavefold = 0.06;
+  byte _1_dc1_wavefold_graph = 10;
+  //noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
+  float _2_noise1_amp = 1;
+  byte _2_noise1_amp_graph = 100;
 
-byte pl7waveformMod1_begin;
-byte pl7waveformMod1_begin_graph;
-float pl7waveformMod1_amplitude;
-byte pl7waveformMod1_amplitude_graph;
-int pl7waveformMod1_frequency;
-byte pl7waveformMod1_frequency_graph;
-float pl7waveformMod1_frequencyModulation;
-byte pl7waveformMod1_frequencyModulation_graph;
-int pl7waveformMod1_frequencyModulation_rnd;
+  byte _2_wfMod_begin;
+  byte _2_wfMod_begin_graph;
+  float _2_wfMod_amplitude;
+  byte _2_wfMod_amplitude_graph;
+  int _2_wfMod_frequency;
+  byte _2_wfMod_frequency_graph;
+  float _2_wfMod_frequencyModulation;
+  byte _2_wfMod_frequencyModulation_graph;
+  int _2_wfMod_frequencyModulation_rnd;
 
-int pl7filter2_frequency;
-byte pl7filter2_frequency_graph;
-float pl7filter2_resonance;
-byte pl7filter2_resonance_graph;
-byte pl7filter2_resonance_rnd;
-float pl7filter2_octaveControl;
-byte pl7filter2_octaveControl_graph;
+  int _2_filter_frequency;
+  byte _2_filter_frequency_graph;
+  float _2_filter_resonance;
+  byte _2_filter_resonance_graph;
+  byte _2_filter_resonance_rnd;
+  float _2_filter_octaveControl;
+  byte _2_filter_octaveControl_graph;
 
-byte pl7Env1_Attack;
-byte pl7Env1_Attack_graph;
-byte pl7Env1_Decay;
-byte pl7Env1_Decay_graph;
-byte pl7Env1_Release;
-byte pl7Env1_Release_graph;
-
-
-
-//FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
-float pl7_3_waveformMod3_amplitude;
-byte pl7_3_waveformMod3_amplitude_rnd;
-byte pl7_3_waveformMod3_amplitude_graph;
-int pl7_3_waveformMod3_frequency;
-byte pl7_3_waveformMod3_frequency_graph;
+  byte _2_Env_Attack;
+  byte _2_Env_Attack_graph;
+  byte _2_Env_Decay;
+  byte _2_Env_Decay_graph;
+  byte _2_Env_Release;
+  byte _2_Env_Release_graph;
 
 
-byte pl7_3_Env2_Attack;
-byte pl7_3_Env2_Attack_graph;
-byte pl7_3_Env2_Decay;
-byte pl7_3_Env2_Decay_graph;
-byte pl7_3_Env2_Release;
-byte pl7_3_Env2_Release_graph;
+
+  //FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
+  float _3_waveformMod3_amplitude;
+  byte _3_waveformMod3_amplitude_rnd;
+  byte _3_waveformMod3_amplitude_graph;
+  int _3_waveformMod3_frequency;
+  byte _3_waveformMod3_frequency_graph;
 
 
-byte pl7_3_waveformMod2_begin;
-byte pl7_3_waveformMod2_begin_graph;
-float pl7_3_waveformMod2_amplitude;
-byte pl7_3_waveformMod2_amplitude_graph;
-int pl7_3_waveformMod2_frequency;
-byte pl7_3_waveformMod2_frequency_graph;
-float pl7_3_waveformMod2_frequencyModulation;
-byte pl7_3_waveformMod2_frequencyModulation_graph;
-int pl7_3_waveformMod2_frequencyModulation_rnd;
+  byte _3_Env2_Attack;
+  byte _3_Env2_Attack_graph;
+  byte _3_Env2_Decay;
+  byte _3_Env2_Decay_graph;
+  byte _3_Env2_Release;
+  byte _3_Env2_Release_graph;
 
-byte pl7_3_Env3_Attack;
-byte pl7_3_Env3_Attack_graph;
-byte pl7_3_Env3_Decay;
-byte pl7_3_Env3_Decay_graph;
-byte pl7_3_Env3_Release;
-byte pl7_3_Env3_Release_graph;
 
-//4444444444444444444444444444444444444444444444444444444444444444444444444444 noise
-float pl7_4_noise2_amplitude = 1;
-int pl7_4_noise2_amplitude_rnd = 100;
-byte pl7_4_noise2_amplitude_graph = 100;
+  byte _3_waveformMod2_begin;
+  byte _3_waveformMod2_begin_graph;
+  float _3_waveformMod2_amplitude;
+  byte _3_waveformMod2_amplitude_graph;
+  int _3_waveformMod2_frequency;
+  byte _3_waveformMod2_frequency_graph;
+  float _3_waveformMod2_frequencyModulation;
+  byte _3_waveformMod2_frequencyModulation_graph;
+  int _3_waveformMod2_frequencyModulation_rnd;
 
-float pl7_4_pink1_amplitude = 1;
-int pl7_4_pink1_amplitude_rnd = 100;
-byte pl7_4_pink1_amplitude_graph = 100;
+  byte _3_Env3_Attack;
+  byte _3_Env3_Attack_graph;
+  byte _3_Env3_Decay;
+  byte _3_Env3_Decay_graph;
+  byte _3_Env3_Release;
+  byte _3_Env3_Release_graph;
 
-int pl7_4_biquad1_frequency = 400;
-byte pl7_4_biquad1_frequency_graph;
-float pl7_4_biquad1_resonance;
-byte pl7_4_biquad1_resonance_graph;
-byte pl7_4_biquad1_resonance_rnd;
+  //4444444444444444444444444444444444444444444444444444444444444444444444444444 noise
+  float _4_noise2_amplitude = 1;
+  int _4_noise2_amplitude_rnd = 100;
+  byte _4_noise2_amplitude_graph = 100;
 
-byte pl7_4_Env4_Attack;
-byte pl7_4_Env4_Attack_graph;
-byte pl7_4_Env4_Decay;
-byte pl7_4_Env4_Decay_graph;
-byte pl7_4_Env4_Release;
-byte pl7_4_Env4_Release_graph;
-byte pl7presetNr;
+  float _4_pink1_amplitude = 1;
+  int _4_pink1_amplitude_rnd = 100;
+  byte _4_pink1_amplitude_graph = 100;
+
+  int _4_biquad1_frequency = 400;
+  byte _4_biquad1_frequency_graph;
+  float _4_biquad1_resonance;
+  byte _4_biquad1_resonance_graph;
+  byte _4_biquad1_resonance_rnd;
+
+  byte _4_Env4_Attack;
+  byte _4_Env4_Attack_graph;
+  byte _4_Env4_Decay;
+  byte _4_Env4_Decay_graph;
+  byte _4_Env4_Release;
+  byte _4_Env4_Release_graph;
+};
+plugin7 pl7[MAX_PRESETS];
+byte pl7presetNr = 0;
+
 //plugin 8 variables
 struct plugin8 {
-  int Filter1_Frequency = 260;
-  float Filter1_Frequency_graph = 50;
-  float Filter1_Resonance = 1;
-  byte Filter1_Resonance_graph = 50;
-  float Filter1_Sweep = 2;
-  byte Filter1_Sweep_graph = 50;
-  int Env1_Attack = 50;
-  byte Env1_Attack_graph = 50;
-  int Env1_Decay = 50;
-  byte Env1_Decay_graph = 50;
-  float Env1_Sustain = 1;
-  byte Env1_Sustain_graph = 50;
-  int Env1_Release = 150;
-  float Env1_Release_graph = 50;
+  float Filter1_Frequency;
+  int Filter1_Frequency_graph;
+  float Filter1_Resonance;
+  byte Filter1_Resonance_graph;
+  float Filter1_Sweep;
+  byte Filter1_Sweep_graph;
+  int Env1_Attack;
+  byte Env1_Attack_graph;
+  int Env1_Decay;
+  byte Env1_Decay_graph;
+  float Env1_Sustain;
+  byte Env1_Sustain_graph;
+  int Env1_Release;
+  float Env1_Release_graph;
   float note1_Velo = 1;
   float note1_Velo_rnd;
   byte wfSelect;
   byte wfSelect_graph;
 };
-plugin8 pl8[MAX_PLUGINS];
+plugin8 pl8[MAX_PRESETS];
 byte pl8presetNr = 0;
 
 struct plugin9 {
@@ -423,27 +427,10 @@ struct plugin9 {
   byte Filter1_Type = 0;
   byte Filter1_Type_graph = 0;
 };
-plugin9 pl9[MAX_PLUGINS];
+plugin9 pl9[MAX_PRESETS];
 byte pl9presetNr = 0;
 
-//Overall Pluginvariables
-struct plugins {
-  byte Volume_graph = 50;
-  float Volume = 1;
 
-  byte FXDryVolume_graph = 100;
-  float FXDryVolume = 1;
-
-  byte FX1Volume_graph = 0;
-  float FX1Volume = 0;
-
-  byte FX2Volume_graph = 0;
-  float FX2Volume = 0;
-
-  byte FX3Volume_graph = 0;
-  float FX3Volume = 0;
-};
-plugins plugin[MAX_PLUGINS];
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
 
@@ -457,7 +444,7 @@ bool audio_rec_rec = false;
 byte audio_rec_rec_graph = 0;
 bool audio_rec_now = false;
 bool audio_rec_listen = false;
-byte audio_rec_listen_graph = 0;
+int audio_rec_listen_graph = 0;
 byte audio_rec_volume_graph = 0;
 float audio_rec_volume = 0;
 byte audio_rec_selected_file;
@@ -478,11 +465,24 @@ byte fx1reverbtime_graph = 0;
 
 //FX2
 //bitcrusher variables
-int fx2bitcrush = 8;
-byte fx2bitcrush_graph = 100;
+int fx2bitcrush = 16;
+byte fx2bitcrush_graph = 127;
 
-int fx2samplerate = 22050;
-byte fx2samplerate_graph = 100;
+int fx2samplerate = 44100;
+byte fx2samplerate_graph = 127;
+
+
+float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
+                           16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
+                           32.7, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55, 58.27, 61.74,
+                           65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98, 103.83, 110, 116.54, 123.47,
+                           130.81, 138.59, 146.83, 155.56, 164.81, 174, 61, 185, 196, 207.65, 220, 233.08, 246.94,
+                           261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88,
+                           523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61, 880, 832.33, 987.77,
+                           1046.5, 1108.73, 1174.66, 1244.66, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53,
+                           2093, 2217.46, 2349.32, 2489.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520, 3729.31, 3951.07,
+                           4186.01, 4434.92, 4698.64, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13,
+                           8372.02, 8869.84, 9397.27, 9956.06, 10548.08, 11175.30, 11839.82, 12543.85 };
 
 
 
@@ -528,7 +528,8 @@ unsigned long previousMillis = 0;
 
 int lastPotRow = 0;
 int Potentiometer[4];
-
+bool enc_moved[4]{ 0, 0, 0, 0 };
+int encoded[4];
 //button variables
 bool enter_button = false;
 bool button_9 = false;
@@ -551,6 +552,7 @@ int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 float circlePos;
 float circlePos_old;
 int dvalue_old;
+int dvalue_old2;
 char* dvalue_old_char;
 //drawPot Variables
 float circlePos_2;
@@ -580,19 +582,6 @@ struct track_t {
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
 track_t ctrack[NUM_TRACKS];
-
-//notenumber to frequency chart
-float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
-                           16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
-                           32.7, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55, 58.27, 61.74,
-                           65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98, 103.83, 110, 116.54, 123.47,
-                           130.81, 138.59, 146.83, 155.56, 164.81, 174, 61, 185, 196, 207.65, 220, 233.08, 246.94,
-                           261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88,
-                           523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61, 880, 832.33, 987.77,
-                           1046.5, 1108.73, 1174.66, 1244.66, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53,
-                           2093, 2217.46, 2349.32, 2489.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520, 3729.31, 3951.07,
-                           4186.01, 4434.92, 4698.64, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13,
-                           8372.02, 8869.84, 9397.27, 9956.06, 10548.08, 11175.30, 11839.82, 12543.85 };
 
 //Scales
 bool scaleSelect = LOW;
@@ -632,7 +621,9 @@ struct tracks {
   byte tone = 0;
   byte shown_octaves = 5;  //
   byte velocity_ON = 96;
-  byte velocity_ON_graph = 80;
+  byte velocity_ON_graph = 96;
+  float gain = 1;
+  byte gain_graph = 127;
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
@@ -650,6 +641,22 @@ struct tracks {
   int NoteOffset[256];
   int presetNr[256];
   int volume[256];
+  byte MIDI_velocity = 96;
+  
+  byte Volume_graph = 50;
+  float Volume = 1;
+
+  byte FXDryVolume_graph = 100;
+  float FXDryVolume = 1;
+
+  byte FX1Volume_graph = 0;
+  float FX1Volume = 0;
+
+  byte FX2Volume_graph = 0;
+  float FX2Volume = 0;
+
+  byte FX3Volume_graph = 0;
+  float FX3Volume = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];

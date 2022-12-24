@@ -1,16 +1,17 @@
 Hello i´m the teensy touch D A W
 
 i will help you to make some cool sounds and Songs
-I am an easy D I Y Project consisting of 
+I am an easy D I Y Project consisting of
 A teensy 4.1
 A teensy Audio shield
 A TFT Display
-4 Potentiometers
-An S D Card
+4 Encoders
+4 jacks
 A custom P C B 
 A 3d printed housing
 some Buttons and diodes
-a and one resistor
+headers
+a and some resistors
 
 I have 8sequencer tracks,  the first is dedicated to drums, the others are meant to be played as melodic tracks. These 7tracks are monophonic.
 For each track i give you 8 , sixteenstep sequences. You can arrange the 8tracks, and its Clips, in songmode. 
@@ -19,10 +20,11 @@ For each track i give you 8 , sixteenstep sequences. You can arrange the 8tracks
 Lets start by making a drumbeat. Tap the , D, on the leftside , or use , Trackbutton, and button , one, to enter the drumtrack. 
 On the left side you can set the desired midi note to be played on this lane.
 
-On the right side you can set one of the 8 sequences and the desired midi channel. You can Control a , drummachine,  over u s b , with midi channel 1 to sixteen, or, If the channel is above sixteen you choose one of the internal Plug-ins. 
+On the right side you can set one of the 8 sequences and the desired midi channel. 
+You can Control a , drummachine,  over u s b , with midi channel 1 to sixteen, or, If the channel is above sixteen you choose one of the internal Plug-ins. 
 
-You can set the active steps with a , touchpen, the Cursor Buttons and , enter button or with the first , 2 Potentiometers. 
-To Control with Potentiometers,  hit , shift, move the Cursor with the first two  Potentiometers and hit , enter.
+You can set the active steps with a , touchpen, the Cursor Buttons and , enter button or with the first , 2 encoders. 
+To Control with encoders,  move the Cursor with the first two  encoders and hit , enter.
 Good.
 
 Now make a first beat.
@@ -38,34 +40,36 @@ Hit song and any other button to enter one of the 16 songmodepages.
 Hit ,song and the ,first button to enter the first page. 
 Alternatly you can also hit the , S on the top left.
 
-touch a drumlane  and choose a Clip with , shift,  button and the third potentiometer
+touch the drumlane  and choose a Clip with the , third encoder.
 Good.
 
-Set the Tempo with the third Potentiometer.
-Values will only be changed when the potentiometer gets close to the last stored value.
+Set the Tempo with the , shift and , first encoder.
+
 
 Hit the playbutton again.
 Now you hear your drumbeat boom chuck
 
-If you still dont hear anything try to adjust the Output volume on the first mixer page
+If you still dont hear anything try to adjust the Output volume on the first mixer page or  in the plug-in page.
 
 Select one of the , melodic  tracks. or use , Trackbutton, and button, two to 8,  to enter the melodictracks. 
-Select an , Octave,  with the Grey arrow Buttons on the Right or use the, second, potentiometer.
+Select an , Octave,  with the Grey arrow Buttons on the Right or use , shift and , the second encoder.
 Set your notes on the grid.
 To listen to the sequence, go to songmode and set your Arrangement there.
 Repeat this for the other tracks.
 Isnt that easy.
 
 Each rectangle stands for one bar, you can Play up to twohundredfiftysix bars with me. 
-Turn the, fourth, Potentiometer to set the end of the loop.
+Each bar can hold the values for, Clipnumber, Note Offset, Preset number, volume.
+Turn the, third, encoder to set the start of the loop.
+Turn the, fourth, encoder to set the end of the loop.
 In, songmode hit , Save or, L to save or load the whole project.
 In, any other page, you save or, load the respective content. 
 Isnt that awesome?
 
 If you have choosen one of the internal Plug-ins hit Plug-in and one of the 8 above Buttons to see the plug-ins page. Here you can Change several Parameters for Sound Control. 
-Some plug-ins have several pages. If the track channel is below 17, i have 16 midi cc controllers. Set the controller number by pressing the ,lower number and the equivalent Potentiometer.
-The controls of each row is automatically assigned to the 4 Potentiometers.
-Hit , row button, or touch the desired row, to remap the Potentiometers to the new row.
+Some plug-ins have several pages. If the track channel is below 17, i have 16 midi cc controllers. Set the controller number by pressing the, enter button,  and the equivalent encoder.
+The controls of each row is automatically assigned to the 4 encoders.
+Hit , row button, or touch the desired row, to remap the encoders to the new row.
 
 If a track is to loud, hit the Grey ,M or press ,Mixer plus button , 1 to 3
 The first page controls the Volume of the tracks plug-in or the Velocity of the sent midi notes and set the mute and solo states.

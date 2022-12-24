@@ -9,22 +9,19 @@ void Plugin10_Page_Static(byte Pagenumber) {
 }
 
 void Plugin10_Page1_Dynamic() {
+
   switch (lastPotRow) {
     case 0:
-      if (millis() % 20 > 15) {
-      }
+
       break;
     case 1:
-      if (millis() % 20 > 15) {
-      }
+
       break;
     case 2:
-      if (millis() % 20 > 15) {
-      }
+
       break;
     case 3:
-      if (millis() % 20 > 15) {
-      }
+
       break;
   }
   if (ts.touched()) {

@@ -6,25 +6,49 @@ void drumStepSequencer_Static() {  //static Display rendering
 }
 
 void drumStepSequencer() {
-
-  // if (msecs % 20 == 0) {
-  //midichannel
-  if (abs(map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS) - track[0].MIDIchannel) < 2) {
-    if (track[0].MIDIchannel != map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS)) {
-      track[0].MIDIchannel = map(Potentiometer[2], 0, 127, 1, MAX_CHANNELS);
-      drawMIDIchannel();
+  //assign drumnotes on the left
+  if (button_15) {
+    //gridTouchX
+    if (enc_moved[0]) {
+      int noteselector = constrain((drumnote[gridTouchY - 1] + encoded[0]), 0, 99);
+      for (byte i = 0; i < 12; i++) {
+        drumnote[gridTouchY - 1] = noteselector;
+        tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
+        tft.setCursor(18, STEP_FRAME_H * i + 18);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_BLACK);
+        tft.setTextSize(1);
+        tft.print(drumnote[i]);
+      }
     }
   }
-  //clip
-  if (abs(map(Potentiometer[3], 0, 127, 0, 7) - track[desired_instrument].clip_selector) < 2) {
-    if (track[desired_instrument].clip_selector != map(Potentiometer[3], 0, 127, 0, 7)) {
-      track[desired_instrument].clip_selector = map(Potentiometer[3], 0, 127, 0, 7);
+
+  if (!button_15) {
+    //gridTouchX
+    if (enc_moved[0]) {
+      gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
+    }
+    //gridTouchY
+    if (enc_moved[1]) {
+      gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
+    }
+
+    //midichannel
+    if (enc_moved[2]) {
+      track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[2]), 0, MAX_CHANNELS - 1);
+      drawMIDIchannel();
+    }
+
+    //clip
+    if (enc_moved[3]) {
+      track[desired_instrument].clip_selector = constrain((track[desired_instrument].clip_selector + encoded[3]), 0, MAX_CLIPS - 1);
       clearStepsGrid();
       drawActiveDrumSteps();
       drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
     }
   }
-  // }
+
+
 
 
 
@@ -74,7 +98,9 @@ void drumStepSequencer() {
       }
     }
     //assign drumnotes on the left
-    if (gridTouchX == 1) {
+
+
+    /*if (gridTouchX == 1) {
       int noteselector = Potentiometer[3];
       for (byte i = 0; i < 12; i++) {
         drumnote[gridTouchY - 1] = map(noteselector, 0, 127, 0, 48);
@@ -85,7 +111,7 @@ void drumStepSequencer() {
         tft.setTextSize(1);
         tft.print(drumnote[i]);
       }
-    }
+    }*/
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
       track[0].clip_selector = (gridTouchX / 2) - 1;

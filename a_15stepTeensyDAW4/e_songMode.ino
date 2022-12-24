@@ -79,7 +79,6 @@ void clearArrangment() {
       track[ctrack].NoteOffset[cphrase] = 0;
       track[ctrack].presetNr[cphrase] = 0;
       track[ctrack].volume[cphrase] = 99;
-
     }
   }
 }
@@ -135,87 +134,122 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
 void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
-  //end of loop
-  if (button_15) {
-    //if (msecs % 20 == 0) {
-    //end of loop
-    if (abs(map(Potentiometer[3], 0, 127, 1, 255) - end_of_loop) < POTPICKUP) {
-      if (end_of_loop != map(Potentiometer[3], 0, 127, 1, 255)) {
-        end_of_loop = map(Potentiometer[3], 0, 127, 1, 255);
-        draw_end_of_loop();
-      }
+  int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
+  byte touched_track;
+  if (gridTouchY == 1) touched_track = 0;
+  if (gridTouchY == 3) touched_track = 1;
+  if (gridTouchY == 4) touched_track = 2;
+  if (gridTouchY == 6) touched_track = 3;
+  if (gridTouchY == 7) touched_track = 4;
+  if (gridTouchY == 9) touched_track = 5;
+  if (gridTouchY == 10) touched_track = 6;
+  if (gridTouchY == 12) touched_track = 7;
+
+  if (!button_15 && !enter_button) {
+
+    //gridTouchX
+    if (enc_moved[0]) {
+      gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
+    }
+    //gridTouchY
+    if (enc_moved[1]) {
+      gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
     }
     //Start of loop
-    if (abs(map(Potentiometer[2], 0, 127, 0, 254) - start_of_loop) < POTPICKUP) {
-      if (start_of_loop != map(Potentiometer[2], 0, 127, 0, 254)) {
-        start_of_loop = map(Potentiometer[2], 0, 127, 0, 254);
-        draw_start_of_loop();
-      }
+    if (enc_moved[2]) {
+      start_of_loop = constrain((start_of_loop + encoded[2]), 0, 254);
+      draw_start_of_loop();
     }
-    //pageselection
-    /*if (abs(map(Potentiometer[1], 0, 127, 0, 15) - songpages) < POTPICKUP) {
-      if (songpages != map(Potentiometer[1], 0, 127, 0, 15)) {
-        songpages = Potentiometer[1] / 10;
-        selectPage = SONGMODE_PAGE_1 + songpages;
-        gridSongMode(songpages);
-        songModePage(songpages);
-      }
-    }*/
+
+    //end of loop
+    if (enc_moved[3]) {
+      end_of_loop = constrain((end_of_loop + encoded[3]), 1, 255);
+      draw_end_of_loop();
+    }
+  }
+
+  if (enter_button) {
+    //Clipassign
+    if (enc_moved[0]) {
+      track[touched_track].arrangment1[touched_phrase] = constrain((track[touched_track].arrangment1[touched_phrase] + encoded[0]), 0, MAX_CLIPS);
+    }
+    //Note transpose
+    if (enc_moved[1]) {
+      track[touched_track].NoteOffset[touched_phrase] = constrain((track[touched_track].NoteOffset[touched_phrase] + encoded[1]), -32, 32);
+    }
+    //presetnr
+    if (enc_moved[2]) {
+      track[touched_track].presetNr[touched_phrase] = constrain((track[touched_track].presetNr[touched_phrase] + encoded[2]), 0, MAX_PRESETS - 1);
+    }
+    //volume
+    if (enc_moved[3]) {
+      track[touched_track].volume[touched_phrase] = constrain((track[touched_track].volume[touched_phrase] + encoded[3]), 0, 127);
+    }
+    //draw horizontal song arrangment Lines
+    if (msecs % 100 == 0) {
+      drawarrengmentLine(songpageNumber, touched_track, touched_phrase);
+      drawChar(18, 9, "Prst:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+      drawNrInRect(18, 10, track[touched_track].presetNr[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+      drawChar(18, 11, "Vol:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+      drawNrInRect2(18, 12, track[touched_track].volume[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+    }
+  }
+
+  //end of loop
+  if (button_15) {
     //set Tempo
-    if (abs(map(Potentiometer[0], 0, 127, 55, 200) - tempo) < POTPICKUP) {
-      if (tempo != map(Potentiometer[0], 0, 127, 55, 200)) {
-        tempo = map(Potentiometer[0], 0, 127, 55, 200);
-        setTempo(tempo);
-      }
+    if (enc_moved[0]) {
+      tempo = constrain((tempo + encoded[0]), 55, 200);
+      setTempo(tempo);
     }
-    // }
+    //Start of loop
+    if (enc_moved[2]) {
+      start_of_loop = constrain(start_of_loop + (encoded[2]*8), 0, 254);
+      draw_start_of_loop();
+    }
+    //end of loop
+    if (enc_moved[3]) {
+      end_of_loop = constrain(end_of_loop + (encoded[3]*8), 1, 255);
+      draw_end_of_loop();
+    }
   }
 
   if (ts.touched() || enter_button) {
 
-    int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
-    byte touched_track;
-    if (gridTouchY == 1) touched_track = 0;
-    if (gridTouchY == 3) touched_track = 1;
-    if (gridTouchY == 4) touched_track = 2;
-    if (gridTouchY == 6) touched_track = 3;
-    if (gridTouchY == 7) touched_track = 4;
-    if (gridTouchY == 9) touched_track = 5;
-    if (gridTouchY == 10) touched_track = 6;
-    if (gridTouchY == 12) touched_track = 7;
 
+    /*
     //Assigning clips to the arranger
     if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
 
-      if (abs(map(Potentiometer[0], 0, 127, 0, 8) - track[touched_track].arrangment1[touched_phrase]) < POTPICKUP) {
-        if (track[touched_track].arrangment1[touched_phrase] != map(Potentiometer[0], 0, 127, 0, 8)) {
-          track[touched_track].arrangment1[touched_phrase] = map(Potentiometer[0], 0, 127, 0, 8);
-        }
+      //if (abs(map(Potentiometer[0], 0, 127, 0, 8) - track[touched_track].arrangment1[touched_phrase]) < POTPICKUP) {
+      if (track[touched_track].arrangment1[touched_phrase] != map(Potentiometer[0], 0, 127, 0, 8)) {
+        track[touched_track].arrangment1[touched_phrase] = map(Potentiometer[0], 0, 127, 0, 8);
       }
-      if (abs(map(Potentiometer[1], 0, 127, -32, 32) - track[touched_track].NoteOffset[touched_phrase]) < POTPICKUP) {
-        if (track[touched_track].NoteOffset[touched_phrase] != map(Potentiometer[1], 0, 127, -32, 32)) {
-          track[touched_track].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
-        }
+      //}
+      // if (abs(map(Potentiometer[1], 0, 127, -32, 32) - track[touched_track].NoteOffset[touched_phrase]) < POTPICKUP) {
+      if (track[touched_track].NoteOffset[touched_phrase] != map(Potentiometer[1], 0, 127, -32, 32)) {
+        track[touched_track].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
       }
-      if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[touched_track].presetNr[touched_phrase]) < POTPICKUP) {
-        if (track[touched_track].presetNr[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
-          track[touched_track].presetNr[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
-          drawChar(18, 9, "Prst:",trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
-          drawNrInRect(18, 10, track[touched_track].presetNr[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));          
-        }
+      // }
+      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[touched_track].presetNr[touched_phrase]) < POTPICKUP) {
+      if (track[touched_track].presetNr[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
+        track[touched_track].presetNr[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
+        drawChar(18, 9, "Prst:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+        drawNrInRect(18, 10, track[touched_track].presetNr[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
       }
-      if (abs(Potentiometer[3] - track[touched_track].volume[touched_phrase]) < POTPICKUP) {
-        if (track[touched_track].volume[touched_phrase] != Potentiometer[3]) {
-          track[touched_track].volume[touched_phrase] = Potentiometer[3];
-          drawChar(18, 11, "Vol:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
-          drawNrInRect(18, 12, track[touched_track].volume[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
-          //pluginVolume(track[touched_track].MIDIchannel, Potentiometer[3] / 127.00);
-        }
+      // }
+      //if (abs(Potentiometer[3] - track[touched_track].volume[touched_phrase]) < POTPICKUP) {
+      if (track[touched_track].volume[touched_phrase] != Potentiometer[3]) {
+        track[touched_track].volume[touched_phrase] = Potentiometer[3];
+        drawChar(18, 11, "Vol:", trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+        drawNrInRect(18, 12, track[touched_track].volume[touched_phrase], trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+        //pluginVolume(track[touched_track].MIDIchannel, Potentiometer[3] / 127.00);
+        //   }
       }
       //draw horizontal song arrangment Lines
       drawarrengmentLine(songpageNumber, touched_track, touched_phrase);
     }
-
+    */
 
 
     //page selection
@@ -296,6 +330,7 @@ void savebutton() {
     saveTrack6();
     saveTrack7();
     saveTrack8();
+    saveMixer();
     tft.println("Done");
 
     tft.print("Writing plugin 1 to project.txt...");
@@ -303,9 +338,19 @@ void savebutton() {
     savePlugin1();
     tft.println("Done");
 
+    tft.print("Writing plugin 2 to project.txt...");
+    //save plugin 3 variables
+    savePlugin2();
+    tft.println("Done");
+
     tft.print("Writing plugin 3 to project.txt...");
     //save plugin 3 variables
     savePlugin3();
+    tft.println("Done");
+
+    tft.print("Writing plugin 4 to project.txt...");
+    //save plugin 3 variables
+    savePlugin4();
     tft.println("Done");
 
     tft.print("Writing plugin 5 to project.txt...");
@@ -373,7 +418,6 @@ void loadbutton() {
         track[ctrack].NoteOffset[cphrase] = myFile.read();
         track[ctrack].presetNr[cphrase] = myFile.read();
         track[ctrack].volume[cphrase] = myFile.read();
-        
       }
     }
     tft.println("Done");
@@ -391,6 +435,7 @@ void loadbutton() {
     loadTrack6();
     loadTrack7();
     loadTrack8();
+    loadMixer();
     tft.println("Done");
 
 
@@ -399,9 +444,19 @@ void loadbutton() {
     loadPlugin1();
     tft.println("Done");
 
+    //load plugin 2 variables
+    tft.print("reading plugin 2 from project.txt...");
+    loadPlugin2();
+    tft.println("Done");
+
     //load plugin 3 variables
     tft.print("reading plugin 3 from project.txt...");
     loadPlugin3();
+    tft.println("Done");
+
+    //load plugin 4 variables
+    tft.print("reading plugin 4 from project.txt...");
+    loadPlugin4();
     tft.println("Done");
 
     //load plugin 5 variables

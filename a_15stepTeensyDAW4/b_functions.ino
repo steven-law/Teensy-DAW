@@ -1,5 +1,5 @@
 void Plugin_View_Static(byte desired_instrument) {
-  clearWorkSpace();
+
   if (selectPage == PLUGIN1_PAGE1) {
     Plugin1_Page_Static(0);
   }
@@ -18,7 +18,7 @@ void Plugin_View_Static(byte desired_instrument) {
   ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
   ////////////////////////////////////////////////////////////////////////////////////////////////
   if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page_Static(0, desired_instrument);
+    Plugin3_Page_Static(0);
   }
   if (selectPage == PLUGIN4_PAGE1) {
     Plugin4_Page_Static(0);
@@ -44,6 +44,139 @@ void Plugin_View_Static(byte desired_instrument) {
   }
   if (selectPage == PLUGIN10_PAGE1) {
     Plugin10_Page_Static(0);
+  }
+}
+
+void Plugin_View_Dynamic() {
+  //***********************************************************************************************************************
+  // 4) copy one of the plugin Page Views
+  //    and change the names according to our variables and functions.
+  //    Every page you want to make has to have its own statement
+  //    we create:
+
+  //  //setting up the Plugin3 Page1-view
+  //    if (selectPage == PLUGIN3_PAGE1) {
+  //      Plugin3_Page1_Dynamic();
+  //    }
+
+  // after adding the active state statement
+  // head over to "midi.ino"
+  //look for *****************************************************************************************
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //-----------------------------------------
+  //setting up the Plugin1 Page1-view
+  if (selectPage == PLUGIN1_PAGE1) {
+    Plugin1_Page1_Dynamic();
+  }
+  //setting up the Plugin1 Page2-view
+  if (selectPage == PLUGIN1_PAGE2) {
+    Plugin1_Page2_Dynamic();
+  }
+
+  //setting up the Plugin2 Page1-view
+  if (selectPage == PLUGIN2_PAGE1) {
+    Plugin2_Page1_Dynamic();
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  //setting up the Plugin3 Page1-view
+  if (selectPage == PLUGIN3_PAGE1) {
+    Plugin3_Page1_Dynamic();
+  }
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  //setting up the Plugin4 Page1-view
+  if (selectPage == PLUGIN4_PAGE1) {
+    Plugin4_Page1_Dynamic();
+  }
+
+  //setting up the Plugin5 Page1-view
+  if (selectPage == PLUGIN5_PAGE1) {
+    Plugin5_Page1_Dynamic();
+  }
+  //setting up the Plugin6 Page1-view
+  if (selectPage == PLUGIN6_PAGE1) {
+    Plugin6_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page1-view
+  if (selectPage == PLUGIN7_PAGE1) {
+    Plugin7_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page2-view
+  if (selectPage == PLUGIN7_PAGE2) {
+    Plugin7_Page2_Dynamic();
+  }
+  //setting up the Plugin8 Page1-view
+  if (selectPage == PLUGIN8_PAGE1) {
+    Plugin8_Page1_Dynamic();
+  }
+  //setting up the Plugin9 Page1-view
+  if (selectPage == PLUGIN9_PAGE1) {
+    Plugin9_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN10_PAGE1) {
+    Plugin10_Page1_Dynamic();
+  }
+
+
+
+    //setting up the StepSequencer-view for drumtrack #1
+  if (selectPage == DRUMTRACK) {
+    drumStepSequencer();
+  }
+  //setting up the melodicStepSequencer-view for #2-8
+  for (byte i = 1; i < 8; i++) {
+    if (selectPage == i) {
+      melodicStepSequencer(i);
+    }
+  }
+  //setting up the scaleSelector-view
+  if (selectPage == SCALESELECT) {
+    scaleSelector();
+  }
+
+  //setting up the songMode-view1
+  for (byte pagenr = 0; pagenr < 16; pagenr++) {
+    if (selectPage == pagenr + 10) {
+      songModePage(pagenr);
+    }
+  }
+
+  //setting up the Recorder Page
+  if (selectPage == RECORDER_PAGE) {
+    recorder_Page1_Dynamic();
+  }
+
+
+  //setting up the Mixer Page 1
+  if (selectPage == MIXER_PAGE_1) {
+    MixerPage1_Dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIXER_PAGE_2) {
+    MixerPage2_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == MIXER_PAGE_3) {
+    MixerPage3_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX1_PAGE1) {
+    FX1reverb_dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX2_PAGE1) {
+    FX2Bitcrush_dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIDICC_PAGE_1) {
+    midiCCpage1_Dynamic(desired_track);
   }
 }
 
@@ -76,6 +209,37 @@ void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (
   }
   if (pluginchannel == 25) {
     pl9amp.gain(volume);
+  }
+}
+// 7) add your amp.gain() control to the volume-functions in "functions.ino"
+void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    pl1amp2.gain(volume);
+  }
+  if (pluginchannel == 18) {
+    pl2amp2.gain(volume);
+  }
+  if (pluginchannel == 19) {
+    pl3amp2.gain(volume);
+  }
+  if (pluginchannel == 20) {
+    pl4amp2.gain(volume);
+  }
+
+  if (pluginchannel == 21) {
+    pl5amp2.gain(volume);
+  }
+  if (pluginchannel == 22) {
+    pl6amp2.gain(volume);
+  }
+  if (pluginchannel == 23) {
+    pl7amp2.gain(volume);
+  }
+  if (pluginchannel == 24) {
+    pl8amp2.gain(volume);
+  }
+  if (pluginchannel == 25) {
+    pl9amp2.gain(volume);
   }
 }
 void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
@@ -398,6 +562,17 @@ void drawNrInRect(byte xPos, byte yPos, byte dvalue, int color) {
   tft.print(dvalue);
   dvalue_old = dvalue;
 }
+void drawNrInRect2(byte xPos, byte yPos, byte dvalue, int color) {
+  tft.setFont(Arial_8);
+  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
+  tft.setTextColor(ILI9341_DARKGREY);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
+  tft.print(dvalue_old2);
+  tft.setTextColor(color);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
+  tft.print(dvalue);
+  dvalue_old2 = dvalue;
+}
 //draws a number into a rect of 2x1grids  drawActiveRect is recommended
 void drawChar(byte xPos, byte yPos, char* dvalue_char, int color) {
   tft.setFont(Arial_8);
@@ -408,6 +583,8 @@ void drawChar(byte xPos, byte yPos, char* dvalue_char, int color) {
   tft.print(dvalue_char);
   dvalue_old_char = dvalue_char;
 }
+
+
 
 
 
