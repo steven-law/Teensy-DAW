@@ -1037,6 +1037,37 @@ void readMainButtons() {
         pixelphrase = -1;
         phrase = 0;
         msecs = 0;
+        //if (track[track_number].send_noteOff) {
+        //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
+        for (int track_number = 1; track_number <= 7; track_number++) {
+          if (track[track_number].MIDIchannel < 17) {
+            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+            MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+          }
+          if (track[track_number].MIDIchannel == 17) {
+            envelope1.noteOff();
+            envelope2.noteOff();
+          }
+          if (track[track_number].MIDIchannel == 19) {
+            pl3envelope1.noteOff();
+            pl3envelope2.noteOff();
+          }
+          if (track[track_number].MIDIchannel == 21) {
+            pl5envelope1.noteOff();
+            pl5envelope2.noteOff();
+          }
+          if (track[track_number].MIDIchannel == 22) {
+            pl6envelope1.noteOff();
+            pl6envelope2.noteOff();
+          }
+          if (track[track_number].MIDIchannel == 24) {
+            pl8envelope1.noteOff();
+            pl8envelope2.noteOff();
+          }
+          if (track[track_number].MIDIchannel == 25) {
+            pl9string1.noteOff(VELOCITYOFF);
+          }
+        }
         tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
       }
 

@@ -150,7 +150,7 @@ const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7",
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-//notenumber to frequency chart
+
 //plugin 1 variables
 struct plugin1 {
 
@@ -225,7 +225,7 @@ byte pl4presetNr = 0;
 //plugin 5 variables
 struct plugin5 {
   float Filter1_Frequency = 260;
-  int Filter1_Frequency_graph = 50;
+  byte Filter1_Frequency_graph = 50;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
@@ -241,7 +241,7 @@ struct plugin5 {
   int Env1_Release = 150;
   float Env1_Release_graph = 50;
   byte selected_file;
-  byte selected_file_graph = 50;
+  byte selected_file_graph = 0;
   byte Volume_graph = 50;
   float Volume;
 };
@@ -252,7 +252,7 @@ bool pl5enter_was_pushed = true;
 //plugin 6 variables
 struct plugin6 {
   float Filter1_Frequency = 260;
-  int Filter1_Frequency_graph = 50;
+  byte Filter1_Frequency_graph = 50;
   float Filter1_Resonance = 1;
   byte Filter1_Resonance_graph = 50;
   float Filter1_Sweep = 2;
@@ -267,8 +267,8 @@ struct plugin6 {
   byte Env1_Sustain_graph = 50;
   int Env1_Release = 150;
   byte Env1_Release_graph = 50;
-  byte selected_raw_file;
-  byte selected_file_raw_graph = 50;
+  byte selected_file_raw;
+  byte selected_file_raw_graph = 0;
   byte Volume_graph = 50;
   float Volume_rnd;
   float Volume;
@@ -384,7 +384,7 @@ byte pl7presetNr = 0;
 //plugin 8 variables
 struct plugin8 {
   float Filter1_Frequency;
-  int Filter1_Frequency_graph;
+  byte Filter1_Frequency_graph;
   float Filter1_Resonance;
   byte Filter1_Resonance_graph;
   float Filter1_Sweep;
@@ -471,12 +471,12 @@ byte fx2bitcrush_graph = 127;
 int fx2samplerate = 44100;
 byte fx2samplerate_graph = 127;
 
-
+//notenumber to frequency chart
 float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
                            16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
                            32.7, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55, 58.27, 61.74,
                            65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98, 103.83, 110, 116.54, 123.47,
-                           130.81, 138.59, 146.83, 155.56, 164.81, 174, 61, 185, 196, 207.65, 220, 233.08, 246.94,
+                           130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185, 196, 207.65, 220, 233.08, 246.94,
                            261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88,
                            523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61, 880, 832.33, 987.77,
                            1046.5, 1108.73, 1174.66, 1244.66, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53,
@@ -641,7 +641,7 @@ struct tracks {
   int NoteOffset[256];
   int presetNr[256];
   int volume[256];
-  byte MIDI_velocity = 96;
+  byte MIDI_velocity = 99;
   
   byte Volume_graph = 50;
   float Volume = 1;

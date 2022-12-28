@@ -51,7 +51,6 @@ void Plugin2_Page1_Dynamic() {
   if (!button_15) {
     switch (lastPotRow) {
       case 0:
-
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (enc_moved[touchX - 1]) {
             pl2[pl2presetNr].Vol_rnd[touchX - 1] = constrain((pl2[pl2presetNr].Vol_rnd[touchX - 1] + encoded[touchX - 1]), 0, 127);
@@ -59,22 +58,10 @@ void Plugin2_Page1_Dynamic() {
             drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
             drawPot(touchX * 4 - 1, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[touchX - 1], pl2[pl2presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
           }
-
-          /*if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX - 1]) < POTPICKUP) {
-          if (pl2[pl2presetNr].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
-            drawPot(touchX * 4 - 1, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[touchX - 1], pl2[pl2presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-            pl2[pl2presetNr].Vol_rnd[touchX - 1] = Potentiometer[touchX - 1];
-            pl2[pl2presetNr].Vol[touchX - 1] = pl2[pl2presetNr].Vol_rnd[touchX - 1] / 127.00;
-            drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
-          }
-        }*/
         }
-
-
-
         break;
-      case 1:
 
+      case 1:
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (enc_moved[touchX - 1]) {
             pl2[pl2presetNr].Vol_rnd[touchX + 3] = constrain((pl2[pl2presetNr].Vol_rnd[touchX + 3] + encoded[touchX - 1]), 0, 127);
@@ -82,20 +69,10 @@ void Plugin2_Page1_Dynamic() {
             drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
             drawPot(touchX * 4 - 1, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[touchX + 3], pl2[pl2presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
           }
-
-          /*  if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX + 3]) < POTPICKUP) {
-          if (pl2[pl2presetNr].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
-            drawPot(touchX * 4 - 1, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[touchX + 3], pl2[pl2presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-            pl2[pl2presetNr].Vol_rnd[touchX + 3] = Potentiometer[touchX - 1];
-            pl2[pl2presetNr].Vol[touchX + 3] = pl2[pl2presetNr].Vol_rnd[touchX + 3] / 127.00;
-            drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
-          }
-        }*/
         }
-
         break;
-      case 2:
 
+      case 2:
         for (byte touchX = 1; touchX < 5; touchX++) {
           if (enc_moved[touchX - 1]) {
             pl2[pl2presetNr].Vol_rnd[touchX + 7] = constrain((pl2[pl2presetNr].Vol_rnd[touchX + 7] + encoded[touchX - 1]), 0, 127);
@@ -103,20 +80,10 @@ void Plugin2_Page1_Dynamic() {
             drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
             drawPot(touchX * 4 - 1, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[touchX + 7], pl2[pl2presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
           }
-
-          /* if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX + 7]) < POTPICKUP) {
-          if (pl2[pl2presetNr].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
-            drawPot(touchX * 4 - 1, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[touchX + 7], pl2[pl2presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
-            pl2[pl2presetNr].Vol_rnd[touchX + 7] = Potentiometer[touchX - 1];
-            pl2[pl2presetNr].Vol[touchX + 7] = pl2[pl2presetNr].Vol_rnd[touchX + 7] / 127.00;
-            drummixer3.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
-          }
-        }*/
         }
-
         break;
-      case 3:
 
+      case 3:
         break;
     }
   }
@@ -124,7 +91,16 @@ void Plugin2_Page1_Dynamic() {
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || enter_button) {
-
+    if (gridTouchY == 0) {
+      //Save button
+      if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
+        savePlugin2();
+      }
+      //Load button
+      if (gridTouchX == POSITION_LOAD_BUTTON) {
+        loadPlugin2();
+      }
+    }
 
     if (gridTouchY >= 2 && gridTouchY <= 4) {
       lastPotRow = 0;
