@@ -104,10 +104,7 @@ Encoder Enc4(2, 3);
 #define POTENTIOMETER_2_PIN 255
 #define POTENTIOMETER_3_PIN 255
 #define POTENTIOMETER_4_PIN 255
-//ResponsiveAnalogRead Potentiometer1full(POTENTIOMETER_1_PIN, true);
-ResponsiveAnalogRead Potentiometer2full(POTENTIOMETER_2_PIN, true);
-ResponsiveAnalogRead Potentiometer3full(POTENTIOMETER_3_PIN, true);
-ResponsiveAnalogRead Potentiometer4full(POTENTIOMETER_4_PIN, true);
+
 
 //calibrate your Screen
 // This is calibration data for the raw touch data to the screen coordinates
@@ -145,12 +142,19 @@ XPT2046_Touchscreen ts(CS_PIN);  //initiate Touchscreen
 USBHost myusb;
 USBHub hub1(myusb);
 USBHub hub2(myusb);
-MIDIDevice midi1(myusb);
-MIDIDevice midi2(myusb);
-MIDIDevice midi3(myusb);
-MIDIDevice midi4(myusb);
-MIDIDevice midi5(myusb);
-MIDIDevice midi6(myusb);
+USBHub hub3(myusb);
+USBHub hub4(myusb);
+MIDIDevice midi01(myusb);
+MIDIDevice midi02(myusb);
+MIDIDevice midi03(myusb);
+MIDIDevice midi04(myusb);
+MIDIDevice midi05(myusb);
+MIDIDevice midi06(myusb);
+MIDIDevice midi07(myusb);
+MIDIDevice midi08(myusb);
+MIDIDevice midi09(myusb);
+MIDIDevice midi10(myusb);
+
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
 
 
@@ -561,41 +565,39 @@ void setup() {
   Serial.println("Initializing USB Host");
   tft.println("Initializing USB Host");
   myusb.begin();
-  midi1.setHandleNoteOn(myNoteOn);
-  midi1.setHandleNoteOff(myNoteOff);
-  midi1.setHandleControlChange(myControlChange);
-  midi2.setHandleNoteOn(myNoteOn);
-  midi2.setHandleNoteOff(myNoteOff);
-  midi2.setHandleControlChange(myControlChange);
-  midi3.setHandleNoteOn(myNoteOn);
-  midi3.setHandleNoteOff(myNoteOff);
-  midi3.setHandleControlChange(myControlChange);
-  midi4.setHandleNoteOn(myNoteOn);
-  midi4.setHandleNoteOff(myNoteOff);
-  midi4.setHandleControlChange(myControlChange);
-  midi5.setHandleNoteOn(myNoteOn);
-  midi5.setHandleNoteOff(myNoteOff);
-  midi5.setHandleControlChange(myControlChange);
-  midi6.setHandleNoteOn(myNoteOn);
-  midi6.setHandleNoteOff(myNoteOff);
-  midi6.setHandleControlChange(myControlChange);
-  midi1.setHandleClock(myClock);
-  midi1.setHandleStart(myStart);
-  midi1.setHandleStop(myStop);
+  midi01.setHandleNoteOn(myNoteOn);
+  midi01.setHandleNoteOff(myNoteOff);
+  midi01.setHandleControlChange(myControlChange);
+  midi02.setHandleNoteOn(myNoteOn);
+  midi02.setHandleNoteOff(myNoteOff);
+  midi02.setHandleControlChange(myControlChange);
+  midi03.setHandleNoteOn(myNoteOn);
+  midi03.setHandleNoteOff(myNoteOff);
+  midi03.setHandleControlChange(myControlChange);
+  midi04.setHandleNoteOn(myNoteOn);
+  midi04.setHandleNoteOff(myNoteOff);
+  midi04.setHandleControlChange(myControlChange);
+  midi05.setHandleNoteOn(myNoteOn);
+  midi05.setHandleNoteOff(myNoteOff);
+  midi05.setHandleControlChange(myControlChange);
+  midi06.setHandleNoteOn(myNoteOn);
+  midi06.setHandleNoteOff(myNoteOff);
+  midi06.setHandleControlChange(myControlChange);
+
   //usbMIDI.setHandleNoteOn(myNoteOn);
   //usbMIDI.setHandleNoteOff(myNoteOff);
   //usbMIDI.setHandleControlChange(myControlChange);
-  usbMIDI.setHandleClock(myClock);
-  usbMIDI.setHandleStart(myStart);
-  usbMIDI.setHandleStop(myStop);
+  //usbMIDI.setHandleClock(myClock);
+  //usbMIDI.setHandleStart(myStart);
+  //usbMIDI.setHandleStop(myStop);
   MIDI.begin();
   pinMode(22, OUTPUT);
   //tft.updateScreen();
   delay(100);
 
-
+  track[0].clip_selector = 0;
   /// set the default channel of each track
-  track[0].MIDIchannel = 10;
+  track[0].MIDIchannel = 9;
   track[1].MIDIchannel = 2;
   track[2].MIDIchannel = 3;
   track[3].MIDIchannel = 4;
@@ -1022,53 +1024,11 @@ void readMainButtons() {
 
       //playbutton
       if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
-        phrase = start_of_loop;
-        seq_run = true;
-        msecs = 0;
-        for (byte i = 1; i <= 7; i++) {
-          track[i].clip_songMode = track[i].arrangment1[start_of_loop];
-        }
+        startSeq();
       }
       //stopbutton
       if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
-        seq_run = false;
-        tick_16 = -1;
-        phrase = start_of_loop - 1;
-        pixelphrase = -1;
-        phrase = 0;
-        msecs = 0;
-        //if (track[track_number].send_noteOff) {
-        //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
-        for (int track_number = 1; track_number <= 7; track_number++) {
-          if (track[track_number].MIDIchannel < 17) {
-            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-            MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-          }
-          if (track[track_number].MIDIchannel == 17) {
-            envelope1.noteOff();
-            envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 19) {
-            pl3envelope1.noteOff();
-            pl3envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 21) {
-            pl5envelope1.noteOff();
-            pl5envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 22) {
-            pl6envelope1.noteOff();
-            pl6envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 24) {
-            pl8envelope1.noteOff();
-            pl8envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 25) {
-            pl9string1.noteOff(VELOCITYOFF);
-          }
-        }
-        tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+        stopSeq();
       }
 
 
@@ -1147,24 +1107,7 @@ void readMainButtons() {
   }
 }
 long oldEnc[4] = { -999, -999, -999, -999 };
-
-void loop() {
-  //Serial.println("==== start of loop ====");
-  usbMIDI.read();
-  myusb.Task();
-  midi1.read();
-  midi2.read();
-  midi3.read();
-  midi4.read();
-  midi5.read();
-  midi6.read();
-  sendClock();
-  kpd.tick();
-  readMainButtons();
-
-  /* if (digitalRead(5)) {
-    tick_16++;
-  }*/
+void readEncoders() {
   encoded[0] = 0;
   encoded[1] = 0;
   encoded[2] = 0;
@@ -1218,104 +1161,78 @@ void loop() {
     encoded[3] = -1;
     oldEnc[3] = newEnc[3];
   }
-
-
-
-  //assigning the current clip/noteoffset/presetnr/Volume from the arrangment array for each track
-  if (seq_run) {
-    for (byte instruments = 0; instruments < 8; instruments++) {
-      track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
-      //track[instruments].MIDI_velocity = track[instruments].velocity_ON_graph - (1 - track[instruments].volume[phrase]);
-      //pluginVolume(track[instruments].MIDIchannel, (track[instruments].velocity_ON - (127 - track[instruments].volume[phrase])) / 127.00);
-      track[instruments].MIDI_velocity = track[instruments].volume[phrase];
-      pluginVolume(track[instruments].MIDIchannel, track[instruments].volume[phrase] / 127.00);
-
-      if (track[instruments].MIDIchannel == 17) {
-        pl1presetNr = track[instruments].presetNr[phrase];
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl1[pl1presetNr].note_Offset[MixerColumn];
-        }
-        waveform1.begin(pl1[pl1presetNr].wfSelect[0]);
-        waveform2.begin(pl1[pl1presetNr].wfSelect[1]);
-        waveform3.begin(pl1[pl1presetNr].wfSelect[2]);
-        waveform4.begin(pl1[pl1presetNr].wfSelect[3]);
-        mixer1.gain(0, pl1[pl1presetNr].note_Velo[0]);
-        mixer1.gain(1, pl1[pl1presetNr].note_Velo[1]);
-        mixer1.gain(2, pl1[pl1presetNr].note_Velo[2]);
-        mixer1.gain(3, pl1[pl1presetNr].note_Velo[3]);
-        filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
-        filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-        filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-        selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
-        envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-        envelope2.attack(pl1[pl1presetNr].Env1_Attack);
-        envelope1.decay(pl1[pl1presetNr].Env1_Decay);
-        envelope2.decay(pl1[pl1presetNr].Env1_Decay);
-        envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
-        envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
-        envelope1.release(pl1[pl1presetNr].Env1_Release);
-        envelope2.release(pl1[pl1presetNr].Env1_Release);
-      }
-      if (track[instruments].MIDIchannel == 18) {
-        pl2presetNr = track[instruments].presetNr[phrase];
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
-          drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
-          drummixer3.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
-        }
-      }
-      if (track[instruments].MIDIchannel == 19) {
-        pl3presetNr = track[instruments].presetNr[phrase];
-        pl3waveform1.begin(pl3[pl3presetNr].wfSelect);
-        pl3filter1.frequency(pl3[pl3presetNr].Filter1_Frequency);
-        pl3filter1.resonance(pl3[pl3presetNr].Filter1_Resonance);
-        pl3filter1.octaveControl(pl3[pl3presetNr].Filter1_Sweep);
-        selectFilterType(19, pl3[pl3presetNr].Filter1_Type);
-        pl3envelope1.attack(pl3[pl3presetNr].Env1_Attack);
-        pl3envelope2.attack(pl3[pl3presetNr].Env1_Attack);
-        pl3envelope1.decay(pl3[pl3presetNr].Env1_Decay);
-        pl3envelope2.decay(pl3[pl3presetNr].Env1_Decay);
-        pl3envelope1.sustain(pl3[pl3presetNr].Env1_Sustain);
-        pl3envelope2.sustain(pl3[pl3presetNr].Env1_Sustain);
-        pl3envelope1.release(pl3[pl3presetNr].Env1_Release);
-        pl3envelope2.release(pl3[pl3presetNr].Env1_Release);
-      }
-      if (track[instruments].MIDIchannel == 20) {
-        pl4presetNr = track[instruments].presetNr[phrase];
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
-          pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
-          pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
-        }
-      }
-      if (track[instruments].MIDIchannel == 21) {
-        pl5presetNr = track[instruments].presetNr[phrase];
-      }
-      if (track[instruments].MIDIchannel == 22) {
-        pl6presetNr = track[instruments].presetNr[phrase];
-      }
-      if (track[instruments].MIDIchannel == 23) {
-        pl7presetNr = track[instruments].presetNr[phrase];
-      }
-      if (track[instruments].MIDIchannel == 24) {
-        pl8presetNr = track[instruments].presetNr[phrase];
-        pl8waveform1.begin(pl8[pl8presetNr].wfSelect);
-        pl8filter1.frequency(pl8[pl8presetNr].Filter1_Frequency);
-        pl8filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
-        pl8filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
-        pl8envelope1.attack(pl8[pl8presetNr].Env1_Attack);
-        pl8envelope2.attack(pl8[pl8presetNr].Env1_Attack);
-        pl8envelope1.decay(pl8[pl8presetNr].Env1_Decay);
-        pl8envelope2.decay(pl8[pl8presetNr].Env1_Decay);
-        pl8envelope1.sustain(pl8[pl8presetNr].Env1_Sustain);
-        pl8envelope2.sustain(pl8[pl8presetNr].Env1_Sustain);
-        pl8envelope1.release(pl8[pl8presetNr].Env1_Release);
-        pl8envelope2.release(pl8[pl8presetNr].Env1_Release);
-      }
-      if (track[instruments].MIDIchannel == 25) {
-        pl9presetNr = track[instruments].presetNr[phrase];
-      }
+}
+void startSeq() {
+  phrase = start_of_loop;
+  seq_run = true;
+  msecs = 0;
+  for (byte i = 1; i <= 7; i++) {
+    track[i].clip_songMode = track[i].arrangment1[start_of_loop];
+  }
+}
+void stopSeq() {
+  seq_run = false;
+  tick_16 = -1;
+  phrase = start_of_loop - 1;
+  pixelphrase = -1;
+  phrase = 0;
+  msecs = 0;
+  //if (track[track_number].send_noteOff) {
+  //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
+  for (int track_number = 1; track_number <= 7; track_number++) {
+    if (track[track_number].MIDIchannel < 17) {
+      usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+      MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
     }
+    if (track[track_number].MIDIchannel == 17) {
+      envelope1.noteOff();
+      envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 19) {
+      pl3envelope1.noteOff();
+      pl3envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 21) {
+      pl5envelope1.noteOff();
+      pl5envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 22) {
+      pl6envelope1.noteOff();
+      pl6envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 24) {
+      pl8envelope1.noteOff();
+      pl8envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 25) {
+      pl9string1.noteOff(VELOCITYOFF);
+    }
+  }
+  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+}
+void loop() {
+  //Serial.println("==== start of loop ====");
+  usbMIDI.read();
+  myusb.Task();
+  midi01.read();
+  midi02.read();
+  midi03.read();
+  midi04.read();
+  midi05.read();
+  midi06.read();
+  sendClock();
+  kpd.tick();
+  readMainButtons();
+  readEncoders();
+  Plugin_View_Dynamic();
+
+  /* if (digitalRead(5)) {
+    tick_16++;
+  }*/
+
+  //assigning the current clip/noteoffset/presets/Volume from the arrangment array for each track
+  if (seq_run) {
+    beatComponents();
   }
 
   if (msecs % 100 == 0) {
@@ -1325,9 +1242,6 @@ void loop() {
     drawCursor();
     showCoordinates();
   }
-
-
-
 
 
   TS_Point p = ts.getPoint();
@@ -1341,32 +1255,18 @@ void loop() {
   if (ts.touched() || enter_button) {
     int start_at = millis();
 
-
-
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Arrangment select
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Play button
       if (gridTouchX == POSITION_PLAY_BUTTON || gridTouchX == POSITION_PLAY_BUTTON + 1) {
-        phrase = start_of_loop;
-        seq_run = true;
-        msecs = 0;
-        //seq.start();
-        for (byte i = 1; i <= 7; i++) {
-          track[i].clip_songMode = track[i].arrangment1[start_of_loop];
-        }
+        startSeq();
       }
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Stop button
       if (gridTouchX == POSITION_STOP_BUTTON) {
-        seq_run = false;
-        tick_16 = -1;
-        phrase = start_of_loop - 1;
-        pixelphrase = -1;
-        phrase = 0;
-        msecs = 0;
-        tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+        stopSeq();
       }
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1444,10 +1344,6 @@ void loop() {
     }
     //tft.updateScreen();
   }
-
-
-  Plugin_View_Dynamic();
-
 
   //if (something_was_pressed) {
   //Serial.println("==== end of loop ====");
@@ -1689,6 +1585,8 @@ void clearStepsGridY() {  // clear all Steps in the same column
     tft.fillCircle((gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
   }
 }
+
+
 
 #define BUFFPIXEL 80
 

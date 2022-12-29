@@ -712,7 +712,7 @@ void loadMixer() {
     FX1pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX1Volume);
     track[MixerColumn + 4].FX1Volume = track[MixerColumn + 4].FX1Volume_graph / 127.00;
     FX1pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX1Volume);
-    
+
     track[MixerColumn].FX2Volume = track[MixerColumn].FX2Volume_graph / 127.00;
     FX2pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX2Volume);
     track[MixerColumn + 4].FX2Volume = track[MixerColumn + 4].FX2Volume_graph / 127.00;

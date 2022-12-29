@@ -62,8 +62,7 @@ byte tempo = 120;
 //    for the tutorial we add "1OSC"
 //    and define our first Plugin page  -> #define PLUGIN3_PAGE1 42   pluginstartpage has to be in order with the midi (plugin-)channel
 //    scroll down and add your plugin variables there, please use one struct for all your variables so things can be handled a bit more easier
-//    now we head over to the 15stepTeensyDAW3.ino"
-//look for *************************************************************************
+//    now we head over to the functions.ino" to add the static and dynamic page to the desired functions
 ////////////////////////////////////////////////////////////////////////////////////////////
 #define MAX_PRESETS 8  //max presets per plugin
 #define MAX_CLIPS 8    //max cliips per track
@@ -642,7 +641,7 @@ struct tracks {
   int presetNr[256];
   int volume[256];
   byte MIDI_velocity = 99;
-  
+
   byte Volume_graph = 50;
   float Volume = 1;
 

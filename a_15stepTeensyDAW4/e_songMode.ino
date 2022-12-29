@@ -204,12 +204,12 @@ void songModePage(byte songpageNumber) {
     }
     //Start of loop
     if (enc_moved[2]) {
-      start_of_loop = constrain(start_of_loop + (encoded[2]*8), 0, 254);
+      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, 254);
       draw_start_of_loop();
     }
     //end of loop
     if (enc_moved[3]) {
-      end_of_loop = constrain(end_of_loop + (encoded[3]*8), 1, 255);
+      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, 255);
       draw_end_of_loop();
     }
   }

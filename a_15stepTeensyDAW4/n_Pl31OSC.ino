@@ -1,18 +1,18 @@
 //Lets create a plugin
 // these are the neccessary elements you have to do to add your own plugin:
 // 1) copy the existing automatic generated code from "15stepTeensyDAW3.ino" and import it to https://newdigate.github.io/teensy-eurorack-audio-gui/
-//    add your modules for the plugin. Dont forget to add your final AMP module for the Mixer section copy the code back to "15stepTeensyDAW3.ino"
+//    add your modules for the plugin. Dont forget to add your final AMP modules for the Mixer section copy the code back to "15stepTeensyDAW3.ino"
 
 // 2) add the plugin- _settings, _Static and _Dynamic functions to your plugin *.ino file add the functions to:
 //    Plugin_3_Settings()      -> setup() function in "15stepTeensyDAW3.ino"
-//    Plugin3_Page1_Static()   -> Plugin_View_Static(x) function in "functions.ino"
-//    Plugin3_Page1_Dynamic()  -> loop() function in "15stepTeensyDAW3.ino"
+//    Plugin3_Page1_Static()   -> Plugin_View_Static() function in "functions.ino"
+//    Plugin3_Page1_Dynamic()  -> Plugin_View_Dynamic() function in "functions.ino"
 
 // 3) define PLUGINx_PAGEnr and variables to "variables.h"
 
-// 4) if not done yet move the plugin- _functions to their desired places
+// 4) add different tasks to the functions in "functions.ino"
 
-// 5) add NoteOn and Off´s to "midi.ino"
+// 5) add NoteOn and Off´s in "functions.ino"
 
 // 6) add controls to Plugin3_Page1_Dynamic()
 
@@ -29,7 +29,7 @@
 // ENVELOPE
 // AMP
 
-// rename the modules to your likenings, we will put all variables into a structfor a better view and handling. double-click on it to change its name.
+// rename the modules to your likenings, we will put all variables into a struct for a better view, handling and preset storage. double-click on it to change its name.
 // its recommended to name the variables like: "modulename_function"
 // connect the modules together, where DC goes to input of the  envelope2 for the filter
 // AMP will be used to control the volume of our mixer. Add your ampX gain function to all "volume-functions"
@@ -41,7 +41,7 @@
 // Plugin_3_Settings()     -> here are all modules and their initial values stored
 //                            like OSC Waveform, Frequency, level, Filters freq and resonance,.....
 
-// Plugin3_Page1_Static(pageNumber)   -> if we open a pluginpage, we want to see the actual values, graphs and other icons immediatly
+// Plugin3_Page1_Static(pageNumber)   -> if we open a pluginpage or change presets, we want to see the actual values, graphs and other icons immediatly
 //                                       add this function to Plugin_View_Static(byte desired_instrument){} in functions.ino
 //                                       desired_instrument can be transmitted to your plugin, for corresponding track color or so
 
@@ -55,10 +55,9 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////   add the settings-function "Plugin_3_Settings();" setup() function in "15stepTeensyDAW3.ino"  //////////
+////////   add the settings-function "Plugin_3_Settings();" setup() function in "functions.ino"  //////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// look for
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////   add the Plugin3_Page1_Static()-function to the Plugin_View_Static(x) function in "functions.ino"     //////////
@@ -72,16 +71,18 @@
 
 // 3) head over to variables.h  and look for the ********************************************************
 
-// you´ve come a long way, your last edited file should be midi.ino.
+// you´ve come a long way, your last edited file should be functions.ino.
 // Now its time to:
 // 6) add your controls:
+//    the controls are mostly changed by the onboard encoders, the encoders are set to send a +1 or -1 per step, you than can add or subtract that 1 from your "old value"
+//    via "mapping" you get your *_graph-value going from 0-127 to your desired range
+
 //    to make live a bit easier the display and touchscreen is sectioned into grids of  16pixels height and width
-//    to call a position best way is to ask if gridTouchX or/and gridTouchY is in certain area like
-//    if (gridTouchX == 10 && gridTouchY == 5)
+//    to set a position best way is to work with gridTouchX or/and gridTouchY for a certain point
 
 //    to draw something the STEP_FRAME_W and STEP_FRAME_H come handy. use a multiplier and an offset to get to your desired position, like:
 //    tft.drawPixel(STEP_FRAME_W * 3 + 2, STEP_FRAME_H * 5 - 3, int colour);
-
+//    where 3 is gridTouchX (or 3*16pixel +2 in x direction)
 
 //    to clear the workspace (Grid, Pluginview or songmode)
 //    this sets all pixels(ex. startupscreen + coordinates) to darkgrey
@@ -230,7 +231,7 @@ void Plugin3_Page1_Dynamic() {
           drawChar(CTRL_COL_3, 7, filterType[pl3[pl3presetNr].Filter1_Type], ILI9341_WHITE);
         }
         break;
-        
+
       case 2:
         //Attack
         if (enc_moved[0]) {

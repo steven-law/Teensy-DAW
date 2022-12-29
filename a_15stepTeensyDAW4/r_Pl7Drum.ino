@@ -117,7 +117,6 @@ void Plugin7_Page_Static(byte Pagenumber) {
     drawPot(CTRL_COL_1, CTRL_ROW_2, pl7[pl7presetNr]._2_filter_resonance_graph, pl7[pl7presetNr]._2_filter_resonance_graph, "2Res", trackColor[desired_instrument]);
     drawPot(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
     drawPot(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
-    
   }
   if (Pagenumber == 1) {
     drawPot(CTRL_COL_0, CTRL_ROW_0, pl7[pl7presetNr]._3_waveformMod3_amplitude_graph, pl7[pl7presetNr]._3_waveformMod3_amplitude_rnd, "3M-Le", trackColor[desired_instrument]);
@@ -136,7 +135,6 @@ void Plugin7_Page_Static(byte Pagenumber) {
     drawPot(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
     drawPot(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
     */
-    
   }
 }
 
