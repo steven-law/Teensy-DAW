@@ -12,7 +12,7 @@
 
 // 4) add different tasks to the functions in "functions.ino"
 
-// 5) add NoteOn and Off´s in "functions.ino"
+// 5) add NoteOn and Off´s in "functions.ino" and "midi.ino"
 
 // 6) add controls to Plugin3_Page1_Dynamic()
 

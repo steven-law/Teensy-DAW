@@ -110,6 +110,12 @@ const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Ra
 #define PLUGIN8_PAGE1 47
 #define PLUGIN9_PAGE1 48
 #define PLUGIN10_PAGE1 49
+#define PLUGIN11_PAGE1 50
+#define PLUGIN12_PAGE1 51
+#define PLUGIN13_PAGE1 52
+#define PLUGIN14_PAGE1 53
+#define PLUGIN15_PAGE1 54
+#define PLUGIN16_PAGE1 55
 
 
 

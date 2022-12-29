@@ -21,6 +21,16 @@ void FX1reverb_settings() {
   FX1mixer4.gain(1, 0);
   FX1mixer4.gain(2, 0);
   FX1mixer4.gain(3, 0);
+    //mixer2 for FX1
+  FX1mixer5.gain(0, 1);
+  FX1mixer5.gain(1, 1);
+  FX1mixer5.gain(2, 1);
+  FX1mixer5.gain(3, 1);
+    //mixer2 for FX1
+  FX1mixer6.gain(0, 0);
+  FX1mixer6.gain(1, 0);
+  FX1mixer6.gain(2, 0);
+  FX1mixer6.gain(3, 0);
 }
 
 void FX1reverb_static() {

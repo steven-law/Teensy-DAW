@@ -1,189 +1,4 @@
 
-//this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
-// just add your plugin-page static function here
-void Plugin_View_Static(byte desired_instrument) {
-
-  if (selectPage == PLUGIN1_PAGE1) {
-    Plugin1_Page_Static(0);
-  }
-  if (selectPage == PLUGIN1_PAGE2) {
-    Plugin1_Page_Static(1);
-  }
-
-
-  if (selectPage == PLUGIN2_PAGE1) {
-    Plugin2_Page_Static(0);
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////// if we select the pluginpage its PLUGINx_PAGE1 bool gets true and selects the Pluginx_Page_Static once
-  ///////// now we see the actual graphs and values, but the programm switches over to Pluginx_Page_Dynamic(),
-  ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page_Static(0);
-  }
-  if (selectPage == PLUGIN4_PAGE1) {
-    Plugin4_Page_Static(0);
-  }
-  if (selectPage == PLUGIN5_PAGE1) {
-    Plugin5_Page_Static(0);
-  }
-  if (selectPage == PLUGIN6_PAGE1) {
-    Plugin6_Page_Static(0);
-  }
-  if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page_Static(0);
-  }
-  if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page_Static(1);
-  }
-
-  if (selectPage == PLUGIN8_PAGE1) {
-    Plugin8_Page_Static(0);
-  }
-  if (selectPage == PLUGIN9_PAGE1) {
-    Plugin9_Page_Static(0);
-  }
-  if (selectPage == PLUGIN10_PAGE1) {
-    Plugin10_Page_Static(0);
-  }
-}
-//this calls the dynamic plugin view for your plugin, where your changes (via encoder) of the soundcontrols are happening
-// just add your plugin-page dynamic function here
-void Plugin_View_Dynamic() {
-  //***********************************************************************************************************************
-  // 4) copy one of the plugin Page Views
-  //    and change the names according to our variables and functions.
-  //    Every page you want to make has to have its own statement
-  //    we create:
-
-  //  //setting up the Plugin3 Page1-view
-  //    if (selectPage == PLUGIN3_PAGE1) {
-  //      Plugin3_Page1_Dynamic();
-  //    }
-
-  // after adding the active state statement
-  // head over to "midi.ino"
-  //look for *****************************************************************************************
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  //-----------------------------------------
-  //setting up the Plugin1 Page1-view
-  if (selectPage == PLUGIN1_PAGE1) {
-    Plugin1_Page1_Dynamic();
-  }
-  //setting up the Plugin1 Page2-view
-  if (selectPage == PLUGIN1_PAGE2) {
-    Plugin1_Page2_Dynamic();
-  }
-
-  //setting up the Plugin2 Page1-view
-  if (selectPage == PLUGIN2_PAGE1) {
-    Plugin2_Page1_Dynamic();
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////
-  //setting up the Plugin3 Page1-view
-  if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page1_Dynamic();
-  }
-  /////////////////////////////////////////////////////////////////////////////
-
-
-  //setting up the Plugin4 Page1-view
-  if (selectPage == PLUGIN4_PAGE1) {
-    Plugin4_Page1_Dynamic();
-  }
-
-  //setting up the Plugin5 Page1-view
-  if (selectPage == PLUGIN5_PAGE1) {
-    Plugin5_Page1_Dynamic();
-  }
-  //setting up the Plugin6 Page1-view
-  if (selectPage == PLUGIN6_PAGE1) {
-    Plugin6_Page1_Dynamic();
-  }
-  //setting up the Plugin7 Page1-view
-  if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page1_Dynamic();
-  }
-  //setting up the Plugin7 Page2-view
-  if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page2_Dynamic();
-  }
-  //setting up the Plugin8 Page1-view
-  if (selectPage == PLUGIN8_PAGE1) {
-    Plugin8_Page1_Dynamic();
-  }
-  //setting up the Plugin9 Page1-view
-  if (selectPage == PLUGIN9_PAGE1) {
-    Plugin9_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN10_PAGE1) {
-    Plugin10_Page1_Dynamic();
-  }
-
-
-
-  //setting up the StepSequencer-view for drumtrack #1
-  if (selectPage == DRUMTRACK) {
-    drumStepSequencer();
-  }
-  //setting up the melodicStepSequencer-view for #2-8
-  for (byte i = 1; i < 8; i++) {
-    if (selectPage == i) {
-      melodicStepSequencer(i);
-    }
-  }
-  //setting up the scaleSelector-view
-  if (selectPage == SCALESELECT) {
-    scaleSelector();
-  }
-
-  //setting up the songMode-view1
-  for (byte pagenr = 0; pagenr < 16; pagenr++) {
-    if (selectPage == pagenr + 10) {
-      songModePage(pagenr);
-    }
-  }
-
-  //setting up the Recorder Page
-  if (selectPage == RECORDER_PAGE) {
-    recorder_Page1_Dynamic();
-  }
-
-
-  //setting up the Mixer Page 1
-  if (selectPage == MIXER_PAGE_1) {
-    MixerPage1_Dynamic();
-  }
-  //setting up the Mixer Page 2
-  if (selectPage == MIXER_PAGE_2) {
-    MixerPage2_Dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == MIXER_PAGE_3) {
-    MixerPage3_Dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == FX1_PAGE1) {
-    FX1reverb_dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == FX2_PAGE1) {
-    FX2Bitcrush_dynamic();
-  }
-  //setting up the Mixer Page 2
-  if (selectPage == MIDICC_PAGE_1) {
-    midiCCpage1_Dynamic(desired_track);
-  }
-}
-
 //this function is called for every beatchange for preset/clip/noteoffset/clip change
 //add your soundcontrol functions like desired osc frequency etc, so the presetchange can be applied
 void beatComponents() {
@@ -279,235 +94,7 @@ void beatComponents() {
     }
   }
 }
-//this is the volume used for the automation in songmode
-//add your amp.gain() to control the volume
-void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    pl1amp.gain(volume);
-  }
-  if (pluginchannel == 18) {
-    pl2amp.gain(volume);
-  }
-  if (pluginchannel == 19) {
-    pl3amp.gain(volume);
-  }
-  if (pluginchannel == 20) {
-    pl4amp.gain(volume);
-  }
-
-  if (pluginchannel == 21) {
-    pl5amp.gain(volume);
-  }
-  if (pluginchannel == 22) {
-    pl6amp.gain(volume);
-  }
-  if (pluginchannel == 23) {
-    pl7amp.gain(volume);
-  }
-  if (pluginchannel == 24) {
-    pl8amp.gain(volume);
-  }
-  if (pluginchannel == 25) {
-    pl9amp.gain(volume);
-  }
-}
-//this is the gain used in the mixer view
-//add your amp.gain2() to control the gain
-void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    pl1amp2.gain(volume);
-  }
-  if (pluginchannel == 18) {
-    pl2amp2.gain(volume);
-  }
-  if (pluginchannel == 19) {
-    pl3amp2.gain(volume);
-  }
-  if (pluginchannel == 20) {
-    pl4amp2.gain(volume);
-  }
-
-  if (pluginchannel == 21) {
-    pl5amp2.gain(volume);
-  }
-  if (pluginchannel == 22) {
-    pl6amp2.gain(volume);
-  }
-  if (pluginchannel == 23) {
-    pl7amp2.gain(volume);
-  }
-  if (pluginchannel == 24) {
-    pl8amp2.gain(volume);
-  }
-  if (pluginchannel == 25) {
-    pl9amp2.gain(volume);
-  }
-}
-//this is the dryvolume
-//add your mixer&channel to be controlled in mixerpage 2+3
-void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    mixer5.gain(0, volume);
-  }
-  if (pluginchannel == 18) {
-    mixer5.gain(1, volume);
-  }
-  if (pluginchannel == 19) {
-    mixer5.gain(2, volume);
-  }
-  if (pluginchannel == 20) {
-    mixer5.gain(3, volume);
-  }
-
-  if (pluginchannel == 21) {
-    mixer6.gain(0, volume);
-  }
-  if (pluginchannel == 22) {
-    mixer6.gain(1, volume);
-  }
-  if (pluginchannel == 23) {
-    mixer6.gain(2, volume);
-  }
-  if (pluginchannel == 24) {
-    mixer6.gain(3, volume);
-  }
-  if (pluginchannel == 25) {
-    mixer10.gain(1, volume);
-  }
-}
-//this is the FX1volume
-//add your mixer&channel to be controlled in mixerpage 2+3
-void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    FX1mixer1.gain(0, volume);
-  }
-  if (pluginchannel == 18) {
-    FX1mixer1.gain(1, volume);
-  }
-  if (pluginchannel == 19) {
-    FX1mixer1.gain(2, volume);
-  }
-  if (pluginchannel == 20) {
-    FX1mixer1.gain(3, volume);
-  }
-
-  if (pluginchannel == 21) {
-    FX1mixer2.gain(0, volume);
-  }
-  if (pluginchannel == 22) {
-    FX1mixer2.gain(1, volume);
-  }
-  if (pluginchannel == 23) {
-    FX1mixer2.gain(2, volume);
-  }
-  if (pluginchannel == 24) {
-    FX1mixer2.gain(3, volume);
-  }
-
-  if (pluginchannel == 25) {
-    FX1mixer4.gain(0, volume);
-  }
-}
-//this is the FX2volume
-//add your mixer&channel to be controlled in mixerpage 2+3
-void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    FX2mixer1.gain(0, volume);
-  }
-  if (pluginchannel == 18) {
-    FX2mixer1.gain(1, volume);
-  }
-  if (pluginchannel == 19) {
-    FX2mixer1.gain(2, volume);
-  }
-  if (pluginchannel == 20) {
-    FX2mixer1.gain(3, volume);
-  }
-
-  if (pluginchannel == 21) {
-    FX2mixer2.gain(0, volume);
-  }
-  if (pluginchannel == 22) {
-    FX2mixer2.gain(1, volume);
-  }
-  if (pluginchannel == 23) {
-    FX2mixer2.gain(2, volume);
-  }
-  if (pluginchannel == 24) {
-    FX2mixer2.gain(3, volume);
-  }
-  if (pluginchannel == 25) {
-    FX2mixer4.gain(0, volume);
-  }
-}
-//this is the FX3volume
-//add your mixer&channel to be controlled in mixerpage 2+3
-void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    FX3mixer1.gain(0, volume);
-  }
-  if (pluginchannel == 18) {
-    FX3mixer1.gain(1, volume);
-  }
-  if (pluginchannel == 19) {
-    FX3mixer1.gain(2, volume);
-  }
-  if (pluginchannel == 20) {
-    FX3mixer1.gain(3, volume);
-  }
-
-  if (pluginchannel == 21) {
-    FX3mixer2.gain(0, volume);
-  }
-  if (pluginchannel == 22) {
-    FX3mixer2.gain(1, volume);
-  }
-  if (pluginchannel == 23) {
-    FX3mixer2.gain(2, volume);
-  }
-  if (pluginchannel == 24) {
-    FX3mixer2.gain(3, volume);
-  }
-  if (pluginchannel == 25) {
-    FX3mixer4.gain(0, volume);
-  }
-}
-//if you have a filter with multiple outputs like the AudioFilterStateVariable
-//this function will switch between the different inputs of the afterwards installed mixer
-//add your filtermixer here
-void selectFilterType(byte pluginchannel, byte mixerchannel) {
-  if (pluginchannel == 17) {
-    pl1mixer2.gain(0, 0);
-    pl1mixer2.gain(1, 0);
-    pl1mixer2.gain(2, 0);
-    pl1mixer2.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 19) {
-    pl3mixer1.gain(0, 0);
-    pl3mixer1.gain(1, 0);
-    pl3mixer1.gain(2, 0);
-    pl3mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 21) {
-    pl5mixer1.gain(0, 0);
-    pl5mixer1.gain(1, 0);
-    pl5mixer1.gain(2, 0);
-    pl5mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 22) {
-    pl6mixer1.gain(0, 0);
-    pl6mixer1.gain(1, 0);
-    pl6mixer1.gain(2, 0);
-    pl6mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 25) {
-    pl9mixer1.gain(0, 0);
-    pl9mixer1.gain(1, 0);
-    pl9mixer1.gain(2, 0);
-    pl9mixer1.gain(mixerchannel, 1);
-  }
-}
-//if you want your plugin to be play via midi this is your place
+//if you want your plugin to be played via midi this is your place
 //add your noteOn´s (envelope.noteOn´s) here
 void myNoteOn(byte channel, byte note, byte velocity) {
   // When a USB device with multiple virtual cables is used,
@@ -1363,7 +950,597 @@ void myControlChange(byte channel, byte control, byte value) {
   }
 }
 
+////////////////////////////////////////////////////
+//only subject to change when we have reached the limit of templated plugins (per now there are 9 plugins and 7 templated plugins)
+//
 
+//this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
+// just add your plugin-page static function here
+void Plugin_View_Static(byte desired_instrument) {
+
+  if (selectPage == PLUGIN1_PAGE1) {
+    Plugin1_Page_Static(0);
+  }
+  if (selectPage == PLUGIN1_PAGE2) {
+    Plugin1_Page_Static(1);
+  }
+
+
+  if (selectPage == PLUGIN2_PAGE1) {
+    Plugin2_Page_Static(0);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////// if we select the pluginpage its PLUGINx_PAGE1 bool gets true and selects the Pluginx_Page_Static once
+  ///////// now we see the actual graphs and values, but the programm switches over to Pluginx_Page_Dynamic(),
+  ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  if (selectPage == PLUGIN3_PAGE1) {
+    Plugin3_Page_Static(0);
+  }
+  if (selectPage == PLUGIN4_PAGE1) {
+    Plugin4_Page_Static(0);
+  }
+  if (selectPage == PLUGIN5_PAGE1) {
+    Plugin5_Page_Static(0);
+  }
+  if (selectPage == PLUGIN6_PAGE1) {
+    Plugin6_Page_Static(0);
+  }
+  if (selectPage == PLUGIN7_PAGE1) {
+    Plugin7_Page_Static(0);
+  }
+  if (selectPage == PLUGIN7_PAGE2) {
+    Plugin7_Page_Static(1);
+  }
+
+  if (selectPage == PLUGIN8_PAGE1) {
+    Plugin8_Page_Static(0);
+  }
+  if (selectPage == PLUGIN9_PAGE1) {
+    Plugin9_Page_Static(0);
+  }
+  if (selectPage == PLUGIN10_PAGE1) {
+    Plugin10_Page_Static(0);
+  }
+  if (selectPage == PLUGIN11_PAGE1) {
+    Plugin11_Page_Static(0);
+  }
+  if (selectPage == PLUGIN12_PAGE1) {
+    Plugin12_Page_Static(0);
+  }
+  if (selectPage == PLUGIN13_PAGE1) {
+    Plugin13_Page_Static(0);
+  }
+  if (selectPage == PLUGIN14_PAGE1) {
+    Plugin14_Page_Static(0);
+  }
+  if (selectPage == PLUGIN15_PAGE1) {
+    Plugin15_Page_Static(0);
+  }
+  if (selectPage == PLUGIN16_PAGE1) {
+    Plugin16_Page_Static(0);
+  }
+}
+//this calls the dynamic plugin view for your plugin, where your changes (via encoder) of the soundcontrols are happening
+// just add your plugin-page dynamic function here
+void Plugin_View_Dynamic() {
+  //***********************************************************************************************************************
+  // 4) copy one of the plugin Page Views
+  //    and change the names according to our variables and functions.
+  //    Every page you want to make has to have its own statement
+  //    we create:
+
+  //  //setting up the Plugin3 Page1-view
+  //    if (selectPage == PLUGIN3_PAGE1) {
+  //      Plugin3_Page1_Dynamic();
+  //    }
+
+  // after adding the active state statement
+  // head over to "midi.ino"
+  //look for *****************************************************************************************
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //-----------------------------------------
+  //setting up the Plugin1 Page1-view
+  if (selectPage == PLUGIN1_PAGE1) {
+    Plugin1_Page1_Dynamic();
+  }
+  //setting up the Plugin1 Page2-view
+  if (selectPage == PLUGIN1_PAGE2) {
+    Plugin1_Page2_Dynamic();
+  }
+
+  //setting up the Plugin2 Page1-view
+  if (selectPage == PLUGIN2_PAGE1) {
+    Plugin2_Page1_Dynamic();
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  //setting up the Plugin3 Page1-view
+  if (selectPage == PLUGIN3_PAGE1) {
+    Plugin3_Page1_Dynamic();
+  }
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  //setting up the Plugin4 Page1-view
+  if (selectPage == PLUGIN4_PAGE1) {
+    Plugin4_Page1_Dynamic();
+  }
+
+  //setting up the Plugin5 Page1-view
+  if (selectPage == PLUGIN5_PAGE1) {
+    Plugin5_Page1_Dynamic();
+  }
+  //setting up the Plugin6 Page1-view
+  if (selectPage == PLUGIN6_PAGE1) {
+    Plugin6_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page1-view
+  if (selectPage == PLUGIN7_PAGE1) {
+    Plugin7_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page2-view
+  if (selectPage == PLUGIN7_PAGE2) {
+    Plugin7_Page2_Dynamic();
+  }
+  //setting up the Plugin8 Page1-view
+  if (selectPage == PLUGIN8_PAGE1) {
+    Plugin8_Page1_Dynamic();
+  }
+  //setting up the Plugin9 Page1-view
+  if (selectPage == PLUGIN9_PAGE1) {
+    Plugin9_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN10_PAGE1) {
+    Plugin10_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN11_PAGE1) {
+    Plugin11_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN12_PAGE1) {
+    Plugin12_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN13_PAGE1) {
+    Plugin13_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN14_PAGE1) {
+    Plugin14_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN15_PAGE1) {
+    Plugin15_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN16_PAGE1) {
+    Plugin16_Page1_Dynamic();
+  }
+
+
+
+  //setting up the StepSequencer-view for drumtrack #1
+  if (selectPage == DRUMTRACK) {
+    drumStepSequencer();
+  }
+  //setting up the melodicStepSequencer-view for #2-8
+  for (byte i = 1; i < 8; i++) {
+    if (selectPage == i) {
+      melodicStepSequencer(i);
+    }
+  }
+  //setting up the scaleSelector-view
+  if (selectPage == SCALESELECT) {
+    scaleSelector();
+  }
+
+  //setting up the songMode-view1
+  for (byte pagenr = 0; pagenr < 16; pagenr++) {
+    if (selectPage == pagenr + 10) {
+      songModePage(pagenr);
+    }
+  }
+
+  //setting up the Recorder Page
+  if (selectPage == RECORDER_PAGE) {
+    recorder_Page1_Dynamic();
+  }
+
+
+  //setting up the Mixer Page 1
+  if (selectPage == MIXER_PAGE_1) {
+    MixerPage1_Dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIXER_PAGE_2) {
+    MixerPage2_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == MIXER_PAGE_3) {
+    MixerPage3_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX1_PAGE1) {
+    FX1reverb_dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX2_PAGE1) {
+    FX2Bitcrush_dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIDICC_PAGE_1) {
+    midiCCpage1_Dynamic(desired_track);
+  }
+}
+
+//this is the volume used for the automation in songmode
+//add your amp.gain() to control the volume
+void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    pl1amp.gain(volume);
+  }
+  if (pluginchannel == 18) {
+    pl2amp.gain(volume);
+  }
+  if (pluginchannel == 19) {
+    pl3amp.gain(volume);
+  }
+  if (pluginchannel == 20) {
+    pl4amp.gain(volume);
+  }
+
+  if (pluginchannel == 21) {
+    pl5amp.gain(volume);
+  }
+  if (pluginchannel == 22) {
+    pl6amp.gain(volume);
+  }
+  if (pluginchannel == 23) {
+    pl7amp.gain(volume);
+  }
+  if (pluginchannel == 24) {
+    pl8amp.gain(volume);
+  }
+  if (pluginchannel == 25) {
+    pl9amp.gain(volume);
+  }
+  if (pluginchannel == 26) {
+    pl10amp.gain(volume);
+  }
+  if (pluginchannel == 27) {
+    pl11amp.gain(volume);
+  }
+  if (pluginchannel == 28) {
+    pl12amp.gain(volume);
+  }
+  if (pluginchannel == 29) {
+    pl13amp.gain(volume);
+  }
+  if (pluginchannel == 30) {
+    pl14amp.gain(volume);
+  }
+  if (pluginchannel == 31) {
+    pl15amp.gain(volume);
+  }
+  if (pluginchannel == 32) {
+    pl16amp.gain(volume);
+  }
+}
+//this is the gain used in the mixer view
+//add your amp.gain2() to control the gain
+void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    pl1amp2.gain(volume);
+  }
+  if (pluginchannel == 18) {
+    pl2amp2.gain(volume);
+  }
+  if (pluginchannel == 19) {
+    pl3amp2.gain(volume);
+  }
+  if (pluginchannel == 20) {
+    pl4amp2.gain(volume);
+  }
+
+  if (pluginchannel == 21) {
+    pl5amp2.gain(volume);
+  }
+  if (pluginchannel == 22) {
+    pl6amp2.gain(volume);
+  }
+  if (pluginchannel == 23) {
+    pl7amp2.gain(volume);
+  }
+  if (pluginchannel == 24) {
+    pl8amp2.gain(volume);
+  }
+  if (pluginchannel == 25) {
+    pl9amp2.gain(volume);
+  }
+  if (pluginchannel == 26) {
+    pl10amp2.gain(volume);
+  }
+  if (pluginchannel == 27) {
+    pl11amp2.gain(volume);
+  }
+  if (pluginchannel == 28) {
+    pl12amp2.gain(volume);
+  }
+  if (pluginchannel == 29) {
+    pl13amp2.gain(volume);
+  }
+  if (pluginchannel == 30) {
+    pl14amp2.gain(volume);
+  }
+  if (pluginchannel == 31) {
+    pl15amp2.gain(volume);
+  }
+  if (pluginchannel == 32) {
+    pl16amp2.gain(volume);
+  }
+}
+//this is the dryvolume
+//add your mixer&channel to be controlled in mixerpage 2+3
+void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    mixer5.gain(0, volume);
+  }
+  if (pluginchannel == 18) {
+    mixer5.gain(1, volume);
+  }
+  if (pluginchannel == 19) {
+    mixer5.gain(2, volume);
+  }
+  if (pluginchannel == 20) {
+    mixer5.gain(3, volume);
+  }
+
+  if (pluginchannel == 21) {
+    mixer6.gain(0, volume);
+  }
+  if (pluginchannel == 22) {
+    mixer6.gain(1, volume);
+  }
+  if (pluginchannel == 23) {
+    mixer6.gain(2, volume);
+  }
+  if (pluginchannel == 24) {
+    mixer6.gain(3, volume);
+  }
+
+  if (pluginchannel == 25) {
+    mixer10.gain(0, volume);
+  }
+  if (pluginchannel == 26) {
+    mixer10.gain(1, volume);
+  }
+  if (pluginchannel == 27) {
+    mixer10.gain(2, volume);
+  }
+  if (pluginchannel == 28) {
+    mixer10.gain(3, volume);
+  }
+
+  if (pluginchannel == 29) {
+    drymixer3.gain(0, volume);
+  }
+  if (pluginchannel == 30) {
+    drymixer3.gain(1, volume);
+  }
+  if (pluginchannel == 31) {
+    drymixer3.gain(2, volume);
+  }
+  if (pluginchannel == 32) {
+    drymixer3.gain(3, volume);
+  }
+}
+//this is the FX1volume
+//add your mixer&channel to be controlled in mixerpage 2+3
+void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    FX1mixer1.gain(0, volume);
+  }
+  if (pluginchannel == 18) {
+    FX1mixer1.gain(1, volume);
+  }
+  if (pluginchannel == 19) {
+    FX1mixer1.gain(2, volume);
+  }
+  if (pluginchannel == 20) {
+    FX1mixer1.gain(3, volume);
+  }
+
+  if (pluginchannel == 21) {
+    FX1mixer2.gain(0, volume);
+  }
+  if (pluginchannel == 22) {
+    FX1mixer2.gain(1, volume);
+  }
+  if (pluginchannel == 23) {
+    FX1mixer2.gain(2, volume);
+  }
+  if (pluginchannel == 24) {
+    FX1mixer2.gain(3, volume);
+  }
+
+  if (pluginchannel == 25) {
+    FX1mixer4.gain(0, volume);
+  }
+  if (pluginchannel == 26) {
+    FX1mixer4.gain(1, volume);
+  }
+  if (pluginchannel == 27) {
+    FX1mixer4.gain(2, volume);
+  }
+  if (pluginchannel == 28) {
+    FX1mixer4.gain(3, volume);
+  }
+
+   if (pluginchannel == 29) {
+    FX1mixer6.gain(0, volume);
+  }
+  if (pluginchannel == 30) {
+    FX1mixer6.gain(1, volume);
+  }
+  if (pluginchannel == 31) {
+    FX1mixer6.gain(2, volume);
+  }
+  if (pluginchannel == 32) {
+    FX1mixer6.gain(3, volume);
+  }
+}
+//this is the FX2volume
+//add your mixer&channel to be controlled in mixerpage 2+3
+void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    FX2mixer1.gain(0, volume);
+  }
+  if (pluginchannel == 18) {
+    FX2mixer1.gain(1, volume);
+  }
+  if (pluginchannel == 19) {
+    FX2mixer1.gain(2, volume);
+  }
+  if (pluginchannel == 20) {
+    FX2mixer1.gain(3, volume);
+  }
+
+  if (pluginchannel == 21) {
+    FX2mixer2.gain(0, volume);
+  }
+  if (pluginchannel == 22) {
+    FX2mixer2.gain(1, volume);
+  }
+  if (pluginchannel == 23) {
+    FX2mixer2.gain(2, volume);
+  }
+  if (pluginchannel == 24) {
+    FX2mixer2.gain(3, volume);
+  }
+
+  if (pluginchannel == 25) {
+    FX2mixer4.gain(0, volume);
+  }
+  if (pluginchannel == 26) {
+    FX2mixer4.gain(1, volume);
+  }
+  if (pluginchannel == 27) {
+    FX2mixer4.gain(2, volume);
+  }
+  if (pluginchannel == 28) {
+    FX2mixer4.gain(3, volume);
+  }
+
+   if (pluginchannel == 29) {
+    FX2mixer6.gain(0, volume);
+  }
+  if (pluginchannel == 30) {
+    FX2mixer6.gain(1, volume);
+  }
+  if (pluginchannel == 31) {
+    FX2mixer6.gain(2, volume);
+  }
+  if (pluginchannel == 32) {
+    FX2mixer6.gain(3, volume);
+  }
+}
+//this is the FX3volume
+//add your mixer&channel to be controlled in mixerpage 2+3
+void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  if (pluginchannel == 17) {
+    FX3mixer1.gain(0, volume);
+  }
+  if (pluginchannel == 18) {
+    FX3mixer1.gain(1, volume);
+  }
+  if (pluginchannel == 19) {
+    FX3mixer1.gain(2, volume);
+  }
+  if (pluginchannel == 20) {
+    FX3mixer1.gain(3, volume);
+  }
+
+  if (pluginchannel == 21) {
+    FX3mixer2.gain(0, volume);
+  }
+  if (pluginchannel == 22) {
+    FX3mixer2.gain(1, volume);
+  }
+  if (pluginchannel == 23) {
+    FX3mixer2.gain(2, volume);
+  }
+  if (pluginchannel == 24) {
+    FX3mixer2.gain(3, volume);
+  }
+  if (pluginchannel == 25) {
+    FX3mixer4.gain(0, volume);
+  }
+  if (pluginchannel == 26) {
+    FX3mixer4.gain(1, volume);
+  }
+  if (pluginchannel == 27) {
+    FX3mixer4.gain(2, volume);
+  }
+  if (pluginchannel == 28) {
+    FX3mixer4.gain(3, volume);
+  }
+
+   if (pluginchannel == 29) {
+    FX3mixer6.gain(0, volume);
+  }
+  if (pluginchannel == 30) {
+    FX3mixer6.gain(1, volume);
+  }
+  if (pluginchannel == 31) {
+    FX3mixer6.gain(2, volume);
+  }
+  if (pluginchannel == 32) {
+    FX3mixer6.gain(3, volume);
+  }
+}
+//if you have a filter with multiple outputs like the AudioFilterStateVariable
+//this function will switch between the different inputs of the afterwards installed mixer
+//add your filtermixer here
+void selectFilterType(byte pluginchannel, byte mixerchannel) {
+  if (pluginchannel == 17) {
+    pl1mixer2.gain(0, 0);
+    pl1mixer2.gain(1, 0);
+    pl1mixer2.gain(2, 0);
+    pl1mixer2.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 19) {
+    pl3mixer1.gain(0, 0);
+    pl3mixer1.gain(1, 0);
+    pl3mixer1.gain(2, 0);
+    pl3mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 21) {
+    pl5mixer1.gain(0, 0);
+    pl5mixer1.gain(1, 0);
+    pl5mixer1.gain(2, 0);
+    pl5mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 22) {
+    pl6mixer1.gain(0, 0);
+    pl6mixer1.gain(1, 0);
+    pl6mixer1.gain(2, 0);
+    pl6mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 25) {
+    pl9mixer1.gain(0, 0);
+    pl9mixer1.gain(1, 0);
+    pl9mixer1.gain(2, 0);
+    pl9mixer1.gain(mixerchannel, 1);
+  }
+}
 //end of the plugin-function-nightmare
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -42,7 +42,7 @@ void melodicStepSequencer(byte desired_instrument) {
 
     //midichannel
     if (enc_moved[2]) {
-      track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[2]), 0, MAX_CHANNELS - 1);
+      track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[2]), 0, MAX_CHANNELS);
       drawMIDIchannel();
     }
 

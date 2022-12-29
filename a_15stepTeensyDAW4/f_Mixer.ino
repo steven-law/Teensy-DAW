@@ -40,11 +40,23 @@ void Mixer_Settings() {
   mixer6.gain(2, 1);
   mixer6.gain(3, 1);
 
-  //mixer8 for plugins 1-16
-  mixer8.gain(0, 1);
-  mixer8.gain(1, 1);
-  mixer8.gain(2, 1);
-  mixer8.gain(3, 1);
+  //drymixer1 for plugins 1-64
+  drymixer1.gain(0, 1);
+  drymixer1.gain(1, 1);
+  drymixer1.gain(2, 1);
+  drymixer1.gain(3, 1);
+
+  //drymixer2 for plugins 1-16
+  drymixer2.gain(0, 1);
+  drymixer2.gain(1, 1);
+  drymixer2.gain(2, 1);
+  drymixer2.gain(3, 1);
+
+  //drymixer3 for plugins 17-32
+  drymixer2.gain(0, 1);
+  drymixer2.gain(1, 1);
+  drymixer2.gain(2, 1);
+  drymixer2.gain(3, 1);
 
   //mixer9 for sum of dry and fx
   mixer9.gain(0, 1);
@@ -52,7 +64,7 @@ void Mixer_Settings() {
   mixer9.gain(2, 1);
   mixer9.gain(3, 1);
 
-  //mixer8 for plugins 9-12
+  //drymixer2 for plugins 9-12
   mixer10.gain(0, 1);
   mixer10.gain(1, 1);
   mixer10.gain(2, 1);
@@ -74,15 +86,25 @@ void Mixer_Settings() {
   FX3mixer2.gain(2, 0);
   FX3mixer2.gain(3, 0);
   //mixer2 for FX3
-  FX3mixer3.gain(0, 0);
-  FX3mixer3.gain(1, 0);
-  FX3mixer3.gain(2, 0);
-  FX3mixer3.gain(3, 0);
+  FX3mixer3.gain(0, 1);
+  FX3mixer3.gain(1, 1);
+  FX3mixer3.gain(2, 1);
+  FX3mixer3.gain(3, 1);
   //mixer2 for FX3
   FX3mixer4.gain(0, 0);
   FX3mixer4.gain(1, 0);
   FX3mixer4.gain(2, 0);
   FX3mixer4.gain(3, 0);
+  //mixer2 for FX3
+  FX3mixer5.gain(0, 1);
+  FX3mixer5.gain(1, 1);
+  FX3mixer5.gain(2, 1);
+  FX3mixer5.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer6.gain(0, 0);
+  FX3mixer6.gain(1, 0);
+  FX3mixer6.gain(2, 0);
+  FX3mixer6.gain(3, 0);
 }
 
 void mixerPage1_Static(byte mixerpage) {
