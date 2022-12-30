@@ -15,13 +15,13 @@ a and some resistors
 
 I have 8sequencer tracks,  the first is dedicated to drums, the others are meant to be played as melodic tracks. These 7 tracks are monophonic.
 For each track i give you 8 , sixteenstep sequences. You can arrange the 8tracks, and its Clips, in songmode. 
-
+You can Control external drummachines and synths,  over usb to your pc or device or use a midi type A TRS Jack for serial midi connection, or, use one of the internal Plug-ins. 
 
 Lets start by making a drumbeat. Tap the , D, on the leftside , or use , Trackbutton, and button , one, to enter the drumtrack. 
 On the left side you can set the desired midi note to be played on this lane by pressing , shift button and the , first encoder to change the note of the active lane
 
-On the right side you can set one of the 8 sequences with the , fourth encoder and the desired midi channel with the , third encoder. 
-You can Control a , drummachine,  over u s b , with midi channel 1 to sixteen, or, If the channel is above sixteen you choose one of the internal Plug-ins. 
+On the right side you can set one of the 8 sequenaces with the , fourth encoder and the desired midi channel with the , third encoder. 
+
 
 You can set the active steps with a , touchpen, the Cursor Buttons and , enter button or with the first , 2 encoders. 
 To Control with encoders,  move the Cursor with the first two  encoders and hit , enter.
