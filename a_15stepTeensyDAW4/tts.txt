@@ -13,7 +13,7 @@ some Buttons and diodes
 headers
 a and some resistors
 
-I have 8sequencer tracks,  the first is dedicated to drums, the others are meant to be played as melodic tracks. These 7tracks are monophonic.
+I have 8sequencer tracks,  the first is dedicated to drums, the others are meant to be played as melodic tracks. These 7 tracks are monophonic.
 For each track i give you 8 , sixteenstep sequences. You can arrange the 8tracks, and its Clips, in songmode. 
 
 
@@ -52,7 +52,7 @@ Now you hear your drumbeat boom chuck
 If you still dont hear anything try to adjust the Output volume on the first mixer page or  in the plug-in page.
 
 Select one of the , melodic  tracks. or use , Trackbutton, and button, two to 8,  to enter the melodictracks. 
-Select an , Octave,  with the Grey arrow Buttons on the Right or use , shift and , the second encoder.
+Select an , Octave,  with the Grey arrow Buttons on the Right or use , shift and the , first encoder.
 Set your notes on the grid.
 To listen to the sequence, go to songmode and set your Arrangement there.
 Repeat this for the other tracks.
@@ -60,14 +60,20 @@ Isnt that easy.
 
 Each rectangle stands for one bar, you can Play up to twohundredfiftysix bars with me. 
 Each bar can hold the values for, Clipnumber, Note Offset, Preset number, volume.
+
+You can either play the whole arrangement, or , play a desired area as loop.
 Turn the, third, encoder to set the start of the loop.
 Turn the, fourth, encoder to set the end of the loop.
-In, songmode hit , Save or, L to save or load the whole project.
+
+If you hit Save or, L  in songmode  it will save or load the whole project.
 In, any other page, you save or, load the respective content. 
 Isnt that awesome?
 
-If you have choosen one of the internal Plug-ins hit Plug-in and one of the 8 above Buttons to see the plug-ins page. Here you can Change several Parameters for Sound Control. 
-Some plug-ins have several pages. If the track channel is below 17, i have 16 midi cc controllers. Set the controller number by pressing the, enter button,  and the equivalent encoder.
+If the track channel is above 16, you have choosen one of the internal Plug-ins hit , Plug-in and one of the 8 track buttons where the plugin is loaded to see the plug-ins page. 
+Here you can Change several Parameters for Sound Control. 
+Some plug-ins have several pages. 
+
+If the track channel is below 17, i have 16 midi cc controllers. Set the controller number by pressing the, enter button,  and the equivalent encoder.
 The controls of each row is automatically assigned to the 4 encoders.
 Hit , row button, or touch the desired row, to remap the encoders to the new row.
 
@@ -99,7 +105,7 @@ While the sequencer is running, you can either Play along your arrangement, or, 
 
 I Always listen to you, at least if you want me to.
 Press the ,sample, button to enter the Audio Recorder. 
-Choose a Raw file to overwrite, set a good volume Ratio, Plug in any line source into the Audio ,in jack, press listen and boom you hear your favourite synth. hit the , record, button once to start recording immediately and , again to stop the process. 
+Choose a Raw file to overwrite, set a good volume Ratio, Plug in any line source into the , Audio in jack, press listen and boom you hear your favourite synth. hit the , record, button once to start recording immediately and , again to stop the process. 
 You may want to load a , raw sampler plug-in, into one of the tracks. load the file and Play it instantly on your Keyboard and, pow wow.
 
 I am completly open source and also Beginners will be able to read , understand and add new Plug-ins to my code. Please refer to the Manual inside my Sketch for further informations. 
