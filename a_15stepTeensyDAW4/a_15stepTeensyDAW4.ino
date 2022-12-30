@@ -680,6 +680,13 @@ void setup() {
   Plugin_7_Settings();
   Plugin_8_Settings();
   Plugin_9_Settings();
+  Plugin_10_Settings();
+  Plugin_11_Settings();
+  Plugin_12_Settings();
+  Plugin_13_Settings();
+  Plugin_14_Settings();
+  Plugin_15_Settings();
+  Plugin_16_Settings();
   Mixer_Settings();
   FX1reverb_settings();
   FX2Bitcrush_settings();

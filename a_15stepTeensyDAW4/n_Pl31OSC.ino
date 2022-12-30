@@ -1,12 +1,12 @@
 //Lets create a plugin
 // these are the neccessary elements you have to do to add your own plugin:
 // 1) copy the existing automatic generated code from "15stepTeensyDAW3.ino" and import it to https://newdigate.github.io/teensy-eurorack-audio-gui/
-//    add your modules for the plugin. Dont forget to add your final AMP modules for the Mixer section copy the code back to "15stepTeensyDAW3.ino"
+//    add your modules for the plugin. Dont forget to add your final AMP modules for the Mixer and volume section; copy the code back to "15stepTeensyDAW3.ino"
 
 // 2) add the plugin- _settings, _Static and _Dynamic functions to your plugin *.ino file add the functions to:
-//    Plugin_3_Settings()      -> setup() function in "15stepTeensyDAW3.ino"
-//    Plugin3_Page1_Static()   -> Plugin_View_Static() function in "functions.ino"
-//    Plugin3_Page1_Dynamic()  -> Plugin_View_Dynamic() function in "functions.ino"
+//    Plugin_3_Settings()      -> setup() function in "15stepTeensyDAW3.ino" -> this should be already done until we reached the limit oftemplated plugins
+//    Plugin3_Page1_Static()   -> Plugin_View_Static() function in "functions.ino" -> this should be already done until we reached the limit oftemplated plugins
+//    Plugin3_Page1_Dynamic()  -> Plugin_View_Dynamic() function in "functions.ino" -> this should be already done until we reached the limit oftemplated plugins
 
 // 3) define PLUGINx_PAGEnr and variables to "variables.h"
 
@@ -14,11 +14,11 @@
 
 // 5) add NoteOn and Off´s in "functions.ino" and "midi.ino"
 
-// 6) add controls to Plugin3_Page1_Dynamic()
+// 6) add controls to Plugin3_Page1_Dynamic()      !! it´s easier to start here after point 3 and then distribute the lines over the desired functions
 
-// 7) add your amp.gain() control to the volume-functions in "functions.ino"
+// 7) add your amp.gain() control to the volume-functions in "functions.ino"  -> this should be already done until we reached the limit oftemplated plugins
 
-
+//Lets start:
 //1) we copy the automatic generated code from the "15stepTeensyDAW3.ino" and import it to https://newdigate.github.io/teensy-eurorack-audio-gui/
 //   All created plugins are in here.
 
@@ -30,10 +30,11 @@
 // AMP
 
 // rename the modules to your likenings, we will put all variables into a struct for a better view, handling and preset storage. double-click on it to change its name.
-// its recommended to name the variables like: "modulename_function"
+// its recommended to name the variables like: "module-function" fe.: pl3filter1
 // connect the modules together, where DC goes to input of the  envelope2 for the filter
-// AMP will be used to control the volume of our mixer. Add your ampX gain function to all "volume-functions"
-// if needed add a mixer to the chain. At this point it is easy to add 2 seperate mixers (for 8 plugins), if more are needed we will have to reroute some parts of the plugins
+// AMP2 will be used to control the volume of our mixer. 
+// AMP2  will be used to control the volume while the arrangment is playing
+// if needed add a mixer to the chain.
 
 // export (Copy-paste) the new automatic generated code to the "15stepTeensyDAW3.ino". delete the librarys that come with the code
 
@@ -43,14 +44,16 @@
 
 // Plugin3_Page1_Static(pageNumber)   -> if we open a pluginpage or change presets, we want to see the actual values, graphs and other icons immediatly
 //                                       add this function to Plugin_View_Static(byte desired_instrument){} in functions.ino
-//                                       desired_instrument can be transmitted to your plugin, for corresponding track color or so
+//                                       desired_instrument can be used for your plugin, for corresponding track color
 
 // Plugin3_Page1_Dynamic()   -> this is where we assign values to our variables, that will handle our module-functions
 //                              (Look on https://www.pjrc.com/teensy/gui/ for each module, what can be controlled)
-//                              here happens all the touch, button and potentiometer input for the plugin.
+//                              here happens all the touch, button and encoder input for the plugin.
 //                              you can have several pages for your plugin
 //                              there are several functions aviable to draw the value of the parameters
-//                              We can leave Plugin3_Page1_Dynamic() {} empty for now.
+//                              We can leave Plugin3_Page1_Dynamic() {} empty for now. (as i made templates you can go and make your dynamic 
+//                                                                                      plugin page with all your controls
+//                                                                                      and distribute them afterwards to the desired functions)
 
 
 
@@ -64,7 +67,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////   add the Plugin3_Page1_Dynamic()-function to the loop() function in "15stepTeensyDAW3.ino"     //////////
+////////   add the Plugin3_Page1_Dynamic()-function to the loop() function in "functions.ino"     //////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -91,7 +94,7 @@
 
 //    a value showing function is implemented. Just call
 
-//    drawPot(xPos, yPos, fvalue, dvalue, dname, color) { //xposition, yposition, value 0-100, value to draw, name to draw, color of circle
+//    drawPot(xPos, yPos, fvalue, dvalue, dname, color) { //xposition, yposition, value 0-127, value to draw, name to draw, color of circle
 
 
 
