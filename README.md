@@ -31,3 +31,37 @@ Implemented plugins:
 6) SD *.raw melodic sampler  
 7) drum synth  
 8) 1OSC with moog ladder filter   
+
+Songmode:  
+.) the individual clips can be arranged in songmode  
+.) songs can be up to 255 bars long  
+.) set individual note offsets (transpose) per beat  
+.) set individual Plugin Preset per beat  
+.) set individual Volumes per beat  
+.) loop function to loop desired bars  
+.)   
+  
+Drumtrack:  
+.) sequence one of the internal drum plugins   
+.) send up to 12 individual Midi notes to ext gear like Drummachines  
+.) sent notes can be easily applied  
+.)   
+  
+Melodic Tracks 2-8:  
+.) sequence one of the internal melodic plugins   
+.) send Midinotes to ext gear like Monophonic Synthesizers  
+.)   
+  
+Mixer:  
+.) mix internal plugins / MIDI Velocity  
+.) solo and mute function  
+.) 3 fx slots with individual sends per track  
+.)  
+  
+Audio Recorder:  
+.) Record Line Level to RAW  
+.) choose one of 128 RAW Files  
+.) apply Gain to the signal  
+.) Pre-Listen /Monitor your signal  
+.) record by hitting Rec, press again to stop recoording  
+.)  
