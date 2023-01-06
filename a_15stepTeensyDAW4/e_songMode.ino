@@ -171,7 +171,8 @@ void songModePage(byte songpageNumber) {
   if (enter_button) {
     //Clipassign
     if (enc_moved[0]) {
-      track[touched_track].arrangment1[touched_phrase] = constrain((track[touched_track].arrangment1[touched_phrase] + encoded[0]), 0, MAX_CLIPS);
+      track[touched_track].arrangment1[touched_phrase] = constrain((track[touched_track].lastclip + encoded[0]), 0, MAX_CLIPS);
+      track[touched_track].lastclip = track[touched_track].arrangment1[touched_phrase];
     }
     //Note transpose
     if (enc_moved[1]) {

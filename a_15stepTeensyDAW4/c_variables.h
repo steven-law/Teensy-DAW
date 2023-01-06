@@ -643,11 +643,12 @@ struct tracks {
   byte midicc_number_row_4[4];
   byte clip[MAX_CLIPS][NUM_STEPS];
   byte arrangment1[256];
+  byte lastclip = 0;
   int NoteOffset[256];
   int presetNr[256];
   int volume[256];
   byte MIDI_velocity = 99;
-
+ 
   byte Volume_graph = 50;
   float Volume = 1;
 

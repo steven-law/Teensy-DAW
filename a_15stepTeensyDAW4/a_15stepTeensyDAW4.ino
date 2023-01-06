@@ -57,6 +57,7 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <USBHost_t36.h>
 #include <Encoder.h>
 #include <MIDI.h>
+
 // WAV files converted to code by wav2sketch
 //#include "AudioSampleSnare.h"         // http://www.freesound.org/people/KEVOY/sounds/82583/
 //#include "AudioSampleTomtom.h"        // http://www.freesound.org/people/zgump/sounds/86334/
@@ -768,7 +769,7 @@ void loop() {
   }
 
   if (msecs % 100 == 0) {
-    //Serial.println(tick_16);
+    //Serial.println(midi01.idVendor());
     tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
     tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
     drawCursor();
@@ -893,29 +894,29 @@ void readMainButtons() {
       //tft.updateScreen();
       //cursor
       //curser left
-      if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68
+      if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
         gridTouchX--;
         drawCursor();
       }
       //cursor right
-      if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70
+      if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
         gridTouchX++;
         drawCursor();
       }
       //cursor up
-      if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57
+      if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
         gridTouchY--;
         drawCursor();
         //something_was_pressed = true;
       }
       //cursor down
-      if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66
+      if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
         gridTouchY++;
         drawCursor();
         //something_was_pressed = true;
       }
       //last-pot-row
-      if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66
+      if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
         lastPotRow++;
         if (lastPotRow == 4) {
           lastPotRow = 0;
@@ -924,7 +925,7 @@ void readMainButtons() {
         //something_was_pressed = true;
       }
       //recorder
-      if (key.bit.KEY == 54) {
+      if (key.bit.KEY == 54) {  // 14th button
         if (enter_button) {
 
         } else {
@@ -934,57 +935,57 @@ void readMainButtons() {
       }
 
       //select tracks
-      if (button_9) {
-        if (key.bit.KEY == 68) {  //"D"  68
+      if (button_9) {   //9th button
+        if (key.bit.KEY == 68) {  //"D"  68  1st button
           selectPage = DRUMTRACK;
           desired_instrument = 0;
           desired_track = 0;
           drumStepSequencer_Static();
         }
         //select melodic track 2
-        if (key.bit.KEY == 70) {  //"F"  70
+        if (key.bit.KEY == 70) {  //"F"  70 2nd button
           selectPage = 1;
           desired_instrument = 1;
           desired_track = 1;
           gridStepSequencer(1);
         }
         //select melodic track 3
-        if (key.bit.KEY == 57) {  //"9"  57
+        if (key.bit.KEY == 57) {  //"9"  57 3rd button
           selectPage = 2;
           desired_instrument = 2;
           desired_track = 2;
           gridStepSequencer(2);
         }
         //select melodic track 4
-        if (key.bit.KEY == 66) {  //"B"  66
+        if (key.bit.KEY == 66) {  //"B"  66 4th button
           selectPage = 3;
           desired_instrument = 3;
           desired_track = 3;
           gridStepSequencer(3);
         }
         //select melodic track 5
-        if (key.bit.KEY == 55) {  //"7"  55
+        if (key.bit.KEY == 55) {  //"7"  55 5th button
           selectPage = 4;
           desired_instrument = 4;
           desired_track = 4;
           gridStepSequencer(4);
         }
         //select melodic track 6
-        if (key.bit.KEY == 53) {  //"5"  53
+        if (key.bit.KEY == 53) {  //"5"  53 6th button
           selectPage = 5;
           desired_instrument = 5;
           desired_track = 5;
           gridStepSequencer(5);
         }
         //select melodic track 7
-        if (key.bit.KEY == 51) {  //"3"  51
+        if (key.bit.KEY == 51) {  //"3"  51 7th button
           selectPage = 6;
           desired_instrument = 6;
           desired_track = 6;
           gridStepSequencer(6);
         }
         //select melodic track 8
-        if (key.bit.KEY == 49) {  //"1"  49
+        if (key.bit.KEY == 49) {  //"1"  49 8th button
           selectPage = 7;
           desired_instrument = 7;
           desired_track = 7;
@@ -993,7 +994,7 @@ void readMainButtons() {
       }
       //plugin selection
       if (button_10) {
-        if (key.bit.KEY == 68) {
+        if (key.bit.KEY == 68) {  //"D"  68  1st button
           desired_track = 0;
           desired_instrument = 0;
           //midicc_view
@@ -1091,7 +1092,7 @@ void readMainButtons() {
         }
         if (key.bit.KEY == 51) {
           desired_track = 6;
-          desired_instrument = 7;
+          desired_instrument = 6;
           //midicc_view
           for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
