@@ -14,32 +14,9 @@ void drawarrengmentLines(byte songpageNumber) {
   page_phrase_end = (songpageNumber + 1) * 16;
 
   //draw horizontal song arrangment Lines
-  for (byte phrase = page_phrase_start; phrase < page_phrase_end; phrase++) {
+  for (byte phraser = page_phrase_start; phraser < page_phrase_end; phraser++) {
     for (byte trackss = 0; trackss < 8; trackss++) {
-      if (track[trackss].arrangment1[phrase] < 8) {
-        for (int thickness = -8; thickness < 8; thickness++) {
-          tft.drawFastHLine((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((trackss + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));
-        }
-        //draw clipnumber
-        tft.setFont(Arial_8);
-        tft.setTextColor(ILI9341_WHITE);
-        tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (trackss + 1) * TRACK_FRAME_H - 4);
-        tft.print(track[trackss].arrangment1[phrase]);
-
-        //draw noteOffset
-        tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (trackss + 1) * TRACK_FRAME_H + 4);
-        if (track[trackss].NoteOffset[phrase] < 0) {
-          tft.setTextColor(ILI9341_BLACK);
-          tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (trackss + 1) * TRACK_FRAME_H + 4);
-          tft.print("-");
-        } else {
-          tft.setTextColor(trackColor[trackss] + (track[trackss].arrangment1[phrase] * 20));
-          tft.setCursor((phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (trackss + 1) * TRACK_FRAME_H + 4);
-          tft.print("-");
-        }
-        tft.setTextColor(ILI9341_BLACK);
-        tft.print(abs(track[trackss].NoteOffset[phrase]));
-      }
+      drawarrengmentLine(songpageNumber, trackss, phraser);
     }
   }
 }
@@ -47,29 +24,54 @@ void drawarrengmentLines(byte songpageNumber) {
 void drawarrengmentLine(byte songpageNumber, byte touched_track, byte touched_phrase) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
-
   //draw horizontal song arrangment Lines
-  for (int thickness = -8; thickness < 8; thickness++) {
-    tft.drawFastHLine((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2, ((touched_track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength, trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));  //(x-start, y, length, color)
-  }
-  //draw clipnumber
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (touched_track + 1) * TRACK_FRAME_H - 4);
-  tft.print(track[touched_track].arrangment1[touched_phrase]);
-  //draw noteOffset
-  tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H + 4);
-  if (track[touched_track].NoteOffset[touched_phrase] < 0) {
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
-    tft.print("-");
+  //for clip 8
+  if (track[touched_track].arrangment1[touched_phrase] == 8) {
+    for (int thickness = -8; thickness < 8; thickness++) {
+      tft.drawFastHLine(((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2) + 1, ((touched_track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength - 1, ILI9341_DARKGREY);  //(x-start, y, length, color)
+    }
+    //draw clipnumber
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_DARKGREY);
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (touched_track + 1) * TRACK_FRAME_H - 4);
+    tft.print(track[touched_track].arrangment1[touched_phrase]);
+    //draw noteOffset
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H + 4);
+    if (track[touched_track].NoteOffset[touched_phrase] < 0) {
+      tft.setTextColor(ILI9341_DARKGREY);
+      tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+      tft.print("-");
+    } else {
+      tft.setTextColor(ILI9341_DARKGREY);
+      tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+      tft.print("-");
+    }
+    tft.setTextColor(ILI9341_DARKGREY);
+    tft.print(abs(track[touched_track].NoteOffset[touched_phrase]));
   } else {
-    tft.setTextColor(trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
-    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
-    tft.print("-");
+    //for other clips
+    for (int thickness = -8; thickness < 8; thickness++) {
+      tft.drawFastHLine(((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2) + 1, ((touched_track + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength - 1, trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));  //(x-start, y, length, color)
+    }
+    //draw clipnumber
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (touched_track + 1) * TRACK_FRAME_H - 4);
+    tft.print(track[touched_track].arrangment1[touched_phrase]);
+    //draw noteOffset
+    tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (touched_track + 1) * TRACK_FRAME_H + 4);
+    if (track[touched_track].NoteOffset[touched_phrase] < 0) {
+      tft.setTextColor(ILI9341_BLACK);
+      tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+      tft.print("-");
+    } else {
+      tft.setTextColor(trackColor[touched_track] + (track[touched_track].arrangment1[touched_phrase] * 20));
+      tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 2, (touched_track + 1) * TRACK_FRAME_H + 4);
+      tft.print("-");
+    }
+    tft.setTextColor(ILI9341_BLACK);
+    tft.print(abs(track[touched_track].NoteOffset[touched_phrase]));
   }
-  tft.setTextColor(ILI9341_BLACK);
-  tft.print(abs(track[touched_track].NoteOffset[touched_phrase]));
 }
 
 void clearArrangment() {
@@ -106,8 +108,8 @@ void draw_end_of_loop() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
   tft.print("E");
-  tft.print(end_of_loop);
-  end_of_loop_old = end_of_loop;
+  tft.print(end_of_loop - 1);
+  end_of_loop_old = end_of_loop - 1;
 }
 
 void gridSongMode(byte songpageNumber) {  //static Display rendering
@@ -118,6 +120,7 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
   drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
   draw_end_of_loop();
+  midi01.sendControlChange(0, 0, 1);
   //occationally working on a full arrangment view
 
   //vertical pointer Lines
@@ -145,6 +148,8 @@ void songModePage(byte songpageNumber) {
   if (gridTouchY == 10) touched_track = 6;
   if (gridTouchY == 12) touched_track = 7;
 
+
+ 
   if (!button_15 && !enter_button) {
 
     //gridTouchX
@@ -169,6 +174,7 @@ void songModePage(byte songpageNumber) {
   }
 
   if (enter_button) {
+    track[touched_track].arrangment1[touched_phrase] = track[touched_track].lastclip;
     //Clipassign
     if (enc_moved[0]) {
       track[touched_track].arrangment1[touched_phrase] = constrain((track[touched_track].lastclip + encoded[0]), 0, MAX_CLIPS);

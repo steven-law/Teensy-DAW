@@ -8,9 +8,11 @@ void beatComponents() {
     pluginVolume(track[instruments].MIDIchannel, track[instruments].volume[phrase] / 127.00);
     if (midi01.idVendor() == 4661) {
       for (byte notes = 0; notes < 9; notes++) {
-        midi01.sendNoteOff(notes + (instruments * 16), 60, 1);
+        midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
       }
-      midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+      if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
+        midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+      }
     }
     if (track[instruments].MIDIchannel == 17) {
       pl1presetNr = track[instruments].presetNr[phrase];
@@ -102,6 +104,30 @@ void beatComponents() {
 //if you want your plugin to be played via midi this is your place
 //add your noteOn´s (envelope.noteOn´s) here
 void myNoteOn(byte channel, byte note, byte velocity) {
+
+  
+  if (midi01.idVendor() == 4661) {
+     for (byte songpages = 0; songpages < 16; songpages++) {
+    if (selectPage == SONGMODE_PAGE_1 + songpages) {
+      LP_songmode(note);
+    }
+  }
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = true;
+      }
+    }
+    for (byte octNotes = 0; octNotes < 24; octNotes++) {
+      if (note == LP_octave_notes[octNotes]) {
+        LP_octave_bool[octNotes] = true;
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = true;
+      }
+    }
+  }
   // When a USB device with multiple virtual cables is used,
   // midi1.getCable() can be used to read which of the virtual
   // MIDI cables received this message.
@@ -113,101 +139,101 @@ void myNoteOn(byte channel, byte note, byte velocity) {
 
   //play drumplugin when midichannel = 18
   if (track[channel - 1].MIDIchannel == 18) {
-    if (note == 36) {
+    if (note == 36 || LP_octave_bool[0]) {
       playSdWav1.play("P0.WAV");
     }
-    if (note == 37) {
+    if (note == 37 || LP_octave_bool[1]) {
       playSdWav2.play("P1.WAV");
     }
-    if (note == 38) {
+    if (note == 38 || LP_octave_bool[2]) {
       playSdWav3.play("P2.WAV");
     }
-    if (note == 39) {
+    if (note == 39 || LP_octave_bool[3]) {
       playSdWav4.play("P3.WAV");
     }
-    if (note == 40) {
+    if (note == 40 || LP_octave_bool[4]) {
       playSdWav5.play("P4.WAV");
     }
-    if (note == 41) {
+    if (note == 41 || LP_octave_bool[5]) {
       playSdWav6.play("P5.WAV");
     }
-    if (note == 42) {
+    if (note == 42 || LP_octave_bool[6]) {
       playSdWav7.play("P6.WAV");
     }
-    if (note == 43) {
+    if (note == 43 || LP_octave_bool[7]) {
       playSdWav8.play("P7.WAV");
     }
-    if (note == 44) {
+    if (note == 44 || LP_octave_bool[8]) {
       playSdWav9.play("P8.WAV");
     }
-    if (note == 45) {
+    if (note == 45 || LP_octave_bool[9]) {
       playSdWav10.play("P9.WAV");
     }
-    if (note == 46) {
+    if (note == 46 || LP_octave_bool[10]) {
       playSdWav11.play("P10.WAV");
     }
-    if (note == 47) {
+    if (note == 47 || LP_octave_bool[11]) {
       playSdWav12.play("P11.WAV");
     }
   }
 
   //play Memory drumplugin when midichannel = 20
   if (track[channel - 1].MIDIchannel == 20) {
-    if (note == 36) {
+    if (note == 36 || LP_octave_bool[0]) {
       playMem1.play(AudioSampleKick);
     }
-    if (note == 37) {
+    if (note == 37 || LP_octave_bool[1]) {
       playMem2.play(AudioSampleSnare);
     }
-    if (note == 38) {
+    if (note == 38 || LP_octave_bool[2]) {
       playMem3.play(AudioSampleP2);
     }
-    if (note == 39) {
+    if (note == 39 || LP_octave_bool[3]) {
       playMem4.play(AudioSampleHihat);
     }
-    if (note == 40) {
+    if (note == 40 || LP_octave_bool[4]) {
       playMem5.play(AudioSampleCashregister);
     }
-    if (note == 41) {
+    if (note == 41 || LP_octave_bool[5]) {
       playMem6.play(AudioSampleTomtom);
     }
-    if (note == 42) {
+    if (note == 42 || LP_octave_bool[6]) {
       playMem6.play(AudioSampleGong);
     }
-    if (note == 43) {
+    if (note == 43 || LP_octave_bool[7]) {
       //playSdWav8.play("P7.WAV");
     }
-    if (note == 44) {
+    if (note == 44 || LP_octave_bool[8]) {
       //playSdWav9.play("P8.WAV");
     }
-    if (note == 45) {
+    if (note == 45 || LP_octave_bool[9]) {
       //playSdWav10.play("P9.WAV");
     }
-    if (note == 46) {
+    if (note == 46 || LP_octave_bool[10]) {
       //playSdWav11.play("P10.WAV");
     }
-    if (note == 47) {
+    if (note == 47 || LP_octave_bool[11]) {
       //playSdWav12.play("P11.WAV");
     }
   }
   //play Memory drumplugin when midichannel = 20
   if (track[channel - 1].MIDIchannel == 23) {
-    if (note == 36) {
+    if (note == 36 || LP_octave_bool[0]) {
       pl7drum1.noteOn();
     }
-    if (note == 37) {
+    if (note == 37 || LP_octave_bool[1]) {
       pl7envelope1.noteOn();
     } else {
       pl7envelope1.noteOff();
     }
-    if (note == 38) {
+    if (note == 38 || LP_octave_bool[2]) {
       pl7envelope2.noteOn();
       pl7envelope3.noteOn();
     } else {
       pl7envelope2.noteOff();
       pl7envelope3.noteOff();
     }
-    if (note == 39) {
+    if (note == 39 || LP_octave_bool[3]) {
       //playMem4.play(AudioSampleHihat);
     }
   }
@@ -297,39 +323,21 @@ void myNoteOff(byte channel, byte note, byte velocity) {
   if (track[channel - 1].MIDIchannel == 25) {
     pl9string1.noteOff(0);
   }
-  //clipselecting via launchpad mini mk1
-  if (seq_rec) {
-    if (midi01.idVendor() == 4661) {
-      for (byte instruments = 0; instruments < 8; instruments++) {
 
-
-        if (note == 0 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 0;
-        }
-        if (note == 1 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 1;
-        }
-        if (note == 2 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 2;
-        }
-        if (note == 3 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 3;
-        }
-        if (note == 4 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 4;
-        }
-        if (note == 5 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 5;
-        }
-        if (note == 6 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 6;
-        }
-        if (note == 7 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 7;
-        }
-        if (note == 8 + (instruments * 16)) {
-          track[instruments].arrangment1[phrase] = 8;
-        }
+  if (midi01.idVendor() == 4661) {
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = false;
+      }
+    }
+    for (byte octNotes = 0; octNotes < 24; octNotes++) {
+      if (note == LP_octave_notes[octNotes]) {
+        LP_octave_bool[octNotes] = false;
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = false;
       }
     }
   }
@@ -992,11 +1000,31 @@ void myControlChange(byte channel, byte control, byte value) {
   }
 
 
-
+  //launchpad control up-est row, they send cc´s
   if (midi01.idVendor() == 4661) {
+    if (!seq_run) {
+      if (control == 104 && value == 127) {
+        phrase--;
+        drawPhrasenumber();
+      }
+      if (control == 105 && value == 127) {
+        phrase++;
+        drawPhrasenumber();
+      }
+      for (byte instruments = 0; instruments < 8; instruments++) {
+        for (byte notes = 0; notes < 9; notes++) {
+          midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
+        }
+        if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
+          midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+        }
+      }
+    }
+
     if (control == 109 && value == 127) {
       if (seq_rec == false) {
         seq_rec = true;
+        midi01.sendControlChange(109, 15, 1);
         tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
         if (selectPage == RECORDER_PAGE) {
           startRecording();
@@ -1004,6 +1032,7 @@ void myControlChange(byte channel, byte control, byte value) {
         }
       } else {
         seq_rec = false;
+        midi01.sendControlChange(109, 12, 1);
         tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
         if (selectPage == RECORDER_PAGE) {
           stopRecording();
@@ -1013,10 +1042,12 @@ void myControlChange(byte channel, byte control, byte value) {
     }
     if (control == 110 && value == 127) {
       startSeq();
+      midi01.sendControlChange(110, 60, 1);
     }
 
     if (control == 111 && value == 127) {
       stopSeq();
+      midi01.sendControlChange(110, 12, 1);
     }
   }
 }

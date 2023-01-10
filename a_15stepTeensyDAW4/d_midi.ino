@@ -30,7 +30,14 @@ void drawstepPosition(byte current) {
     }
   }
 }
-
+void drawPhrasenumber() {
+  //draw phrasenumber
+  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_9);
+  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
+  tft.print(phrase + 1);
+}
 void sendClock() {
   if (seq_run) {
     //unsigned long now = micros();  // what's the time?
@@ -563,12 +570,7 @@ void myClock() {
     tick_16++;
     step(tick_16);
     drawstepPosition(tick_16);
-    //draw phrasenumber
-    tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setFont(Arial_9);
-    tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-    tft.print(phrase + 1);
+    drawPhrasenumber();
   }
   Serial.println("Clock");
 }

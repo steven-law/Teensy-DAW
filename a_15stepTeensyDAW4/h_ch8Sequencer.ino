@@ -5,6 +5,12 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   drawActiveSteps();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawMIDIchannel();
+  midi01.sendControlChange(0, 0, 1);
+  LP_drawStepsequencer();
+  LP_drawOctave(3);
+  //LP_drawOctave(5);
+  midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
+  midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
   //draw Octavebuttons
   int leftmost = STEP_FRAME_W * OCTAVE_CHANGE_LEFTMOST;
   int rightmost = STEP_FRAME_W * OCTAVE_CHANGE_RIGHTMOST;
@@ -17,15 +23,13 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W, DOWN_bottommost, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
 
   //draw the octave number
-  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
-  tft.setFont(Arial_16);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  tft.print(track[desired_instrument].shown_octaves);
+  drawOctaveNumber();
 }
 
 void melodicStepSequencer(byte desired_instrument) {
+  LP_drawclipRow();
+  LP_melodicstep();
+
 
 
 
@@ -98,7 +102,7 @@ void melodicStepSequencer(byte desired_instrument) {
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
-          clearStepsGridY();
+          clearStepsGridY(touched_step);
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));  //draw the active steps circles
 
         } else if (notevalue_on_step > VALUE_NOTEOFF) {
@@ -119,12 +123,7 @@ void melodicStepSequencer(byte desired_instrument) {
           clearStepsGrid();
         }
         //draw the octave number
-        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
-        tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
-        tft.setFont(Arial_16);
-        tft.setTextColor(ILI9341_WHITE);
-        tft.setTextSize(1);
-        tft.print(track[desired_instrument].shown_octaves);
+        drawOctaveNumber();
       }
     }
 

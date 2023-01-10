@@ -3,12 +3,18 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawStepSequencerStatic(0);
   drawActiveDrumSteps();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+
+  midi01.sendControlChange(0, 0, 1);
+  LP_drawStepsequencer();
+  LP_drawOctave(3);
 }
 
 void drumStepSequencer() {
+  LP_drawclipRow();
+
+  LP_drumstep();
   //assign drumnotes on the left
   if (button_15) {
-    //gridTouchX
     if (enc_moved[0]) {
       int noteselector = constrain((drumnote[gridTouchY - 1] + encoded[0]), 0, 99);
       for (byte i = 0; i < 12; i++) {
@@ -71,20 +77,20 @@ void drumStepSequencer() {
 
         int dot_on_X = (gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X;
         int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
+
         ch1tone = (gridTouchY - 1);
         byte step_number = gridTouchX - 2;
 
         if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
-
           channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector) * 20));  //draw the active steps circles
-
         } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
           channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
         }
       }
     }
+
 
     //load and save
     if (gridTouchY == 0) {
@@ -119,6 +125,7 @@ void drumStepSequencer() {
       //draw active steps
       drawActiveDrumSteps();
       drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+      midi01.sendNoteOn(track[desired_instrument].clip_selector, LP_RED, 1);
     }
   }
 }

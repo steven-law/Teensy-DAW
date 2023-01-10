@@ -37,7 +37,7 @@
 #define SPI_READ_FREQUENCY 10000000
 
 #define VELOCITYOFF 0
-#define VALUE_NOTEOFF 0
+static const int VALUE_NOTEOFF = 0;
 
 
 //variables for own clock
@@ -56,6 +56,42 @@ byte tick_16 = 0;
 bool seq_run = false;
 bool seq_rec = false;
 byte tempo = 120;
+
+//Launchpad
+#define LP_GREEN 60
+#define LP_GREEN_DIM 28
+#define LP_RED 15
+#define LP_RED_DIM 13
+#define LP_AMBER 63
+#define LP_AMBER_DIM 29
+#define LP_YELLOW 62
+byte LP_note;
+byte LP_GRID_notes[8][8]{{0, 1, 2, 3, 4, 5, 6, 7},
+{16, 17, 18, 19, 20, 21, 22, 23},
+{32, 33, 34, 35, 36, 37, 38, 39},
+{48, 49, 50, 51, 52, 53, 54, 55},
+{64, 65, 66, 67, 68, 69, 70, 71},
+{80, 81, 82, 83, 84, 85, 86, 87},
+{96, 97, 98, 99, 100, 101, 102, 103},
+{112, 113, 114, 115, 116, 117, 118, 118}
+};
+bool LP_GRID_bool[8][8];
+byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
+                        16, 17, 18, 19, 20, 21, 22, 23,
+                        32, 33, 34, 35, 36, 37, 38, 39,
+                        48, 49, 50, 51, 52, 53, 54, 55,
+
+                        64, 65, 66, 67, 68, 69, 70, 71,
+                        80, 81, 82, 83, 84, 85, 86, 87,
+                        96, 97, 98, 99, 100, 101, 102, 103,
+                        112, 113, 114, 115, 116, 117, 118, 118 };
+bool LP_grid_bool[64];
+byte LP_octave_notes[24]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70,
+                          96, 81, 97, 82, 98, 99, 84, 100, 85, 101, 86, 102 };
+bool LP_octave_bool[24];
+byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
+bool LP_step_bool[16];
+bool LP_drawOnce[16];
 
 //****************************************************************************
 // 3) add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
@@ -517,6 +553,7 @@ byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 1
 byte trackTouchY;
 bool is_held = true;
 unsigned long previousMillis = 0;
+unsigned long previousMillis2 = 0;
 //DMAMEM uint16_t fb1[320 * 240];
 
 
@@ -579,7 +616,7 @@ int dname_oldcc;
 
 
 struct sequence_t {
-  byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
+  int step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
 };
 
 struct track_t {
@@ -648,7 +685,7 @@ struct tracks {
   int presetNr[256];
   int volume[256];
   byte MIDI_velocity = 99;
- 
+
   byte Volume_graph = 50;
   float Volume = 1;
 
