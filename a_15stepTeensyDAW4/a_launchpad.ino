@@ -161,7 +161,7 @@ void LP_melodicstep() {
 
 
         else if (LP_octave_bool[notes]) {
-          if ((LP_octave_bool[notes] * notes) + (track[desired_instrument].shown_octaves * 12) == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps]) {
+          if (track[desired_instrument].tone == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps]) {
             //if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps] > VALUE_NOTEOFF) {
             Serial.println("hello");
 
