@@ -14,7 +14,7 @@ void drumStepSequencer() {
 
   LP_drumstep();
   //assign drumnotes on the left
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       int noteselector = constrain((drumnote[gridTouchY - 1] + encoded[0]), 0, 99);
       for (byte i = 0; i < 12; i++) {
@@ -29,7 +29,7 @@ void drumStepSequencer() {
     }
   }
 
-  if (!button_15) {
+  if (!button[14]) {
     //gridTouchX
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);

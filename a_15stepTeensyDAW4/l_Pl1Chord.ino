@@ -113,14 +113,14 @@ void Plugin1_Page_Static(byte Pagenumber) {
 
 void Plugin1_Page1_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl1presetNr = constrain((pl1presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl1presetNr, ILI9341_PURPLE);
       Plugin1_Page_Static(0);
     }
   }
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
 
@@ -236,14 +236,14 @@ void Plugin1_Page1_Dynamic() {
 
 void Plugin1_Page2_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl1presetNr = constrain((pl1presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl1presetNr, ILI9341_PURPLE);
       Plugin1_Page_Static(1);
     }
   }
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
         //Filter Frequency

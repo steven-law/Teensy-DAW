@@ -41,14 +41,14 @@ void Plugin2_Page_Static(byte Pagenumber) {
 
 void Plugin2_Page1_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl2presetNr = constrain((pl2presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl2presetNr, ILI9341_PURPLE);
       Plugin2_Page_Static(0);
     }
   }
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
         for (byte touchX = 1; touchX < 5; touchX++) {

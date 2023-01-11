@@ -397,7 +397,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       //if (msecs % 20 == 0) {
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (!button_15) {
+        if (!button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_1[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_1[MixerColumn] + encoded[MixerColumn]), 0, 127);
             drawPotCC(MixerColumnPos, CTRL_ROW_0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
@@ -413,7 +413,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
             }
           }*/
         }
-        if (button_15) {
+        if (button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_number_row_1[MixerColumn] = constrain((track[desired_instrument].midicc_number_row_1[MixerColumn] + encoded[MixerColumn]), 0, 127);
             drawNrInRect(MixerColumnPos, CTRL_ROW_0 + 1, track[desired_instrument].midicc_number_row_1[MixerColumn], trackColor[desired_instrument]);
@@ -433,7 +433,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
 
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (!button_15) {
+        if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_2[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_2[MixerColumn] + encoded[MixerColumn]), 0, 127);
@@ -449,7 +449,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
             }
           }*/
         }
-        if (button_15) {
+        if (button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_number_row_2[MixerColumn] = constrain((track[desired_instrument].midicc_number_row_2[MixerColumn] + encoded[MixerColumn]), 0, 127);
             drawNrInRect(MixerColumnPos, CTRL_ROW_1 + 1, track[desired_instrument].midicc_number_row_2[MixerColumn], trackColor[desired_instrument]);
@@ -468,7 +468,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
 
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (!button_15) {
+        if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_3[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_3[MixerColumn] + encoded[MixerColumn]), 0, 127);
@@ -485,7 +485,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
             }
           }*/
         }
-        if (button_15) {
+        if (button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_number_row_3[MixerColumn] = constrain((track[desired_instrument].midicc_number_row_3[MixerColumn] + encoded[MixerColumn]), 0, 127);
             drawNrInRect(MixerColumnPos, CTRL_ROW_2 + 1, track[desired_instrument].midicc_number_row_3[MixerColumn], trackColor[desired_instrument]);
@@ -505,7 +505,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       // if (msecs % 20 == 0) {
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (!button_15) {
+        if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_4[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_4[MixerColumn] + encoded[MixerColumn]), 0, 127);
@@ -522,7 +522,7 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
             }
           }*/
         }
-        if (button_15) {
+        if (button[14]) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_number_row_4[MixerColumn] = constrain((track[desired_instrument].midicc_number_row_4[MixerColumn] + encoded[MixerColumn]), 0, 127);

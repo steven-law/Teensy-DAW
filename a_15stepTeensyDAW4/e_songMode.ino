@@ -150,7 +150,7 @@ void songModePage(byte songpageNumber) {
 
 
  
-  if (!button_15 && !enter_button) {
+  if (!button[14] && !enter_button) {
 
     //gridTouchX
     if (enc_moved[0]) {
@@ -203,7 +203,7 @@ void songModePage(byte songpageNumber) {
   }
 
   //end of loop
-  if (button_15) {
+  if (button[14]) {
     //set Tempo
     if (enc_moved[0]) {
       tempo = constrain((tempo + encoded[0]), 55, 200);

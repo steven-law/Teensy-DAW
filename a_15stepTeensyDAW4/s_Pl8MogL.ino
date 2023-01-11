@@ -63,14 +63,14 @@ void Plugin8_Page_Static(byte Pagenumber) {
 
 void Plugin8_Page1_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl8presetNr = constrain((pl8presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl8presetNr, ILI9341_PURPLE);
       Plugin8_Page_Static(0);
     }
   }
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
         //Waveform

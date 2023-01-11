@@ -141,14 +141,14 @@ void Plugin7_Page_Static(byte Pagenumber) {
 
 void Plugin7_Page1_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl7presetNr = constrain((pl7presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl7presetNr, ILI9341_PURPLE);
       Plugin7_Page_Static(0);
     }
   }
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
 
@@ -405,7 +405,7 @@ void Plugin7_Page1_Dynamic() {
 
 void Plugin7_Page2_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[3]) {
       pl7presetNr = constrain((pl7presetNr + encoded[3]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl7presetNr, ILI9341_PURPLE);

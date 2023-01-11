@@ -65,17 +65,8 @@ byte tempo = 120;
 #define LP_AMBER 63
 #define LP_AMBER_DIM 29
 #define LP_YELLOW 62
-byte LP_note;
-byte LP_GRID_notes[8][8]{{0, 1, 2, 3, 4, 5, 6, 7},
-{16, 17, 18, 19, 20, 21, 22, 23},
-{32, 33, 34, 35, 36, 37, 38, 39},
-{48, 49, 50, 51, 52, 53, 54, 55},
-{64, 65, 66, 67, 68, 69, 70, 71},
-{80, 81, 82, 83, 84, 85, 86, 87},
-{96, 97, 98, 99, 100, 101, 102, 103},
-{112, 113, 114, 115, 116, 117, 118, 118}
-};
-bool LP_GRID_bool[8][8];
+
+
 byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
                         16, 17, 18, 19, 20, 21, 22, 23,
                         32, 33, 34, 35, 36, 37, 38, 39,
@@ -554,6 +545,7 @@ byte trackTouchY;
 bool is_held = true;
 unsigned long previousMillis = 0;
 unsigned long previousMillis2 = 0;
+unsigned long previousMillis3 = 0;
 //DMAMEM uint16_t fb1[320 * 240];
 
 
@@ -574,14 +566,10 @@ bool enc_moved[4]{ 0, 0, 0, 0 };
 int encoded[4];
 //button variables
 bool enter_button = false;
-bool button_9 = false;
-bool button_10 = false;
-bool button_11 = false;
-bool button_12 = false;
-bool button_13 = false;
-bool button_14 = false;
-bool button_15 = false;
+
+bool button[16]{};
 bool something_was_pressed = false;
+bool otherCtrlButtons = true;
 byte last_button_X = 0;
 byte last_button_Y = 0;
 uint16_t tftRAM[16][16];

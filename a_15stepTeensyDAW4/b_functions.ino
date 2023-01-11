@@ -105,29 +105,8 @@ void beatComponents() {
 //add your noteOn´s (envelope.noteOn´s) here
 void myNoteOn(byte channel, byte note, byte velocity) {
 
-  
-  if (midi01.idVendor() == 4661) {
-     for (byte songpages = 0; songpages < 16; songpages++) {
-    if (selectPage == SONGMODE_PAGE_1 + songpages) {
-      LP_songmode(note);
-    }
-  }
-    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
-      if (note == LP_grid_notes[gridNotes]) {
-        LP_grid_bool[gridNotes] = true;
-      }
-    }
-    for (byte octNotes = 0; octNotes < 24; octNotes++) {
-      if (note == LP_octave_notes[octNotes]) {
-        LP_octave_bool[octNotes] = true;
-      }
-    }
-    for (byte stepss = 0; stepss < 16; stepss++) {
-      if (note == LP_step_notes[stepss]) {
-        LP_step_bool[stepss] = true;
-      }
-    }
-  }
+
+
   // When a USB device with multiple virtual cables is used,
   // midi1.getCable() can be used to read which of the virtual
   // MIDI cables received this message.
@@ -286,6 +265,62 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   if (track[channel - 1].MIDIchannel == 25) {
     pl9string1.noteOn(note_frequency[note], 1);
   }
+
+  if (midi01.idVendor() == 4661) {
+    for (byte songpages = 0; songpages < 16; songpages++) {
+      if (selectPage == SONGMODE_PAGE_1 + songpages) {
+        LP_songmode(note);
+      }
+    }
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = true;
+      }
+    }
+    for (byte octNotes = 0; octNotes < 24; octNotes++) {
+      if (note == LP_octave_notes[octNotes]) {
+        LP_octave_bool[octNotes] = true;
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = true;
+      }
+    }
+
+    // hold for track button
+    if (!button[10] && note == 8) {  //"E"  69
+      button[8] = true;
+    }
+    // hold for plugin button
+    if (!button[10] && note == 24) {  //"C"  67
+      button[9] = true;
+    }
+    //  hold for Songarranger button
+    if (note == 40) {  //"A"  65
+      button[10] = true;
+    }
+    // hold for Mixer button
+    if (!button[10] && note == 56) {  //"4"  52
+      button[11] = true;
+    }
+    // hold for FX button
+    if (!button[10] && note == 72) {  //"8"  56
+      button[12] = true;
+    }
+    //  hold for recorder button
+    if (!button[10] && note == 88) {  //"A"  65
+      button[13] = true;
+    }
+    // hold for shift button
+    if (!button[10] && note == 104) {
+      button[14] = true;
+    }
+    // hold for enter button
+    if (!button[10] && note == 120) {
+      enter_button = true;
+    }
+  }
 }
 //and your noteOff here
 void myNoteOff(byte channel, byte note, byte velocity) {
@@ -339,6 +374,42 @@ void myNoteOff(byte channel, byte note, byte velocity) {
       if (note == LP_step_notes[stepss]) {
         LP_step_bool[stepss] = false;
       }
+    }
+
+    // hold for track button
+    if (!button[10] && note == 8) {  //"E"  69
+      button[8] = false;
+      
+    }
+    // hold for plugin button
+    if (!button[10] && note == 24) {  //"C"  67
+      button[9] = false;
+      
+    }
+    // hold for Mixer button
+    if (note == 40) {  //"4"  52
+      button[10] = false;
+    }
+    // hold for Mixer button
+    if (!button[10] && note == 56) {  //"4"  52
+      button[11] = false;
+    }
+
+    // hold for FX button
+    if (!button[10] && note == 72) {  //"8"  56
+      button[12] = false;
+    }
+    // hold for recorder button
+    if (!button[10] && note == 88) {
+      button[13] = false;
+    }
+    // hold for shift button
+    if (!button[10] && note == 104) {
+      button[14] = false;
+    }
+    // hold for enter button
+    if (!button[10] && note == 120) {
+      enter_button = false;
     }
   }
 }
@@ -1002,56 +1073,60 @@ void myControlChange(byte channel, byte control, byte value) {
 
   //launchpad control up-est row, they send cc´s
   if (midi01.idVendor() == 4661) {
-    if (!seq_run) {
-      if (control == 104 && value == 127) {
-        phrase--;
-        drawPhrasenumber();
-      }
-      if (control == 105 && value == 127) {
-        phrase++;
-        drawPhrasenumber();
-      }
-      for (byte instruments = 0; instruments < 8; instruments++) {
-        for (byte notes = 0; notes < 9; notes++) {
-          midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
-        }
-        if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
-          midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
-        }
-      }
+    if (otherCtrlButtons && control == 104 && value == 127) {
+      button[0] = true;
+      gridTouchX--;
+      drawCursor();
+    } else if (otherCtrlButtons && control == 104 && value != 127) {
+      button[0] = false;
     }
-
-    if (control == 109 && value == 127) {
-      if (seq_rec == false) {
-        seq_rec = true;
-        midi01.sendControlChange(109, 15, 1);
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
-        if (selectPage == RECORDER_PAGE) {
-          startRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
-        }
-      } else {
-        seq_rec = false;
-        midi01.sendControlChange(109, 12, 1);
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
-        if (selectPage == RECORDER_PAGE) {
-          stopRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
-        }
-      }
+    if (otherCtrlButtons && control == 105 && value == 127) {
+      button[1] = true;
+      gridTouchX++;
+      drawCursor();
+    } else if (otherCtrlButtons && control == 105 && value != 127) {
+      button[1] = false;
+      gridTouchY--;
+      drawCursor();
     }
-    if (control == 110 && value == 127) {
-      startSeq();
-      midi01.sendControlChange(110, 60, 1);
+    if (otherCtrlButtons && control == 106 && value == 127) {
+      button[2] = true;
+      gridTouchY--;
+      drawCursor();
+      
+    } else if (otherCtrlButtons && control == 106 && value != 127) {
+      button[2] = false;
+      
     }
-
-    if (control == 111 && value == 127) {
-      stopSeq();
-      midi01.sendControlChange(110, 12, 1);
+    if (otherCtrlButtons && control == 107 && value == 127) {
+      button[3] = true;
+      gridTouchY++;
+      drawCursor();
+    } else if (otherCtrlButtons && control == 107 && value != 127) {
+      button[3] = false;
+    }
+    if (otherCtrlButtons && control == 108 && value == 127) {
+      button[4] = true;
+    } else if (otherCtrlButtons && control == 108 && value != 127) {
+      button[4] = false;
+    }
+    if (otherCtrlButtons && control == 109 && value == 127) {
+      button[5] = true;
+    } else if (otherCtrlButtons && control == 109 && value != 127) {
+      button[5] = false;
+    }
+    if (otherCtrlButtons && control == 110 && value == 127) {
+      button[6] = true;
+    } else if (otherCtrlButtons && control == 110 && value != 127) {
+      button[6] = false;
+    }
+    if (otherCtrlButtons && control == 111 && value == 127) {
+      button[7] = true;
+    } else if (otherCtrlButtons && control == 111 && value != 127) {
+      button[7] = false;
     }
   }
 }
-
 ////////////////////////////////////////////////////
 //only subject to change when we have reached the limit of templated plugins (per now there are 9 plugins and 7 templated plugins)
 //

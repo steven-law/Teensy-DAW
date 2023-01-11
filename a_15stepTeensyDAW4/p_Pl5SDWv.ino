@@ -64,7 +64,7 @@ void Plugin5_Page_Static(byte Pagenumber) {
 }
 void Plugin5_Page1_Dynamic() {
   //change preset
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       pl5presetNr = constrain((pl5presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl5presetNr, ILI9341_PURPLE);
@@ -72,7 +72,7 @@ void Plugin5_Page1_Dynamic() {
     }
   }
 
-  if (!button_15) {
+  if (!button[14]) {
     switch (lastPotRow) {
       case 0:
         if (enc_moved[0]) {

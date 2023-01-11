@@ -33,7 +33,7 @@ void melodicStepSequencer(byte desired_instrument) {
 
 
 
-  if (!button_15) {
+  if (!button[14]) {
     //gridTouchX
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
@@ -60,7 +60,7 @@ void melodicStepSequencer(byte desired_instrument) {
   }
 
   //octaves
-  if (button_15) {
+  if (button[14]) {
     if (enc_moved[0]) {
       track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
       clearStepsGrid();
