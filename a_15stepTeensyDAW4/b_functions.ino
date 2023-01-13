@@ -1,4 +1,229 @@
+//this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
+// just add your plugin-page static function here
+void Plugin_View_Static(byte desired_instrument) {
 
+  if (selectPage == PLUGIN1_PAGE1) {
+    Plugin1_Page_Static(0);
+  }
+  if (selectPage == PLUGIN1_PAGE2) {
+    Plugin1_Page_Static(1);
+  }
+
+
+  if (selectPage == PLUGIN2_PAGE1) {
+    Plugin2_Page_Static(0);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////// if we select the pluginpage its PLUGINx_PAGE1 bool gets true and selects the Pluginx_Page_Static once
+  ///////// now we see the actual graphs and values, but the programm switches over to Pluginx_Page_Dynamic(),
+  ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  if (selectPage == PLUGIN3_PAGE1) {
+    Plugin3_Page_Static(0);
+  }
+  if (selectPage == PLUGIN4_PAGE1) {
+    Plugin4_Page_Static(0);
+  }
+  if (selectPage == PLUGIN5_PAGE1) {
+    Plugin5_Page_Static(0);
+  }
+  if (selectPage == PLUGIN6_PAGE1) {
+    Plugin6_Page_Static(0);
+  }
+  if (selectPage == PLUGIN7_PAGE1) {
+    Plugin7_Page_Static(0);
+  }
+  if (selectPage == PLUGIN7_PAGE2) {
+    Plugin7_Page_Static(1);
+  }
+
+  if (selectPage == PLUGIN8_PAGE1) {
+    Plugin8_Page_Static(0);
+  }
+  if (selectPage == PLUGIN9_PAGE1) {
+    Plugin9_Page_Static(0);
+  }
+  if (selectPage == PLUGIN10_PAGE1) {
+    Plugin10_Page_Static(0);
+  }
+  if (selectPage == PLUGIN11_PAGE1) {
+    Plugin11_Page_Static(0);
+  }
+  if (selectPage == PLUGIN12_PAGE1) {
+    Plugin12_Page_Static(0);
+  }
+  if (selectPage == PLUGIN13_PAGE1) {
+    Plugin13_Page_Static(0);
+  }
+  if (selectPage == PLUGIN14_PAGE1) {
+    Plugin14_Page_Static(0);
+  }
+  if (selectPage == PLUGIN15_PAGE1) {
+    Plugin15_Page_Static(0);
+  }
+  if (selectPage == PLUGIN16_PAGE1) {
+    Plugin16_Page_Static(0);
+  }
+}
+//this calls the dynamic plugin view for your plugin, where your changes (via encoder) of the soundcontrols are happening
+// just add your plugin-page dynamic function here
+void Plugin_View_Dynamic() {
+  //***********************************************************************************************************************
+  // 4) copy one of the plugin Page Views
+  //    and change the names according to our variables and functions.
+  //    Every page you want to make has to have its own statement
+  //    we create:
+
+  //  //setting up the Plugin3 Page1-view
+  //    if (selectPage == PLUGIN3_PAGE1) {
+  //      Plugin3_Page1_Dynamic();
+  //    }
+
+  // after adding the active state statement
+  // head over to "midi.ino"
+  //look for *****************************************************************************************
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //-----------------------------------------
+  //setting up the Plugin1 Page1-view
+  if (selectPage == PLUGIN1_PAGE1) {
+    Plugin1_Page1_Dynamic();
+  }
+  //setting up the Plugin1 Page2-view
+  if (selectPage == PLUGIN1_PAGE2) {
+    Plugin1_Page2_Dynamic();
+  }
+
+  //setting up the Plugin2 Page1-view
+  if (selectPage == PLUGIN2_PAGE1) {
+    Plugin2_Page1_Dynamic();
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  //setting up the Plugin3 Page1-view
+  if (selectPage == PLUGIN3_PAGE1) {
+    Plugin3_Page1_Dynamic();
+  }
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  //setting up the Plugin4 Page1-view
+  if (selectPage == PLUGIN4_PAGE1) {
+    Plugin4_Page1_Dynamic();
+  }
+
+  //setting up the Plugin5 Page1-view
+  if (selectPage == PLUGIN5_PAGE1) {
+    Plugin5_Page1_Dynamic();
+  }
+  //setting up the Plugin6 Page1-view
+  if (selectPage == PLUGIN6_PAGE1) {
+    Plugin6_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page1-view
+  if (selectPage == PLUGIN7_PAGE1) {
+    Plugin7_Page1_Dynamic();
+  }
+  //setting up the Plugin7 Page2-view
+  if (selectPage == PLUGIN7_PAGE2) {
+    Plugin7_Page2_Dynamic();
+  }
+  //setting up the Plugin8 Page1-view
+  if (selectPage == PLUGIN8_PAGE1) {
+    Plugin8_Page1_Dynamic();
+  }
+  //setting up the Plugin9 Page1-view
+  if (selectPage == PLUGIN9_PAGE1) {
+    Plugin9_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN10_PAGE1) {
+    Plugin10_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN11_PAGE1) {
+    Plugin11_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN12_PAGE1) {
+    Plugin12_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN13_PAGE1) {
+    Plugin13_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN14_PAGE1) {
+    Plugin14_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN15_PAGE1) {
+    Plugin15_Page1_Dynamic();
+  }
+  //setting up the Plugin10 Page1-view
+  if (selectPage == PLUGIN16_PAGE1) {
+    Plugin16_Page1_Dynamic();
+  }
+
+
+
+  //setting up the StepSequencer-view for drumtrack #1
+  if (selectPage == DRUMTRACK) {
+    drumStepSequencer();
+  }
+  //setting up the melodicStepSequencer-view for #2-8
+  for (byte i = 1; i < 8; i++) {
+    if (selectPage == i) {
+      melodicStepSequencer(i);
+    }
+  }
+  //setting up the scaleSelector-view
+  if (selectPage == SCALESELECT) {
+    scaleSelector();
+  }
+
+  //setting up the songMode-view1
+  for (byte pagenr = 0; pagenr < 16; pagenr++) {
+    if (selectPage == pagenr + 10) {
+      songModePage(pagenr);
+    }
+  }
+
+  //setting up the Recorder Page
+  if (selectPage == RECORDER_PAGE) {
+    recorder_Page1_Dynamic();
+  }
+
+
+  //setting up the Mixer Page 1
+  if (selectPage == MIXER_PAGE_1) {
+    MixerPage1_Dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIXER_PAGE_2) {
+    MixerPage2_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == MIXER_PAGE_3) {
+    MixerPage3_Dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX1_PAGE1) {
+    FX1reverb_dynamic();
+  }
+  //setting up the Mixer Page 3
+  if (selectPage == FX2_PAGE1) {
+    FX2Bitcrush_dynamic();
+  }
+  //setting up the Mixer Page 2
+  if (selectPage == MIDICC_PAGE_1) {
+    midiCCpage1_Dynamic(desired_track);
+  }
+}
 //this function is called for every beatchange for preset/clip/noteoffset/clip change
 //add your soundcontrol functions like desired osc frequency etc, so the presetchange can be applied
 void beatComponents() {
@@ -6,14 +231,21 @@ void beatComponents() {
     track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
     track[instruments].MIDI_velocity = track[instruments].volume[phrase];
     pluginVolume(track[instruments].MIDIchannel, track[instruments].volume[phrase] / 127.00);
-    if (midi01.idVendor() == 4661) {
-      for (byte notes = 0; notes < 9; notes++) {
-        midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
-      }
-      if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
-        midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+
+    for (byte songpages = 0; songpages < 16; songpages++) {
+      if (selectPage == SONGMODE_PAGE_1 + songpages) {
+        if (midi01.idVendor() == 4661) {
+          for (byte notes = 0; notes < 9; notes++) {
+            midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
+          }
+
+          if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
+            midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+          }
+        }
       }
     }
+    //}
     if (track[instruments].MIDIchannel == 17) {
       pl1presetNr = track[instruments].presetNr[phrase];
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
@@ -104,7 +336,79 @@ void beatComponents() {
 //if you want your plugin to be played via midi this is your place
 //add your noteOn´s (envelope.noteOn´s) here
 void myNoteOn(byte channel, byte note, byte velocity) {
+  if (midi01.idVendor() == 4661) {
 
+    for (byte songpages = 0; songpages < 16; songpages++) {
+      if (selectPage == SONGMODE_PAGE_1 + songpages) {
+        LP_songmode(note);
+      }
+    }
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = true;
+      }
+    }
+    if (selectPage == 0) {
+      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+        if (note == LP_octave_notes[octNotes]) {
+          LP_octave_bool[octNotes] = true;
+        }
+      }
+    }
+    for (int trackss = 1; trackss < 8; trackss++) {
+      if (selectPage == trackss) {
+        for (byte octNotes = 0; octNotes < 12; octNotes++) {
+          if (note == LP_octave_notes_keys[octNotes]) {
+            channel = desired_instrument + 1;
+
+            LP_octave_bool_keys[octNotes] = true;
+            note = octNotes + (track[desired_instrument].shown_octaves * 12);
+          }
+        }
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = true;
+      }
+    }
+
+
+    // hold for track button
+    if (!button[10] && note == 8) {  //"E"  69
+      button[8] = true;
+    }
+    // hold for plugin button
+    if (!button[10] && note == 24) {  //"C"  67
+      button[9] = true;
+    }
+    //  hold for Songarranger button
+    if (note == 40) {  //"A"  65
+      button[10] = true;
+    }
+    // hold for Mixer button
+    if (!button[10] && note == 56) {  //"4"  52
+      button[11] = true;
+    }
+    // hold for FX button
+    if (!button[10] && note == 72) {  //"8"  56
+      button[12] = true;
+    }
+    //  hold for recorder button
+    if (!button[10] && note == 88) {  //"A"  65
+      button[13] = true;
+      selectPage = RECORDER_PAGE;
+      recorder_Page_Static();
+    }
+    // hold for shift button
+    if (!button[10] && note == 104) {
+      button[14] = true;
+    }
+    // hold for enter button
+    if (!button[10] && note == 120) {
+      button[15] = true;
+    }
+  }
 
 
   // When a USB device with multiple virtual cables is used,
@@ -115,47 +419,14 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
   }
   //send midinotes for drumtrack #1
-
   //play drumplugin when midichannel = 18
   if (track[channel - 1].MIDIchannel == 18) {
-    if (note == 36 || LP_octave_bool[0]) {
-      playSdWav1.play("P0.WAV");
-    }
-    if (note == 37 || LP_octave_bool[1]) {
-      playSdWav2.play("P1.WAV");
-    }
-    if (note == 38 || LP_octave_bool[2]) {
-      playSdWav3.play("P2.WAV");
-    }
-    if (note == 39 || LP_octave_bool[3]) {
-      playSdWav4.play("P3.WAV");
-    }
-    if (note == 40 || LP_octave_bool[4]) {
-      playSdWav5.play("P4.WAV");
-    }
-    if (note == 41 || LP_octave_bool[5]) {
-      playSdWav6.play("P5.WAV");
-    }
-    if (note == 42 || LP_octave_bool[6]) {
-      playSdWav7.play("P6.WAV");
-    }
-    if (note == 43 || LP_octave_bool[7]) {
-      playSdWav8.play("P7.WAV");
-    }
-    if (note == 44 || LP_octave_bool[8]) {
-      playSdWav9.play("P8.WAV");
-    }
-    if (note == 45 || LP_octave_bool[9]) {
-      playSdWav10.play("P9.WAV");
-    }
-    if (note == 46 || LP_octave_bool[10]) {
-      playSdWav11.play("P10.WAV");
-    }
-    if (note == 47 || LP_octave_bool[11]) {
-      playSdWav12.play("P11.WAV");
+    for (int files = 0; files < 12; files++) {
+      if (note == (files + 36) || LP_octave_bool[files]) {
+        playSdWav1.play(wavKit[files]);
+      }
     }
   }
-
   //play Memory drumplugin when midichannel = 20
   if (track[channel - 1].MIDIchannel == 20) {
     if (note == 36 || LP_octave_bool[0]) {
@@ -234,7 +505,6 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     waveform4.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[3]]);
     envelope1.noteOn();
     envelope2.noteOn();
-    Serial.println(note);
   }
   if (track[channel - 1].MIDIchannel == 19) {
     pl3waveform1.frequency(note_frequency[note]);
@@ -265,66 +535,72 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   if (track[channel - 1].MIDIchannel == 25) {
     pl9string1.noteOn(note_frequency[note], 1);
   }
-
+}
+//and your noteOff here
+void myNoteOff(byte channel, byte note, byte velocity) {
   if (midi01.idVendor() == 4661) {
-    for (byte songpages = 0; songpages < 16; songpages++) {
-      if (selectPage == SONGMODE_PAGE_1 + songpages) {
-        LP_songmode(note);
-      }
-    }
     for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
       if (note == LP_grid_notes[gridNotes]) {
-        LP_grid_bool[gridNotes] = true;
+        LP_grid_bool[gridNotes] = false;
       }
     }
     for (byte octNotes = 0; octNotes < 24; octNotes++) {
       if (note == LP_octave_notes[octNotes]) {
-        LP_octave_bool[octNotes] = true;
+        LP_octave_bool[octNotes] = false;
       }
     }
     for (byte stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
-        LP_step_bool[stepss] = true;
+        LP_step_bool[stepss] = false;
+      }
+    }
+    for (int trackss = 1; trackss < 8; trackss++) {
+      if (selectPage == trackss) {
+        for (byte octNotes = 0; octNotes < 12; octNotes++) {
+          if (note == LP_octave_notes_keys[octNotes]) {
+            channel = desired_instrument + 1;
+
+            LP_octave_bool_keys[octNotes] = false;
+            note = octNotes + (track[desired_instrument].shown_octaves * 12);
+          }
+        }
       }
     }
 
     // hold for track button
     if (!button[10] && note == 8) {  //"E"  69
-      button[8] = true;
+      button[8] = false;
     }
     // hold for plugin button
     if (!button[10] && note == 24) {  //"C"  67
-      button[9] = true;
+      button[9] = false;
     }
-    //  hold for Songarranger button
-    if (note == 40) {  //"A"  65
-      button[10] = true;
+    // hold for Mixer button
+    if (note == 40) {  //"4"  52
+      button[10] = false;
     }
     // hold for Mixer button
     if (!button[10] && note == 56) {  //"4"  52
-      button[11] = true;
+      button[11] = false;
     }
+
     // hold for FX button
     if (!button[10] && note == 72) {  //"8"  56
-      button[12] = true;
+      button[12] = false;
     }
-    //  hold for recorder button
-    if (!button[10] && note == 88) {  //"A"  65
-      button[13] = true;
+    // hold for recorder button
+    if (!button[10] && note == 88) {
+      button[13] = false;
     }
     // hold for shift button
     if (!button[10] && note == 104) {
-      button[14] = true;
+      button[14] = false;
     }
     // hold for enter button
     if (!button[10] && note == 120) {
-      enter_button = true;
+      button[15] = false;
     }
   }
-}
-//and your noteOff here
-void myNoteOff(byte channel, byte note, byte velocity) {
-
   if (track[channel - 1].MIDIchannel < 17) {
     usbMIDI.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
     MIDI.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
@@ -357,60 +633,6 @@ void myNoteOff(byte channel, byte note, byte velocity) {
   }
   if (track[channel - 1].MIDIchannel == 25) {
     pl9string1.noteOff(0);
-  }
-
-  if (midi01.idVendor() == 4661) {
-    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
-      if (note == LP_grid_notes[gridNotes]) {
-        LP_grid_bool[gridNotes] = false;
-      }
-    }
-    for (byte octNotes = 0; octNotes < 24; octNotes++) {
-      if (note == LP_octave_notes[octNotes]) {
-        LP_octave_bool[octNotes] = false;
-      }
-    }
-    for (byte stepss = 0; stepss < 16; stepss++) {
-      if (note == LP_step_notes[stepss]) {
-        LP_step_bool[stepss] = false;
-      }
-    }
-
-    // hold for track button
-    if (!button[10] && note == 8) {  //"E"  69
-      button[8] = false;
-      
-    }
-    // hold for plugin button
-    if (!button[10] && note == 24) {  //"C"  67
-      button[9] = false;
-      
-    }
-    // hold for Mixer button
-    if (note == 40) {  //"4"  52
-      button[10] = false;
-    }
-    // hold for Mixer button
-    if (!button[10] && note == 56) {  //"4"  52
-      button[11] = false;
-    }
-
-    // hold for FX button
-    if (!button[10] && note == 72) {  //"8"  56
-      button[12] = false;
-    }
-    // hold for recorder button
-    if (!button[10] && note == 88) {
-      button[13] = false;
-    }
-    // hold for shift button
-    if (!button[10] && note == 104) {
-      button[14] = false;
-    }
-    // hold for enter button
-    if (!button[10] && note == 120) {
-      enter_button = false;
-    }
   }
 }
 
@@ -1073,6 +1295,7 @@ void myControlChange(byte channel, byte control, byte value) {
 
   //launchpad control up-est row, they send cc´s
   if (midi01.idVendor() == 4661) {
+    //cursor left
     if (otherCtrlButtons && control == 104 && value == 127) {
       button[0] = true;
       gridTouchX--;
@@ -1080,24 +1303,23 @@ void myControlChange(byte channel, byte control, byte value) {
     } else if (otherCtrlButtons && control == 104 && value != 127) {
       button[0] = false;
     }
+    //cursor right
     if (otherCtrlButtons && control == 105 && value == 127) {
       button[1] = true;
       gridTouchX++;
       drawCursor();
     } else if (otherCtrlButtons && control == 105 && value != 127) {
       button[1] = false;
-      gridTouchY--;
-      drawCursor();
     }
+    //cursor up
     if (otherCtrlButtons && control == 106 && value == 127) {
       button[2] = true;
       gridTouchY--;
       drawCursor();
-      
     } else if (otherCtrlButtons && control == 106 && value != 127) {
       button[2] = false;
-      
     }
+    //cursor down
     if (otherCtrlButtons && control == 107 && value == 127) {
       button[3] = true;
       gridTouchY++;
@@ -1105,363 +1327,184 @@ void myControlChange(byte channel, byte control, byte value) {
     } else if (otherCtrlButtons && control == 107 && value != 127) {
       button[3] = false;
     }
+    //last pot row
     if (otherCtrlButtons && control == 108 && value == 127) {
       button[4] = true;
+      lastPotRow++;
+      if (lastPotRow == 4) {
+        lastPotRow = 0;
+      }
     } else if (otherCtrlButtons && control == 108 && value != 127) {
       button[4] = false;
     }
+    //recbutton
     if (otherCtrlButtons && control == 109 && value == 127) {
       button[5] = true;
+      if (seq_rec == false) {
+        seq_rec = true;
+        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
+        if (selectPage == RECORDER_PAGE) {
+          startRecording();
+          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
+        }
+      } else {
+        seq_rec = false;
+        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
+        if (selectPage == RECORDER_PAGE) {
+          stopRecording();
+          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
+        }
+      }
     } else if (otherCtrlButtons && control == 109 && value != 127) {
       button[5] = false;
     }
+    //playbutton
     if (otherCtrlButtons && control == 110 && value == 127) {
       button[6] = true;
+      startSeq();
     } else if (otherCtrlButtons && control == 110 && value != 127) {
       button[6] = false;
     }
+    //stopbutton
     if (otherCtrlButtons && control == 111 && value == 127) {
       button[7] = true;
+      stopSeq();
     } else if (otherCtrlButtons && control == 111 && value != 127) {
       button[7] = false;
     }
+
+
+    //select tracks
+    if (button[8]) {                         //9th button
+      if (control == 104 && value == 127) {  //"D"  68  1st button
+        selectPage = DRUMTRACK;
+        desired_instrument = 0;
+        desired_track = 0;
+        drumStepSequencer_Static();
+      }
+      for (int controlss = 1; controlss < 8; controlss++) {
+        //select melodic track 2
+        if (control == controlss + 104 && value == 127) {  //"F"  70 2nd button
+          selectPage = controlss;
+          desired_instrument = controlss;
+          desired_track = controlss;
+          gridStepSequencer(controlss);
+        }
+      }
+    }
+
+    //plugin selection
+    if (button[9]) {
+      for (int controlss = 0; controlss < 8; controlss++) {
+        if (control == controlss + 104 && value == 127) {  //"D"  68  1st button
+          desired_track = controlss;
+          desired_instrument = controlss;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+      }
+    }
+
+    //  select Mixer
+    if (button[11]) {                        //"8"  56
+      if (control == 104 && value == 127) {  //"D"  68
+        selectPage = MIXER_PAGE_1;
+        mixerPage1_Static(0);
+      }
+      //select melodic track 2
+      if (control == 105 && value == 127) {  //"F"  70
+        selectPage = MIXER_PAGE_2;
+        mixerPage2_Static();
+      }
+      //select melodic track 3
+      if (control == 106 && value == 127) {  //"9"  57
+        selectPage = MIXER_PAGE_3;
+        mixerPage3_Static();
+      }
+    }
+    //FX Selection
+    if (button[12]) {
+      if (control == 104 && value == 127) {
+        selectPage = FX1_PAGE1;
+        FX1reverb_static();
+      }
+      if (control == 105 && value == 127) {
+        selectPage = FX2_PAGE1;
+        FX2Bitcrush_static();
+      }
+      if (control == 106 && value == 127) {
+        //delay
+      }
+    }
+  }
+}
+//if you have a filter with multiple outputs like the AudioFilterStateVariable
+//this function will switch between the different inputs of the afterwards installed mixer
+//add your filtermixer here
+void selectFilterType(byte pluginchannel, byte mixerchannel) {
+  if (pluginchannel == 17) {
+    pl1mixer2.gain(0, 0);
+    pl1mixer2.gain(1, 0);
+    pl1mixer2.gain(2, 0);
+    pl1mixer2.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 19) {
+    pl3mixer1.gain(0, 0);
+    pl3mixer1.gain(1, 0);
+    pl3mixer1.gain(2, 0);
+    pl3mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 21) {
+    pl5mixer1.gain(0, 0);
+    pl5mixer1.gain(1, 0);
+    pl5mixer1.gain(2, 0);
+    pl5mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 22) {
+    pl6mixer1.gain(0, 0);
+    pl6mixer1.gain(1, 0);
+    pl6mixer1.gain(2, 0);
+    pl6mixer1.gain(mixerchannel, 1);
+  }
+  if (pluginchannel == 25) {
+    pl9mixer1.gain(0, 0);
+    pl9mixer1.gain(1, 0);
+    pl9mixer1.gain(2, 0);
+    pl9mixer1.gain(mixerchannel, 1);
   }
 }
 ////////////////////////////////////////////////////
 //only subject to change when we have reached the limit of templated plugins (per now there are 9 plugins and 7 templated plugins)
 //
 
-//this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
-// just add your plugin-page static function here
-void Plugin_View_Static(byte desired_instrument) {
 
-  if (selectPage == PLUGIN1_PAGE1) {
-    Plugin1_Page_Static(0);
-  }
-  if (selectPage == PLUGIN1_PAGE2) {
-    Plugin1_Page_Static(1);
-  }
-
-
-  if (selectPage == PLUGIN2_PAGE1) {
-    Plugin2_Page_Static(0);
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////// if we select the pluginpage its PLUGINx_PAGE1 bool gets true and selects the Pluginx_Page_Static once
-  ///////// now we see the actual graphs and values, but the programm switches over to Pluginx_Page_Dynamic(),
-  ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-  if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page_Static(0);
-  }
-  if (selectPage == PLUGIN4_PAGE1) {
-    Plugin4_Page_Static(0);
-  }
-  if (selectPage == PLUGIN5_PAGE1) {
-    Plugin5_Page_Static(0);
-  }
-  if (selectPage == PLUGIN6_PAGE1) {
-    Plugin6_Page_Static(0);
-  }
-  if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page_Static(0);
-  }
-  if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page_Static(1);
-  }
-
-  if (selectPage == PLUGIN8_PAGE1) {
-    Plugin8_Page_Static(0);
-  }
-  if (selectPage == PLUGIN9_PAGE1) {
-    Plugin9_Page_Static(0);
-  }
-  if (selectPage == PLUGIN10_PAGE1) {
-    Plugin10_Page_Static(0);
-  }
-  if (selectPage == PLUGIN11_PAGE1) {
-    Plugin11_Page_Static(0);
-  }
-  if (selectPage == PLUGIN12_PAGE1) {
-    Plugin12_Page_Static(0);
-  }
-  if (selectPage == PLUGIN13_PAGE1) {
-    Plugin13_Page_Static(0);
-  }
-  if (selectPage == PLUGIN14_PAGE1) {
-    Plugin14_Page_Static(0);
-  }
-  if (selectPage == PLUGIN15_PAGE1) {
-    Plugin15_Page_Static(0);
-  }
-  if (selectPage == PLUGIN16_PAGE1) {
-    Plugin16_Page_Static(0);
-  }
-}
-//this calls the dynamic plugin view for your plugin, where your changes (via encoder) of the soundcontrols are happening
-// just add your plugin-page dynamic function here
-void Plugin_View_Dynamic() {
-  //***********************************************************************************************************************
-  // 4) copy one of the plugin Page Views
-  //    and change the names according to our variables and functions.
-  //    Every page you want to make has to have its own statement
-  //    we create:
-
-  //  //setting up the Plugin3 Page1-view
-  //    if (selectPage == PLUGIN3_PAGE1) {
-  //      Plugin3_Page1_Dynamic();
-  //    }
-
-  // after adding the active state statement
-  // head over to "midi.ino"
-  //look for *****************************************************************************************
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  //-----------------------------------------
-  //setting up the Plugin1 Page1-view
-  if (selectPage == PLUGIN1_PAGE1) {
-    Plugin1_Page1_Dynamic();
-  }
-  //setting up the Plugin1 Page2-view
-  if (selectPage == PLUGIN1_PAGE2) {
-    Plugin1_Page2_Dynamic();
-  }
-
-  //setting up the Plugin2 Page1-view
-  if (selectPage == PLUGIN2_PAGE1) {
-    Plugin2_Page1_Dynamic();
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////
-  //setting up the Plugin3 Page1-view
-  if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page1_Dynamic();
-  }
-  /////////////////////////////////////////////////////////////////////////////
-
-
-  //setting up the Plugin4 Page1-view
-  if (selectPage == PLUGIN4_PAGE1) {
-    Plugin4_Page1_Dynamic();
-  }
-
-  //setting up the Plugin5 Page1-view
-  if (selectPage == PLUGIN5_PAGE1) {
-    Plugin5_Page1_Dynamic();
-  }
-  //setting up the Plugin6 Page1-view
-  if (selectPage == PLUGIN6_PAGE1) {
-    Plugin6_Page1_Dynamic();
-  }
-  //setting up the Plugin7 Page1-view
-  if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page1_Dynamic();
-  }
-  //setting up the Plugin7 Page2-view
-  if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page2_Dynamic();
-  }
-  //setting up the Plugin8 Page1-view
-  if (selectPage == PLUGIN8_PAGE1) {
-    Plugin8_Page1_Dynamic();
-  }
-  //setting up the Plugin9 Page1-view
-  if (selectPage == PLUGIN9_PAGE1) {
-    Plugin9_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN10_PAGE1) {
-    Plugin10_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN11_PAGE1) {
-    Plugin11_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN12_PAGE1) {
-    Plugin12_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN13_PAGE1) {
-    Plugin13_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN14_PAGE1) {
-    Plugin14_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN15_PAGE1) {
-    Plugin15_Page1_Dynamic();
-  }
-  //setting up the Plugin10 Page1-view
-  if (selectPage == PLUGIN16_PAGE1) {
-    Plugin16_Page1_Dynamic();
-  }
-
-
-
-  //setting up the StepSequencer-view for drumtrack #1
-  if (selectPage == DRUMTRACK) {
-    drumStepSequencer();
-  }
-  //setting up the melodicStepSequencer-view for #2-8
-  for (byte i = 1; i < 8; i++) {
-    if (selectPage == i) {
-      melodicStepSequencer(i);
-    }
-  }
-  //setting up the scaleSelector-view
-  if (selectPage == SCALESELECT) {
-    scaleSelector();
-  }
-
-  //setting up the songMode-view1
-  for (byte pagenr = 0; pagenr < 16; pagenr++) {
-    if (selectPage == pagenr + 10) {
-      songModePage(pagenr);
-    }
-  }
-
-  //setting up the Recorder Page
-  if (selectPage == RECORDER_PAGE) {
-    recorder_Page1_Dynamic();
-  }
-
-
-  //setting up the Mixer Page 1
-  if (selectPage == MIXER_PAGE_1) {
-    MixerPage1_Dynamic();
-  }
-  //setting up the Mixer Page 2
-  if (selectPage == MIXER_PAGE_2) {
-    MixerPage2_Dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == MIXER_PAGE_3) {
-    MixerPage3_Dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == FX1_PAGE1) {
-    FX1reverb_dynamic();
-  }
-  //setting up the Mixer Page 3
-  if (selectPage == FX2_PAGE1) {
-    FX2Bitcrush_dynamic();
-  }
-  //setting up the Mixer Page 2
-  if (selectPage == MIDICC_PAGE_1) {
-    midiCCpage1_Dynamic(desired_track);
-  }
-}
 
 //this is the volume used for the automation in songmode
 //add your amp.gain() to control the volume
 void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    pl1amp.gain(volume);
-  }
-  if (pluginchannel == 18) {
-    pl2amp.gain(volume);
-  }
-  if (pluginchannel == 19) {
-    pl3amp.gain(volume);
-  }
-  if (pluginchannel == 20) {
-    pl4amp.gain(volume);
-  }
-
-  if (pluginchannel == 21) {
-    pl5amp.gain(volume);
-  }
-  if (pluginchannel == 22) {
-    pl6amp.gain(volume);
-  }
-  if (pluginchannel == 23) {
-    pl7amp.gain(volume);
-  }
-  if (pluginchannel == 24) {
-    pl8amp.gain(volume);
-  }
-  if (pluginchannel == 25) {
-    pl9amp.gain(volume);
-  }
-  if (pluginchannel == 26) {
-    pl10amp.gain(volume);
-  }
-  if (pluginchannel == 27) {
-    pl11amp.gain(volume);
-  }
-  if (pluginchannel == 28) {
-    pl12amp.gain(volume);
-  }
-  if (pluginchannel == 29) {
-    pl13amp.gain(volume);
-  }
-  if (pluginchannel == 30) {
-    pl14amp.gain(volume);
-  }
-  if (pluginchannel == 31) {
-    pl15amp.gain(volume);
-  }
-  if (pluginchannel == 32) {
-    pl16amp.gain(volume);
+  for (int pluginn = 0; pluginn < 16; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      gainPerBar[pluginn]->gain(volume);
+    }
   }
 }
 //this is the gain used in the mixer view
 //add your amp.gain2() to control the gain
 void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  if (pluginchannel == 17) {
-    pl1amp2.gain(volume);
-  }
-  if (pluginchannel == 18) {
-    pl2amp2.gain(volume);
-  }
-  if (pluginchannel == 19) {
-    pl3amp2.gain(volume);
-  }
-  if (pluginchannel == 20) {
-    pl4amp2.gain(volume);
-  }
-
-  if (pluginchannel == 21) {
-    pl5amp2.gain(volume);
-  }
-  if (pluginchannel == 22) {
-    pl6amp2.gain(volume);
-  }
-  if (pluginchannel == 23) {
-    pl7amp2.gain(volume);
-  }
-  if (pluginchannel == 24) {
-    pl8amp2.gain(volume);
-  }
-  if (pluginchannel == 25) {
-    pl9amp2.gain(volume);
-  }
-  if (pluginchannel == 26) {
-    pl10amp2.gain(volume);
-  }
-  if (pluginchannel == 27) {
-    pl11amp2.gain(volume);
-  }
-  if (pluginchannel == 28) {
-    pl12amp2.gain(volume);
-  }
-  if (pluginchannel == 29) {
-    pl13amp2.gain(volume);
-  }
-  if (pluginchannel == 30) {
-    pl14amp2.gain(volume);
-  }
-  if (pluginchannel == 31) {
-    pl15amp2.gain(volume);
-  }
-  if (pluginchannel == 32) {
-    pl16amp2.gain(volume);
+  for (int pluginn = 0; pluginn < 16; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      gainmax[pluginn]->gain(volume);
+    }
   }
 }
 //this is the dryvolume
@@ -1683,41 +1726,7 @@ void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channe
     FX3mixer6.gain(3, volume);
   }
 }
-//if you have a filter with multiple outputs like the AudioFilterStateVariable
-//this function will switch between the different inputs of the afterwards installed mixer
-//add your filtermixer here
-void selectFilterType(byte pluginchannel, byte mixerchannel) {
-  if (pluginchannel == 17) {
-    pl1mixer2.gain(0, 0);
-    pl1mixer2.gain(1, 0);
-    pl1mixer2.gain(2, 0);
-    pl1mixer2.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 19) {
-    pl3mixer1.gain(0, 0);
-    pl3mixer1.gain(1, 0);
-    pl3mixer1.gain(2, 0);
-    pl3mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 21) {
-    pl5mixer1.gain(0, 0);
-    pl5mixer1.gain(1, 0);
-    pl5mixer1.gain(2, 0);
-    pl5mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 22) {
-    pl6mixer1.gain(0, 0);
-    pl6mixer1.gain(1, 0);
-    pl6mixer1.gain(2, 0);
-    pl6mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 25) {
-    pl9mixer1.gain(0, 0);
-    pl9mixer1.gain(1, 0);
-    pl9mixer1.gain(2, 0);
-    pl9mixer1.gain(mixerchannel, 1);
-  }
-}
+
 //end of the plugin-function-nightmare
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

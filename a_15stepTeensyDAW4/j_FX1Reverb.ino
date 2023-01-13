@@ -69,7 +69,7 @@ void FX1reverb_dynamic() {
 
 
   TS_Point p = ts.getPoint();
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
 
 

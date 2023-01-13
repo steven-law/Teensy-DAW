@@ -82,7 +82,7 @@ void Plugin5_Page1_Dynamic() {
           pl5enter_was_pushed = false;
           drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
         }
-        if (enter_button) {
+        if (button[15]) {
           newdigate::flashloader loader;
           pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
           pl5enter_was_pushed = true;
@@ -152,7 +152,7 @@ void Plugin5_Page1_Dynamic() {
     }
   }
   TS_Point p = ts.getPoint();
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
 
     if (gridTouchY == 0) {

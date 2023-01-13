@@ -121,7 +121,7 @@ void recorder_Page1_Dynamic() {
       // }
       break;
   }
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
     if (gridTouchY >= 2 && gridTouchY <= 4) {
       lastPotRow = 0;

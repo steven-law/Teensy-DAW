@@ -57,32 +57,7 @@ bool seq_run = false;
 bool seq_rec = false;
 byte tempo = 120;
 
-//Launchpad
-#define LP_GREEN 60
-#define LP_GREEN_DIM 28
-#define LP_RED 15
-#define LP_RED_DIM 13
-#define LP_AMBER 63
-#define LP_AMBER_DIM 29
-#define LP_YELLOW 62
 
-
-byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
-                        16, 17, 18, 19, 20, 21, 22, 23,
-                        32, 33, 34, 35, 36, 37, 38, 39,
-                        48, 49, 50, 51, 52, 53, 54, 55,
-
-                        64, 65, 66, 67, 68, 69, 70, 71,
-                        80, 81, 82, 83, 84, 85, 86, 87,
-                        96, 97, 98, 99, 100, 101, 102, 103,
-                        112, 113, 114, 115, 116, 117, 118, 118 };
-bool LP_grid_bool[64];
-byte LP_octave_notes[24]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70,
-                          96, 81, 97, 82, 98, 99, 84, 100, 85, 101, 86, 102 };
-bool LP_octave_bool[24];
-byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
-bool LP_step_bool[16];
-bool LP_drawOnce[16];
 
 //****************************************************************************
 // 3) add your Plugin name (4 chars max) to the pluginName array, if needed decrease MAX-PLUGINS, MAX-CHANNELS & MAX-PAGES
@@ -97,7 +72,7 @@ bool LP_drawOnce[16];
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
-
+byte selectPage;
 #define DRUMTRACK 0
 // 1-7 are the Sequencer-Tracks: 2-8
 #define SCALESELECT 8
@@ -157,11 +132,12 @@ const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Ra
 #define FX2_PAGE1 123
 #define FX3_PAGE1 126
 
-byte selectPage;
+
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
 #define MAX_WAV_FILES 11
+const char* wavKit[12] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
 const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
                                          "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
                                          "21.RAW", "22.RAW", "23.RAW", "24.RAW", "25.RAW", "26.RAW", "27.RAW", "28.RAW", "29.RAW", "30.RAW",
@@ -565,9 +541,10 @@ int Potentiometer[4];
 bool enc_moved[4]{ 0, 0, 0, 0 };
 int encoded[4];
 //button variables
-bool enter_button = false;
+
 
 bool button[16]{};
+
 bool something_was_pressed = false;
 bool otherCtrlButtons = true;
 byte last_button_X = 0;
@@ -577,6 +554,34 @@ int Button_Pos_X_last = (last_button_X)*STEP_FRAME_W;
 int Button_Pos_Y_last = (last_button_Y)*STEP_FRAME_H;
 int Button_Pos_X_new = (last_button_X - 1) * STEP_FRAME_W;
 int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
+
+//Launchpad
+#define LP_GREEN 60
+#define LP_GREEN_DIM 28
+#define LP_RED 15
+#define LP_RED_DIM 13
+#define LP_AMBER 63
+#define LP_AMBER_DIM 29
+#define LP_YELLOW 62
+
+
+byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
+                        16, 17, 18, 19, 20, 21, 22, 23,
+                        32, 33, 34, 35, 36, 37, 38, 39,
+                        48, 49, 50, 51, 52, 53, 54, 55,
+
+                        64, 65, 66, 67, 68, 69, 70, 71,
+                        80, 81, 82, 83, 84, 85, 86, 87,
+                        96, 97, 98, 99, 100, 101, 102, 103,
+                        112, 113, 114, 115, 116, 117, 118, 118 };
+bool LP_grid_bool[64];
+byte LP_octave_notes[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
+bool LP_octave_bool[12];
+byte LP_octave_notes_keys[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
+bool LP_octave_bool_keys[12];
+byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
+bool LP_step_bool[16];
+bool LP_drawOnce[16];
 
 //drawPot Variables
 float circlePos;

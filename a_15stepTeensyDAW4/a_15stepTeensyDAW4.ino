@@ -564,7 +564,10 @@ AudioControlSGTL5000 sgtl5000_1;  //xy=2645.5000286102295,809.0000114440918
 // GUItool: end automatically generated code
 
 
-
+AudioAmplifier *gainmax[16]{ &pl1amp2, &pl2amp2, &pl3amp2, &pl4amp2, &pl5amp2, &pl6amp2, &pl7amp2, &pl8amp2,
+                             &pl9amp2, &pl10amp2, &pl11amp2, &pl12amp2, &pl13amp2, &pl14amp2, &pl15amp2, &pl16amp2 };
+AudioAmplifier *gainPerBar[16]{ &pl1amp, &pl2amp, &pl3amp, &pl4amp, &pl5amp, &pl6amp, &pl7amp, &pl8amp,
+                             &pl9amp, &pl10amp, &pl11amp, &pl12amp, &pl13amp, &pl14amp, &pl15amp, &pl16amp };
 
 
 
@@ -758,7 +761,7 @@ void loop() {
   kpd.tick();
   sendClock();
   readMainButtons();
-  doMainButtons();
+  //doMainButtons();
   readEncoders();
   Plugin_View_Dynamic();
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
@@ -774,7 +777,7 @@ void loop() {
   if (msecs % 100 == 0) {
     //Serial.print(LP_octave_bool[0]);
     //Serial.print("-");
-    Serial.println(button[8]);
+    //Serial.println(button[8]);
     tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
     tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
     drawCursor();
@@ -790,7 +793,7 @@ void loop() {
   }
 
 
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
     int start_at = millis();
 
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Arrangment select
@@ -889,8 +892,6 @@ void loop() {
   //}
   //Serial.printf("processing touch took %i millis!", millis () - start_at);
 }
-
-
 void readMainButtons() {
 
   while (kpd.available()) {
@@ -900,36 +901,373 @@ void readMainButtons() {
       //cursor
       //curser left
       if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
-        button[0] = true;
+        gridTouchX--;
+        drawCursor();
       }
       //cursor right
       if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
-        button[1] = true;
+        gridTouchX++;
+        drawCursor();
       }
       //cursor up
       if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
-        button[2] = true;
+        gridTouchY--;
+        drawCursor();
+        //something_was_pressed = true;
       }
       //cursor down
       if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
-        button[3] = true;
+        gridTouchY++;
+        drawCursor();
+        //something_was_pressed = true;
       }
       //last-pot-row
       if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
-        button[4] = true;
+        lastPotRow++;
+        if (lastPotRow == 4) {
+          lastPotRow = 0;
+        }
       }
-      //stopbutton
-      if (otherCtrlButtons && key.bit.KEY == 53) {  //"1" 49
-        button[5] = true;
+
+      //recbutton
+      if (otherCtrlButtons && key.bit.KEY == 53) {  //"5" 53
+        if (seq_rec == false) {
+          seq_rec = true;
+          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
+          if (selectPage == RECORDER_PAGE) {
+            startRecording();
+            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
+          }
+        } else {
+          seq_rec = false;
+          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
+          if (selectPage == RECORDER_PAGE) {
+            stopRecording();
+            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
+          }
+        }
       }
+
       //playbutton
       if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
-        button[6] = true;
+        startSeq();
       }
       //stopbutton
       if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
-        button[7] = true;
+        stopSeq();
       }
+
+
+      //select tracks
+      if (button[8]) {            //9th button
+        if (key.bit.KEY == 68) {  //"D"  68  1st button
+          selectPage = DRUMTRACK;
+          desired_instrument = 0;
+          desired_track = 0;
+          drumStepSequencer_Static();
+        }
+        //select melodic track 2
+        if (key.bit.KEY == 70) {  //"F"  70 2nd button
+          selectPage = 1;
+          desired_instrument = 1;
+          desired_track = 1;
+          gridStepSequencer(1);
+        }
+        //select melodic track 3
+        if (key.bit.KEY == 57) {  //"9"  57 3rd button
+          selectPage = 2;
+          desired_instrument = 2;
+          desired_track = 2;
+          gridStepSequencer(2);
+        }
+        //select melodic track 4
+        if (key.bit.KEY == 66) {  //"B"  66 4th button
+          selectPage = 3;
+          desired_instrument = 3;
+          desired_track = 3;
+          gridStepSequencer(3);
+        }
+        //select melodic track 5
+        if (key.bit.KEY == 55) {  //"7"  55 5th button
+          selectPage = 4;
+          desired_instrument = 4;
+          desired_track = 4;
+          gridStepSequencer(4);
+        }
+        //select melodic track 6
+        if (key.bit.KEY == 53) {  //"5"  53 6th button
+          selectPage = 5;
+          desired_instrument = 5;
+          desired_track = 5;
+          gridStepSequencer(5);
+        }
+        //select melodic track 7
+        if (key.bit.KEY == 51) {  //"3"  51 7th button
+          selectPage = 6;
+          desired_instrument = 6;
+          desired_track = 6;
+          gridStepSequencer(6);
+        }
+        //select melodic track 8
+        if (key.bit.KEY == 49) {  //"1"  49 8th button
+          selectPage = 7;
+          desired_instrument = 7;
+          desired_track = 7;
+          gridStepSequencer(7);
+        }
+      }
+      //plugin selection
+      if (button[9]) {
+        if (key.bit.KEY == 68) {  //"D"  68  1st button
+          desired_track = 0;
+          desired_instrument = 0;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 70) {
+          desired_track = 1;
+          desired_instrument = 1;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 57) {
+          desired_track = 2;
+          desired_instrument = 2;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 66) {
+          desired_track = 3;
+          desired_instrument = 3;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 55) {
+          desired_track = 4;
+          desired_instrument = 4;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 53) {
+          desired_track = 5;
+          desired_instrument = 5;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 51) {
+          desired_track = 6;
+          desired_instrument = 6;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+        if (key.bit.KEY == 49) {
+          desired_track = 7;
+          desired_instrument = 7;
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
+          }
+        }
+      }
+      //  select Songarranger page 11 & button[10]
+      if (key.bit.KEY == 65) {  //"A"  65
+        button[10] = true;
+        selectPage = SONGMODE_PAGE_11;
+        gridSongMode(10);
+      }
+      if (button[10]) {  //"A"  65
+        if (key.bit.KEY == 68) {
+          selectPage = SONGMODE_PAGE_1;
+          gridSongMode(0);
+          songModePage(0);
+        }
+        if (key.bit.KEY == 70) {
+          selectPage = SONGMODE_PAGE_2;
+          gridSongMode(1);
+          songModePage(1);
+        }
+        if (key.bit.KEY == 57) {
+          selectPage = SONGMODE_PAGE_3;
+          gridSongMode(2);
+          songModePage(2);
+        }
+        if (key.bit.KEY == 66) {
+          selectPage = SONGMODE_PAGE_4;
+          gridSongMode(3);
+          songModePage(3);
+        }
+        if (key.bit.KEY == 55) {
+          selectPage = SONGMODE_PAGE_5;
+          gridSongMode(4);
+          songModePage(4);
+        }
+        if (key.bit.KEY == 53) {
+          selectPage = SONGMODE_PAGE_6;
+          gridSongMode(5);
+          songModePage(5);
+        }
+        if (key.bit.KEY == 51) {
+          selectPage = SONGMODE_PAGE_7;
+          gridSongMode(6);
+          songModePage(6);
+        }
+        if (key.bit.KEY == 49) {
+          selectPage = SONGMODE_PAGE_8;
+          gridSongMode(7);
+          songModePage(7);
+        }
+        if (key.bit.KEY == 69) {
+          selectPage = SONGMODE_PAGE_9;
+          gridSongMode(8);
+          songModePage(8);
+        }
+        if (key.bit.KEY == 67) {
+          selectPage = SONGMODE_PAGE_10;
+          gridSongMode(9);
+          songModePage(9);
+        }
+        if (key.bit.KEY == 56) {
+          selectPage = SONGMODE_PAGE_12;
+          gridSongMode(11);
+          songModePage(11);
+        }
+        if (key.bit.KEY == 52) {
+          selectPage = SONGMODE_PAGE_13;
+          gridSongMode(12);
+          songModePage(12);
+        }
+        if (key.bit.KEY == 54) {
+          selectPage = SONGMODE_PAGE_14;
+          gridSongMode(13);
+          songModePage(13);
+        }
+        if (key.bit.KEY == 50) {
+          selectPage = SONGMODE_PAGE_15;
+          gridSongMode(14);
+          songModePage(14);
+        }
+        if (key.bit.KEY == 48) {
+          selectPage = SONGMODE_PAGE_16;
+          gridSongMode(15);
+          songModePage(15);
+        }
+      }
+      //  select Mixer
+      if (button[11]) {           //"8"  56
+        if (key.bit.KEY == 68) {  //"D"  68
+          selectPage = MIXER_PAGE_1;
+          mixerPage1_Static(0);
+        }
+        //select melodic track 2
+        if (key.bit.KEY == 70) {  //"F"  70
+          selectPage = MIXER_PAGE_2;
+          mixerPage2_Static();
+        }
+        //select melodic track 3
+        if (key.bit.KEY == 57) {  //"9"  57
+          selectPage = MIXER_PAGE_3;
+          mixerPage3_Static();
+        }
+      }
+      //FX Selection
+      if (button[12]) {
+        if (key.bit.KEY == 68) {
+          selectPage = FX1_PAGE1;
+          FX1reverb_static();
+        }
+        if (key.bit.KEY == 70) {
+          selectPage = FX2_PAGE1;
+          FX2Bitcrush_static();
+        }
+        if (key.bit.KEY == 57) {
+          //delay
+        }
+      }
+      //recorder
+      if (!button[10] && key.bit.KEY == 54) {  // 14th button
+        selectPage = RECORDER_PAGE;
+        recorder_Page_Static();
+      }
+
+
 
 
       // hold for track button
@@ -940,10 +1278,6 @@ void readMainButtons() {
       if (!button[10] && key.bit.KEY == 67) {  //"C"  67
         button[9] = true;
       }
-      //  select Songarranger page 11 & button[10]
-      if (key.bit.KEY == 65) {  //"A"  65
-        button[10] = true;
-      }
       // hold for Mixer button
       if (!button[10] && key.bit.KEY == 56) {  //"4"  52
         button[11] = true;
@@ -952,8 +1286,8 @@ void readMainButtons() {
       if (!button[10] && key.bit.KEY == 52) {  //"8"  56
         button[12] = true;
       }
-      //recorder
-      if (!button[10] && key.bit.KEY == 54) {  // 14th button
+      // hold for cursor via pot
+      if (!button[10] && key.bit.KEY == 54) {
         button[13] = true;
       }
       // hold for cursor via pot
@@ -962,7 +1296,218 @@ void readMainButtons() {
       }
       // hold for enter button
       if (!button[10] && key.bit.KEY == 48) {
-        enter_button = true;
+        button[15] = true;
+      }
+    } else if (key.bit.EVENT == KEY_JUST_RELEASED) {
+      //tft.updateScreen();
+      // release for track button
+      if (key.bit.KEY == 69) {  //"E"  69
+        button[8] = false;
+      }
+      // release for plugin button
+      if (key.bit.KEY == 67) {  //"C"  67
+        button[9] = false;
+      }
+      // release for arranger button
+      if (key.bit.KEY == 65) {  //"A"  65
+        button[10] = false;
+      }
+      // hold for mixer button
+      if (key.bit.KEY == 56) {  //"8"  56
+        button[11] = false;
+      }
+      // release for FX button
+      if (key.bit.KEY == 52) {  //"4"  52
+        button[12] = false;
+      }
+      // rel for cursor via pot
+      if (!button[10] && key.bit.KEY == 54) {
+        button[13] = false;
+      }
+      //release for cursor via pot
+      if (key.bit.KEY == 50) {
+        button[14] = false;
+      }
+      //release for enter button
+      if (key.bit.KEY == 48) {
+        button[15] = false;
+      }
+    }
+  }
+}
+/*
+void readMainButtons() {
+
+  while (kpd.available()) {
+    keypadEvent key = kpd.read();
+    if (key.bit.EVENT == KEY_JUST_PRESSED) {
+      //tft.updateScreen();
+      //cursor
+      //curser left
+      if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
+        button[0] = true;
+        gridTouchX--;
+        drawCursor();
+      }
+      //cursor right
+      if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
+        button[1] = true;
+        gridTouchX++;
+        drawCursor();
+      }
+      //cursor up
+      if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
+        button[2] = true;
+        gridTouchY--;
+        drawCursor();
+      }
+      //cursor down
+      if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
+        button[3] = true;
+        gridTouchY++;
+        drawCursor();
+      }
+      //last-pot-row
+      if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
+        button[4] = true;
+        lastPotRow++;
+        if (lastPotRow == 4) {
+          lastPotRow = 0;
+        }
+      }
+      //recbutton
+      if (otherCtrlButtons && key.bit.KEY == 53) {  //"1" 49
+        button[5] = true;
+        if (seq_rec == false) {
+          seq_rec = true;
+          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
+          if (selectPage == RECORDER_PAGE) {
+            startRecording();
+            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
+          }
+        } else {
+          seq_rec = false;
+          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
+          if (selectPage == RECORDER_PAGE) {
+            stopRecording();
+            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
+          }
+        }
+      }
+      //playbutton
+      if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
+        button[6] = true;
+        startSeq();
+      }
+      //stopbutton
+      if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
+        button[7] = true;
+        stopSeq();
+      }
+
+
+      // hold for track button
+      if (!button[10] && key.bit.KEY == 69) {  //"E"  69
+        button[8] = true;
+        if (button[0]) {  //"D"  68  1st button
+          selectPage = 0;
+          desired_instrument = 0;
+          desired_track = 0;
+          drumStepSequencer_Static();
+        }
+        for (int trackss = 1; trackss < 8; trackss++) {
+          //select melodic track 2
+          if (button[trackss]) {  //"F"  70 2nd button
+            selectPage = trackss;
+            desired_instrument = trackss;
+            desired_track = trackss;
+            gridStepSequencer(trackss);
+          }
+        }
+      }
+      // hold for plugin button
+      if (!button[10] && key.bit.KEY == 67) {  //"C"  67
+        button[9] = true;
+        Serial.println("Press Plugin");
+        for (int pluginss = 0; pluginss < 8; pluginss++) {
+          if (button[pluginss]) {  //"D"  68  1st button
+            desired_track = pluginss;
+            desired_instrument = pluginss;
+            Serial.println("Press 1");
+            //midicc_view
+            for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+              if (track[desired_instrument].MIDIchannel == pluginSelection) {
+                selectPage = MIDICC_PAGE_1;
+                midiCC_view_Static(0, desired_track);
+              }
+              //plugin_1_view
+              if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+                selectPage = pluginSelection + 40;
+                Plugin_View_Static(desired_track);
+              }
+            }
+          }
+        }
+      }
+      //  select Songarranger page 11 & button[10]
+      if (key.bit.KEY == 65) {  //"A"  65
+        button[10] = true;
+        selectPage = SONGMODE_PAGE_11;
+        gridSongMode(10);
+        for (int pagess = 0; pagess < 16; pagess++) {
+          if (button[pagess]) {
+            selectPage = SONGMODE_PAGE_1 + pagess;
+            gridSongMode(pagess);
+            songModePage(pagess);
+          }
+        }
+      }
+      // hold for Mixer button
+      if (!button[10] && key.bit.KEY == 56) {  //"4"  52
+        button[11] = true;
+        if (button[0]) {  //"D"  68
+          selectPage = MIXER_PAGE_1;
+          mixerPage1_Static(0);
+        }
+        //select melodic track 2
+        if (button[1]) {  //"F"  70
+          selectPage = MIXER_PAGE_2;
+          mixerPage2_Static();
+        }
+        //select melodic track 3
+        if (button[2]) {  //"9"  57
+          selectPage = MIXER_PAGE_3;
+          mixerPage3_Static();
+        }
+      }
+      // hold for FX button
+      if (!button[10] && key.bit.KEY == 52) {  //"8"  56
+        button[12] = true;
+        if (button[0]) {
+          selectPage = FX1_PAGE1;
+          FX1reverb_static();
+        }
+        if (button[1]) {
+          selectPage = FX2_PAGE1;
+          FX2Bitcrush_static();
+        }
+        if (button[2]) {
+          //delay
+        }
+      }
+      //recorder
+      if (!button[10] && key.bit.KEY == 54) {  // 14th button
+        button[13] = true;
+        selectPage = RECORDER_PAGE;
+        recorder_Page_Static();
+      }
+      // hold for cursor via pot
+      if (!button[10] && key.bit.KEY == 50) {
+        button[14] = true;
+      }
+      // hold for enter button
+      if (!button[10] && key.bit.KEY == 48) {
+        button[15] = true;
       }
     }
     // if the buttons whre released
@@ -970,26 +1515,18 @@ void readMainButtons() {
 
       if (key.bit.KEY == 68) {  //"D" 68 1st button
         button[0] = false;
-        gridTouchX--;
-        drawCursor();
       }
       //cursor right
       if (key.bit.KEY == 70) {  //"F"  70 2nd button
         button[1] = false;
-        gridTouchX++;
-      drawCursor();
       }
       //cursor up
       if (key.bit.KEY == 57) {  //"9"   57 3rd button
         button[2] = false;
-        gridTouchY--;
-      drawCursor();
       }
       //cursor down
       if (key.bit.KEY == 66) {  //"B"   66 4th button
         button[3] = false;
-        gridTouchY++;
-      drawCursor();
       }
       //last-pot-row
       if (key.bit.KEY == 55) {  //"B"   66 5th button
@@ -1039,12 +1576,12 @@ void readMainButtons() {
       }
       // hold for enter button
       if (key.bit.KEY == 48) {
-        enter_button = false;
+        button[15] = false;
       }
     }
   }
 }
-
+*/
 void doMainButtons() {
 
   unsigned long currentMillis3 = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
@@ -1114,189 +1651,40 @@ void doMainButtons() {
     //select tracks
     if (!button[10] && button[8]) {  //9th button
       if (button[0]) {               //"D"  68  1st button
-        selectPage = DRUMTRACK;
+        selectPage = 0;
         desired_instrument = 0;
         desired_track = 0;
         drumStepSequencer_Static();
       }
-      
-      //select melodic track 2
-      if (button[1]) {  //"F"  70 2nd button
-        selectPage = 1;
-        desired_instrument = 1;
-        desired_track = 1;
-        gridStepSequencer(1);
-      }
-      //select melodic track 3
-      if (button[2]) {  //"9"  57 3rd button
-        selectPage = 2;
-        desired_instrument = 2;
-        desired_track = 2;
-        gridStepSequencer(2);
-      }
-      //select melodic track 4
-      if (button[3]) {  //"B"  66 4th button
-        selectPage = 3;
-        desired_instrument = 3;
-        desired_track = 3;
-        gridStepSequencer(3);
-      }
-      //select melodic track 5
-      if (button[4]) {  //"7"  55 5th button
-        selectPage = 4;
-        desired_instrument = 4;
-        desired_track = 4;
-        gridStepSequencer(4);
-      }
-      //select melodic track 6
-      if (button[5]) {  //"5"  53 6th button
-        selectPage = 5;
-        desired_instrument = 5;
-        desired_track = 5;
-        gridStepSequencer(5);
-      }
-      //select melodic track 7
-      if (button[6]) {  //"3"  51 7th button
-        selectPage = 6;
-        desired_instrument = 6;
-        desired_track = 6;
-        gridStepSequencer(6);
-      }
-      //select melodic track 8
-      if (button[7]) {  //"1"  49 8th button
-        selectPage = 7;
-        desired_instrument = 7;
-        desired_track = 7;
-        gridStepSequencer(7);
+      for (int trackss = 1; trackss < 8; trackss++) {
+        //select melodic track 2
+        if (button[trackss]) {  //"F"  70 2nd button
+          selectPage = trackss;
+          desired_instrument = trackss;
+          desired_track = trackss;
+          gridStepSequencer(trackss);
+        }
       }
     }
     //plugin selection
     if (!button[10] && button[9]) {
-      if (button[0]) {  //"D"  68  1st button
-        desired_track = 0;
-        desired_instrument = 0;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[1]) {
-        desired_track = 1;
-        desired_instrument = 1;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[2]) {
-        desired_track = 2;
-        desired_instrument = 2;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[3]) {
-        desired_track = 3;
-        desired_instrument = 3;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[4]) {
-        desired_track = 4;
-        desired_instrument = 4;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[5]) {
-        desired_track = 5;
-        desired_instrument = 5;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[6]) {
-        desired_track = 6;
-        desired_instrument = 6;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
-          }
-        }
-      }
-      if (button[7]) {
-        desired_track = 7;
-        desired_instrument = 7;
-        //midicc_view
-        for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-          if (track[desired_instrument].MIDIchannel == pluginSelection) {
-            selectPage = MIDICC_PAGE_1;
-            midiCC_view_Static(0, desired_track);
-          }
-          //plugin_1_view
-          if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-            selectPage = pluginSelection + 40;
-            Plugin_View_Static(desired_track);
+      Serial.println("Press Plugin");
+      for (int pluginss = 0; pluginss < 8; pluginss++) {
+        if (button[pluginss]) {  //"D"  68  1st button
+          desired_track = pluginss;
+          desired_instrument = pluginss;
+          Serial.println("Press 1");
+          //midicc_view
+          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+            if (track[desired_instrument].MIDIchannel == pluginSelection) {
+              selectPage = MIDICC_PAGE_1;
+              midiCC_view_Static(0, desired_track);
+            }
+            //plugin_1_view
+            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
+              selectPage = pluginSelection + 40;
+              Plugin_View_Static(desired_track);
+            }
           }
         }
       }
@@ -1305,80 +1693,12 @@ void doMainButtons() {
     if (button[10]) {
       selectPage = SONGMODE_PAGE_11;
       gridSongMode(10);
-      if (button[0]) {
-        selectPage = SONGMODE_PAGE_1;
-        gridSongMode(0);
-        songModePage(0);
-      }
-      if (button[1]) {
-        selectPage = SONGMODE_PAGE_2;
-        gridSongMode(1);
-        songModePage(1);
-      }
-      if (button[2]) {
-        selectPage = SONGMODE_PAGE_3;
-        gridSongMode(2);
-        songModePage(2);
-      }
-      if (button[3]) {
-        selectPage = SONGMODE_PAGE_4;
-        gridSongMode(3);
-        songModePage(3);
-      }
-      if (button[4]) {
-        selectPage = SONGMODE_PAGE_5;
-        gridSongMode(4);
-        songModePage(4);
-      }
-      if (button[5]) {
-        selectPage = SONGMODE_PAGE_6;
-        gridSongMode(5);
-        songModePage(5);
-      }
-      if (button[6]) {
-        selectPage = SONGMODE_PAGE_7;
-        gridSongMode(6);
-        songModePage(6);
-      }
-      if (button[7]) {
-        selectPage = SONGMODE_PAGE_8;
-        gridSongMode(7);
-        songModePage(7);
-      }
-      if (button[8]) {
-        selectPage = SONGMODE_PAGE_9;
-        gridSongMode(8);
-        songModePage(8);
-      }
-      if (button[9]) {
-        selectPage = SONGMODE_PAGE_10;
-        gridSongMode(9);
-        songModePage(9);
-      }
-      if (button[11]) {
-        selectPage = SONGMODE_PAGE_12;
-        gridSongMode(11);
-        songModePage(11);
-      }
-      if (button[12]) {
-        selectPage = SONGMODE_PAGE_13;
-        gridSongMode(12);
-        songModePage(12);
-      }
-      if (button[13]) {
-        selectPage = SONGMODE_PAGE_14;
-        gridSongMode(13);
-        songModePage(13);
-      }
-      if (button[14]) {
-        selectPage = SONGMODE_PAGE_15;
-        gridSongMode(14);
-        songModePage(14);
-      }
-      if (enter_button) {
-        selectPage = SONGMODE_PAGE_16;
-        gridSongMode(15);
-        songModePage(15);
+      for (int pagess = 0; pagess < 16; pagess++) {
+        if (button[pagess]) {
+          selectPage = SONGMODE_PAGE_1 + pagess;
+          gridSongMode(pagess);
+          songModePage(pagess);
+        }
       }
     }
     //  select Mixer

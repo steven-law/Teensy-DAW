@@ -137,6 +137,8 @@ void gridSongMode(byte songpageNumber) {  //static Display rendering
 void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
+  
+  phrase = gridTouchX - 2 + (16 * songpageNumber);
   int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
   byte touched_track;
   if (gridTouchY == 1) touched_track = 0;
@@ -147,10 +149,10 @@ void songModePage(byte songpageNumber) {
   if (gridTouchY == 9) touched_track = 5;
   if (gridTouchY == 10) touched_track = 6;
   if (gridTouchY == 12) touched_track = 7;
+  
 
 
- 
-  if (!button[14] && !enter_button) {
+  if (!button[14] && !button[15]) {
 
     //gridTouchX
     if (enc_moved[0]) {
@@ -173,7 +175,7 @@ void songModePage(byte songpageNumber) {
     }
   }
 
-  if (enter_button) {
+  if (button[15]) {
     track[touched_track].arrangment1[touched_phrase] = track[touched_track].lastclip;
     //Clipassign
     if (enc_moved[0]) {
@@ -221,7 +223,7 @@ void songModePage(byte songpageNumber) {
     }
   }
 
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
 
     /*

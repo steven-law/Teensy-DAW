@@ -90,7 +90,7 @@ void Plugin2_Page1_Dynamic() {
 
 
   TS_Point p = ts.getPoint();
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {

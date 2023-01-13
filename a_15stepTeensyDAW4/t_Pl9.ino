@@ -136,7 +136,7 @@ void Plugin9_Page1_Dynamic() {
     }
   }
 
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
       //Save button

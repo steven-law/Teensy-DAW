@@ -85,7 +85,7 @@ void melodicStepSequencer(byte desired_instrument) {
 
 
   TS_Point p = ts.getPoint();
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
     //manually assigning steps to the grid;
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds

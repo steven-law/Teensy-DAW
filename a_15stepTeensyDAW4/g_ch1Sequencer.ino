@@ -63,7 +63,7 @@ void drumStepSequencer() {
   //tho, this leads to a drop of the sequencertempo
 
 
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
 
 

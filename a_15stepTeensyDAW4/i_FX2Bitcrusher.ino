@@ -84,7 +84,7 @@ void FX2Bitcrush_dynamic() {
   }*/
 
   TS_Point p = ts.getPoint();
-  if (ts.touched() || enter_button) {
+  if (ts.touched() || button[15]) {
 
 
     if (gridTouchX >= 18) {
