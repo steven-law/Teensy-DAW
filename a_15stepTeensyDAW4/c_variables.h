@@ -504,6 +504,7 @@ byte songpageNumber = 10;
 #define phraseSegmentLength 16  // a variable for the zoomfactor in songmode
 byte pixelphrase = 0;           // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
+byte phraser;
 byte end_of_loop = 255;
 byte start_of_loop = 0;
 byte end_of_loop_old = 255;
@@ -542,7 +543,7 @@ bool enc_moved[4]{ 0, 0, 0, 0 };
 int encoded[4];
 //button variables
 
-
+bool drumnotes[12];
 bool button[16]{};
 
 bool something_was_pressed = false;

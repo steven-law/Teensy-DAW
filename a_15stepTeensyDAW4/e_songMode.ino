@@ -14,9 +14,9 @@ void drawarrengmentLines(byte songpageNumber) {
   page_phrase_end = (songpageNumber + 1) * 16;
 
   //draw horizontal song arrangment Lines
-  for (byte phraser = page_phrase_start; phraser < page_phrase_end; phraser++) {
+  for (byte phrasers = page_phrase_start; phrasers < page_phrase_end; phrasers++) {
     for (byte trackss = 0; trackss < 8; trackss++) {
-      drawarrengmentLine(songpageNumber, trackss, phraser);
+      drawarrengmentLine(songpageNumber, trackss, phrasers);
     }
   }
 }
@@ -138,7 +138,7 @@ void songModePage(byte songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
   
-  phrase = gridTouchX - 2 + (16 * songpageNumber);
+  phraser = gridTouchX - 2 + (16 * songpageNumber);
   int touched_phrase = gridTouchX - 2 + (16 * songpageNumber);
   byte touched_track;
   if (gridTouchY == 1) touched_track = 0;

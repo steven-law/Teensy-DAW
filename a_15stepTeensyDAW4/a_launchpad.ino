@@ -31,19 +31,19 @@ void LP_songmode(byte note) {
 
 
           if (note == notes + (instruments * 16)) {
-            if (track[instruments].arrangment1[phrase] == notes) {
-              track[instruments].arrangment1[phrase] = 8;
+            if (track[instruments].arrangment1[phraser] == notes) {
+              track[instruments].arrangment1[phraser] = 8;
               track[instruments].lastclip = 8;
             } else {
-              track[instruments].arrangment1[phrase] = notes;
+              track[instruments].arrangment1[phraser] = notes;
               track[instruments].lastclip = notes;
             }
-            drawarrengmentLine(songpages, instruments, phrase);
+            drawarrengmentLine(songpages, instruments, phraser);
             for (byte notes = 0; notes < 9; notes++) {
               midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
             }
-            if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
-              midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
+            if (track[instruments].arrangment1[phraser] < MAX_CLIPS) {
+              midi01.sendNoteOn(track[instruments].arrangment1[phraser] + (instruments * 16), 60, 1);
             }
           }
         }

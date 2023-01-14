@@ -123,6 +123,7 @@ void step(int current) {
       for (int i = 0; i < 12; i++) {
         if (channel1Clip[track[0].clip_songMode][i][current]) {
           if (!dsend_noteOff[i]) {
+            drumnotes[i] = true;
             usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
             MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
             if (midi01.idVendor() != 4661) {
@@ -137,6 +138,7 @@ void step(int current) {
           }
         } else {
           if (dsend_noteOff[i]) {
+          
             usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             if (midi01.idVendor() != 4661) {
@@ -149,75 +151,6 @@ void step(int current) {
             }
             dsend_noteOff[i] = false;
           }
-        }
-      }
-      //play drumplugin when midichannel = 18
-      if (track[0].MIDIchannel == 18) {
-        for (int files = 0; files < 12; files++) {
-          if (channel1Clip[track[0].clip_songMode][files][current]) {
-            playSdWav1.play(wavKit[files]);
-          }
-        }
-      }
-
-      //play Memory drumplugin when midichannel = 20
-      if (track[0].MIDIchannel == 20) {
-        if (channel1Clip[track[0].clip_songMode][0][current]) {
-          playMem1.play(AudioSampleKick);
-        }
-        if (channel1Clip[track[0].clip_songMode][1][current]) {
-          playMem2.play(AudioSampleSnare);
-        }
-        if (channel1Clip[track[0].clip_songMode][2][current]) {
-          playMem3.play(AudioSampleP2);
-        }
-        if (channel1Clip[track[0].clip_songMode][3][current]) {
-          playMem4.play(AudioSampleHihat);
-        }
-        if (channel1Clip[track[0].clip_songMode][4][current]) {
-          playMem5.play(AudioSampleCashregister);
-        }
-        if (channel1Clip[track[0].clip_songMode][5][current]) {
-          playMem6.play(AudioSampleTomtom);
-        }
-        if (channel1Clip[track[0].clip_songMode][6][current]) {
-          playMem6.play(AudioSampleGong);
-        }
-        if (channel1Clip[track[0].clip_songMode][7][current]) {
-          //playSdWav8.play("P7.WAV");
-        }
-        if (channel1Clip[track[0].clip_songMode][8][current]) {
-          //playSdWav9.play("P8.WAV");
-        }
-        if (channel1Clip[track[0].clip_songMode][9][current]) {
-          //playSdWav10.play("P9.WAV");
-        }
-        if (channel1Clip[track[0].clip_songMode][10][current]) {
-          //playSdWav11.play("P10.WAV");
-        }
-        if (channel1Clip[track[0].clip_songMode][11][current]) {
-          //playSdWav12.play("P11.WAV");
-        }
-      }
-      //play Memory drumplugin when midichannel = 20
-      if (track[0].MIDIchannel == 23) {
-        if (channel1Clip[track[0].clip_songMode][0][current]) {
-          pl7drum1.noteOn();
-        }
-        if (channel1Clip[track[0].clip_songMode][1][current]) {
-          pl7envelope1.noteOn();
-        } else {
-          pl7envelope1.noteOff();
-        }
-        if (channel1Clip[track[0].clip_songMode][2][current]) {
-          pl7envelope2.noteOn();
-          pl7envelope3.noteOn();
-        } else {
-          pl7envelope2.noteOff();
-          pl7envelope3.noteOff();
-        }
-        if (channel1Clip[track[0].clip_songMode][3][current]) {
-          //playMem4.play(AudioSampleHihat);
         }
       }
     }
