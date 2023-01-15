@@ -138,7 +138,7 @@ void step(int current) {
           }
         } else {
           if (dsend_noteOff[i]) {
-          
+
             usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             if (midi01.idVendor() != 4661) {
@@ -182,97 +182,40 @@ void step(int current) {
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
+        track[desired_instrument].notePressed = true;
+        track[desired_instrument].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
 
-        byte noteNumber = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
           if (track[track_number].MIDIchannel < 17) {
-            usbMIDI.sendNoteOn(noteNumber, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-            MIDI.sendNoteOn(noteNumber, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+
+            usbMIDI.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+            MIDI.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
             if (midi01.idVendor() != 4661) {
-              // midi01.sendNoteOn(noteNumber, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+              // midi01.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
             }
           }
-
-          if (track[track_number].MIDIchannel == 17) {
-            waveform1.frequency(note_frequency[noteNumber + pl1[track[track_number].presetNr[phrase]].note_Offset[0]]);
-            waveform2.frequency(note_frequency[noteNumber + pl1[track[track_number].presetNr[phrase]].note_Offset[1]]);
-            waveform3.frequency(note_frequency[noteNumber + pl1[track[track_number].presetNr[phrase]].note_Offset[2]]);
-            waveform4.frequency(note_frequency[noteNumber + pl1[track[track_number].presetNr[phrase]].note_Offset[3]]);
-            envelope1.noteOn();
-            envelope2.noteOn();
-          }
-          if (track[track_number].MIDIchannel == 19) {
-            pl3waveform1.frequency(note_frequency[noteNumber]);
-            pl3envelope1.noteOn();
-            pl3envelope2.noteOn();
-          }
-          if (track[track_number].MIDIchannel == 21) {
-            double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
-            playSdPitch1.setPlaybackRate(note_ratio);
-            //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
-            playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
-            pl5envelope1.noteOn();
-            pl5envelope2.noteOn();
-            Serial.println("listen?");
-          }
-          if (track[track_number].MIDIchannel == 22) {
-            double note_ratio = pow(2.0, ((double)(noteNumber - SAMPLE_ROOT) / 12.0));
-            playSdPitch2.setPlaybackRate(note_ratio);
-            playSdPitch2.playRaw(RAW_files[pl6[track[track_number].presetNr[phrase]].selected_file_raw], 1);
-            pl6envelope1.noteOn();
-            pl6envelope2.noteOn();
-          }
-          if (track[track_number].MIDIchannel == 24) {
-            pl8waveform1.frequency(note_frequency[noteNumber]);
-            pl8envelope1.noteOn();
-            pl8envelope2.noteOn();
-          }
-          if (track[track_number].MIDIchannel == 25) {
-            pl9string1.noteOn(note_frequency[noteNumber], 1);
-          }
+          PluginPlay();
           track[track_number].send_noteOff = true;
         }
         //if (track[track_number].send_noteOff) {
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
+          track[desired_instrument].notePressed = false;
+
           if (track[track_number].MIDIchannel < 17) {
+
             usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
             MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
             if (midi01.idVendor() != 4661) {
               // midi01.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
             }
           }
-          if (track[track_number].MIDIchannel == 17) {
-            envelope1.noteOff();
-            envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 19) {
-            pl3envelope1.noteOff();
-            pl3envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 21) {
-            pl5envelope1.noteOff();
-            pl5envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 22) {
-            pl6envelope1.noteOff();
-            pl6envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 24) {
-            pl8envelope1.noteOff();
-            pl8envelope2.noteOff();
-          }
-          if (track[track_number].MIDIchannel == 25) {
-            pl9string1.noteOff(VELOCITYOFF);
-          }
+          PluginPlay();
           track[track_number].send_noteOff = false;
           //}
         }
       }
     }
   }
-
-
-
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     if (current == 0) {
       tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);

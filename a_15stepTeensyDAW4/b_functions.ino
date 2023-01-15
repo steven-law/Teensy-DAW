@@ -224,6 +224,167 @@ void Plugin_View_Dynamic() {
     midiCCpage1_Dynamic(desired_track);
   }
 }
+
+void PluginPlay() {
+  //play drumplugin when midichannel = 18
+  for (int desired_instruments = 0; desired_instruments < 8; desired_instruments++) {
+    if (track[0].MIDIchannel == 18) {
+      for (int files = 0; files < 12; files++) {
+        if (drumnotes[files]) {
+          drumnotes[files] = false;
+          playSdWav1.play(wavKit[files]);
+        }
+      }
+    }
+    //play Memory drumplugin when midichannel = 20
+    if (track[0].MIDIchannel == 20) {
+      if (drumnotes[0]) {
+        drumnotes[0] = false;
+        playMem1.play(AudioSampleKick);
+      }
+      if (drumnotes[1]) {
+        drumnotes[1] = false;
+        playMem2.play(AudioSampleSnare);
+      }
+      if (drumnotes[2]) {
+        drumnotes[2] = false;
+        playMem3.play(AudioSampleP2);
+      }
+      if (drumnotes[3]) {
+        drumnotes[3] = false;
+        playMem4.play(AudioSampleHihat);
+      }
+      if (drumnotes[4]) {
+        drumnotes[4] = false;
+        playMem5.play(AudioSampleCashregister);
+      }
+      if (drumnotes[5]) {
+        drumnotes[5] = false;
+        playMem6.play(AudioSampleTomtom);
+      }
+      if (drumnotes[6]) {
+        drumnotes[6] = false;
+        playMem6.play(AudioSampleGong);
+      }
+      if (drumnotes[7]) {
+        drumnotes[7] = false;
+        //playSdWav8.play("P7.WAV");
+      }
+      if (drumnotes[8]) {
+        drumnotes[8] = false;
+        //playSdWav9.play("P8.WAV");
+      }
+      if (drumnotes[9]) {
+        drumnotes[9] = false;
+        //playSdWav10.play("P9.WAV");
+      }
+      if (drumnotes[10]) {
+        drumnotes[10] = false;
+        //playSdWav11.play("P10.WAV");
+      }
+      if (drumnotes[11]) {
+        drumnotes[11] = false;
+        //playSdWav12.play("P11.WAV");
+      }
+    }
+    //play Memory drumplugin when midichannel = 20
+    if (track[0].MIDIchannel == 23) {
+      if (drumnotes[0]) {
+        pl7drum1.noteOn();
+      }
+      if (drumnotes[1]) {
+        pl7envelope1.noteOn();
+      } else {
+        pl7envelope1.noteOff();
+      }
+      if (drumnotes[2]) {
+        pl7envelope2.noteOn();
+        pl7envelope3.noteOn();
+      } else {
+        pl7envelope2.noteOff();
+        pl7envelope3.noteOff();
+      }
+      if (drumnotes[3]) {
+        //playMem4.play(AudioSampleHihat);
+      }
+    }
+
+    if (track[desired_instruments].notePressed) {
+      
+      if (track[desired_instruments].MIDIchannel == 17) {
+        Serial.print(track[desired_instruments].notePressed);
+        Serial.print("-");
+        Serial.println(track[desired_instruments].notePlayed);
+
+        waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
+        waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
+        waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);
+        waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
+        envelope1.noteOn();
+        envelope2.noteOn();
+      }
+
+      if (track[desired_instruments].MIDIchannel == 19) {
+        pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+        pl3envelope1.noteOn();
+        pl3envelope2.noteOn();
+      }
+      if (track[desired_instruments].MIDIchannel == 21) {
+        double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+        playSdPitch1.setPlaybackRate(note_ratio);
+        //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
+        playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
+        pl5envelope1.noteOn();
+        pl5envelope2.noteOn();
+        Serial.println("listen?");
+      }
+      if (track[desired_instruments].MIDIchannel == 22) {
+        double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+        playSdPitch2.setPlaybackRate(note_ratio);
+        playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file_raw], 1);
+        pl6envelope1.noteOn();
+        pl6envelope2.noteOn();
+      }
+      if (track[desired_instruments].MIDIchannel == 24) {
+        pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+        pl8envelope1.noteOn();
+        pl8envelope2.noteOn();
+      }
+      if (track[desired_instruments].MIDIchannel == 25) {
+        pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
+      }
+    }
+
+
+
+    if (!track[desired_instruments].notePressed) {
+      
+      if (track[desired_instruments].MIDIchannel == 17) {
+        envelope1.noteOff();
+        envelope2.noteOff();
+      }
+      if (track[desired_instruments].MIDIchannel == 19) {
+        pl3envelope1.noteOff();
+        pl3envelope2.noteOff();
+      }
+      if (track[desired_instruments].MIDIchannel == 21) {
+        pl5envelope1.noteOff();
+        pl5envelope2.noteOff();
+      }
+      if (track[desired_instruments].MIDIchannel == 22) {
+        pl6envelope1.noteOff();
+        pl6envelope2.noteOff();
+      }
+      if (track[desired_instruments].MIDIchannel == 24) {
+        pl8envelope1.noteOff();
+        pl8envelope2.noteOff();
+      }
+      if (track[desired_instruments].MIDIchannel == 25) {
+        pl9string1.noteOff(0);
+      }
+    }
+  }
+}
 //this function is called for every beatchange for preset/clip/noteoffset/clip change
 //add your soundcontrol functions like desired osc frequency etc, so the presetchange can be applied
 void beatComponents() {
@@ -245,7 +406,7 @@ void beatComponents() {
         }
       }
     }
-    //}
+
     if (track[instruments].MIDIchannel == 17) {
       pl1presetNr = track[instruments].presetNr[phrase];
       for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
@@ -334,340 +495,6 @@ void beatComponents() {
   }
 }
 
-void PluginPlay() {
-  //play drumplugin when midichannel = 18
-  if (track[0].MIDIchannel == 18) {
-    for (int files = 0; files < 12; files++) {
-      if (drumnotes[files]) {
-        drumnotes[files] = false;
-        playSdWav1.play(wavKit[files]);
-      }
-    }
-  }
-  //play Memory drumplugin when midichannel = 20
-  if (track[0].MIDIchannel == 20) {
-    if (drumnotes[0]) {
-      drumnotes[0] = false;
-      playMem1.play(AudioSampleKick);
-    }
-    if (drumnotes[1]) {
-      drumnotes[1] = false;
-      playMem2.play(AudioSampleSnare);
-    }
-    if (drumnotes[2]) {
-      drumnotes[2] = false;
-      playMem3.play(AudioSampleP2);
-    }
-    if (drumnotes[3]) {
-      drumnotes[3] = false;
-      playMem4.play(AudioSampleHihat);
-    }
-    if (drumnotes[4]) {
-      drumnotes[4] = false;
-      playMem5.play(AudioSampleCashregister);
-    }
-    if (drumnotes[5]) {
-      drumnotes[5] = false;
-      playMem6.play(AudioSampleTomtom);
-    }
-    if (drumnotes[6]) {
-      drumnotes[6] = false;
-      playMem6.play(AudioSampleGong);
-    }
-    if (drumnotes[7]) {
-      drumnotes[7] = false;
-      //playSdWav8.play("P7.WAV");
-    }
-    if (drumnotes[8]) {
-      drumnotes[8] = false;
-      //playSdWav9.play("P8.WAV");
-    }
-    if (drumnotes[9]) {
-      drumnotes[9] = false;
-      //playSdWav10.play("P9.WAV");
-    }
-    if (drumnotes[10]) {
-      drumnotes[10] = false;
-      //playSdWav11.play("P10.WAV");
-    }
-    if (drumnotes[11]) {
-      drumnotes[11] = false;
-      //playSdWav12.play("P11.WAV");
-    }
-  }
-  //play Memory drumplugin when midichannel = 20
-  if (track[0].MIDIchannel == 23) {
-    if (drumnotes[0]) {
-      pl7drum1.noteOn();
-    }
-    if (drumnotes[1]) {
-      pl7envelope1.noteOn();
-    } else {
-      pl7envelope1.noteOff();
-    }
-    if (drumnotes[2]) {
-      pl7envelope2.noteOn();
-      pl7envelope3.noteOn();
-    } else {
-      pl7envelope2.noteOff();
-      pl7envelope3.noteOff();
-    }
-    if (drumnotes[3]) {
-      //playMem4.play(AudioSampleHihat);
-    }
-  }
-}
-//if you want your plugin to be played via midi this is your place
-//add your noteOn´s (envelope.noteOn´s) here
-void myNoteOn(byte channel, byte note, byte velocity) {
-  if (midi01.idVendor() == 4661) {
-
-    for (byte songpages = 0; songpages < 16; songpages++) {
-      if (selectPage == SONGMODE_PAGE_1 + songpages) {
-        LP_songmode(note);
-        for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
-          if (note == LP_grid_notes[gridNotes]) {
-            LP_grid_bool[gridNotes] = true;
-          }
-        }
-      }
-    }
-    if (desired_instrument == 0) {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
-        if (note == LP_octave_notes[octNotes]) {
-          LP_octave_bool[octNotes] = true;
-        }
-      }
-    }
-    for (int trackss = 1; trackss < 8; trackss++) {
-      if (desired_instrument == trackss) {
-        for (byte octNotes = 0; octNotes < 12; octNotes++) {
-          if (note == LP_octave_notes_keys[octNotes]) {
-            channel = desired_instrument + 1;
-            LP_octave_bool_keys[octNotes] = true;
-            note = octNotes + (track[desired_instrument].shown_octaves * 12);
-          }
-        }
-      }
-    }
-    for (byte stepss = 0; stepss < 16; stepss++) {
-      if (note == LP_step_notes[stepss]) {
-        LP_step_bool[stepss] = true;
-      }
-    }
-
-
-    // hold for track button
-    if (!button[10] && note == 8) {  //"E"  69
-      button[8] = true;
-    }
-    // hold for plugin button
-    if (!button[10] && note == 24) {  //"C"  67
-      button[9] = true;
-    }
-    //  hold for Songarranger button
-    if (note == 40) {  //"A"  65
-      button[10] = true;
-    }
-    // hold for Mixer button
-    if (!button[10] && note == 56) {  //"4"  52
-      button[11] = true;
-    }
-    // hold for FX button
-    if (!button[10] && note == 72) {  //"8"  56
-      button[12] = true;
-    }
-    //  hold for recorder button
-    if (!button[10] && note == 88) {  //"A"  65
-      button[13] = true;
-      selectPage = RECORDER_PAGE;
-      recorder_Page_Static();
-    }
-    // hold for shift button
-    if (!button[10] && note == 104) {
-      button[14] = true;
-    }
-    // hold for enter button
-    if (!button[10] && note == 120) {
-      button[15] = true;
-    }
-  }
-
-
-  // When a USB device with multiple virtual cables is used,
-  // midi1.getCable() can be used to read which of the virtual
-  // MIDI cables received this message.
-
-  if (seq_rec) {
-    ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
-  }
-  //send midinotes for drumtrack #1
-  //play drumplugin when midichannel = 18
-
-  for (int files = 0; files < 12; files++) {
-    if (note == (files + 36) || LP_octave_bool[files]) {
-      drumnotes[files] = true;
-    }
-  }
-
-
-  if (track[channel - 1].MIDIchannel < 17) {
-    usbMIDI.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    MIDI.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi01.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi02.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi03.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi04.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi05.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-    midi06.sendNoteOn(note, velocity, track[channel - 1].MIDIchannel);
-  }
-  if (track[channel - 1].MIDIchannel == 17) {
-    waveform1.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[0]]);
-    waveform2.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[1]]);
-    waveform3.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[2]]);
-    waveform4.frequency(note_frequency[note + pl1[track[desired_track].presetNr[phrase]].note_Offset[3]]);
-    envelope1.noteOn();
-    envelope2.noteOn();
-  }
-  if (track[channel - 1].MIDIchannel == 19) {
-    pl3waveform1.frequency(note_frequency[note]);
-    pl3envelope1.noteOn();
-    pl3envelope2.noteOn();
-  }
-  if (track[channel - 1].MIDIchannel == 21) {
-    double note_ratio = pow(2.0, ((double)(note - SAMPLE_ROOT) / 12.0));
-    playSdPitch1.setPlaybackRate(note_ratio);
-    //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
-    playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
-    pl5envelope1.noteOn();
-    pl5envelope2.noteOn();
-    Serial.println("listen?");
-  }
-  if (track[channel - 1].MIDIchannel == 22) {
-    double note_ratio = pow(2.0, ((double)(note - SAMPLE_ROOT) / 12.0));
-    playSdPitch2.setPlaybackRate(note_ratio);
-    playSdPitch2.playRaw(RAW_files[pl6[track[desired_track].presetNr[phrase]].selected_file_raw], 1);
-    pl6envelope1.noteOn();
-    pl6envelope2.noteOn();
-  }
-  if (track[channel - 1].MIDIchannel == 24) {
-    pl8waveform1.frequency(note_frequency[note]);
-    pl8envelope1.noteOn();
-    pl8envelope2.noteOn();
-  }
-  if (track[channel - 1].MIDIchannel == 25) {
-    pl9string1.noteOn(note_frequency[note], 1);
-  }
-}
-//and your noteOff here
-void myNoteOff(byte channel, byte note, byte velocity) {
-  if (midi01.idVendor() == 4661) {
-    for (byte songpages = 0; songpages < 16; songpages++) {
-      if (selectPage == SONGMODE_PAGE_1 + songpages) {
-        for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
-          if (note == LP_grid_notes[gridNotes]) {
-            LP_grid_bool[gridNotes] = false;
-          }
-        }
-      }
-    }
-    if (desired_instrument == 0) {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
-        if (note == LP_octave_notes[octNotes]) {
-          LP_octave_bool[octNotes] = false;
-        }
-      }
-    }
-    for (int trackss = 1; trackss < 8; trackss++) {
-      if (desired_instrument == trackss) {
-        for (byte octNotes = 0; octNotes < 12; octNotes++) {
-          if (note == LP_octave_notes_keys[octNotes]) {
-            channel = desired_instrument + 1;
-            LP_octave_bool_keys[octNotes] = false;
-            note = octNotes + (track[desired_instrument].shown_octaves * 12);
-          }
-        }
-      }
-    }
-    for (byte stepss = 0; stepss < 16; stepss++) {
-      if (note == LP_step_notes[stepss]) {
-        LP_step_bool[stepss] = false;
-      }
-    }
-
-    // hold for track button
-    if (!button[10] && note == 8) {  //"E"  69
-      button[8] = false;
-    }
-    // hold for plugin button
-    if (!button[10] && note == 24) {  //"C"  67
-      button[9] = false;
-    }
-    // hold for Mixer button
-    if (note == 40) {  //"4"  52
-      button[10] = false;
-    }
-    // hold for Mixer button
-    if (!button[10] && note == 56) {  //"4"  52
-      button[11] = false;
-    }
-
-    // hold for FX button
-    if (!button[10] && note == 72) {  //"8"  56
-      button[12] = false;
-    }
-    // hold for recorder button
-    if (!button[10] && note == 88) {
-      button[13] = false;
-    }
-    // hold for shift button
-    if (!button[10] && note == 104) {
-      button[14] = false;
-    }
-    // hold for enter button
-    if (!button[10] && note == 120) {
-      button[15] = false;
-    }
-  }
-  for (int files = 0; files < 12; files++) {
-    if (note == (files + 36) && !LP_octave_bool[files]) {
-      drumnotes[files] = false;
-    }
-  }
-  if (track[channel - 1].MIDIchannel < 17) {
-    usbMIDI.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    MIDI.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi01.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi02.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi03.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi04.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi05.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-    midi06.sendNoteOff(note, velocity, track[channel - 1].MIDIchannel);
-  }
-  if (track[channel - 1].MIDIchannel == 17) {
-    envelope1.noteOff();
-    envelope2.noteOff();
-  }
-  if (track[channel - 1].MIDIchannel == 19) {
-    pl3envelope1.noteOff();
-    pl3envelope2.noteOff();
-  }
-  if (track[channel - 1].MIDIchannel == 21) {
-    pl5envelope1.noteOff();
-    pl5envelope2.noteOff();
-  }
-  if (track[channel - 1].MIDIchannel == 22) {
-    pl6envelope1.noteOff();
-    pl6envelope2.noteOff();
-  }
-  if (track[channel - 1].MIDIchannel == 24) {
-    pl8envelope1.noteOff();
-    pl8envelope2.noteOff();
-  }
-  if (track[channel - 1].MIDIchannel == 25) {
-    pl9string1.noteOff(0);
-  }
-}
 
 
 //if you want your plugin to be controlled via midi this is your place
@@ -1481,6 +1308,10 @@ void myControlChange(byte channel, byte control, byte value) {
     }
   }
 }
+
+
+
+
 //if you have a filter with multiple outputs like the AudioFilterStateVariable
 //this function will switch between the different inputs of the afterwards installed mixer
 //add your filtermixer here
@@ -1516,12 +1347,14 @@ void selectFilterType(byte pluginchannel, byte mixerchannel) {
     pl9mixer1.gain(mixerchannel, 1);
   }
 }
+
+//end of the plugin-function-nightmare
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+
 //only subject to change when we have reached the limit of templated plugins (per now there are 9 plugins and 7 templated plugins)
 //
-
-
-
 //this is the volume used for the automation in songmode
 //add your amp.gain() to control the volume
 void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
@@ -1760,9 +1593,183 @@ void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channe
   }
 }
 
-//end of the plugin-function-nightmare
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void myNoteOn(byte channel, byte note, byte velocity) {
+
+  if (midi01.idVendor() == 4661) {
+
+    for (byte songpages = 0; songpages < 16; songpages++) {
+      if (selectPage == SONGMODE_PAGE_1 + songpages) {
+        LP_songmode(note);
+      }
+    }
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = true;
+      }
+    }
+
+
+    if (desired_instrument == 0) {
+      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+        if (note == LP_octave_notes[octNotes]) {
+          LP_octave_bool[octNotes] = true;
+        }
+      }
+    }
+    for (int trackss = 1; trackss < 8; trackss++) {
+      if (desired_instrument == trackss) {
+        for (byte octNotes = 0; octNotes < 12; octNotes++) {
+          if (note == LP_octave_notes_keys[octNotes]) {
+            channelPlayed = desired_instrument + 1;
+            channel = desired_instrument + 1;
+            LP_octave_bool_keys[octNotes] = true;
+            track[desired_instrument].notePressed = true;
+            track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
+          }
+        }
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = true;
+      }
+    }
+
+
+    // hold for track button
+    if (!button[10] && note == 8) {  //"E"  69
+      button[8] = true;
+    }
+    // hold for plugin button
+    if (!button[10] && note == 24) {  //"C"  67
+      button[9] = true;
+    }
+    //  hold for Songarranger button
+    if (note == 40) {  //"A"  65
+      button[10] = true;
+    }
+    // hold for Mixer button
+    if (!button[10] && note == 56) {  //"4"  52
+      button[11] = true;
+    }
+    // hold for FX button
+    if (!button[10] && note == 72) {  //"8"  56
+      button[12] = true;
+    }
+    //  hold for recorder button
+    if (!button[10] && note == 88) {  //"A"  65
+      button[13] = true;
+      selectPage = RECORDER_PAGE;
+      recorder_Page_Static();
+    }
+    // hold for shift button
+    if (!button[10] && note == 104) {
+      button[14] = true;
+    }
+    // hold for enter button
+    if (!button[10] && note == 120) {
+      button[15] = true;
+    }
+  }
+
+
+  // When a USB device with multiple virtual cables is used,
+  // midi1.getCable() can be used to read which of the virtual
+  // MIDI cables received this message.
+
+  if (seq_rec) {
+    ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
+  }
+  //send midinotes for drumtrack
+
+
+  for (int files = 0; files < 12; files++) {
+    if (note == (files + 36) || LP_octave_bool[files]) {
+      drumnotes[files] = true;
+    }
+  }
+  PluginPlay();
+}
+
+void myNoteOff(byte channel, byte note, byte velocity) {
+  if (midi01.idVendor() == 4661) {
+
+    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+      if (note == LP_grid_notes[gridNotes]) {
+        LP_grid_bool[gridNotes] = false;
+      }
+    }
+
+    if (desired_instrument == 0) {
+      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+        if (note == LP_octave_notes[octNotes]) {
+          LP_octave_bool[octNotes] = false;
+        }
+      }
+    }
+    for (int trackss = 1; trackss < 8; trackss++) {
+      if (desired_instrument == trackss) {
+        for (byte octNotes = 0; octNotes < 12; octNotes++) {
+          if (note == LP_octave_notes_keys[octNotes]) {
+            channel = desired_instrument + 1;
+            LP_octave_bool_keys[octNotes] = false;
+            track[desired_instrument].notePressed = false;
+            track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
+          }
+        }
+      }
+    }
+    for (byte stepss = 0; stepss < 16; stepss++) {
+      if (note == LP_step_notes[stepss]) {
+        LP_step_bool[stepss] = false;
+      }
+    }
+
+    // hold for track button
+    if (!button[10] && note == 8) {  //"E"  69
+      button[8] = false;
+    }
+    // hold for plugin button
+    if (!button[10] && note == 24) {  //"C"  67
+      button[9] = false;
+    }
+    // hold for Mixer button
+    if (note == 40) {  //"4"  52
+      button[10] = false;
+    }
+    // hold for Mixer button
+    if (!button[10] && note == 56) {  //"4"  52
+      button[11] = false;
+    }
+
+    // hold for FX button
+    if (!button[10] && note == 72) {  //"8"  56
+      button[12] = false;
+    }
+    // hold for recorder button
+    if (!button[10] && note == 88) {
+      button[13] = false;
+    }
+    // hold for shift button
+    if (!button[10] && note == 104) {
+      button[14] = false;
+    }
+    // hold for enter button
+    if (!button[10] && note == 120) {
+      button[15] = false;
+    }
+  }
+  for (int files = 0; files < 12; files++) {
+    if (note == (files + 36) && !LP_octave_bool[files]) {
+      drumnotes[files] = false;
+    }
+  }
+
+
+
+  PluginPlay();
+}
 
 //these are some function you might want to use like the drawpot or any of the draw-rect functions
 

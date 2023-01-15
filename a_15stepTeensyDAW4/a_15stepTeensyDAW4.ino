@@ -760,7 +760,7 @@ void loop() {
   midi06.read();
   kpd.tick();
   sendClock();
-  PluginPlay();
+  
   readMainButtons();
   //doMainButtons();
   readEncoders();

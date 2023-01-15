@@ -545,6 +545,8 @@ int encoded[4];
 
 bool drumnotes[12];
 bool button[16]{};
+int channelPlayed;
+
 
 bool something_was_pressed = false;
 bool otherCtrlButtons = true;
@@ -678,6 +680,8 @@ struct tracks {
   int NoteOffset[256];
   int presetNr[256];
   int volume[256];
+  int notePlayed;
+  bool notePressed;
   byte MIDI_velocity = 99;
 
   byte Volume_graph = 50;
