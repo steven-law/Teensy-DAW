@@ -32,7 +32,7 @@
 // rename the modules to your likenings, we will put all variables into a struct for a better view, handling and preset storage. double-click on it to change its name.
 // its recommended to name the variables like: "module-function" fe.: pl3filter1
 // connect the modules together, where DC goes to input of the  envelope2 for the filter
-// AMP2 will be used to control the volume of our mixer. 
+// AMP2 will be used to control the volume of our mixer.
 // AMP2  will be used to control the volume while the arrangment is playing
 // if needed add a mixer to the chain.
 
@@ -51,7 +51,7 @@
 //                              here happens all the touch, button and encoder input for the plugin.
 //                              you can have several pages for your plugin
 //                              there are several functions aviable to draw the value of the parameters
-//                              We can leave Plugin3_Page1_Dynamic() {} empty for now. (as i made templates you can go and make your dynamic 
+//                              We can leave Plugin3_Page1_Dynamic() {} empty for now. (as i made templates you can go and make your dynamic
 //                                                                                      plugin page with all your controls
 //                                                                                      and distribute them afterwards to the desired functions)
 
@@ -181,7 +181,19 @@ void Plugin3_Page_Static(byte Pagenumber) {
     drawPot(CTRL_COL_3, CTRL_ROW_2, pl3[pl3presetNr].Env1_Release_graph, pl3[pl3presetNr].Env1_Release, "Rel", trackColor[desired_track]);
   }
 }
+void Plugin3_Control() {
+  switch (lastPotRow) {
+    case 0:
 
+      break;
+
+    case 1:
+      break;
+
+    case 2:
+      break;
+  }
+}
 void Plugin3_Page1_Dynamic() {
   //change preset
   if (button[14]) {

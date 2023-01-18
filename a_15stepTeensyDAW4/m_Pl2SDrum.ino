@@ -38,7 +38,48 @@ void Plugin2_Page_Static(byte Pagenumber) {
   }
 }
 
+void Plugin2_Control() {
+  switch (lastPotRow) {
+    case 0:
+      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        if (pl2[pl2presetNr].Vol_rnd[MixerColumn] != Potentiometer[MixerColumn]) {
+          pl2[pl2presetNr].Vol_rnd[MixerColumn] = Potentiometer[MixerColumn];
+          pl2[pl2presetNr].Vol[MixerColumn] = pl2[pl2presetNr].Vol_rnd[MixerColumn] / 127.00;
+          drummixer1.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn]);
+          drawPot(MixerColumnPos, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[MixerColumn], pl2[pl2presetNr].Vol_rnd[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
+        }
+      }
+      break;
 
+    case 1:
+      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        if (pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] != Potentiometer[MixerColumn]) {
+          pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] = Potentiometer[MixerColumn];
+          pl2[pl2presetNr].Vol[MixerColumn + 4] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] / 127.00;
+          drummixer1.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 4]);
+          drawPot(MixerColumnPos, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[MixerColumn + 4], pl2[pl2presetNr].Vol_rnd[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
+        }
+      }
+      break;
+
+    case 2:
+      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        if (pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] != Potentiometer[MixerColumn]) {
+          pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] = Potentiometer[MixerColumn];
+          pl2[pl2presetNr].Vol[MixerColumn + 8] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] / 127.00;
+          drummixer1.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 8]);
+          drawPot(MixerColumnPos, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[MixerColumn + 8], pl2[pl2presetNr].Vol_rnd[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
+        }
+      }
+      break;
+
+    case 3:
+      break;
+  }
+}
 void Plugin2_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -51,34 +92,28 @@ void Plugin2_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (enc_moved[touchX - 1]) {
-            pl2[pl2presetNr].Vol_rnd[touchX - 1] = constrain((pl2[pl2presetNr].Vol_rnd[touchX - 1] + encoded[touchX - 1]), 0, 127);
-            pl2[pl2presetNr].Vol[touchX - 1] = pl2[pl2presetNr].Vol_rnd[touchX - 1] / 127.00;
-            drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
-            drawPot(touchX * 4 - 1, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[touchX - 1], pl2[pl2presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          if (enc_moved[MixerColumn]) {
+            Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn] + encoded[MixerColumn]), 0, 127);
           }
         }
         break;
 
       case 1:
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (enc_moved[touchX - 1]) {
-            pl2[pl2presetNr].Vol_rnd[touchX + 3] = constrain((pl2[pl2presetNr].Vol_rnd[touchX + 3] + encoded[touchX - 1]), 0, 127);
-            pl2[pl2presetNr].Vol[touchX + 3] = pl2[pl2presetNr].Vol_rnd[touchX + 3] / 127.00;
-            drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
-            drawPot(touchX * 4 - 1, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[touchX + 3], pl2[pl2presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          if (enc_moved[MixerColumn]) {
+            Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] + encoded[MixerColumn]), 0, 127);
           }
         }
         break;
 
       case 2:
-        for (byte touchX = 1; touchX < 5; touchX++) {
-          if (enc_moved[touchX - 1]) {
-            pl2[pl2presetNr].Vol_rnd[touchX + 7] = constrain((pl2[pl2presetNr].Vol_rnd[touchX + 7] + encoded[touchX - 1]), 0, 127);
-            pl2[pl2presetNr].Vol[touchX + 7] = pl2[pl2presetNr].Vol_rnd[touchX + 7] / 127.00;
-            drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
-            drawPot(touchX * 4 - 1, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[touchX + 7], pl2[pl2presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          if (enc_moved[MixerColumn]) {
+            Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] + encoded[MixerColumn]), 0, 127);
           }
         }
         break;

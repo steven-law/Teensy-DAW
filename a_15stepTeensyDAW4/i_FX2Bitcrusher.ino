@@ -4,35 +4,35 @@ void FX2Bitcrush_settings() {
   bitcrusher2.sampleRate(11025);
 
   //mixer1 for FX2
-  FX2mixer1.gain(0, 0);
-  FX2mixer1.gain(1, 0);
-  FX2mixer1.gain(2, 0);
-  FX2mixer1.gain(3, 0);
+  FX2mixer1.gain(0, 1);
+  FX2mixer1.gain(1, 1);
+  FX2mixer1.gain(2, 1);
+  FX2mixer1.gain(3, 1);
   //mixer2 for FX2
-  FX2mixer2.gain(0, 0);
-  FX2mixer2.gain(1, 0);
-  FX2mixer2.gain(2, 0);
-  FX2mixer2.gain(3, 0);
+  FX2mixer2.gain(0, 1);
+  FX2mixer2.gain(1, 1);
+  FX2mixer2.gain(2, 1);
+  FX2mixer2.gain(3, 1);
   //mixer2 for FX2
   FX2mixer3.gain(0, 1);
   FX2mixer3.gain(1, 1);
   FX2mixer3.gain(2, 1);
   FX2mixer3.gain(3, 1);
   //mixer2 for FX2
-  FX2mixer4.gain(0, 0);
-  FX2mixer4.gain(1, 0);
-  FX2mixer4.gain(2, 0);
-  FX2mixer4.gain(3, 0);
+  FX2mixer4.gain(0, 1);
+  FX2mixer4.gain(1, 1);
+  FX2mixer4.gain(2, 1);
+  FX2mixer4.gain(3, 1);
    //mixer2 for FX2
   FX2mixer5.gain(0, 1);
   FX2mixer5.gain(1, 1);
   FX2mixer5.gain(2, 1);
   FX2mixer5.gain(3, 1);
    //mixer2 for FX2
-  FX2mixer6.gain(0, 0);
-  FX2mixer6.gain(1, 0);
-  FX2mixer6.gain(2, 0);
-  FX2mixer6.gain(3, 0);
+  FX2mixer6.gain(0, 1);
+  FX2mixer6.gain(1, 1);
+  FX2mixer6.gain(2, 1);
+  FX2mixer6.gain(3, 1);
 }
 
 void FX2Bitcrush_static() {
