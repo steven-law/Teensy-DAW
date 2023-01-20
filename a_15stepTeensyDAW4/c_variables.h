@@ -541,6 +541,7 @@ int lastPotRow = 0;
 int Potentiometer[4];
 bool enc_moved[4]{ 0, 0, 0, 0 };
 int encoded[4];
+bool enc_button[4];
 //button variables
 
 bool drumnotes[12];
