@@ -351,10 +351,6 @@ void PluginPlay() {
     if (track[desired_instruments].notePressed) {
 
       if (track[desired_instruments].MIDIchannel == 17) {
-        Serial.print(track[desired_instruments].notePressed);
-        Serial.print("-");
-        Serial.println(track[desired_instruments].notePlayed);
-
         waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
         waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
         waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);

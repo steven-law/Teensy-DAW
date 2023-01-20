@@ -312,8 +312,6 @@ void Plugin3_Page1_Dynamic() {
 void Plugin3_Page_Static(byte Pagenumber) {
   clearWorkSpace();
   Plugin3_Change();
-  //draw selecting pages buttons
-  //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl3presetNr, ILI9341_PURPLE);
   
   //case 0
