@@ -133,27 +133,6 @@ void Plugin_3_Settings() {
   pl3amp.gain(1);
   pl3amp2.gain(1);
 }
-void Plugin3_Page_Static(byte Pagenumber) {
-  clearWorkSpace();
-  Plugin3_Change();
-  //draw selecting pages buttons
-  //draw_sub_page_buttons(2);
-  drawNrInRect(18, 1, pl3presetNr, ILI9341_PURPLE);
-  
-  //case 0
-  drawPot(CTRL_COL_0, CTRL_ROW_0, pl3[pl3presetNr].wfSelect_graph, pl3[pl3presetNr].wfSelect, "WForm", trackColor[desired_track]);
-  //case 1
-  drawPot(CTRL_COL_0, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Frequency_graph, note_frequency[pl3[pl3presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Resonance_graph, pl3[pl3presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Sweep_graph, pl3[pl3presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Type_graph, pl3[pl3presetNr].Filter1_Type, "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[pl3[pl3presetNr].Filter1_Type], ILI9341_WHITE);
-  //case 2
-  drawPot(CTRL_COL_0, CTRL_ROW_2, pl3[pl3presetNr].Env1_Attack_graph, pl3[pl3presetNr].Env1_Attack, "Atck", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, pl3[pl3presetNr].Env1_Decay_graph, pl3[pl3presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, pl3[pl3presetNr].Env1_Sustain_graph, pl3[pl3presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, pl3[pl3presetNr].Env1_Release_graph, pl3[pl3presetNr].Env1_Release, "Rel", trackColor[desired_track]);
-}
 void Plugin3_Control() {
   switch (lastPotRow) {
     case 0:
@@ -225,21 +204,6 @@ void Plugin3_Control() {
       }
       break;
   }
-}
-void Plugin3_Change() {
-  pl3waveform1.begin(pl3[pl3presetNr].wfSelect);
-  pl3filter1.frequency(pl3[pl3presetNr].Filter1_Frequency);
-  pl3filter1.resonance(pl3[pl3presetNr].Filter1_Resonance);
-  pl3filter1.octaveControl(pl3[pl3presetNr].Filter1_Sweep);
-  selectFilterType(19, pl3[pl3presetNr].Filter1_Type);
-  pl3envelope1.attack(pl3[pl3presetNr].Env1_Attack);
-  pl3envelope2.attack(pl3[pl3presetNr].Env1_Attack);
-  pl3envelope1.decay(pl3[pl3presetNr].Env1_Decay);
-  pl3envelope2.decay(pl3[pl3presetNr].Env1_Decay);
-  pl3envelope1.sustain(pl3[pl3presetNr].Env1_Sustain);
-  pl3envelope2.sustain(pl3[pl3presetNr].Env1_Sustain);
-  pl3envelope1.release(pl3[pl3presetNr].Env1_Release);
-  pl3envelope2.release(pl3[pl3presetNr].Env1_Release);
 }
 void Plugin3_Page1_Dynamic() {
   //change preset
@@ -345,6 +309,43 @@ void Plugin3_Page1_Dynamic() {
     }
   }
 }
+void Plugin3_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
+  Plugin3_Change();
+  //draw selecting pages buttons
+  //draw_sub_page_buttons(2);
+  drawNrInRect(18, 1, pl3presetNr, ILI9341_PURPLE);
+  
+  //case 0
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl3[pl3presetNr].wfSelect_graph, pl3[pl3presetNr].wfSelect, "WForm", trackColor[desired_track]);
+  //case 1
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Frequency_graph, note_frequency[pl3[pl3presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Resonance_graph, pl3[pl3presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Sweep_graph, pl3[pl3presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_1, pl3[pl3presetNr].Filter1_Type_graph, pl3[pl3presetNr].Filter1_Type, "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 7, filterType[pl3[pl3presetNr].Filter1_Type], ILI9341_WHITE);
+  //case 2
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl3[pl3presetNr].Env1_Attack_graph, pl3[pl3presetNr].Env1_Attack, "Atck", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_2, pl3[pl3presetNr].Env1_Decay_graph, pl3[pl3presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_2, pl3[pl3presetNr].Env1_Sustain_graph, pl3[pl3presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_2, pl3[pl3presetNr].Env1_Release_graph, pl3[pl3presetNr].Env1_Release, "Rel", trackColor[desired_track]);
+}
+void Plugin3_Change() {
+  pl3waveform1.begin(pl3[pl3presetNr].wfSelect);
+  pl3filter1.frequency(pl3[pl3presetNr].Filter1_Frequency);
+  pl3filter1.resonance(pl3[pl3presetNr].Filter1_Resonance);
+  pl3filter1.octaveControl(pl3[pl3presetNr].Filter1_Sweep);
+  selectFilterType(19, pl3[pl3presetNr].Filter1_Type);
+  pl3envelope1.attack(pl3[pl3presetNr].Env1_Attack);
+  pl3envelope2.attack(pl3[pl3presetNr].Env1_Attack);
+  pl3envelope1.decay(pl3[pl3presetNr].Env1_Decay);
+  pl3envelope2.decay(pl3[pl3presetNr].Env1_Decay);
+  pl3envelope1.sustain(pl3[pl3presetNr].Env1_Sustain);
+  pl3envelope2.sustain(pl3[pl3presetNr].Env1_Sustain);
+  pl3envelope1.release(pl3[pl3presetNr].Env1_Release);
+  pl3envelope2.release(pl3[pl3presetNr].Env1_Release);
+}
+
 
 void savePlugin3() {
 

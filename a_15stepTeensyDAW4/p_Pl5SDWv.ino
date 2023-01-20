@@ -28,28 +28,6 @@ void Plugin_5_Settings() {
   pl5amp.gain(1);
   pl5amp2.gain(1);
 }
-
-
-void Plugin5_Page_Static(byte Pagenumber) {
-  clearWorkSpace();
-  Plugin5_Change();
-  //draw selecting pages buttons
-  //draw_sub_page_buttons(2);
-  drawNrInRect(18, 1, pl5presetNr, ILI9341_PURPLE);
-  drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
-  drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Frequency_graph, note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Sweep_graph, pl5[pl5presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Type_graph, pl5[pl5presetNr].Filter1_Type, "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[pl5[pl5presetNr].Filter1_Type], ILI9341_WHITE);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_2, pl5[pl5presetNr].Env1_Attack_graph, pl5[pl5presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, pl5[pl5presetNr].Env1_Decay_graph, pl5[pl5presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, pl5[pl5presetNr].Env1_Sustain_graph, pl5[pl5presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, pl5[pl5presetNr].Env1_Release_graph, pl5[pl5presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
-}
 void Plugin5_Control() {
   switch (lastPotRow) {
     case 0:
@@ -120,24 +98,6 @@ void Plugin5_Control() {
       }
       break;
   }
-}
-void Plugin5_Change() {
-  pl5[pl5presetNr].selected_file;
-  newdigate::flashloader loader;
-  pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
-  pl5filter1.frequency(pl5[pl5presetNr].Filter1_Frequency);
-  pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance);
-  pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep);
-  selectFilterType(21, pl5[pl5presetNr].Filter1_Type);
-
-  pl5envelope1.attack(pl5[pl5presetNr].Env1_Attack);
-  pl5envelope2.attack(pl5[pl5presetNr].Env1_Attack);
-  pl5envelope1.decay(pl5[pl5presetNr].Env1_Decay);
-  pl5envelope2.decay(pl5[pl5presetNr].Env1_Decay);
-  pl5envelope1.sustain(pl5[pl5presetNr].Env1_Sustain);
-  pl5envelope2.sustain(pl5[pl5presetNr].Env1_Sustain);
-  pl5envelope1.release(pl5[pl5presetNr].Env1_Release);
-  pl5envelope2.release(pl5[pl5presetNr].Env1_Release);
 }
 void Plugin5_Page1_Dynamic() {
   //change preset
@@ -249,6 +209,45 @@ void Plugin5_Page1_Dynamic() {
     }
   }
 }
+void Plugin5_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
+  Plugin5_Change();
+  //draw selecting pages buttons
+  //draw_sub_page_buttons(2);
+  drawNrInRect(18, 1, pl5presetNr, ILI9341_PURPLE);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
+  drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Frequency_graph, note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Sweep_graph, pl5[pl5presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_3, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Type_graph, pl5[pl5presetNr].Filter1_Type, "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 7, filterType[pl5[pl5presetNr].Filter1_Type], ILI9341_WHITE);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl5[pl5presetNr].Env1_Attack_graph, pl5[pl5presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_2, pl5[pl5presetNr].Env1_Decay_graph, pl5[pl5presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_2, pl5[pl5presetNr].Env1_Sustain_graph, pl5[pl5presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_3, CTRL_ROW_2, pl5[pl5presetNr].Env1_Release_graph, pl5[pl5presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+}
+void Plugin5_Change() {
+  pl5[pl5presetNr].selected_file;
+  newdigate::flashloader loader;
+  pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
+  pl5filter1.frequency(pl5[pl5presetNr].Filter1_Frequency);
+  pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance);
+  pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep);
+  selectFilterType(21, pl5[pl5presetNr].Filter1_Type);
+
+  pl5envelope1.attack(pl5[pl5presetNr].Env1_Attack);
+  pl5envelope2.attack(pl5[pl5presetNr].Env1_Attack);
+  pl5envelope1.decay(pl5[pl5presetNr].Env1_Decay);
+  pl5envelope2.decay(pl5[pl5presetNr].Env1_Decay);
+  pl5envelope1.sustain(pl5[pl5presetNr].Env1_Sustain);
+  pl5envelope2.sustain(pl5[pl5presetNr].Env1_Sustain);
+  pl5envelope1.release(pl5[pl5presetNr].Env1_Release);
+  pl5envelope2.release(pl5[pl5presetNr].Env1_Release);
+}
+
 
 void savePlugin5() {
   tft.fillScreen(ILI9341_DARKGREY);

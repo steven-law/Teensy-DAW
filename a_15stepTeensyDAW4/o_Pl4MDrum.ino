@@ -27,17 +27,6 @@ void Plugin_4_Settings() {
   pl4amp.gain(1);
   pl4amp2.gain(1);
 }
-void Plugin4_Page_Static(byte Pagenumber) {
-  clearWorkSpace();
-  Plugin4_Change();
-  drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
-  for (byte touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-    drawPot(touchX * 4 - 1, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-    drawPot(touchX * 4 - 1, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
-  }
-}
-
 void Plugin4_Control() {
   switch (lastPotRow) {
     case 0:
@@ -78,13 +67,6 @@ void Plugin4_Control() {
 
     case 3:
       break;
-  }
-}
-void Plugin4_Change() {
-  for (byte touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
-    pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
-    pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
   }
 }
 void Plugin4_Page1_Dynamic() {
@@ -162,7 +144,23 @@ void Plugin4_Page1_Dynamic() {
     }
   }
 }
-
+void Plugin4_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
+  Plugin4_Change();
+  drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
+  for (byte touchX = 1; touchX < 5; touchX++) {
+    drawPot(touchX * 4 - 1, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+  }
+}
+void Plugin4_Change() {
+  for (byte touchX = 1; touchX < 5; touchX++) {
+    pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
+    pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
+    pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
+  }
+}
 
 void savePlugin4() {
 

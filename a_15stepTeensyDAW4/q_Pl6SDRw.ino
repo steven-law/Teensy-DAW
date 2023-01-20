@@ -26,25 +26,6 @@ void Plugin_6_Settings() {
   pl6amp.gain(1);
   pl6amp2.gain(1);
 }
-
-void Plugin6_Page_Static(byte Pagenumber) {
-  clearWorkSpace();
-  Plugin6_Change();
-  //draw selecting pages buttons
-  //draw_sub_page_buttons(2);
-  drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
-  drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_graph, pl6[pl6presetNr].selected_file, "RAW", ILI9341_BLACK);
-  drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, note_frequency[pl6[pl6presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Type_graph, pl6[pl6presetNr].Filter1_Type, "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[pl6[pl6presetNr].Filter1_Type], ILI9341_WHITE);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
-}
 void Plugin6_Control() {
   switch (lastPotRow) {
     case 0:
@@ -114,21 +95,6 @@ void Plugin6_Control() {
       }
       break;
   }
-}
-void Plugin6_Change() {
-  pl6[pl6presetNr].selected_file;
-  pl6filter1.frequency(pl6[pl6presetNr].Filter1_Frequency);
-  pl6filter1.resonance(pl6[pl6presetNr].Filter1_Resonance);
-  pl6filter1.octaveControl(pl6[pl6presetNr].Filter1_Sweep);
-  selectFilterType(21, pl6[pl6presetNr].Filter1_Type);
-  pl6envelope1.attack(pl6[pl6presetNr].Env1_Attack);
-  pl6envelope2.attack(pl6[pl6presetNr].Env1_Attack);
-  pl6envelope1.decay(pl6[pl6presetNr].Env1_Decay);
-  pl6envelope2.decay(pl6[pl6presetNr].Env1_Decay);
-  pl6envelope1.sustain(pl6[pl6presetNr].Env1_Sustain);
-  pl6envelope2.sustain(pl6[pl6presetNr].Env1_Sustain);
-  pl6envelope1.release(pl6[pl6presetNr].Env1_Release);
-  pl6envelope2.release(pl6[pl6presetNr].Env1_Release);
 }
 void Plugin6_Page1_Dynamic() {
   //change preset
@@ -234,6 +200,40 @@ void Plugin6_Page1_Dynamic() {
     }
   }
 }
+void Plugin6_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
+  Plugin6_Change();
+  //draw selecting pages buttons
+  //draw_sub_page_buttons(2);
+  drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl6[pl6presetNr].selected_file_graph, pl6[pl6presetNr].selected_file, "RAW", ILI9341_BLACK);
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Frequency_graph, note_frequency[pl6[pl6presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Resonance_graph, pl6[pl6presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Sweep_graph, pl6[pl6presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_3, CTRL_ROW_1, pl6[pl6presetNr].Filter1_Type_graph, pl6[pl6presetNr].Filter1_Type, "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 7, filterType[pl6[pl6presetNr].Filter1_Type], ILI9341_WHITE);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl6[pl6presetNr].Env1_Attack_graph, pl6[pl6presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_2, pl6[pl6presetNr].Env1_Decay_graph, pl6[pl6presetNr].Env1_Decay, "Dec", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_2, pl6[pl6presetNr].Env1_Sustain_graph, pl6[pl6presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_3, CTRL_ROW_2, pl6[pl6presetNr].Env1_Release_graph, pl6[pl6presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+}
+void Plugin6_Change() {
+  pl6[pl6presetNr].selected_file;
+  pl6filter1.frequency(pl6[pl6presetNr].Filter1_Frequency);
+  pl6filter1.resonance(pl6[pl6presetNr].Filter1_Resonance);
+  pl6filter1.octaveControl(pl6[pl6presetNr].Filter1_Sweep);
+  selectFilterType(21, pl6[pl6presetNr].Filter1_Type);
+  pl6envelope1.attack(pl6[pl6presetNr].Env1_Attack);
+  pl6envelope2.attack(pl6[pl6presetNr].Env1_Attack);
+  pl6envelope1.decay(pl6[pl6presetNr].Env1_Decay);
+  pl6envelope2.decay(pl6[pl6presetNr].Env1_Decay);
+  pl6envelope1.sustain(pl6[pl6presetNr].Env1_Sustain);
+  pl6envelope2.sustain(pl6[pl6presetNr].Env1_Sustain);
+  pl6envelope1.release(pl6[pl6presetNr].Env1_Release);
+  pl6envelope2.release(pl6[pl6presetNr].Env1_Release);
+}
+
 
 void savePlugin6() {
 

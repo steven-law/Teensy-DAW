@@ -17,29 +17,6 @@ void Plugin_9_Settings() {
   pl9amp.gain(1);
   pl9amp2.gain(1);
 }
-
-void Plugin9_Page_Static(byte Pagenumber) {
-  clearWorkSpace();
-  Plugin9_Change();
-  //place here the (copied!) shown controls for your plugin
-  //if needed draw selecting pages buttons
-  //draw_sub_page_buttons(n); //max 4
-  drawNrInRect(18, 1, pl9presetNr, ILI9341_PURPLE);
-  drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate, "Rate", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
-
-  drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
-  drawPot(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
-}
 void Plugin9_Control() {
   switch (lastPotRow) {
     case 0:
@@ -114,18 +91,6 @@ void Plugin9_Control() {
       }
       break;
   }
-}
-void Plugin9_Change() {
-  pl9bpinput.begin(pl9[pl9presetNr].wah_form);
-  pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
-  pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
-  pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
-  pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
-  pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
-  filter1.frequency(pl9[pl9presetNr].Filter1_Frequency);
-  filter1.resonance(pl9[pl9presetNr].Filter1_Resonance);
-  filter1.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
-  selectFilterType(21, pl9[pl9presetNr].Filter1_Type);
 }
 void Plugin9_Page1_Dynamic() {
   //change preset
@@ -237,6 +202,40 @@ void Plugin9_Page1_Dynamic() {
       lastPotRow = 3;
     }
   }
+}
+void Plugin9_Page_Static(byte Pagenumber) {
+  clearWorkSpace();
+  Plugin9_Change();
+  //place here the (copied!) shown controls for your plugin
+  //if needed draw selecting pages buttons
+  //draw_sub_page_buttons(n); //max 4
+  drawNrInRect(18, 1, pl9presetNr, ILI9341_PURPLE);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate, "Rate", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
+}
+void Plugin9_Change() {
+  pl9bpinput.begin(pl9[pl9presetNr].wah_form);
+  pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
+  pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
+  pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
+  pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
+  pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
+  filter1.frequency(pl9[pl9presetNr].Filter1_Frequency);
+  filter1.resonance(pl9[pl9presetNr].Filter1_Resonance);
+  filter1.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
+  selectFilterType(21, pl9[pl9presetNr].Filter1_Type);
 }
 
 void savePlugin9() {
