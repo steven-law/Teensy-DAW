@@ -632,7 +632,53 @@ void MixerPage3_Dynamic() {
     }
   }
 }
+void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < 16; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      gainPerBar[pluginn]->gain(volume);
+    }
+  }
+}
 
+void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < 16; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      gainmax[pluginn]->gain(volume);
+    }
+  }
+}
+
+void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      dryVolume[pluginn]->gain(volume);
+    }
+  }
+}
+
+void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      FX1Volume[pluginn]->gain(volume);
+    }
+  }
+}
+
+void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      FX2Volume[pluginn]->gain(volume);
+    }
+  }
+}
+
+void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
+    if (pluginchannel == pluginn + 17) {
+      FX3Volume[pluginn]->gain(volume);
+    }
+  }
+}
 void saveMixer() {
 
   tft.fillScreen(ILI9341_DARKGREY);

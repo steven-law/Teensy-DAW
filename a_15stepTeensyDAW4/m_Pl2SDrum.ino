@@ -30,6 +30,7 @@ void Plugin_2_Settings() {
 }
 void Plugin2_Page_Static(byte Pagenumber) {
   clearWorkSpace();
+  Plugin2_Change();
   drawNrInRect(18, 1, pl2presetNr, ILI9341_PURPLE);
   for (byte touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[touchX - 1], pl2[pl2presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
@@ -80,6 +81,13 @@ void Plugin2_Control() {
       break;
   }
 }
+void Plugin2_Change() {
+  for (byte touchX = 1; touchX < 5; touchX++) {
+    drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
+    drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
+    drummixer3.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
+  }
+}
 void Plugin2_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -94,6 +102,7 @@ void Plugin2_Page1_Dynamic() {
       case 0:
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl2[pl2presetNr].Vol_rnd[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn] + encoded[MixerColumn]), 0, 127);
           }
@@ -103,6 +112,7 @@ void Plugin2_Page1_Dynamic() {
       case 1:
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] + encoded[MixerColumn]), 0, 127);
           }
@@ -112,6 +122,7 @@ void Plugin2_Page1_Dynamic() {
       case 2:
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] + encoded[MixerColumn]), 0, 127);
           }

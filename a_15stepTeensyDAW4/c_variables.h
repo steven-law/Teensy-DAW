@@ -275,8 +275,8 @@ struct plugin6 {
   byte Env1_Sustain_graph = 50;
   int Env1_Release = 150;
   byte Env1_Release_graph = 50;
-  byte selected_file_raw;
-  byte selected_file_raw_graph = 0;
+  byte selected_file;
+  byte selected_file_graph = 0;
   byte Volume_graph = 50;
   float Volume_rnd;
   float Volume;

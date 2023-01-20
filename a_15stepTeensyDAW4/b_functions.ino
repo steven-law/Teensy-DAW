@@ -66,8 +66,8 @@ void Plugin_View_Static() {
     Plugin16_Page_Static(0);
   }
 }
-//this calls the dynamic plugin view for your plugin, where your changes (via encoder) of the soundcontrols are happening
-// just add your plugin-page dynamic function here
+//this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
+// just add your plugin-page dynamic and Pluginx_Control function here
 void Plugin_View_Dynamic() {
   //***********************************************************************************************************************
   // 4) copy one of the plugin Page Views
@@ -87,19 +87,27 @@ void Plugin_View_Dynamic() {
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+
+  readMainButtons();
   //-----------------------------------------
   //setting up the Plugin1 Page1-view
   if (selectPage == PLUGIN1_PAGE1) {
     Plugin1_Page1_Dynamic();
+    Plugin1_Control();
   }
   //setting up the Plugin1 Page2-view
   if (selectPage == PLUGIN1_PAGE2) {
     Plugin1_Page2_Dynamic();
+    Plugin1_Control();
   }
 
   //setting up the Plugin2 Page1-view
   if (selectPage == PLUGIN2_PAGE1) {
     Plugin2_Page1_Dynamic();
+    Plugin2_Control();
   }
 
 
@@ -107,6 +115,7 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin3 Page1-view
   if (selectPage == PLUGIN3_PAGE1) {
     Plugin3_Page1_Dynamic();
+    Plugin3_Control();
   }
   /////////////////////////////////////////////////////////////////////////////
 
@@ -114,31 +123,38 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin4 Page1-view
   if (selectPage == PLUGIN4_PAGE1) {
     Plugin4_Page1_Dynamic();
+    Plugin4_Control();
   }
 
   //setting up the Plugin5 Page1-view
   if (selectPage == PLUGIN5_PAGE1) {
     Plugin5_Page1_Dynamic();
+    Plugin5_Control();
   }
   //setting up the Plugin6 Page1-view
   if (selectPage == PLUGIN6_PAGE1) {
     Plugin6_Page1_Dynamic();
+    Plugin6_Control();
   }
   //setting up the Plugin7 Page1-view
   if (selectPage == PLUGIN7_PAGE1) {
     Plugin7_Page1_Dynamic();
+    Plugin7_Control1();
   }
   //setting up the Plugin7 Page2-view
   if (selectPage == PLUGIN7_PAGE2) {
     Plugin7_Page2_Dynamic();
+    Plugin7_Control2();
   }
   //setting up the Plugin8 Page1-view
   if (selectPage == PLUGIN8_PAGE1) {
     Plugin8_Page1_Dynamic();
+    Plugin8_Control();
   }
   //setting up the Plugin9 Page1-view
   if (selectPage == PLUGIN9_PAGE1) {
     Plugin9_Page1_Dynamic();
+    Plugin9_Control();
   }
   //setting up the Plugin10 Page1-view
   if (selectPage == PLUGIN10_PAGE1) {
@@ -224,7 +240,7 @@ void Plugin_View_Dynamic() {
     midiCCpage1_Dynamic(desired_track);
   }
 }
-
+//here you have to put your NoteOn/Off´s into
 void PluginPlay() {
   //play drumplugin when midichannel = 18
   for (int desired_instruments = 0; desired_instruments < 8; desired_instruments++) {
@@ -289,25 +305,48 @@ void PluginPlay() {
     }
     //play Memory drumplugin when midichannel = 20
     if (track[0].MIDIchannel == 23) {
+
       if (drumnotes[0]) {
+        drumnotes[0] = false;
         pl7drum1.noteOn();
       }
+
       if (drumnotes[1]) {
+        drumnotes[1] = false;
         pl7envelope1.noteOn();
       } else {
         pl7envelope1.noteOff();
       }
+
       if (drumnotes[2]) {
+        drumnotes[2] = false;
         pl7envelope2.noteOn();
         pl7envelope3.noteOn();
       } else {
         pl7envelope2.noteOff();
         pl7envelope3.noteOff();
       }
+
       if (drumnotes[3]) {
+        drumnotes[3] = false;
         //playMem4.play(AudioSampleHihat);
+      } else {
+      }
+
+      if (drumnotes[4]) {
+        drumnotes[4] = false;
+        //playMem4.play(AudioSampleHihat);
+      } else {
+      }
+
+      if (drumnotes[5]) {
+        drumnotes[5] = false;
+        //playMem4.play(AudioSampleHihat);
+      } else {
       }
     }
+
+
 
     if (track[desired_instruments].notePressed) {
 
@@ -341,7 +380,7 @@ void PluginPlay() {
       if (track[desired_instruments].MIDIchannel == 22) {
         double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
         playSdPitch2.setPlaybackRate(note_ratio);
-        playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file_raw], 1);
+        playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
         pl6envelope1.noteOn();
         pl6envelope2.noteOn();
       }
@@ -410,83 +449,38 @@ void beatComponents() {
 
     if (track[instruments].MIDIchannel == 17) {
       pl1presetNr = track[instruments].presetNr[phrase];
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl1[pl1presetNr].note_Offset[MixerColumn];
-        waveform1.begin(pl1[pl1presetNr].wfSelect[MixerColumn]);
-        mixer1.gain(0, pl1[pl1presetNr].note_Velo[MixerColumn]);
-      }
-
-      filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
-      filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-      filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-      selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
-      envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-      envelope2.attack(pl1[pl1presetNr].Env1_Attack);
-      envelope1.decay(pl1[pl1presetNr].Env1_Decay);
-      envelope2.decay(pl1[pl1presetNr].Env1_Decay);
-      envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
-      envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
-      envelope1.release(pl1[pl1presetNr].Env1_Release);
-      envelope2.release(pl1[pl1presetNr].Env1_Release);
+      Plugin1_Change();
     }
     if (track[instruments].MIDIchannel == 18) {
       pl2presetNr = track[instruments].presetNr[phrase];
-      for (byte touchX = 1; touchX < 5; touchX++) {
-        drummixer1.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX - 1]);
-        drummixer2.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 3]);
-        drummixer3.gain(touchX - 1, pl2[pl2presetNr].Vol[touchX + 7]);
-      }
+      Plugin2_Change();
     }
     if (track[instruments].MIDIchannel == 19) {
       pl3presetNr = track[instruments].presetNr[phrase];
-      pl3waveform1.begin(pl3[pl3presetNr].wfSelect);
-      pl3filter1.frequency(pl3[pl3presetNr].Filter1_Frequency);
-      pl3filter1.resonance(pl3[pl3presetNr].Filter1_Resonance);
-      pl3filter1.octaveControl(pl3[pl3presetNr].Filter1_Sweep);
-      selectFilterType(19, pl3[pl3presetNr].Filter1_Type);
-      pl3envelope1.attack(pl3[pl3presetNr].Env1_Attack);
-      pl3envelope2.attack(pl3[pl3presetNr].Env1_Attack);
-      pl3envelope1.decay(pl3[pl3presetNr].Env1_Decay);
-      pl3envelope2.decay(pl3[pl3presetNr].Env1_Decay);
-      pl3envelope1.sustain(pl3[pl3presetNr].Env1_Sustain);
-      pl3envelope2.sustain(pl3[pl3presetNr].Env1_Sustain);
-      pl3envelope1.release(pl3[pl3presetNr].Env1_Release);
-      pl3envelope2.release(pl3[pl3presetNr].Env1_Release);
+      Plugin3_Change();
     }
     if (track[instruments].MIDIchannel == 20) {
       pl4presetNr = track[instruments].presetNr[phrase];
-      for (byte touchX = 1; touchX < 5; touchX++) {
-        pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
-        pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
-        pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
-      }
+      Plugin4_Change();
     }
     if (track[instruments].MIDIchannel == 21) {
       pl5presetNr = track[instruments].presetNr[phrase];
+      Plugin5_Change();
     }
     if (track[instruments].MIDIchannel == 22) {
       pl6presetNr = track[instruments].presetNr[phrase];
+      Plugin6_Change();
     }
     if (track[instruments].MIDIchannel == 23) {
       pl7presetNr = track[instruments].presetNr[phrase];
     }
     if (track[instruments].MIDIchannel == 24) {
       pl8presetNr = track[instruments].presetNr[phrase];
-      pl8waveform1.begin(pl8[pl8presetNr].wfSelect);
-      pl8filter1.frequency(pl8[pl8presetNr].Filter1_Frequency);
-      pl8filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
-      pl8filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
-      pl8envelope1.attack(pl8[pl8presetNr].Env1_Attack);
-      pl8envelope2.attack(pl8[pl8presetNr].Env1_Attack);
-      pl8envelope1.decay(pl8[pl8presetNr].Env1_Decay);
-      pl8envelope2.decay(pl8[pl8presetNr].Env1_Decay);
-      pl8envelope1.sustain(pl8[pl8presetNr].Env1_Sustain);
-      pl8envelope2.sustain(pl8[pl8presetNr].Env1_Sustain);
-      pl8envelope1.release(pl8[pl8presetNr].Env1_Release);
-      pl8envelope2.release(pl8[pl8presetNr].Env1_Release);
+      Plugin8_Change();
     }
     if (track[instruments].MIDIchannel == 25) {
       pl9presetNr = track[instruments].presetNr[phrase];
+      Plugin9_Change();
     }
   }
 }
@@ -532,57 +526,8 @@ void selectFilterType(byte pluginchannel, byte mixerchannel) {
 ////////////////////////////////////////////////////
 
 
-//only subject to change when we have reached the limit of templated plugins (per now there are 9 plugins and 7 templated plugins)
-//
-//this is the volume used for the automation in songmode
-//add your amp.gain() to control the volume
-void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < 16; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      gainPerBar[pluginn]->gain(volume);
-    }
-  }
-}
 
-void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < 16; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      gainmax[pluginn]->gain(volume);
-    }
-  }
-}
 
-void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      dryVolume[pluginn]->gain(volume);
-    }
-  }
-}
-
-void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      FX1Volume[pluginn]->gain(volume);
-    }
-  }
-}
-
-void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      FX2Volume[pluginn]->gain(volume);
-    }
-  }
-}
-
-void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
-  for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
-    if (pluginchannel == pluginn + 17) {
-      FX3Volume[pluginn]->gain(volume);
-    }
-  }
-}
 
 
 

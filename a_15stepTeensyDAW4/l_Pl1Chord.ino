@@ -73,40 +73,27 @@ void Plugin_1_Settings() {
 
 void Plugin1_Page_Static(byte Pagenumber) {
   clearWorkSpace();
+  Plugin1_Change();
   //draw selecting pages buttons
   draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl1presetNr, ILI9341_PURPLE);
   if (Pagenumber == 0) {
     for (byte voice = 0; voice < 4; voice++) {
       byte voicePos = ((voice + 1) * 4) - 1;
-
       drawPot(voicePos, CTRL_ROW_0, pl1[pl1presetNr].note_Offset_graph[voice], pl1[pl1presetNr].note_Offset[voice], "Offset", trackColor[desired_instrument]);
       drawPot(voicePos, CTRL_ROW_1, pl1[pl1presetNr].wfSelect_graph[voice], pl1[pl1presetNr].wfSelect[voice], "W~F", trackColor[desired_instrument]);
       drawPot(voicePos, CTRL_ROW_2, pl1[pl1presetNr].note_Velo_graph[voice], pl1[pl1presetNr].note_Velo_graph[voice], "Vel", trackColor[desired_instrument]);
     }
   }
   if (Pagenumber == 1) {
-    filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
     drawPot(CTRL_COL_0, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Frequency_graph, note_frequency[pl1[pl1presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
-    filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
     drawPot(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
-    filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
     drawPot(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
-    selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
     drawPot(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
     drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
-
-    envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-    envelope2.attack(pl1[pl1presetNr].Env1_Attack);
     drawPot(CTRL_COL_0, CTRL_ROW_1, pl1[pl1presetNr].Env1_Attack_graph, pl1[pl1presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
-    envelope1.decay(pl1[pl1presetNr].Env1_Decay);
-    envelope2.decay(pl1[pl1presetNr].Env1_Decay);
     drawPot(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Env1_Decay_graph, pl1[pl1presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
-    envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
-    envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
     drawPot(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Env1_Sustain_graph, pl1[pl1presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
-    envelope1.release(pl1[pl1presetNr].Env1_Release);
-    envelope2.release(pl1[pl1presetNr].Env1_Release);
     drawPot(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
   }
 }
@@ -127,6 +114,7 @@ void Plugin1_Page1_Dynamic() {
         //1 Row 1 note Offset
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl1[pl1presetNr].note_Offset_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].note_Offset_graph[MixerColumn] + (encoded[MixerColumn] * 2)), 0, 127);
           }
@@ -136,6 +124,7 @@ void Plugin1_Page1_Dynamic() {
         //1 Row 2 Waveform
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl1[pl1presetNr].wfSelect[MixerColumn] * 11;
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].wfSelect[MixerColumn] + encoded[MixerColumn]), 0, 12) * 11;
           }
@@ -145,6 +134,7 @@ void Plugin1_Page1_Dynamic() {
         //1 Row 2 note Velocity
         for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+          Potentiometer[MixerColumn] = pl1[pl1presetNr].note_Velo_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].note_Velo_graph[MixerColumn] + encoded[MixerColumn]), 0, 127);
           }
@@ -226,39 +216,47 @@ void Plugin1_Page2_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Filter Frequency
+        Potentiometer[0] = pl1[pl1presetNr].Filter1_Frequency_graph;
         if (enc_moved[0]) {
-          pl1[pl1presetNr].Filter1_Frequency_graph = constrain((pl1[pl1presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
+          Potentiometer[0] = constrain((pl1[pl1presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
         }
         //Resonance
+        Potentiometer[1] = pl1[pl1presetNr].Filter1_Resonance_graph;
         if (enc_moved[1]) {
-          pl1[pl1presetNr].Filter1_Resonance_graph = constrain((pl1[pl1presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
+          Potentiometer[1] = constrain((pl1[pl1presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
         }
         //Sweep
+        Potentiometer[2] = pl1[pl1presetNr].Filter1_Sweep_graph;
         if (enc_moved[2]) {
-          pl1[pl1presetNr].Filter1_Sweep_graph = constrain((pl1[pl1presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
+          Potentiometer[2] = constrain((pl1[pl1presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
         }
         //Filtertype
+        Potentiometer[3] = pl1[pl1presetNr].Filter1_Type * 43;
         if (enc_moved[3]) {
-          pl1[pl1presetNr].Filter1_Type = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 2);
+          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 2) * 43;
         }
         break;
 
       case 1:
         //Attack
+        Potentiometer[0] = pl1[pl1presetNr].Env1_Attack_graph;
         if (enc_moved[0]) {
-          pl1[pl1presetNr].Env1_Attack_graph = constrain((pl1[pl1presetNr].Env1_Attack_graph + encoded[0]), 0, 127);
+          Potentiometer[0] = constrain((pl1[pl1presetNr].Env1_Attack_graph + encoded[0]), 0, 127);
         }
         //Decay
+        Potentiometer[1] = pl1[pl1presetNr].Env1_Decay_graph;
         if (enc_moved[1]) {
-          pl1[pl1presetNr].Env1_Decay_graph = constrain((pl1[pl1presetNr].Env1_Decay_graph + encoded[1]), 0, 127);
+          Potentiometer[1] = constrain((pl1[pl1presetNr].Env1_Decay_graph + encoded[1]), 0, 127);
         }
         //Sustain
+        Potentiometer[2] = pl1[pl1presetNr].Env1_Sustain_graph;
         if (enc_moved[2]) {
-          pl1[pl1presetNr].Env1_Sustain_graph = constrain((pl1[pl1presetNr].Env1_Sustain_graph + encoded[2]), 0, 127);
+          Potentiometer[2] = constrain((pl1[pl1presetNr].Env1_Sustain_graph + encoded[2]), 0, 127);
         }
         //Release
+        Potentiometer[3] = pl1[pl1presetNr].Env1_Release_graph;
         if (enc_moved[3]) {
-          pl1[pl1presetNr].Env1_Release_graph = constrain((pl1[pl1presetNr].Env1_Release_graph + encoded[3]), 0, 127);
+          Potentiometer[3] = constrain((pl1[pl1presetNr].Env1_Release_graph + encoded[3]), 0, 127);
         }
         break;
     }
@@ -431,7 +429,26 @@ void Plugin1_Control() {
     }
   }
 }
+void Plugin1_Change() {
+  for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    pl1[pl1presetNr].note_Offset[MixerColumn];
+    waveform1.begin(pl1[pl1presetNr].wfSelect[MixerColumn]);
+    mixer1.gain(0, pl1[pl1presetNr].note_Velo[MixerColumn]);
+  }
 
+  filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
+  filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
+  filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
+  selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
+  envelope1.attack(pl1[pl1presetNr].Env1_Attack);
+  envelope2.attack(pl1[pl1presetNr].Env1_Attack);
+  envelope1.decay(pl1[pl1presetNr].Env1_Decay);
+  envelope2.decay(pl1[pl1presetNr].Env1_Decay);
+  envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
+  envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
+  envelope1.release(pl1[pl1presetNr].Env1_Release);
+  envelope2.release(pl1[pl1presetNr].Env1_Release);
+}
 
 void savePlugin1() {
 

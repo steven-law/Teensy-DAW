@@ -20,6 +20,7 @@ void Plugin_9_Settings() {
 
 void Plugin9_Page_Static(byte Pagenumber) {
   clearWorkSpace();
+  Plugin9_Change();
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -39,7 +40,93 @@ void Plugin9_Page_Static(byte Pagenumber) {
   drawPot(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
   drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
 }
+void Plugin9_Control() {
+  switch (lastPotRow) {
+    case 0:
+      if (pl9[pl9presetNr].wah_form_graph != Potentiometer[0]) {
+        pl9[pl9presetNr].wah_form = Potentiometer[0] / 10;
+        pl9[pl9presetNr].wah_form_graph = pl9[pl9presetNr].wah_form * 10;
+        pl9bpinput.begin(pl9[pl9presetNr].wah_form);
+        drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].wah_rate_graph != Potentiometer[1]) {
+        pl9[pl9presetNr].wah_rate_graph = Potentiometer[1];
+        pl9[pl9presetNr].wah_rate = pl9[pl9presetNr].wah_rate_graph / 16.00;
+        pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate_graph, "Rate", trackColor[desired_track]);
+      }
 
+      break;
+    case 1:
+      if (pl9[pl9presetNr].wah_freq_graph != Potentiometer[0]) {
+        pl9[pl9presetNr].wah_freq_graph = Potentiometer[0];
+        pl9[pl9presetNr].wah_freq = map(pl9[pl9presetNr].wah_freq_graph, 0, 127, 20, 2000);
+        pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
+        drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].wah_reso_graph != Potentiometer[1]) {
+        pl9[pl9presetNr].wah_reso_graph = Potentiometer[1];
+        pl9[pl9presetNr].wah_reso = pl9[pl9presetNr].wah_reso_graph / 25.40;
+        pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].wah_sweep_graph != Potentiometer[2]) {
+        pl9[pl9presetNr].wah_sweep_graph = Potentiometer[2];
+        pl9[pl9presetNr].wah_sweep = pl9[pl9presetNr].wah_sweep_graph / 18.30;
+        pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
+        drawPot_3(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
+      }
+      break;
+    case 2:
+      if (pl9[pl9presetNr].wavefold_graph != Potentiometer[0]) {
+        pl9[pl9presetNr].wavefold_graph = Potentiometer[0];
+        pl9[pl9presetNr].wavefold = (pl9[pl9presetNr].wavefold_graph / 64.00) + 0.06;
+        pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
+        drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
+      }
+      break;
+    case 3:
+      if (pl9[pl9presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
+        pl9[pl9presetNr].Filter1_Frequency_graph = Potentiometer[0];
+        pl9[pl9presetNr].Filter1_Frequency = note_frequency[pl9[pl9presetNr].Filter1_Frequency_graph];
+        filter1.frequency(pl9[pl9presetNr].Filter1_Frequency);
+        drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
+      }
+
+      if (pl9[pl9presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
+        pl9[pl9presetNr].Filter1_Resonance_graph = Potentiometer[1];
+        pl9[pl9presetNr].Filter1_Resonance = pl9[pl9presetNr].Filter1_Resonance_graph / 25.40;
+        filter1.resonance(pl9[pl9presetNr].Filter1_Resonance);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
+        pl9[pl9presetNr].Filter1_Sweep_graph = Potentiometer[2];
+        pl9[pl9presetNr].Filter1_Sweep = pl9[pl9presetNr].Filter1_Sweep_graph / 18.14;
+        filter1.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
+        drawPot_3(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].Filter1_Type_graph != Potentiometer[3]) {
+        pl9[pl9presetNr].Filter1_Type_graph = Potentiometer[3];
+        pl9[pl9presetNr].Filter1_Type = pl9[pl9presetNr].Filter1_Type_graph / 43;
+        selectFilterType(21, pl9[pl9presetNr].Filter1_Type);
+        drawPot_4(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
+        drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
+      }
+      break;
+  }
+}
+void Plugin9_Change() {
+  pl9bpinput.begin(pl9[pl9presetNr].wah_form);
+  pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
+  pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
+  pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
+  pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
+  pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
+  filter1.frequency(pl9[pl9presetNr].Filter1_Frequency);
+  filter1.resonance(pl9[pl9presetNr].Filter1_Resonance);
+  filter1.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
+  selectFilterType(21, pl9[pl9presetNr].Filter1_Type);
+}
 void Plugin9_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -54,83 +141,62 @@ void Plugin9_Page1_Dynamic() {
       case 0:
         //wah-wah
         //Waveform
+        Potentiometer[0] = pl9[pl9presetNr].wah_form;
         if (enc_moved[0]) {
-          pl9[pl9presetNr].wah_form = constrain((pl9[pl9presetNr].wah_form + encoded[0]), 0, 12);
-          pl9[pl9presetNr].wah_form_graph = pl9[pl9presetNr].wah_form * 10;
-          pl9bpinput.begin(pl9[pl9presetNr].wah_form);
-          drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
+          Potentiometer[0] = constrain((pl9[pl9presetNr].wah_form + encoded[0]), 0, 12) * 11;
         }
         //Rate
+        Potentiometer[1] = pl9[pl9presetNr].wah_rate_graph;
         if (enc_moved[1]) {
-          pl9[pl9presetNr].wah_rate_graph = constrain((pl9[pl9presetNr].wah_rate_graph + encoded[1]), 0, 127);
-          pl9[pl9presetNr].wah_rate = pl9[pl9presetNr].wah_rate_graph / 16.00;
-          pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
-          drawPot_2(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate_graph, "Rate", trackColor[desired_track]);
+          Potentiometer[1] = constrain((pl9[pl9presetNr].wah_rate_graph + encoded[1]), 0, 127);
         }
         //Amount
+        Potentiometer[2] = pl9[pl9presetNr].wah_sweep_graph;
         if (enc_moved[2]) {
-          pl9[pl9presetNr].wah_sweep_graph = constrain((pl9[pl9presetNr].wah_sweep_graph + encoded[2]), 0, 127);
-          pl9[pl9presetNr].wah_sweep = pl9[pl9presetNr].wah_sweep_graph / 18.30;
-          pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
-          drawPot_3(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Depth", trackColor[desired_track]);
+          Potentiometer[2] = constrain((pl9[pl9presetNr].wah_sweep_graph + encoded[2]), 0, 127);
         }
         break;
 
       case 1:
         //Freq
+        Potentiometer[0] = pl9[pl9presetNr].wah_freq_graph;
         if (enc_moved[0]) {
-          pl9[pl9presetNr].wah_freq_graph = constrain((pl9[pl9presetNr].wah_freq_graph + encoded[0]), 0, 127);
-          pl9[pl9presetNr].wah_freq = map(pl9[pl9presetNr].wah_freq_graph, 0, 127, 20, 2000);
-          pl9bpfilter.frequency(pl9[pl9presetNr].wah_freq);
-          drawPot(CTRL_COL_0, CTRL_ROW_1, pl9[pl9presetNr].wah_freq_graph, pl9[pl9presetNr].wah_freq_graph, "Freq", trackColor[desired_track]);
+          Potentiometer[0] = constrain((pl9[pl9presetNr].wah_freq_graph + encoded[0]), 0, 127);
         }
         //Reso
+        Potentiometer[1] = pl9[pl9presetNr].wah_reso_graph;
         if (enc_moved[1]) {
-          pl9[pl9presetNr].wah_reso_graph = constrain((pl9[pl9presetNr].wah_reso_graph + encoded[1]), 0, 127);
-          pl9[pl9presetNr].wah_reso = pl9[pl9presetNr].wah_reso_graph / 25.40;
-          pl9bpfilter.resonance(pl9[pl9presetNr].wah_reso);
-          drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl9[pl9presetNr].wah_reso_graph, pl9[pl9presetNr].wah_reso_graph, "Reso", trackColor[desired_track]);
+          Potentiometer[1] = constrain((pl9[pl9presetNr].wah_reso_graph + encoded[1]), 0, 127);
         }
         break;
       case 2:
         //Wavefold
+        Potentiometer[0] = pl9[pl9presetNr].wavefold_graph;
         if (enc_moved[0]) {
-          pl9[pl9presetNr].wavefold_graph = constrain((pl9[pl9presetNr].wavefold_graph + encoded[0]), 0, 127);
-          pl9[pl9presetNr].wavefold = (pl9[pl9presetNr].wavefold_graph / 64.00) + 0.06;
-          pl9dc1.amplitude(pl9[pl9presetNr].wavefold);
-          drawPot(CTRL_COL_0, CTRL_ROW_2, pl9[pl9presetNr].wavefold_graph, pl9[pl9presetNr].wavefold_graph, "WFold", trackColor[desired_track]);
+          Potentiometer[0] = constrain((pl9[pl9presetNr].wavefold_graph + encoded[0]), 0, 127);
         }
         break;
 
       case 3:
         //Filter Frequency
+        Potentiometer[0] = pl9[pl9presetNr].Filter1_Frequency_graph;
         if (enc_moved[0]) {
-          pl9[pl9presetNr].Filter1_Frequency_graph = constrain((pl9[pl9presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
-          pl9[pl9presetNr].Filter1_Frequency = note_frequency[pl9[pl9presetNr].Filter1_Frequency_graph];
-          pl9filter2.frequency(pl9[pl9presetNr].Filter1_Frequency);
-          drawPot(CTRL_COL_0, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Frequency_graph, pl9[pl9presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
+          Potentiometer[0] = constrain((pl9[pl9presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
         }
         //Resonance
+        Potentiometer[1] = pl9[pl9presetNr].Filter1_Resonance_graph;
         if (enc_moved[1]) {
-          pl9[pl9presetNr].Filter1_Resonance_graph = constrain((pl9[pl9presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
-          pl9[pl9presetNr].Filter1_Resonance = pl9[pl9presetNr].Filter1_Resonance_graph / 25.40;
-          pl9filter2.resonance(pl9[pl9presetNr].Filter1_Resonance);
-          drawPot_2(CTRL_COL_1, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Resonance_graph, pl9[pl9presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
+          Potentiometer[1] = constrain((pl9[pl9presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
         }
         //Sweep
+        Potentiometer[2] = pl9[pl9presetNr].Filter1_Sweep_graph;
         if (enc_moved[2]) {
-          pl9[pl9presetNr].Filter1_Sweep_graph = constrain((pl9[pl9presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
-          pl9[pl9presetNr].Filter1_Sweep = pl9[pl9presetNr].Filter1_Sweep_graph / 18.14;
-          pl9filter2.octaveControl(pl9[pl9presetNr].Filter1_Sweep);
-          drawPot_3(CTRL_COL_2, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Sweep_graph, pl9[pl9presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
+          Potentiometer[2] = constrain((pl9[pl9presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
         }
         //Filtertype
+        Potentiometer[3] = pl9[pl9presetNr].Filter1_Type * 43;
         if (enc_moved[3]) {
-          pl9[pl9presetNr].Filter1_Type = constrain((pl9[pl9presetNr].Filter1_Type + encoded[3]), 0, 2);
-          pl9[pl9presetNr].Filter1_Type_graph = pl9[pl9presetNr].Filter1_Type * 43;
-          selectFilterType(25, pl9[pl1presetNr].Filter1_Type);
-          drawPot_4(CTRL_COL_3, CTRL_ROW_3, pl9[pl9presetNr].Filter1_Type_graph, pl9[pl9presetNr].Filter1_Type, "", trackColor[desired_track]);
-          drawChar(CTRL_COL_3, 13, filterType[pl9[pl9presetNr].Filter1_Type], ILI9341_WHITE);
+          Potentiometer[3] = constrain((pl9[pl9presetNr].Filter1_Type + encoded[3]), 0, 2) * 43;
         }
         break;
     }
