@@ -1,5 +1,5 @@
 void LP_drawclipRow() {
-  if (midi01.idVendor() == 4661) {
+  if (launchpad) {
 
     for (byte LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
@@ -21,11 +21,11 @@ void LP_drawclipRow() {
 
 void LP_songmode(byte note) {
   //launchpadcontrols
-  if (midi01.idVendor() == 4661) {
+  if (launchpad) {
     //clipselecting via launchpad mini mk1
 
     if (seq_rec) {
-      
+
       for (byte instruments = 0; instruments < 8; instruments++) {
         for (byte notes = 0; notes < 8; notes++) {
 
@@ -184,6 +184,19 @@ void LP_melodicstep() {
           }
         }
       }
+    }
+  }
+}
+
+void detect_and_assign_midi_devices() {
+  if (launchpad != nullptr && (!launchpad || launchpad->idProduct() != MIDI_PRODUCTID_LAUNCHPAD || launchpad->idProduct() != MIDI_VENDORID_LAUNCHPAD)) {
+    // our currently-assigned 'launchpad' device no longer refers to the launchpad - unset it
+    launchpad = nullptr;
+  }
+  for (int i = 0; i < MAX_USB_DEVICES; i++) {
+    if (usb_midi_devices[i] && usb_midi_devices[i]->idVendor() == MIDI_VENDORID_LAUNCHPAD && usb_midi_devices[i]->idProduct() == MIDI_PRODUCTID_LAUNCHPAD) {
+      // detected launchpad on midi device with index 'i'!
+      launchpad = usb_midi_devices[i];  // assign pointer to this device to the 'launchpad' variable
     }
   }
 }

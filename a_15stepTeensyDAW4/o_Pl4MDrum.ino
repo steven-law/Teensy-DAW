@@ -3,6 +3,7 @@
 
 
 
+
 void Plugin_4_Settings() {
   pl4drummixer1.gain(0, 1);
   pl4drummixer1.gain(1, 1);
@@ -35,7 +36,7 @@ void Plugin4_Control() {
         if (pl4[pl4presetNr].Vol_rnd[MixerColumn] != Potentiometer[MixerColumn]) {
           pl4[pl4presetNr].Vol_rnd[MixerColumn] = Potentiometer[MixerColumn];
           pl4[pl4presetNr].Vol[MixerColumn] = pl4[pl4presetNr].Vol_rnd[MixerColumn] / 127.00;
-          drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn]);
+          pl4drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn]);
           drawPot(MixerColumnPos, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[MixerColumn], pl4[pl4presetNr].Vol_rnd[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
         }
       }
@@ -47,7 +48,7 @@ void Plugin4_Control() {
         if (pl4[pl4presetNr].Vol_rnd[MixerColumn + 4] != Potentiometer[MixerColumn]) {
           pl4[pl4presetNr].Vol_rnd[MixerColumn + 4] = Potentiometer[MixerColumn];
           pl4[pl4presetNr].Vol[MixerColumn + 4] = pl4[pl4presetNr].Vol_rnd[MixerColumn + 4] / 127.00;
-          drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn + 4]);
+          pl4drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn + 4]);
           drawPot(MixerColumnPos, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[MixerColumn + 4], pl4[pl4presetNr].Vol_rnd[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
         }
       }
@@ -59,7 +60,7 @@ void Plugin4_Control() {
         if (pl4[pl4presetNr].Vol_rnd[MixerColumn + 8] != Potentiometer[MixerColumn]) {
           pl4[pl4presetNr].Vol_rnd[MixerColumn + 8] = Potentiometer[MixerColumn];
           pl4[pl4presetNr].Vol[MixerColumn + 8] = pl4[pl4presetNr].Vol_rnd[MixerColumn + 8] / 127.00;
-          drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn + 8]);
+          pl4drummixer1.gain(MixerColumn, pl4[pl4presetNr].Vol[MixerColumn + 8]);
           drawPot(MixerColumnPos, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[MixerColumn + 8], pl4[pl4presetNr].Vol_rnd[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
         }
       }
@@ -78,7 +79,6 @@ void Plugin4_Page1_Dynamic() {
       Plugin4_Page_Static(0);
     }
   }
-
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:

@@ -69,7 +69,7 @@
 ////////   add the Plugin3_Page1_Dynamic()-function to the loop() function in "functions.ino"     //////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+//kkjgjjvhhlkkjgggllhkkllk
 
 // 3) head over to variables.h  and look for the ********************************************************
 

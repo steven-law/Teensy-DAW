@@ -158,7 +158,12 @@ MIDIDevice midi09(myusb);
 MIDIDevice midi10(myusb);
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
+#define MAX_USB_DEVICES 10
+#define MIDI_VENDORID_LAUNCHPAD 4661
+#define MIDI_PRODUCTID_LAUNCHPAD 54
 
+MIDIDevice *launchpad = nullptr;
+MIDIDevice *usb_midi_devices[MAX_USB_DEVICES] = { &midi01, &midi02, &midi03, &midi04, &midi05, &midi06, &midi07, &midi08, &midi09, &midi10 };
 
 
 
@@ -831,6 +836,9 @@ void setup() {
   tft.println("Initializing Track- and Pluginsettings");
   for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
     dryVolume[pluginn]->gain(1);
+    FX1Volume[pluginn]->gain(0);
+    FX2Volume[pluginn]->gain(0);
+    FX3Volume[pluginn]->gain(0);
   }
 
 
@@ -897,6 +905,11 @@ void loop() {
   midi04.read();
   midi05.read();
   midi06.read();
+  midi07.read();
+  midi08.read();
+  midi09.read();
+  midi10.read();
+  detect_and_assign_midi_devices();
   kpd.tick();
   sendClock();
 
@@ -910,13 +923,13 @@ void loop() {
 
   //assigning the current clip/noteoffset/presets/Volume from the arrangment array for each track
   if (seq_run) {
-    beatComponents();
+    
   }
 
   if (msecs % 100 == 0) {
-    //Serial.print(LP_octave_bool[0]);
+    //Serial.print(pl2[0].Vol_rnd[0]);
     //Serial.print("-");
-    //Serial.println(button[8]);
+    //Serial.println(pl2[0].Vol_rnd[1]);
     tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
     tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
     drawCursor();

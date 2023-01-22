@@ -115,8 +115,6 @@ void Plugin2_Page1_Dynamic() {
         break;
     }
   }
-
-
   TS_Point p = ts.getPoint();
   if (ts.touched() || button[15]) {
     if (gridTouchY == 0) {

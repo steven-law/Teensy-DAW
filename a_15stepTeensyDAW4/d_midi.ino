@@ -56,6 +56,7 @@ void sendClock() {
         tick_16++;
         //digitalWrite(22, HIGH);
         noteOff_tick = 0;
+
         ////tft.updateScreen();
         step(tick_16);
         drawstepPosition(tick_16);
@@ -66,9 +67,13 @@ void sendClock() {
         tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
         tft.print(phrase + 1);
       }
+      if (tick_16 == 0) {
+        beatComponents();
+      }
       if (tick_16 == 15) {
         tick_16 = -1;
         phrase++;
+
         pixelphrase++;
         drawbarPosition();
       }
@@ -124,35 +129,31 @@ void step(int current) {
         if (channel1Clip[track[0].clip_songMode][i][current]) {
           if (!dsend_noteOff[i]) {
             drumnotes[i] = true;
-            usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-            MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-            PluginPlay();
-            if (midi01.idVendor() != 4661) {
-              //midi01.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              midi02.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              midi03.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              midi04.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              midi05.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              midi06.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+            PluginPlayDrum();
+            if (track[0].MIDIchannel < 17) {
+              usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              for (int usbs = 0; usbs < 10; usbs++) {
+                if (!launchpad) {
+                  usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                }
+              }
             }
             dsend_noteOff[i] = true;
           }
-        } else {
-          if (dsend_noteOff[i]) {
-
+        }
+        if (channel1Clip[track[0].clip_songMode][i][current - 1]) {
+          PluginPlayDrum();
+          if (track[0].MIDIchannel < 17) {
             usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-            if (midi01.idVendor() != 4661) {
-              //midi01.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              midi02.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              midi03.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              midi04.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              midi05.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              midi06.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+            for (int usbs = 0; usbs < 10; usbs++) {
+              if (!launchpad) {
+                usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              }
             }
-            PluginPlay();
-            dsend_noteOff[i] = false;
           }
+          dsend_noteOff[i] = false;
         }
       }
     }
@@ -184,31 +185,33 @@ void step(int current) {
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
-        track[desired_instrument].notePressed = true;
-        track[desired_instrument].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
+        track[track_number].notePressed = true;
+        track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
 
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
           if (track[track_number].MIDIchannel < 17) {
-
-            usbMIDI.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-            MIDI.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-            if (midi01.idVendor() != 4661) {
-              // midi01.sendNoteOn(track[desired_instrument].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+            track[track_number].send_noteOff = true;
+            usbMIDI.sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+            MIDI.sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+            for (int usbs = 0; usbs < 10; usbs++) {
+              if (!launchpad) {
+                usb_midi_devices[usbs]->sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
+              }
             }
           }
           PluginPlay();
-          track[track_number].send_noteOff = true;
         }
         //if (track[track_number].send_noteOff) {
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
-          track[desired_instrument].notePressed = false;
+          track[track_number].notePressed = false;
 
           if (track[track_number].MIDIchannel < 17) {
-
             usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
             MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-            if (midi01.idVendor() != 4661) {
-              // midi01.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+            for (int usbs = 0; usbs < 10; usbs++) {
+              if (!launchpad) {
+                usb_midi_devices[usbs]->sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+              }
             }
           }
           PluginPlay();
@@ -427,6 +430,7 @@ void myClock() {
     drawstepPosition(tick_16);
     drawPhrasenumber();
   }
+
   Serial.println("Clock");
 }
 
@@ -452,11 +456,13 @@ void myStop() {
 
 void myNoteOn(byte channel, byte note, byte velocity) {
 
-  if (midi01.idVendor() == 4661) {
+  if (launchpad) {
 
     for (byte songpages = 0; songpages < 16; songpages++) {
       if (selectPage == SONGMODE_PAGE_1 + songpages) {
-        LP_songmode(note);
+        if (msecs % 100 == 0) {
+          LP_songmode(note);
+        }
       }
     }
     for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
@@ -470,6 +476,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
       for (byte octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes[octNotes]) {
           LP_octave_bool[octNotes] = true;
+          drumnotes[octNotes] = true;
         }
       }
     }
@@ -555,7 +562,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   PluginPlay();
 }
 void myNoteOff(byte channel, byte note, byte velocity) {
-  if (midi01.idVendor() == 4661) {
+  if (launchpad) {
 
     for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
       if (note == LP_grid_notes[gridNotes]) {
@@ -1168,7 +1175,7 @@ void myControlChange(byte channel, byte control, byte value) {
 
 
   //launchpad control up-est row, they send cc´s
-  if (midi01.idVendor() == 4661) {
+  if (launchpad) {
     //cursor left
     if (otherCtrlButtons && control == 104 && value == 127) {
       button[0] = true;
