@@ -666,7 +666,7 @@ struct tracks {
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
-  bool send_noteOff;
+  
   byte midicc_value_row_1[4];
   byte midicc_number_row_1[4]{ 20, 21, 22, 23 };
   byte midicc_value_row_2[4];
@@ -682,7 +682,9 @@ struct tracks {
   int presetNr[256];
   int volume[256];
   int notePlayed;
+  int notePlayedLast;
   bool notePressed;
+  bool playNoteOnce;
   byte MIDI_velocity = 99;
 
   byte Volume_graph = 50;

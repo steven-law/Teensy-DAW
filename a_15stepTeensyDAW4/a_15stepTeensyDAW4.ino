@@ -1967,8 +1967,7 @@ void stopSeq() {
   pixelphrase = -1;
   phrase = 0;
   msecs = 0;
-  //if (track[track_number].send_noteOff) {
-  //if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current-1] > VALUE_NOTEOFF) {
+
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (track[track_number].MIDIchannel < 17) {
       usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);

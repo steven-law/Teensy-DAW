@@ -129,7 +129,8 @@ void step(int current) {
         if (channel1Clip[track[0].clip_songMode][i][current]) {
           if (!dsend_noteOff[i]) {
             drumnotes[i] = true;
-            PluginPlayDrum();
+            dsend_noteOff[i] = true;
+            DrumPluginPlay();
             if (track[0].MIDIchannel < 17) {
               usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
               MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
@@ -139,11 +140,11 @@ void step(int current) {
                 }
               }
             }
-            dsend_noteOff[i] = true;
           }
         }
         if (channel1Clip[track[0].clip_songMode][i][current - 1]) {
-          PluginPlayDrum();
+          drumnotes[i] = false;
+          DrumPluginPlay();
           if (track[0].MIDIchannel < 17) {
             usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
@@ -159,68 +160,32 @@ void step(int current) {
     }
   }
 
-  //********************************************************************************
-  //track 2-8 are intended to be (monophonic) melodic sequencer
-  //in this file we let the 15step sequencer do all the midi and note trigering stuff
 
-
-  // 5) so if you add a melodic plugin its best to add all the noteOn / Off functions here
-  //    let the plugin only play when the midi channel for a track is set to this plugin
-  //    do this with:
-  //    if (track[track_number].MIDIchannel == Pluginnumber + 16) {}
-
-  //    you can calculate the needed frequencys with this formula
-  //    440 * pow(2.0, ((double)(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] - SAMPLE_ROOT) / 12.0))
-  //    or use my note_frequency array
-  //    current notes are stored in a struct with a "step" array
-  //    call the frequency for your module with:
-  //    "module".frequency(note_frequency[ctrack[track_number].sequence[track[track_number].clip_songMode].step[current]]);
-  //    call the desired MIDINumber with:
-  //    ctrack[track_number].sequence[track[track_number].clip_songMode].step[current]
-
-
-  // if you want to change your parameters and you certainly will, head back to your plugin ino file to add graphics and controls.
-
-  //send midinotes for melodic track #2 -8
+  //send midinoteOn/Off´s for melodic track #2 -8
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
-        track[track_number].notePressed = true;
         track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
-
+        track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase];
+       
+        //if the actual step is high, play the notes
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
-          if (track[track_number].MIDIchannel < 17) {
-            track[track_number].send_noteOff = true;
-            usbMIDI.sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-            MIDI.sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-            for (int usbs = 0; usbs < 10; usbs++) {
-              if (!launchpad) {
-                usb_midi_devices[usbs]->sendNoteOn(track[track_number].notePlayed, track[track_number].MIDI_velocity, track[track_number].MIDIchannel);
-              }
-            }
-          }
+          track[track_number].playNoteOnce = true;
+          track[track_number].notePressed = true;
           PluginPlay();
         }
-        //if (track[track_number].send_noteOff) {
+        //if the last step wass high, stop the notes
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
           track[track_number].notePressed = false;
-
-          if (track[track_number].MIDIchannel < 17) {
-            usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-            MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-            for (int usbs = 0; usbs < 10; usbs++) {
-              if (!launchpad) {
-                usb_midi_devices[usbs]->sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
-              }
-            }
-          }
           PluginPlay();
-          track[track_number].send_noteOff = false;
+
           //}
         }
       }
     }
   }
+
+
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     if (current == 0) {
       tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
@@ -480,19 +445,20 @@ void myNoteOn(byte channel, byte note, byte velocity) {
         }
       }
     }
-    for (int trackss = 1; trackss < 8; trackss++) {
-      if (desired_instrument == trackss) {
-        for (byte octNotes = 0; octNotes < 12; octNotes++) {
-          if (note == LP_octave_notes_keys[octNotes]) {
-            channelPlayed = desired_instrument + 1;
-            channel = desired_instrument + 1;
-            LP_octave_bool_keys[octNotes] = true;
-            track[desired_instrument].notePressed = true;
-            track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
-          }
+
+    else {
+      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+        if (note == LP_octave_notes_keys[octNotes]) {
+          channelPlayed = desired_instrument + 1;
+          channel = desired_instrument + 1;
+          LP_octave_bool_keys[octNotes] = true;
+          track[desired_instrument].notePressed = true;
+          track[desired_instrument].playNoteOnce = true;
+          track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
         }
       }
     }
+
     for (byte stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
         LP_step_bool[stepss] = true;
@@ -534,33 +500,34 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     if (!button[10] && note == 120) {
       button[15] = true;
     }
-  } else if (channel == 1) {
-    LP_octave_bool[note - 60] = true;
-    for (int files = 0; files < 12; files++) {
-      if (note == (files + 60) || LP_octave_bool[files]) {
-        drumnotes[files] = true;
+  }
+
+  if (!launchpad) {
+    //send midinotes for drumtrack
+    if (channel == 1) {
+      LP_octave_bool[note - 60] = true;
+      for (int files = 0; files < 12; files++) {
+        if (note == (files + 60) || LP_octave_bool[files]) {
+          drumnotes[files] = true;
+        }
       }
+    } else {
+      LP_octave_bool_keys[0] = true;
+      track[channel - 1].notePressed = true;
+      track[channel - 1].playNoteOnce = true;
+      track[channel - 1].notePlayed = note;
     }
-  } else {
-    LP_octave_bool_keys[0] = true;
-    track[channel - 1].notePressed = true;
-    track[channel - 1].notePlayed = note;
+    if (seq_rec) {
+      ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
+    }
+    // When a USB device with multiple virtual cables is used,
+    // midi1.getCable() can be used to read which of the virtual
+    // MIDI cables received this message.
   }
-
-  // When a USB device with multiple virtual cables is used,
-  // midi1.getCable() can be used to read which of the virtual
-  // MIDI cables received this message.
-
-  if (seq_rec) {
-    ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
-  }
-  //send midinotes for drumtrack
-
-
-
-
+  DrumPluginPlay();
   PluginPlay();
 }
+
 void myNoteOff(byte channel, byte note, byte velocity) {
   if (launchpad) {
 
@@ -577,18 +544,18 @@ void myNoteOff(byte channel, byte note, byte velocity) {
         }
       }
     }
-    for (int trackss = 1; trackss < 8; trackss++) {
-      if (desired_instrument == trackss) {
-        for (byte octNotes = 0; octNotes < 12; octNotes++) {
-          if (note == LP_octave_notes_keys[octNotes]) {
-            channel = desired_instrument + 1;
-            LP_octave_bool_keys[octNotes] = false;
-            track[desired_instrument].notePressed = false;
-            track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
-          }
+
+    else {
+      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+        if (note == LP_octave_notes_keys[octNotes]) {
+          channel = desired_instrument + 1;
+          LP_octave_bool_keys[octNotes] = false;
+          track[desired_instrument].notePressed = false;
+          track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
         }
       }
     }
+
     for (byte stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
         LP_step_bool[stepss] = false;
@@ -628,25 +595,25 @@ void myNoteOff(byte channel, byte note, byte velocity) {
     if (!button[10] && note == 120) {
       button[15] = false;
     }
-  } else if (channel == 1) {
-    LP_octave_bool[note - 60] = false;
-    for (int files = 0; files < 12; files++) {
-      if (note == (files + 60) && !LP_octave_bool[files]) {
-        drumnotes[files] = false;
-      }
-    }
-  } else {
-    LP_octave_bool_keys[0] = false;
-
-    track[channel - 1].notePressed = false;
-    track[channel - 1].notePlayed = note;
   }
-
-
-
-
+  if (!launchpad) {
+    if (channel == 1) {
+      LP_octave_bool[note - 60] = false;
+      for (int files = 0; files < 12; files++) {
+        if (note == (files + 60) && !LP_octave_bool[files]) {
+          drumnotes[files] = false;
+        }
+      }
+    } else {
+      LP_octave_bool_keys[0] = false;
+      track[channel - 1].notePressed = false;
+      track[channel - 1].notePlayed = note;
+    }
+  }
+  DrumPluginPlay();
   PluginPlay();
 }
+
 void myControlChange(byte channel, byte control, byte value) {
   if (control == 3) {
     Potentiometer[0] = value;

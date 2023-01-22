@@ -242,61 +242,84 @@ void Plugin_View_Dynamic() {
 }
 //here you have to put your NoteOn/Off´s into
 void PluginPlay() {
-  //play drumplugin when midichannel = 18
-
-
-
-
 
   for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
-
-
     if (track[desired_instruments].notePressed) {
+      if (track[desired_instruments].playNoteOnce) {
 
-      if (track[desired_instruments].MIDIchannel == 17) {
-        waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
-        waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
-        waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);
-        waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
-        envelope1.noteOn();
-        envelope2.noteOn();
-        Serial.println("crackling");
-      }
 
-      if (track[desired_instruments].MIDIchannel == 19) {
-        pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
-        pl3envelope1.noteOn();
-        pl3envelope2.noteOn();
-      }
-      if (track[desired_instruments].MIDIchannel == 21) {
-        double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
-        playSdPitch1.setPlaybackRate(note_ratio);
-        //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
-        playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
-        pl5envelope1.noteOn();
-        pl5envelope2.noteOn();
-      }
-      if (track[desired_instruments].MIDIchannel == 22) {
-        double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
-        playSdPitch2.setPlaybackRate(note_ratio);
-        playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
-        pl6envelope1.noteOn();
-        pl6envelope2.noteOn();
-      }
-      if (track[desired_instruments].MIDIchannel == 24) {
-        pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
-        pl8envelope1.noteOn();
-        pl8envelope2.noteOn();
-      }
-      if (track[desired_instruments].MIDIchannel == 25) {
-        pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
+        //send midi noteOn´s with channel 1-16
+        if (track[desired_instruments].MIDIchannel < 17) {
+          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+          MIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+          for (int usbs = 0; usbs < 10; usbs++) {
+            if (!launchpad) {
+              usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+            }
+          }
+          track[desired_instruments].playNoteOnce = false;
+        }
+        //send plugin noteOn´s to plugins
+        if (track[desired_instruments].MIDIchannel == 17) {
+          waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
+          waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
+          waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);
+          waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
+          envelope1.noteOn();
+          envelope2.noteOn();
+          track[desired_instruments].playNoteOnce = false;
+          Serial.println("crackling");
+        }
+        if (track[desired_instruments].MIDIchannel == 19) {
+          pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+          pl3envelope1.noteOn();
+          pl3envelope2.noteOn();
+          track[desired_instruments].playNoteOnce = false;
+        }
+        if (track[desired_instruments].MIDIchannel == 21) {
+          double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+          playSdPitch1.setPlaybackRate(note_ratio);
+          //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
+          playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
+          pl5envelope1.noteOn();
+          pl5envelope2.noteOn();
+          track[desired_instruments].playNoteOnce = false;
+        }
+        if (track[desired_instruments].MIDIchannel == 22) {
+          double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+          playSdPitch2.setPlaybackRate(note_ratio);
+          playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
+          pl6envelope1.noteOn();
+          pl6envelope2.noteOn();
+          track[desired_instruments].playNoteOnce = false;
+        }
+        if (track[desired_instruments].MIDIchannel == 24) {
+          pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+          pl8envelope1.noteOn();
+          pl8envelope2.noteOn();
+          track[desired_instruments].playNoteOnce = false;
+        }
+        if (track[desired_instruments].MIDIchannel == 25) {
+          pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
+          track[desired_instruments].playNoteOnce = false;
+        }
       }
     }
 
 
-
     if (!track[desired_instruments].notePressed) {
 
+      //send midi noteOff´s with channel 1-16
+      if (track[desired_instruments].MIDIchannel < 17) {
+        usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+        MIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+        for (int usbs = 0; usbs < 10; usbs++) {
+          if (!launchpad) {
+            usb_midi_devices[usbs]->sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+          }
+        }
+      }
+      //send plugin noteOff´s to plugins
       if (track[desired_instruments].MIDIchannel == 17) {
         envelope1.noteOff();
         envelope2.noteOff();
@@ -427,11 +450,36 @@ void selectFilterType(byte pluginchannel, byte mixerchannel) {
 ////////////////////////////////////////////////////
 
 
-void PluginPlayDrum() {
+void DrumPluginPlay() {
+
+
+
+  /* 
+  if (track[0].MIDIchannel < 17) {
+    for (int files = 0; files < 12; files++) {
+      if (drumnotes[files]) {
+        usbMIDI.sendNoteOn(drumnote[files], track[0].MIDI_velocity, track[0].MIDIchannel);
+        MIDI.sendNoteOn(drumnote[files], track[0].MIDI_velocity, track[0].MIDIchannel);
+        for (int usbs = 0; usbs < 10; usbs++) {
+          if (!launchpad) {
+            usb_midi_devices[usbs]->sendNoteOn(drumnote[files], track[0].MIDI_velocity, track[0].MIDIchannel);
+          }
+        }
+      }
+      if (!drumnotes[files]) {
+
+        usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+        MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+        for (int usbs = 0; usbs < 10; usbs++) {
+          if (!launchpad) {
+            usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+          }
+        }
+      }
+    }
+  }*/
+
   //play drumplugin when midichannel = 18
-
-
-
   if (track[0].MIDIchannel == 18) {
     for (int files = 0; files < 12; files++) {
       if (drumnotes[files]) {
