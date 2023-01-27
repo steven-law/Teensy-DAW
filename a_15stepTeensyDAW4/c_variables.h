@@ -548,7 +548,7 @@ bool drumnotes[12];
 bool button[16]{};
 int channelPlayed;
 
-
+bool showSerialonce = false;
 bool something_was_pressed = false;
 bool otherCtrlButtons = true;
 byte last_button_X = 0;

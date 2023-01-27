@@ -58,7 +58,7 @@ void sendClock() {
         //digitalWrite(22, HIGH);
 
         step(tick_16);
-        SerialPrint();
+        SerialPrintSeq();
         drawstepPosition(tick_16);
         //draw phrasenumber
         tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
@@ -73,9 +73,13 @@ void sendClock() {
         phrase++;
         drawbarPosition();
         pixelphrase++;
+        showSerialonce = true;
       }
       if (tick_16 == -1) {
         beatComponents();
+        if (showSerialonce) {
+          SerialPrintPlugins();
+        }
       }
       //differnt things happening while the clock is running
       if (phrase == MAX_PHRASES - 1) {

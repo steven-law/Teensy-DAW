@@ -42,20 +42,20 @@ void Plugin5_Control() {
       if (pl5[pl5presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
         pl5[pl5presetNr].Filter1_Frequency_graph = Potentiometer[0];
         pl5[pl5presetNr].Filter1_Frequency = note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph];
-        filter1.frequency(pl5[pl5presetNr].Filter1_Frequency);
+        pl5filter1.frequency(pl5[pl5presetNr].Filter1_Frequency);
         drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Frequency_graph, pl5[pl5presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
       }
 
       if (pl5[pl5presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
         pl5[pl5presetNr].Filter1_Resonance_graph = Potentiometer[1];
         pl5[pl5presetNr].Filter1_Resonance = pl5[pl5presetNr].Filter1_Resonance_graph / 25.40;
-        filter1.resonance(pl5[pl5presetNr].Filter1_Resonance);
+        pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance);
         drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
       }
       if (pl5[pl5presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
         pl5[pl5presetNr].Filter1_Sweep_graph = Potentiometer[2];
         pl5[pl5presetNr].Filter1_Sweep = pl5[pl5presetNr].Filter1_Sweep_graph / 18.14;
-        filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep);
+        pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep);
         drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Sweep_graph, pl5[pl5presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
       }
       if (pl5[pl5presetNr].Filter1_Type_graph != Potentiometer[3]) {
@@ -71,29 +71,29 @@ void Plugin5_Control() {
       if (pl5[pl5presetNr].Env1_Attack_graph != Potentiometer[0]) {
         pl5[pl5presetNr].Env1_Attack_graph = Potentiometer[0];
         pl5[pl5presetNr].Env1_Attack = map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-        envelope1.attack(pl5[pl5presetNr].Env1_Attack);
-        envelope2.attack(pl5[pl5presetNr].Env1_Attack);
+        pl5envelope1.attack(pl5[pl5presetNr].Env1_Attack);
+        pl5envelope2.attack(pl5[pl5presetNr].Env1_Attack);
         drawPot(CTRL_COL_0, CTRL_ROW_2, pl5[pl5presetNr].Env1_Attack_graph, pl5[pl5presetNr].Env1_Attack, "Atck", trackColor[desired_track]);
       }
       if (pl5[pl5presetNr].Env1_Decay_graph != Potentiometer[1]) {
         pl5[pl5presetNr].Env1_Decay_graph = Potentiometer[1];
         pl5[pl5presetNr].Env1_Decay = map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 10, 700);
-        envelope1.decay(pl5[pl5presetNr].Env1_Decay);
-        envelope2.decay(pl5[pl5presetNr].Env1_Decay);
+        pl5envelope1.decay(pl5[pl5presetNr].Env1_Decay);
+        pl5envelope2.decay(pl5[pl5presetNr].Env1_Decay);
         drawPot_2(CTRL_COL_1, CTRL_ROW_2, pl5[pl5presetNr].Env1_Decay_graph, pl5[pl5presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
       }
       if (pl5[pl5presetNr].Env1_Sustain_graph != Potentiometer[2]) {
         pl5[pl5presetNr].Env1_Sustain_graph = Potentiometer[2];
         pl5[pl5presetNr].Env1_Sustain = pl5[pl5presetNr].Env1_Sustain_graph / 127.00;
-        envelope1.sustain(pl5[pl5presetNr].Env1_Sustain);
-        envelope2.sustain(pl5[pl5presetNr].Env1_Sustain);
+        pl5envelope1.sustain(pl5[pl5presetNr].Env1_Sustain);
+        pl5envelope2.sustain(pl5[pl5presetNr].Env1_Sustain);
         drawPot_3(CTRL_COL_2, CTRL_ROW_2, pl5[pl5presetNr].Env1_Sustain_graph, pl5[pl5presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
       }
       if (pl5[pl5presetNr].Env1_Release_graph != Potentiometer[3]) {
         pl5[pl5presetNr].Env1_Release_graph = Potentiometer[3];
         pl5[pl5presetNr].Env1_Release = map(pl5[pl5presetNr].Env1_Release_graph, 0, 127, 180, 1200);
-        envelope1.release(pl5[pl5presetNr].Env1_Release);
-        envelope2.release(pl5[pl5presetNr].Env1_Release);
+        pl5envelope1.release(pl5[pl5presetNr].Env1_Release);
+        pl5envelope2.release(pl5[pl5presetNr].Env1_Release);
         drawPot_4(CTRL_COL_3, CTRL_ROW_2, pl5[pl5presetNr].Env1_Release_graph, pl5[pl5presetNr].Env1_Release, "Rel", trackColor[desired_track]);
       }
       break;

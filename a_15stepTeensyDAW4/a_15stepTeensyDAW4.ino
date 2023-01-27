@@ -894,7 +894,9 @@ void setup() {
 elapsedMillis msecs;
 elapsedMicros msecsclock;
 long oldEnc[4] = { -999, -999, -999, -999 };
-void SerialPrint() {
+
+
+void SerialPrintSeq() {
   Serial.print(tempo);
   Serial.print("-");
   Serial.print(tick_16);
@@ -913,6 +915,159 @@ void SerialPrint() {
     Serial.print("-   ");
   }
   Serial.println("");
+}
+void SerialPrintPlugins() {
+  Serial.print("PL1");
+  Serial.print("-   ");
+  Serial.print("note: ");
+  Serial.print(pl1[pl1presetNr].note_Offset_graph[0]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Offset_graph[1]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Offset_graph[2]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Offset_graph[3]);
+  Serial.print("   ");
+  Serial.print("W~F: ");
+  Serial.print(pl1[pl1presetNr].wfSelect[0]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].wfSelect[1]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].wfSelect[2]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].wfSelect[3]);
+  Serial.print("   ");
+  Serial.print("Velo: ");
+  Serial.print(pl1[pl1presetNr].note_Velo_graph[0]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Velo_graph[1]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Velo_graph[2]);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].note_Velo_graph[3]);
+  Serial.print("     ");
+  Serial.print("Filter: ");
+  Serial.print(pl1[pl1presetNr].Filter1_Frequency_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Filter1_Resonance_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Filter1_Sweep_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Filter1_Type_graph);
+  Serial.print("   ");
+  Serial.print("ADSR: ");
+  Serial.print(pl1[pl1presetNr].Env1_Attack_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Env1_Decay_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Env1_Sustain_graph);
+  Serial.print("-");
+  Serial.print(pl1[pl1presetNr].Env1_Release_graph);
+
+  Serial.println();
+
+  Serial.print("PL2");
+  Serial.print("-   ");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[0]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[1]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[2]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[3]);
+  Serial.print("  ");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[4]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[5]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[6]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[7]);
+  Serial.print("  ");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[8]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[9]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[10]);
+  Serial.print("-");
+  Serial.print(pl2[pl2presetNr].Vol_rnd[11]);
+  Serial.println();
+
+  Serial.print("PL3");
+  Serial.print("-   ");
+  Serial.print("W~F: ");
+  Serial.print(pl3[pl3presetNr].wfSelect);
+  Serial.print("   ");
+  Serial.print("Filter: ");
+  Serial.print(pl3[pl3presetNr].Filter1_Frequency_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Filter1_Resonance_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Filter1_Sweep_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Filter1_Type_graph);
+  Serial.print("   ");
+  Serial.print("ADSR: ");
+  Serial.print(pl3[pl3presetNr].Env1_Attack_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Env1_Decay_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Env1_Sustain_graph);
+  Serial.print("-");
+  Serial.print(pl3[pl3presetNr].Env1_Release_graph);
+  Serial.println();
+
+  Serial.print("PL4");
+  Serial.print("-   ");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[0]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[1]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[2]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[3]);
+  Serial.print("  ");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[4]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[5]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[6]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[7]);
+  Serial.print("  ");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[8]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[9]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[10]);
+  Serial.print("-");
+  Serial.print(pl4[pl4presetNr].Vol_rnd[11]);
+  Serial.println();
+
+  Serial.print("PL8");
+  Serial.print("-   ");
+  Serial.print("W~F: ");
+  Serial.print(pl8[pl8presetNr].wfSelect);
+  Serial.print("   ");
+  Serial.print("Filter: ");
+  Serial.print(pl8[pl8presetNr].Filter1_Frequency_graph);
+  Serial.print("-");
+  Serial.print(pl8[pl8presetNr].Filter1_Resonance_graph);
+  Serial.print("-");
+  Serial.print(pl8[pl8presetNr].Filter1_Sweep_graph);
+  Serial.print("   ");
+  Serial.print("ADSR: ");
+  Serial.print(pl8[pl8presetNr].Env1_Attack_graph);
+  Serial.print("-");
+  Serial.print(pl8[pl8presetNr].Env1_Decay_graph);
+  Serial.print("-");
+  Serial.print(pl8[pl8presetNr].Env1_Sustain_graph);
+  Serial.print("-");
+  Serial.print(pl8[pl8presetNr].Env1_Release_graph);
+  Serial.println();
+
+
+  showSerialonce = false;
 }
 void loop() {
   //Serial.println("==== start of loop ====");

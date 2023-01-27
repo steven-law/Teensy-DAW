@@ -42,20 +42,20 @@ void Plugin8_Control() {
       if (pl8[pl8presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
         pl8[pl8presetNr].Filter1_Frequency_graph = Potentiometer[0];
         pl8[pl8presetNr].Filter1_Frequency = note_frequency[pl8[pl8presetNr].Filter1_Frequency_graph];
-        filter1.frequency(pl8[pl8presetNr].Filter1_Frequency);
+        pl8filter1.frequency(pl8[pl8presetNr].Filter1_Frequency);
         drawPot(CTRL_COL_0, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Frequency_graph, pl8[pl8presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
       }
 
       if (pl8[pl8presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
         pl8[pl8presetNr].Filter1_Resonance_graph = Potentiometer[1];
         pl8[pl8presetNr].Filter1_Resonance = pl8[pl8presetNr].Filter1_Resonance_graph / 25.40;
-        filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
+        pl8filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
         drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Resonance_graph, pl8[pl8presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
       }
       if (pl8[pl8presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
         pl8[pl8presetNr].Filter1_Sweep_graph = Potentiometer[2];
         pl8[pl8presetNr].Filter1_Sweep = pl8[pl8presetNr].Filter1_Sweep_graph / 18.14;
-        filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
+        pl8filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
         drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Sweep_graph, pl8[pl8presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
       }
 
@@ -65,29 +65,29 @@ void Plugin8_Control() {
       if (pl8[pl8presetNr].Env1_Attack_graph != Potentiometer[0]) {
         pl8[pl8presetNr].Env1_Attack_graph = Potentiometer[0];
         pl8[pl8presetNr].Env1_Attack = map(pl8[pl8presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-        envelope1.attack(pl8[pl8presetNr].Env1_Attack);
-        envelope2.attack(pl8[pl8presetNr].Env1_Attack);
+        pl8envelope1.attack(pl8[pl8presetNr].Env1_Attack);
+        pl8envelope2.attack(pl8[pl8presetNr].Env1_Attack);
         drawPot(CTRL_COL_0, CTRL_ROW_2, pl8[pl8presetNr].Env1_Attack_graph, pl8[pl8presetNr].Env1_Attack, "Atck", trackColor[desired_track]);
       }
       if (pl8[pl8presetNr].Env1_Decay_graph != Potentiometer[1]) {
         pl8[pl8presetNr].Env1_Decay_graph = Potentiometer[1];
         pl8[pl8presetNr].Env1_Decay = map(pl8[pl8presetNr].Env1_Decay_graph, 0, 127, 10, 700);
-        envelope1.decay(pl8[pl8presetNr].Env1_Decay);
-        envelope2.decay(pl8[pl8presetNr].Env1_Decay);
+        pl8envelope1.decay(pl8[pl8presetNr].Env1_Decay);
+        pl8envelope2.decay(pl8[pl8presetNr].Env1_Decay);
         drawPot_2(CTRL_COL_1, CTRL_ROW_2, pl8[pl8presetNr].Env1_Decay_graph, pl8[pl8presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
       }
       if (pl8[pl8presetNr].Env1_Sustain_graph != Potentiometer[2]) {
         pl8[pl8presetNr].Env1_Sustain_graph = Potentiometer[2];
         pl8[pl8presetNr].Env1_Sustain = pl8[pl8presetNr].Env1_Sustain_graph / 127.00;
-        envelope1.sustain(pl8[pl8presetNr].Env1_Sustain);
-        envelope2.sustain(pl8[pl8presetNr].Env1_Sustain);
+        pl8envelope1.sustain(pl8[pl8presetNr].Env1_Sustain);
+        pl8envelope2.sustain(pl8[pl8presetNr].Env1_Sustain);
         drawPot_3(CTRL_COL_2, CTRL_ROW_2, pl8[pl8presetNr].Env1_Sustain_graph, pl8[pl8presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
       }
       if (pl8[pl8presetNr].Env1_Release_graph != Potentiometer[3]) {
         pl8[pl8presetNr].Env1_Release_graph = Potentiometer[3];
         pl8[pl8presetNr].Env1_Release = map(pl8[pl8presetNr].Env1_Release_graph, 0, 127, 180, 1200);
-        envelope1.release(pl8[pl8presetNr].Env1_Release);
-        envelope2.release(pl8[pl8presetNr].Env1_Release);
+        pl8envelope1.release(pl8[pl8presetNr].Env1_Release);
+        pl8envelope2.release(pl8[pl8presetNr].Env1_Release);
         drawPot_4(CTRL_COL_3, CTRL_ROW_2, pl8[pl8presetNr].Env1_Release_graph, pl8[pl8presetNr].Env1_Release, "Rel", trackColor[desired_track]);
       }
       break;
