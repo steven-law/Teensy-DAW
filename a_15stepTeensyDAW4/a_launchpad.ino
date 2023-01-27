@@ -142,7 +142,6 @@ void LP_melodicstep() {
     for (byte notes = 0; notes < 12; notes++) {
       for (byte steps = 0; steps < 16; steps++) {
 
-
         int touched_step = LP_step_bool[steps] * steps;
         byte touched_note = LP_octave_bool_keys[notes] * notes;
         track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
@@ -150,24 +149,19 @@ void LP_melodicstep() {
         int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
         int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
 
-        if (!LP_octave_bool_keys[notes]) {  //if (function_to_find_out_if_button_is_held()) {
+        if (!LP_octave_bool_keys[notes]) {  
           if (!LP_drawOnce[notes]) {
-            // control is held now, but it wasnt before -- clear screen
             LP_drawStepsequencer();
           }
           LP_drawOnce[notes] = true;
         }
-        // control was released - do something if needed when control is released?
-
 
         else if (LP_octave_bool_keys[notes]) {
           if (track[desired_instrument].tone == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps]) {
             Serial.println("hello");
-
             midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
           }
           LP_drawOnce[notes] = false;
-
 
           if (LP_step_bool[steps]) {
 

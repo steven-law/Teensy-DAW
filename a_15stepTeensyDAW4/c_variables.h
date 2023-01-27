@@ -684,6 +684,7 @@ struct tracks {
   int notePlayed;
   int notePlayedLast;
   bool notePressed;
+  bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
 

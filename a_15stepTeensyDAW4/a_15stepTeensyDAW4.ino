@@ -916,6 +916,10 @@ void loop() {
   //doMainButtons();
   readEncoders();
   Plugin_View_Dynamic();
+  DrumPluginPlay();
+  PluginNoteOn();
+  PluginNoteOff();
+  
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
   /* if (digitalRead(5)) {
     tick_16++;
@@ -923,7 +927,6 @@ void loop() {
 
   //assigning the current clip/noteoffset/presets/Volume from the arrangment array for each track
   if (seq_run) {
-    
   }
 
   if (msecs % 100 == 0) {

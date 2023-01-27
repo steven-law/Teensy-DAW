@@ -7,12 +7,17 @@
 
 
 void drawbarPosition() {
+  //draw phrasenumber
+  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_9);
+  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
+  tft.print(phrase + 1);
+  //drawbarPosition
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    //
     tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
-    //
-    tft.drawFastHLine((pixelphrase + 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
-    tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
+    tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
+    tft.drawFastHLine((pixelphrase - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
   }
   if (phrase % 16 == 0) {
     pixelphrase = 0;
@@ -28,16 +33,12 @@ void drawstepPosition(byte current) {
       tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
       tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
+    if (current == 0) {
+      tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+    }
   }
 }
-void drawPhrasenumber() {
-  //draw phrasenumber
-  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_9);
-  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-  tft.print(phrase + 1);
-}
+
 void sendClock() {
   if (seq_run) {
     //unsigned long now = micros();  // what's the time?
@@ -56,8 +57,6 @@ void sendClock() {
         tick_16++;
         //digitalWrite(22, HIGH);
         noteOff_tick = 0;
-
-        ////tft.updateScreen();
         step(tick_16);
         drawstepPosition(tick_16);
         //draw phrasenumber
@@ -68,14 +67,13 @@ void sendClock() {
         tft.print(phrase + 1);
       }
       if (tick_16 == 0) {
-        beatComponents();
       }
       if (tick_16 == 15) {
         tick_16 = -1;
         phrase++;
-
-        pixelphrase++;
+        beatComponents();
         drawbarPosition();
+        pixelphrase++;
       }
       //differnt things happening while the clock is running
       if (phrase == 255) {
@@ -119,32 +117,16 @@ void setTempo(int tempo) {
 // called when the step position changes. both the current
 // position and last are passed to the callback
 void step(int current) {
-
-
-
+  Serial.println(current);
   //send midinotes for drumtrack #1
   if (!track[0].solo_mutes_state) {
     if (!track[0].mute_state) {
       for (int i = 0; i < 12; i++) {
-        if (channel1Clip[track[0].clip_songMode][i][current]) {
-          if (!dsend_noteOff[i]) {
-            drumnotes[i] = true;
-            dsend_noteOff[i] = true;
-            DrumPluginPlay();
-            if (track[0].MIDIchannel < 17) {
-              usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              for (int usbs = 0; usbs < 10; usbs++) {
-                if (!launchpad) {
-                  usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-                }
-              }
-            }
-          }
-        }
+
+        //if the last step was high, stop the notes
         if (channel1Clip[track[0].clip_songMode][i][current - 1]) {
-          drumnotes[i] = false;
-          DrumPluginPlay();
+          //drumnotes[i] = false;
+          // DrumPluginPlay();
           if (track[0].MIDIchannel < 17) {
             usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
             MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
@@ -155,6 +137,23 @@ void step(int current) {
             }
           }
           dsend_noteOff[i] = false;
+        }
+        //if the actual step is high, play the notes
+        if (channel1Clip[track[0].clip_songMode][i][current]) {
+          if (!dsend_noteOff[i]) {
+            drumnotes[i] = true;
+            dsend_noteOff[i] = true;
+            //DrumPluginPlay();
+            if (track[0].MIDIchannel < 17) {
+              usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              for (int usbs = 0; usbs < 10; usbs++) {
+                if (!launchpad) {
+                  usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -167,28 +166,19 @@ void step(int current) {
       if (!track[track_number].mute_state) {
         track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
         track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase];
-       
+
         //if the actual step is high, play the notes
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
           track[track_number].playNoteOnce = true;
           track[track_number].notePressed = true;
-          PluginPlay();
+          //PluginNoteOn();
         }
         //if the last step wass high, stop the notes
         if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
           track[track_number].notePressed = false;
-          PluginPlay();
-
-          //}
+          //PluginNoteOff();
         }
       }
-    }
-  }
-
-
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    if (current == 0) {
-      tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
     }
   }
 }
@@ -393,7 +383,7 @@ void myClock() {
     tick_16++;
     step(tick_16);
     drawstepPosition(tick_16);
-    drawPhrasenumber();
+    drawbarPosition();
   }
 
   Serial.println("Clock");
@@ -525,7 +515,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     // MIDI cables received this message.
   }
   DrumPluginPlay();
-  PluginPlay();
+  PluginNoteOn();
 }
 
 void myNoteOff(byte channel, byte note, byte velocity) {
@@ -611,7 +601,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
     }
   }
   DrumPluginPlay();
-  PluginPlay();
+  PluginNoteOff();
 }
 
 void myControlChange(byte channel, byte control, byte value) {
