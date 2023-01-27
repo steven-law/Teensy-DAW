@@ -47,7 +47,7 @@ void sendClock() {
     if (msecsclock > _clock) {
       //_next_clock = now + _clock;
       MIDItick++;
-      noteOff_tick++;
+
       usbMIDI.sendRealTime(usbMIDI.Clock);
       MIDI.sendClock();
       msecsclock = 0;
@@ -56,8 +56,9 @@ void sendClock() {
       if (MIDItick % 6 == 0) {
         tick_16++;
         //digitalWrite(22, HIGH);
-        noteOff_tick = 0;
+
         step(tick_16);
+        SerialPrint();
         drawstepPosition(tick_16);
         //draw phrasenumber
         tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
@@ -66,17 +67,18 @@ void sendClock() {
         tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
         tft.print(phrase + 1);
       }
-      if (tick_16 == 0) {
-      }
+
       if (tick_16 == 15) {
         tick_16 = -1;
         phrase++;
-        beatComponents();
         drawbarPosition();
         pixelphrase++;
       }
+      if (tick_16 == -1) {
+        beatComponents();
+      }
       //differnt things happening while the clock is running
-      if (phrase == 255) {
+      if (phrase == MAX_PHRASES - 1) {
         seq_run = false;
         //seq.stop();
         //seq.panic();
@@ -117,7 +119,8 @@ void setTempo(int tempo) {
 // called when the step position changes. both the current
 // position and last are passed to the callback
 void step(int current) {
-  Serial.println(current);
+
+
   //send midinotes for drumtrack #1
   if (!track[0].solo_mutes_state) {
     if (!track[0].mute_state) {

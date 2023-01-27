@@ -894,7 +894,26 @@ void setup() {
 elapsedMillis msecs;
 elapsedMicros msecsclock;
 long oldEnc[4] = { -999, -999, -999, -999 };
+void SerialPrint() {
+  Serial.print(tempo);
+  Serial.print("-");
+  Serial.print(tick_16);
+  Serial.print("-   ");
+  for (int i = 0; i < 12; i++) {
+    Serial.print(channel1Clip[track[0].clip_songMode][i][tick_16]);
+    Serial.print("-");
+  }
 
+  Serial.print("-   ");
+
+  for (int desired_tracks = 1; desired_tracks < 8; desired_tracks++) {
+    Serial.print(track[desired_tracks].notePlayed);
+    Serial.print("-");
+    Serial.print(track[desired_tracks].envActive);
+    Serial.print("-   ");
+  }
+  Serial.println("");
+}
 void loop() {
   //Serial.println("==== start of loop ====");
   usbMIDI.read();
@@ -919,7 +938,7 @@ void loop() {
   DrumPluginPlay();
   PluginNoteOn();
   PluginNoteOff();
-  
+
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
   /* if (digitalRead(5)) {
     tick_16++;

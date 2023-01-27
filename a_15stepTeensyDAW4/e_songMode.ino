@@ -76,7 +76,7 @@ void drawarrengmentLine(byte songpageNumber, byte touched_track, byte touched_ph
 
 void clearArrangment() {
   for (byte ctrack = 0; ctrack < 8; ctrack++) {
-    for (byte cphrase = 0; cphrase < 255; cphrase++) {
+    for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
       track[ctrack].arrangment1[cphrase] = 8;
       track[ctrack].NoteOffset[cphrase] = 0;
       track[ctrack].presetNr[cphrase] = 0;
@@ -164,13 +164,13 @@ void songModePage(byte songpageNumber) {
     }
     //Start of loop
     if (enc_moved[2]) {
-      start_of_loop = constrain((start_of_loop + encoded[2]), 0, 254);
+      start_of_loop = constrain((start_of_loop + encoded[2]), 0, MAX_PHRASES - 2);
       draw_start_of_loop();
     }
 
     //end of loop
     if (enc_moved[3]) {
-      end_of_loop = constrain((end_of_loop + encoded[3]), 1, 255);
+      end_of_loop = constrain((end_of_loop + encoded[3]), 1, MAX_PHRASES - 1);
       draw_end_of_loop();
     }
   }
@@ -213,12 +213,12 @@ void songModePage(byte songpageNumber) {
     }
     //Start of loop
     if (enc_moved[2]) {
-      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, 254);
+      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, MAX_PHRASES - 2);
       draw_start_of_loop();
     }
     //end of loop
     if (enc_moved[3]) {
-      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, 255);
+      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, MAX_PHRASES - 1);
       draw_end_of_loop();
     }
   }
@@ -316,7 +316,7 @@ void savebutton() {
     //save arrangment
     tft.print("Writing songarrangment to project.txt...");
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
-      for (byte cphrase = 0; cphrase < 255; cphrase++) {
+      for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         myFile.print((char)track[ctrack].arrangment1[cphrase]);
         myFile.print((char)track[ctrack].NoteOffset[cphrase]);
         myFile.print((char)track[ctrack].presetNr[cphrase]);
@@ -422,7 +422,7 @@ void loadbutton() {
     //load arrangment
     tft.print("Reading songarrangment from project.txt...");
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
-      for (byte cphrase = 0; cphrase < 255; cphrase++) {
+      for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         track[ctrack].arrangment1[cphrase] = myFile.read();
         track[ctrack].NoteOffset[cphrase] = myFile.read();
         track[ctrack].presetNr[cphrase] = myFile.read();

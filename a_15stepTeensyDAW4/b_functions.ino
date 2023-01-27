@@ -270,7 +270,7 @@ void PluginNoteOn() {
             envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
-            Serial.println("crackling");
+            //Serial.println("crackling");
           }
           if (track[desired_instruments].MIDIchannel == 19) {
             pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);

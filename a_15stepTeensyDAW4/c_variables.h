@@ -45,14 +45,13 @@ static const int VALUE_NOTEOFF = 0;
 #define NUM_TRACKS 8
 
 #define NUM_STEPS 16
-#define NUM_PHRASES 256
+#define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
 unsigned long _next_clock = 0;
 unsigned long _clock = 0;
 unsigned long MIDItick = 0;
-byte noteOff_tick = 0;
-byte tick_16 = 0;
+int tick_16 = -1;
 bool seq_run = false;
 bool seq_rec = false;
 byte tempo = 120;
@@ -70,6 +69,7 @@ byte tempo = 120;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
+
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
 byte selectPage;
@@ -505,9 +505,9 @@ byte songpageNumber = 10;
 byte pixelphrase = 0;           // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte phraser;
-byte end_of_loop = 255;
+byte end_of_loop = MAX_PHRASES-1;
 byte start_of_loop = 0;
-byte end_of_loop_old = 255;
+byte end_of_loop_old = MAX_PHRASES-1;
 byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 byte songpages;
@@ -657,7 +657,7 @@ struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
   byte clip_songMode = 1;  //clipselection from the arrangement
-  byte tone = 0;
+  int tone = 0;
   byte shown_octaves = 5;  //
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
