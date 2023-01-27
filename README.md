@@ -1,4 +1,11 @@
-# Teensy-DAW
+#
+Please join this Discord channel for best feature updates, informations and other chats.  
+The most updated files are still here, tho.  
+https://discord.gg/N78atDz9bC
+
+
+
+Teensy-DAW
  clipbased Touch DAW for Teensy
 
 functions for Teensy 3.5  
