@@ -58,7 +58,9 @@ void sendClock() {
         //digitalWrite(22, HIGH);
 
         step(tick_16);
-        SerialPrintSeq();
+        if (debugTime) {
+          SerialPrintSeq();
+        }
         drawstepPosition(tick_16);
         //draw phrasenumber
         tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
@@ -77,8 +79,10 @@ void sendClock() {
       }
       if (tick_16 == -1) {
         beatComponents();
-        if (showSerialonce) {
-          SerialPrintPlugins();
+        if (debugTime) {
+          if (showSerialonce) {
+            SerialPrintPlugins();
+          }
         }
       }
       //differnt things happening while the clock is running
@@ -521,8 +525,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     // midi1.getCable() can be used to read which of the virtual
     // MIDI cables received this message.
   }
-  DrumPluginPlay();
-  PluginNoteOn();
+
 }
 
 void myNoteOff(byte channel, byte note, byte velocity) {
@@ -607,8 +610,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
       track[channel - 1].notePlayed = note;
     }
   }
-  DrumPluginPlay();
-  PluginNoteOff();
+
 }
 
 void myControlChange(byte channel, byte control, byte value) {

@@ -268,6 +268,14 @@ void PluginNoteOn() {
             waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
             envelope1.noteOn();
             envelope2.noteOn();
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
             //Serial.println("crackling");
@@ -326,11 +334,11 @@ void PluginNoteOff() {
 
         //send midi noteOff´s with channel 1-16
         if (track[desired_instruments].MIDIchannel < 17) {
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
           for (int usbs = 0; usbs < 10; usbs++) {
             if (!launchpad) {
-              usb_midi_devices[usbs]->sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+              usb_midi_devices[usbs]->sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
             }
           }
           track[desired_instruments].envActive = false;
@@ -339,6 +347,14 @@ void PluginNoteOff() {
         if (track[desired_instruments].MIDIchannel == 17) {
           envelope1.noteOff();
           envelope2.noteOff();
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
           track[desired_instruments].envActive = false;
         }
         if (track[desired_instruments].MIDIchannel == 19) {

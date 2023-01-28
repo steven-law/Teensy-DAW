@@ -113,12 +113,10 @@ void recorder_Page1_Dynamic() {
       // }
       break;
     case 2:
-      // if (msecs % 20 == 0) {
-      //  }
+
       break;
     case 3:
-      // if (msecs % 20 == 0) {
-      // }
+
       break;
   }
   if (ts.touched() || button[15]) {

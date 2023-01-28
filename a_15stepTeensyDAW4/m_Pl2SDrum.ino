@@ -48,7 +48,7 @@ void Plugin2_Control() {
         if (pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] != Potentiometer[MixerColumn]) {
           pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] = Potentiometer[MixerColumn];
           pl2[pl2presetNr].Vol[MixerColumn + 4] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 4] / 127.00;
-          drummixer1.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 4]);
+          drummixer2.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 4]);
           drawPot(MixerColumnPos, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[MixerColumn + 4], pl2[pl2presetNr].Vol_rnd[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
         }
       }
@@ -60,7 +60,7 @@ void Plugin2_Control() {
         if (pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] != Potentiometer[MixerColumn]) {
           pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] = Potentiometer[MixerColumn];
           pl2[pl2presetNr].Vol[MixerColumn + 8] = pl2[pl2presetNr].Vol_rnd[MixerColumn + 8] / 127.00;
-          drummixer1.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 8]);
+          drummixer3.gain(MixerColumn, pl2[pl2presetNr].Vol[MixerColumn + 8]);
           drawPot(MixerColumnPos, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[MixerColumn + 8], pl2[pl2presetNr].Vol_rnd[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
         }
       }
