@@ -456,6 +456,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
           track[desired_instrument].notePressed = true;
           track[desired_instrument].playNoteOnce = true;
           track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
+          track[desired_instrument].notePlayedLast = track[desired_instrument].notePlayed;
         }
       }
     }
@@ -517,6 +518,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
       track[channel - 1].notePressed = true;
       track[channel - 1].playNoteOnce = true;
       track[channel - 1].notePlayed = note;
+      track[channel - 1].notePlayedLast = note;
     }
     if (seq_rec) {
       ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
@@ -552,6 +554,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
           LP_octave_bool_keys[octNotes] = false;
           track[desired_instrument].notePressed = false;
           track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
+          track[desired_instrument].notePlayedLast = track[desired_instrument].notePlayed;
         }
       }
     }
@@ -608,6 +611,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
       LP_octave_bool_keys[0] = false;
       track[channel - 1].notePressed = false;
       track[channel - 1].notePlayed = note;
+      track[channel - 1].notePlayedLast = note;
     }
   }
 
