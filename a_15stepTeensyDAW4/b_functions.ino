@@ -389,10 +389,7 @@ void PluginNoteOff() {
 //add your soundcontrol functions like desired osc frequency etc, so the presetchange can be applied
 void beatComponents() {
 
-  for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
-    track[desired_instruments].notePressed = false;
-    PluginNoteOff();
-  }
+
   for (byte instruments = 0; instruments < 8; instruments++) {
 
     track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
