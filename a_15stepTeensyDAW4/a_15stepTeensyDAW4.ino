@@ -1,4 +1,4 @@
-bool debugTime = true;
+bool debugTime = false;
 /*Contributing Manual:
 
 Many Thanks to Tristan Rowley, without his immense efforts and time to explain things to me, 

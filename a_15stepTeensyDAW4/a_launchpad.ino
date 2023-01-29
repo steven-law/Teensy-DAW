@@ -71,9 +71,11 @@ void LP_drawStepsequencer() {
 }
 
 void LP_drumstep() {
-  unsigned long currentMillis2 = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
+
+  unsigned long currentMillis2 = millis();  
   if (currentMillis2 - previousMillis2 >= interval) {
     previousMillis2 = currentMillis2;
+    //Serial.println("LP_drumstep");
     for (byte notes = 0; notes < 12; notes++) {
       for (byte steps = 0; steps < 16; steps++) {
 
@@ -158,7 +160,7 @@ void LP_melodicstep() {
 
         else if (LP_octave_bool_keys[notes]) {
           if (track[desired_instrument].tone == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps]) {
-            Serial.println("hello");
+            //Serial.println("hello");
             midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
           }
           LP_drawOnce[notes] = false;

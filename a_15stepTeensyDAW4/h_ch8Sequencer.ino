@@ -27,8 +27,21 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
 }
 
 void melodicStepSequencer(byte desired_instrument) {
-  LP_drawclipRow();
-  LP_melodicstep();
+  if (launchpad) {
+    for (byte LPclips = 0; LPclips < 8; LPclips++) {
+      if (LP_grid_bool[LPclips]) {
+        LP_drawclipRow();
+      }
+    }
+    for (int notes = 0; notes < 12; notes++) {
+      for (byte steps = 0; steps < 16; steps++) {
+        if (LP_octave_bool[notes] || LP_grid_bool[24] || LP_grid_bool[31] || LP_step_bool[steps])
+          LP_melodicstep();
+      }
+    }
+  }
+
+
 
 
 

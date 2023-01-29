@@ -296,7 +296,7 @@ void PluginNoteOn() {
             pl5envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
-            Serial.println("crackling2");
+            //Serial.println("crackling2");
           }
           if (track[desired_instruments].MIDIchannel == 22) {
             double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
@@ -401,12 +401,12 @@ void beatComponents() {
         if (launchpad) {
           for (byte notes = 0; notes < 9; notes++) {
             midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
-            Serial.println("doh");
+            //Serial.println("doh");
           }
 
           if (track[instruments].arrangment1[phrase] < MAX_CLIPS) {
             midi01.sendNoteOn(track[instruments].arrangment1[phrase] + (instruments * 16), 60, 1);
-            Serial.println("dah");
+            //Serial.println("dah");
           }
         }
       }

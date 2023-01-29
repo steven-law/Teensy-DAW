@@ -10,9 +10,18 @@ void drumStepSequencer_Static() {  //static Display rendering
 }
 
 void drumStepSequencer() {
-  LP_drawclipRow();
+  if (launchpad) {
+    for (byte LPclips = 0; LPclips < 8; LPclips++) {
+      if (LP_grid_bool[LPclips]) {
+        LP_drawclipRow();
+      }
+    }
+    for (int notes = 0; notes < 12; notes++) {
+      if (LP_octave_bool[notes])
+        LP_drumstep();
+    }
+  }
 
-  LP_drumstep();
   //assign drumnotes on the left
   if (button[14]) {
     if (enc_moved[0]) {
