@@ -176,7 +176,13 @@ void songModePage(byte songpageNumber) {
   }
   //clipassign
   if (button[15]) {
-    track[touched_track].arrangment1[touched_phrase] = track[touched_track].lastclip;
+    if (seq_rec) {
+      track[touched_track].arrangment1[touched_phrase] = track[touched_track].lastclip;
+      track[touched_track].NoteOffset[touched_phrase] = track[touched_track].lastNoteOffset;
+      track[touched_track].presetNr[touched_phrase] = track[touched_track].lastpresetNr;
+      track[touched_track].volume[touched_phrase] = track[touched_track].lastvolume;
+    }
+
     //Clipassign
     if (enc_moved[0]) {
       track[touched_track].arrangment1[touched_phrase] = constrain((track[touched_track].lastclip + encoded[0]), 0, MAX_CLIPS);
@@ -184,15 +190,18 @@ void songModePage(byte songpageNumber) {
     }
     //Note transpose
     if (enc_moved[1]) {
-      track[touched_track].NoteOffset[touched_phrase] = constrain((track[touched_track].NoteOffset[touched_phrase] + encoded[1]), -32, 32);
+      track[touched_track].NoteOffset[touched_phrase] = constrain((track[touched_track].lastNoteOffset + encoded[1]), -32, 32);
+      track[touched_track].lastNoteOffset = track[touched_track].NoteOffset[touched_phrase];
     }
     //presetnr
     if (enc_moved[2]) {
-      track[touched_track].presetNr[touched_phrase] = constrain((track[touched_track].presetNr[touched_phrase] + encoded[2]), 0, MAX_PRESETS - 1);
+      track[touched_track].presetNr[touched_phrase] = constrain((track[touched_track].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
+      track[touched_track].lastpresetNr = track[touched_track].presetNr[touched_phrase];
     }
     //volume
     if (enc_moved[3]) {
-      track[touched_track].volume[touched_phrase] = constrain((track[touched_track].volume[touched_phrase] + encoded[3]), 0, 127);
+      track[touched_track].volume[touched_phrase] = constrain((track[touched_track].lastvolume + encoded[3]), 0, 127);
+      track[touched_track].lastvolume = track[touched_track].volume[touched_phrase];
     }
     //draw horizontal song arrangment Lines
     if (msecs % 100 == 0) {
@@ -300,6 +309,11 @@ void savebutton() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(Arial_8);
   tft.setCursor(0, 0);
+  for (byte ctrack = 0; ctrack < 8; ctrack++) {
+    for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
+      track[ctrack].NoteOffset_graph[cphrase] = track[ctrack].NoteOffset[cphrase] + 32;
+    }
+  }
   // delete the file:
   tft.print("Removing project.txt...");
   SD.remove("project.txt");
@@ -318,12 +332,17 @@ void savebutton() {
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
       for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         myFile.print((char)track[ctrack].arrangment1[cphrase]);
-        myFile.print((char)track[ctrack].NoteOffset[cphrase]);
+        myFile.print((char)track[ctrack].NoteOffset_graph[cphrase]);
         myFile.print((char)track[ctrack].presetNr[cphrase]);
         myFile.print((char)track[ctrack].volume[cphrase]);
       }
     }
     tft.println("Done");
+
+    // close the file:
+    myFile.close();
+    tft.println("Saving done.");
+
 
     tft.print("Writing track 1 to project.txt...");
     //save plugin 1 variables
@@ -393,13 +412,6 @@ void savebutton() {
     tft.println("Done");
 
 
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-
-
-
-
     startUpScreen();
   } else {
     // if the file didn't open, print an error:
@@ -424,12 +436,22 @@ void loadbutton() {
     for (byte ctrack = 0; ctrack < 8; ctrack++) {
       for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         track[ctrack].arrangment1[cphrase] = myFile.read();
-        track[ctrack].NoteOffset[cphrase] = myFile.read();
+        track[ctrack].NoteOffset_graph[cphrase] = myFile.read();
         track[ctrack].presetNr[cphrase] = myFile.read();
         track[ctrack].volume[cphrase] = myFile.read();
       }
     }
     tft.println("Done");
+
+    // close the file:
+    myFile.close();
+    for (byte ctrack = 0; ctrack < 8; ctrack++) {
+      for (byte cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
+        track[ctrack].NoteOffset[cphrase] = track[ctrack].NoteOffset_graph[cphrase] - 32;
+      }
+    }
+    tft.println("Done");
+
 
     //load track 1
     tft.print("Reading track1 from project.txt...");
@@ -498,13 +520,6 @@ void loadbutton() {
     tft.print("reading FX 2 from project.txt...");
     loadFX2();
     tft.println("Done");
-
-
-
-    // close the file:
-    myFile.close();
-    tft.println("Done");
-
     startUpScreen();
   } else {
     // if the file didn't open, print an error:

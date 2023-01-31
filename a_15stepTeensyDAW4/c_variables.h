@@ -679,8 +679,12 @@ struct tracks {
   byte arrangment1[256];
   byte lastclip = 0;
   int NoteOffset[256];
+  int lastNoteOffset = 0;
+  int NoteOffset_graph[256];
   int presetNr[256];
+  int lastpresetNr = 0;
   int volume[256];
+  int lastvolume = 100;
   int notePlayed;
   int notePlayedLast;
   bool notePressed;

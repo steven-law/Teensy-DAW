@@ -41,11 +41,6 @@ void melodicStepSequencer(byte desired_instrument) {
     }
   }
 
-
-
-
-
-
   if (!button[14]) {
     //gridTouchX
     if (enc_moved[0]) {

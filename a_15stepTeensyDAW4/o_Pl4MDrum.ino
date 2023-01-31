@@ -157,7 +157,11 @@ void Plugin4_Page_Static(byte Pagenumber) {
 void Plugin4_Change() {
   for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
+  }
+  for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
+  }   
+  for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
   }
 }
