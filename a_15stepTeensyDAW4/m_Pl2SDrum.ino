@@ -74,6 +74,7 @@ void Plugin2_Page1_Dynamic() {
   //change preset
   if (button[14]) {
     if (enc_moved[0]) {
+      lastPotRow = 10;
       pl2presetNr = constrain((pl2presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl2presetNr, ILI9341_PURPLE);
       Plugin2_Page_Static(0);

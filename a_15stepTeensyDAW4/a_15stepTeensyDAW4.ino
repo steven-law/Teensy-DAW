@@ -57,6 +57,7 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <USBHost_t36.h>
 #include <Encoder.h>
 #include <MIDI.h>
+#include "v_smfwriter.h"
 
 // WAV files converted to code by wav2sketch
 //#include "AudioSampleSnare.h"         // http://www.freesound.org/people/KEVOY/sounds/82583/
@@ -1108,8 +1109,14 @@ void loop() {
     //Serial.print(pl2[0].Vol_rnd[0]);
     //Serial.print("-");
     //Serial.println(pl2[0].Vol_rnd[1]);
-    tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-    tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
+    if (lastPotRow < 4) {
+      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+      tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
+    }
+    if (lastPotRow >= 4) {
+      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+    }
+
     drawCursor();
     showCoordinates();
   }
@@ -1254,7 +1261,7 @@ void readMainButtons() {
       //last-pot-row
       if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
         lastPotRow++;
-        if (lastPotRow == 4) {
+        if (lastPotRow >= 4) {
           lastPotRow = 0;
         }
       }
@@ -1946,7 +1953,7 @@ void doMainButtons() {
     //last-pot-row
     if (otherCtrlButtons && button[4]) {  //"B"   66 5th button
       lastPotRow++;
-      if (lastPotRow == 4) {
+      if (lastPotRow >= 4) {
         lastPotRow = 0;
       }
 

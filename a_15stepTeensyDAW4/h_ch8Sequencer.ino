@@ -182,6 +182,34 @@ void drawActiveSteps() {
     }
   }
 }
+#define STEP_LENGTH 6
+#define NOTE_OFF 0  // presuming you are still using 0 for 'no note'
+
+void saveMIDItrack(char* track, int trackNr) {
+  SmfWriter writer;
+  writer.setFilename(track);
+  writer.writeHeader();
+  //Serial.print("Start saving-> ");
+  //writer.addSetTempo(tempo);
+  //double microsPerTick = writer.get_microseconds_per_tick();
+  deltaStep = 0;
+  for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
+
+    for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+      if (ctrack[trackNr].sequence[sclip].step[sstep] > 0) {
+        //deltaStep = (sstep - stepOld);
+        writer.addNoteOnEvent(deltaStep, trackNr, ctrack[trackNr].sequence[sclip].step[sstep], 127);
+        writer.addNoteOffEvent(4, trackNr, ctrack[trackNr].sequence[sclip].step[sstep]);
+        deltaStep = 0;
+        //stepOld = sstep-1;
+      }
+      if (ctrack[trackNr].sequence[sclip].step[sstep] <= 0) {
+        deltaStep = deltaStep + 4;
+      }
+    }
+  }
+  writer.flush();
+}
 
 void saveTrack2() {
 
@@ -217,12 +245,19 @@ void saveTrack2() {
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track2.txt");
   }
+  saveMIDItrack("track2", 1);
+
+
+
+
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack2() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -273,9 +308,6 @@ void saveTrack3() {
 
   // if the file opened okay, write to it:
   if (myFile) {
-
-
-
     //save track3
     tft.print("Writing track3 to track3.txt...");
     for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
@@ -284,16 +316,16 @@ void saveTrack3() {
       }
     }
     myFile.print((char)track[2].MIDIchannel);
-
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track3.txt");
   }
+  saveMIDItrack("track3", 2);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack3() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -344,9 +376,6 @@ void saveTrack4() {
 
   // if the file opened okay, write to it:
   if (myFile) {
-
-
-
     //save track4
     tft.print("Writing track4 to track4.txt...");
     for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
@@ -355,16 +384,17 @@ void saveTrack4() {
       }
     }
     myFile.print((char)track[3].MIDIchannel);
-
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track4.txt");
   }
+  saveMIDItrack("track4", 3);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack4() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -430,12 +460,14 @@ void saveTrack5() {
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track5.txt");
   }
+  saveMIDItrack("track5", 4);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack5() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -501,12 +533,14 @@ void saveTrack6() {
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track6.txt");
   }
+  saveMIDItrack("track6", 5);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack6() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -572,12 +606,14 @@ void saveTrack7() {
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track7.txt");
   }
+  saveMIDItrack("track7", 6);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack7() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -643,12 +679,14 @@ void saveTrack8() {
     tft.println("Done");
     // close the file:
     myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
+
   } else {
     // if the file didn't open, print an error:
     tft.println("error opening track8.txt");
   }
+  saveMIDItrack("track8", 7);
+  tft.println("Saving done.");
+  startUpScreen();
 }
 void loadTrack8() {
   tft.fillScreen(ILI9341_DARKGREY);

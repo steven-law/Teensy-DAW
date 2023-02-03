@@ -511,6 +511,8 @@ byte end_of_loop_old = MAX_PHRASES-1;
 byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 byte songpages;
+byte stepOld;
+int deltaStep=0;
 
 byte step_Frame_X;
 byte step_Frame_Y;

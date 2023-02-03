@@ -271,6 +271,7 @@ void Plugin7_Page1_Dynamic() {
   //change preset
   if (button[14]) {
     if (enc_moved[0]) {
+      lastPotRow = 10;
       pl7presetNr = constrain((pl7presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl7presetNr, ILI9341_PURPLE);
       Plugin7_Page_Static(0);
@@ -403,6 +404,7 @@ void Plugin7_Page2_Dynamic() {
   //change preset
   if (button[14]) {
     if (enc_moved[3]) {
+      lastPotRow = 10;
       pl7presetNr = constrain((pl7presetNr + encoded[3]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl7presetNr, ILI9341_PURPLE);
       Plugin7_Page_Static(1);

@@ -74,6 +74,7 @@ void Plugin4_Page1_Dynamic() {
   //change preset
   if (button[14]) {
     if (enc_moved[0]) {
+      lastPotRow = 10;
       pl4presetNr = constrain((pl4presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
       Plugin4_Page_Static(0);
@@ -150,21 +151,29 @@ void Plugin4_Page_Static(byte Pagenumber) {
   drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
   for (byte touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+  }
+  for (byte touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+  }
+  for (byte touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
   }
 }
+
 void Plugin4_Change() {
   for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX - 1]);
+    pl4[pl4presetNr].Vol_rnd[touchX - 1];
   }
   for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 3]);
-  }   
+    pl4[pl4presetNr].Vol_rnd[touchX +3];
+  }
   for (byte touchX = 1; touchX < 5; touchX++) {
     pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Vol[touchX + 7]);
   }
 }
+
 
 void savePlugin4() {
 

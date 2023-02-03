@@ -1182,7 +1182,7 @@ void myControlChange(byte channel, byte control, byte value) {
     if (otherCtrlButtons && control == 108 && value == 127) {
       button[4] = true;
       lastPotRow++;
-      if (lastPotRow == 4) {
+      if (lastPotRow >= 4) {
         lastPotRow = 0;
       }
     } else if (otherCtrlButtons && control == 108 && value != 127) {
