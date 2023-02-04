@@ -20,9 +20,10 @@ void Plugin_9_Settings() {
 void Plugin9_Control() {
   switch (lastPotRow) {
     case 0:
+
       if (pl9[pl9presetNr].wah_form_graph != Potentiometer[0]) {
-        pl9[pl9presetNr].wah_form = Potentiometer[0] / 10;
-        pl9[pl9presetNr].wah_form_graph = pl9[pl9presetNr].wah_form * 10;
+        pl9[pl9presetNr].wah_form = Potentiometer[0] / 11;
+        pl9[pl9presetNr].wah_form_graph = pl9[pl9presetNr].wah_form * 11;
         pl9bpinput.begin(pl9[pl9presetNr].wah_form);
         drawPot(CTRL_COL_0, CTRL_ROW_0, pl9[pl9presetNr].wah_form_graph, pl9[pl9presetNr].wah_form, "WForm", trackColor[desired_track]);
       }
@@ -31,6 +32,12 @@ void Plugin9_Control() {
         pl9[pl9presetNr].wah_rate = pl9[pl9presetNr].wah_rate_graph / 16.00;
         pl9bpinput.frequency(pl9[pl9presetNr].wah_rate);
         drawPot_2(CTRL_COL_1, CTRL_ROW_0, pl9[pl9presetNr].wah_rate_graph, pl9[pl9presetNr].wah_rate_graph, "Rate", trackColor[desired_track]);
+      }
+      if (pl9[pl9presetNr].wah_sweep_graph != Potentiometer[2]) {
+        pl9[pl9presetNr].wah_sweep_graph = Potentiometer[2];
+        pl9[pl9presetNr].wah_sweep = pl9[pl9presetNr].wah_sweep_graph / 127.00;
+        pl9bpfilter.octaveControl(pl9[pl9presetNr].wah_sweep);
+        drawPot_2(CTRL_COL_2, CTRL_ROW_0, pl9[pl9presetNr].wah_sweep_graph, pl9[pl9presetNr].wah_sweep_graph, "Rate", trackColor[desired_track]);
       }
 
       break;
@@ -107,7 +114,7 @@ void Plugin9_Page1_Dynamic() {
       case 0:
         //wah-wah
         //Waveform
-        Potentiometer[0] = pl9[pl9presetNr].wah_form;
+        Potentiometer[0] = pl9[pl9presetNr].wah_form * 11;
         if (enc_moved[0]) {
           Potentiometer[0] = constrain((pl9[pl9presetNr].wah_form + encoded[0]), 0, 12) * 11;
         }
