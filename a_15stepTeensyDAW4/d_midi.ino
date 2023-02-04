@@ -1295,6 +1295,8 @@ void myControlChange(byte channel, byte control, byte value) {
       }
       if (control == 106 && value == 127) {
         //delay
+         selectPage = FX3_PAGE1;
+        FX3Delay_static();
       }
     }
   }

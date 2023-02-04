@@ -479,6 +479,19 @@ byte fx2bitcrush_graph = 127;
 int fx2samplerate = 44100;
 byte fx2samplerate_graph = 127;
 
+//FX2
+//delay variables
+int fx3delayTime = 300;
+int fx3delayTime_graph = 30;
+float fx3delayFeedback = 0;
+int fx3delayFeedback_graph = 0;
+int fx3delayFilterFreq = 600;
+int fx3delayFilterFreq_graph = 40;
+float fx3delayFilterReso = 0;
+int fx3delayFilterReso_graph = 0;
+int fx3delayFilterType = 0;
+int fx3delayFilterType_graph = 0; 
+
 //notenumber to frequency chart
 float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
                            16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
@@ -505,14 +518,14 @@ byte songpageNumber = 10;
 byte pixelphrase = 0;           // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte phraser;
-byte end_of_loop = MAX_PHRASES-1;
+byte end_of_loop = MAX_PHRASES - 1;
 byte start_of_loop = 0;
-byte end_of_loop_old = MAX_PHRASES-1;
+byte end_of_loop_old = MAX_PHRASES - 1;
 byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 byte songpages;
 byte stepOld;
-int deltaStep=0;
+int deltaStep = 0;
 
 byte step_Frame_X;
 byte step_Frame_Y;
@@ -668,7 +681,7 @@ struct tracks {
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
-  
+
   byte midicc_value_row_1[4];
   byte midicc_number_row_1[4]{ 20, 21, 22, 23 };
   byte midicc_value_row_2[4];

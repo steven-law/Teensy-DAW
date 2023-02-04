@@ -1,0 +1,200 @@
+void FX3Delay_settings() {
+  //bitcrusher1 controlled by startKnob on page 3
+  dldelay1.delay(0, fx3delayTime);
+  dlmixer1.gain(1, fx3delayFeedback);
+  dlmixer1.gain(2, 0);
+  dlfilter1.frequency(fx3delayFilterFreq);
+  dlfilter1.resonance(fx3delayFilterReso);
+
+  //mixer1 for FX3
+  FX3mixer1.gain(0, 1);
+  FX3mixer1.gain(1, 1);
+  FX3mixer1.gain(2, 1);
+  FX3mixer1.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer2.gain(0, 1);
+  FX3mixer2.gain(1, 1);
+  FX3mixer2.gain(2, 1);
+  FX3mixer2.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer3.gain(0, 1);
+  FX3mixer3.gain(1, 1);
+  FX3mixer3.gain(2, 1);
+  FX3mixer3.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer4.gain(0, 1);
+  FX3mixer4.gain(1, 1);
+  FX3mixer4.gain(2, 1);
+  FX3mixer4.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer5.gain(0, 1);
+  FX3mixer5.gain(1, 1);
+  FX3mixer5.gain(2, 1);
+  FX3mixer5.gain(3, 1);
+  //mixer2 for FX3
+  FX3mixer6.gain(0, 1);
+  FX3mixer6.gain(1, 1);
+  FX3mixer6.gain(2, 1);
+  FX3mixer6.gain(3, 1);
+}
+
+void FX3Delay_static() {
+  clearWorkSpace();
+  drawActiveRect(18, 3, 2, 2, false, "Main", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
+  drawActiveRect(18, 7, 2, 2, false, "5-8", ILI9341_LIGHTGREY);
+
+  drawActiveRect(1, 5, 2, 2, false, "Rvrb", ILI9341_YELLOW);
+  drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
+  drawActiveRect(1, 11, 2, 2, true, "Dly", ILI9341_BLUE);
+
+  drawPot(CTRL_COL_0, CTRL_ROW_0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback, "Fdbk", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, fx3delayFilterReso_graph, fx3delayFilterReso, "Reso", trackColor[desired_instrument]);
+}
+
+void FX3Delay_dynamic() {
+  //delaytime
+  if (!button[14]) {
+    switch (lastPotRow) {
+      case 0:
+        Potentiometer[0] = fx3delayTime_graph;
+        if (enc_moved[0]) {
+          fx3delayTime_graph = constrain((fx3delayTime_graph + encoded[0]), 0, 127);
+          fx3delayTime = map(fx3delayTime_graph, 0, 127, 0, 2000);
+          dldelay1.delay(0, fx3delayTime);
+          drawPot(CTRL_COL_0, CTRL_ROW_0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
+        }
+        //feedback
+        Potentiometer[1] = fx3delayFeedback_graph;
+        if (enc_moved[1]) {
+          fx3delayFeedback_graph = constrain((fx3delayFeedback_graph + encoded[1]), 0, 127);
+          fx3delayFeedback = fx3delayFeedback_graph / 127.00;
+          dlmixer1.gain(1, fx3delayFeedback);
+          drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback_graph, "Fdbk", trackColor[desired_instrument]);
+        }
+        break;
+
+        //filterfreq
+      case 1:
+        Potentiometer[0] = fx3delayFilterFreq_graph;
+        if (enc_moved[0]) {
+          fx3delayFilterFreq_graph = constrain((fx3delayFilterFreq_graph + encoded[0]), 0, 127);
+          fx3delayFilterFreq = note_frequency[fx3delayFilterFreq_graph];
+          dlfilter1.frequency(fx3delayFilterFreq);
+          drawPot(CTRL_COL_0, CTRL_ROW_1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
+        }
+        //filterreso
+        Potentiometer[1] = fx3delayFilterReso_graph;
+        if (enc_moved[1]) {
+          fx3delayFilterReso_graph = constrain((fx3delayFilterReso_graph + encoded[1]), 0, 127);
+          fx3delayFilterReso = fx3delayFilterReso_graph / 127.00;
+          dlfilter1.resonance(fx3delayFilterReso);
+          drawPot(CTRL_COL_1, CTRL_ROW_1, fx3delayFilterReso_graph, fx3delayFilterReso_graph, "Reso", trackColor[desired_instrument]);
+        }
+        break;
+    }
+  }
+  TS_Point p = ts.getPoint();
+  if (ts.touched() || button[15]) {
+
+
+    if (gridTouchX >= 18) {
+      //page selection
+      if (gridTouchY >= 3 && gridTouchY <= 4) {
+        selectPage = MIXER_PAGE_1;
+        mixerPage1_Static(0);
+        MixerPage1_Dynamic();
+      }
+      if (gridTouchY >= 5 && gridTouchY <= 6) {
+        selectPage = MIXER_PAGE_2;
+        mixerPage2_Static();
+        MixerPage2_Dynamic();
+      }
+      if (gridTouchY >= 7 && gridTouchY <= 8) {
+        selectPage = MIXER_PAGE_3;
+        mixerPage3_Static();
+        MixerPage3_Dynamic();
+      }
+    }
+    if (gridTouchX == 1 || gridTouchX == 2) {
+
+      if (gridTouchY == 5 || gridTouchY == 6) {
+        selectPage = FX3_PAGE1;
+        FX1reverb_static();
+      }
+      if (gridTouchY == 8 || gridTouchY == 9) {
+        selectPage = FX3_PAGE1;
+        FX2Bitcrush_static();
+      }
+      if (gridTouchY == 11 || gridTouchY == 12) {
+        selectPage = FX3_PAGE1;
+        FX3Delay_static();
+      }
+    }
+  }
+}
+/*
+void saveFX3() {
+
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
+  // delete the file:
+  tft.print("Removing FX3.txt...");
+  SD.remove("FX3.txt");
+  tft.println("Done");
+
+  // open the file.
+  tft.print("Creating and opening FX3.txt...");
+  myFile = SD.open("FX3.txt", FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+
+    tft.print("Writing plugin 1 to FX3.txt...");
+    //save plugin 1 variables
+    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      myFile.print((char)FX3samplerate_graph);
+      myFile.print((char)FX3bitcrush_graph);
+    }
+    tft.println("Done");
+    // close the file:
+    myFile.close();
+    tft.println("Saving done.");
+    startUpScreen();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening FX3.txt");
+  }
+}
+void loadFX3() {
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open("FX3.txt");
+  if (myFile) {
+    tft.println("opening FX3.txt:");
+
+    //load plugin 1 variables
+    tft.print("reading plugin 1 from FX3.txt...");
+    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      FX3samplerate_graph = myFile.read();
+      FX3bitcrush_graph = myFile.read();
+    }
+    tft.println("Done");
+
+
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening FX3.txt");
+  }
+}*/

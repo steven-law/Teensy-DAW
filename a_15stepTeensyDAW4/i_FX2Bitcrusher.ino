@@ -23,12 +23,12 @@ void FX2Bitcrush_settings() {
   FX2mixer4.gain(1, 1);
   FX2mixer4.gain(2, 1);
   FX2mixer4.gain(3, 1);
-   //mixer2 for FX2
+  //mixer2 for FX2
   FX2mixer5.gain(0, 1);
   FX2mixer5.gain(1, 1);
   FX2mixer5.gain(2, 1);
   FX2mixer5.gain(3, 1);
-   //mixer2 for FX2
+  //mixer2 for FX2
   FX2mixer6.gain(0, 1);
   FX2mixer6.gain(1, 1);
   FX2mixer6.gain(2, 1);
@@ -114,6 +114,10 @@ void FX2Bitcrush_dynamic() {
       if (gridTouchY == 8 || gridTouchY == 9) {
         selectPage = FX2_PAGE1;
         FX2Bitcrush_static();
+      }
+      if (gridTouchY == 11 || gridTouchY == 12) {
+        selectPage = FX3_PAGE1;
+        FX3Delay_static();
       }
     }
   }

@@ -91,7 +91,7 @@ void Plugin_View_Dynamic() {
 
 
 
-  readMainButtons();
+  
   //-----------------------------------------
   //setting up the Plugin1 Page1-view
   if (selectPage == PLUGIN1_PAGE1) {
@@ -235,6 +235,9 @@ void Plugin_View_Dynamic() {
   if (selectPage == FX2_PAGE1) {
     FX2Bitcrush_dynamic();
   }
+   if (selectPage == FX3_PAGE1) {
+  FX3Delay_dynamic();
+   }
   //setting up the Mixer Page 2
   if (selectPage == MIDICC_PAGE_1) {
     midiCCpage1_Dynamic(desired_track);

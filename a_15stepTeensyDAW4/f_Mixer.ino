@@ -405,7 +405,7 @@ void MixerPage2_Dynamic() {
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX3Volume_graph = constrain((track[MixerColumn].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX3Volume = track[MixerColumn].FX3Volume_graph / 127.00;
-          FX2pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX3Volume);
+          FX3pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX3Volume);
           drawPot(MixerColumnPos, CTRL_ROW_3, track[MixerColumn].FX3Volume_graph, track[MixerColumn].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
         }
 
@@ -463,6 +463,10 @@ void MixerPage2_Dynamic() {
       if (gridTouchY == 8 || gridTouchY == 9) {
         selectPage = FX2_PAGE1;
         FX2Bitcrush_static();
+      }
+      if (gridTouchY == 11 || gridTouchY == 12) {
+        selectPage = FX3_PAGE1;
+        FX3Delay_static();
       }
     }
   }
@@ -574,7 +578,7 @@ void MixerPage3_Dynamic() {
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX3Volume_graph = constrain((track[MixerColumn + 4].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX3Volume = track[MixerColumn + 4].FX3Volume_graph / 127.00;
-          FX1pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX3Volume);
+          FX3pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX3Volume);
           drawPot(MixerColumnPos, CTRL_ROW_3, track[MixerColumn + 4].FX3Volume_graph, track[MixerColumn + 4].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn + 4].FX3Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
@@ -628,6 +632,10 @@ void MixerPage3_Dynamic() {
       if (gridTouchY == 8 || gridTouchY == 9) {
         selectPage = FX2_PAGE1;
         FX2Bitcrush_static();
+      }
+      if (gridTouchY == 11 || gridTouchY == 12) {
+        selectPage = FX3_PAGE1;
+        FX3Delay_static();
       }
     }
   }

@@ -194,14 +194,11 @@ void saveMIDItrack(char* track, int trackNr) {
   //double microsPerTick = writer.get_microseconds_per_tick();
   deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
-
     for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
       if (ctrack[trackNr].sequence[sclip].step[sstep] > 0) {
-        //deltaStep = (sstep - stepOld);
         writer.addNoteOnEvent(deltaStep, trackNr, ctrack[trackNr].sequence[sclip].step[sstep], 127);
         writer.addNoteOffEvent(4, trackNr, ctrack[trackNr].sequence[sclip].step[sstep]);
         deltaStep = 0;
-        //stepOld = sstep-1;
       }
       if (ctrack[trackNr].sequence[sclip].step[sstep] <= 0) {
         deltaStep = deltaStep + 4;
