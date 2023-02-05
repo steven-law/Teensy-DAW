@@ -1,6 +1,7 @@
 void FX3Delay_settings() {
   //bitcrusher1 controlled by startKnob on page 3
   dldelay1.delay(0, fx3delayTime);
+  dlmixer1.gain(0, fx3delayAmount);
   dlmixer1.gain(1, fx3delayFeedback);
   dlmixer1.gain(2, 0);
   dlfilter1.frequency(fx3delayFilterFreq);
@@ -50,6 +51,8 @@ void FX3Delay_static() {
 
   drawPot(CTRL_COL_0, CTRL_ROW_0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
   drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback, "Fdbk", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, CTRL_ROW_0, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
+
   drawPot(CTRL_COL_0, CTRL_ROW_1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
   drawPot(CTRL_COL_1, CTRL_ROW_1, fx3delayFilterReso_graph, fx3delayFilterReso, "Reso", trackColor[desired_instrument]);
 }
@@ -73,6 +76,14 @@ void FX3Delay_dynamic() {
           fx3delayFeedback = fx3delayFeedback_graph / 127.00;
           dlmixer1.gain(1, fx3delayFeedback);
           drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback_graph, "Fdbk", trackColor[desired_instrument]);
+        }
+        //feedback
+        Potentiometer[2] = fx3delayAmount_graph;
+        if (enc_moved[2]) {
+          fx3delayAmount_graph = constrain((fx3delayAmount_graph + encoded[2]), 0, 127);
+          fx3delayAmount = fx3delayAmount_graph / 127.00;
+          dlmixer1.gain(0, fx3delayAmount);
+          drawPot(CTRL_COL_2, CTRL_ROW_0, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
         }
         break;
 

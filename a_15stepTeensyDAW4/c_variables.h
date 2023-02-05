@@ -489,8 +489,8 @@ int fx3delayFilterFreq = 600;
 int fx3delayFilterFreq_graph = 40;
 float fx3delayFilterReso = 0;
 int fx3delayFilterReso_graph = 0;
-int fx3delayFilterType = 0;
-int fx3delayFilterType_graph = 0; 
+float fx3delayAmount = 0;
+int fx3delayAmount_graph = 0; 
 
 //notenumber to frequency chart
 float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,

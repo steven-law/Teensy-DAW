@@ -38,6 +38,7 @@ void Plugin5_Control() {
         pl5enter_was_pushed = false;
         drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
       }
+      break;
     case 1:
       if (pl5[pl5presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
         pl5[pl5presetNr].Filter1_Frequency_graph = Potentiometer[0];
