@@ -98,6 +98,7 @@ void Plugin_7_Settings() {
 }
 void Plugin7_Control1() {
   switch (lastPotRow) {
+
     case 0:
       if (pl7[pl7presetNr]._1_frequency_graph != Potentiometer[0]) {
         pl7[pl7presetNr]._1_frequency_graph = Potentiometer[0];
@@ -113,73 +114,97 @@ void Plugin7_Control1() {
       }
       if (pl7[pl7presetNr]._1_pitchMod_graph != Potentiometer[2]) {
         pl7[pl7presetNr]._1_pitchMod_graph = Potentiometer[2];
-        pl7[pl7presetNr]._1_pitchMod_rnd = map(pl7[pl7presetNr]._1_pitchMod_graph, 0, 127, 6, 200);
-        pl7[pl7presetNr]._1_pitchMod = pl7[pl7presetNr]._1_pitchMod_rnd / 100;
+        pl7[pl7presetNr]._1_pitchMod = pl7[pl7presetNr]._1_pitchMod_graph / 127.00;
         pl7drum1.pitchMod(pl7[pl7presetNr]._1_pitchMod);
         drawPot_3(CTRL_COL_2, CTRL_ROW_0, pl7[pl7presetNr]._1_pitchMod_graph, pl7[pl7presetNr]._1_pitchMod_graph, "1Sweep", trackColor[desired_instrument]);
       }
-      if (pl7[pl7presetNr]._1_dc1_wavefold_graph != Potentiometer[3]) {
-        pl7[pl7presetNr]._1_dc1_wavefold_graph = Potentiometer[3];
-        pl7[pl7presetNr]._1_dc1_wavefold = pl7[pl7presetNr]._1_dc1_wavefold_graph / 127.00;
-        pl7dc1.amplitude(pl7[pl7presetNr]._1_dc1_wavefold);
-        drawPot_4(CTRL_COL_3, CTRL_ROW_0, pl7[pl7presetNr]._1_dc1_wavefold_graph, pl7[pl7presetNr]._1_dc1_wavefold_graph, "1Fold", trackColor[desired_instrument]);
+      if (pl7[pl7presetNr]._1_secondMixgraph != Potentiometer[3]) {
+        pl7[pl7presetNr]._1_secondMixgraph = Potentiometer[3];
+        pl7[pl7presetNr]._1_secondMix = pl7[pl7presetNr]._1_secondMixgraph / 4.00;
+        pl7drum1.secondMix(pl7[pl7presetNr]._1_secondMix);
+        drawPot_4(CTRL_COL_3, CTRL_ROW_0, pl7[pl7presetNr]._1_secondMixgraph, pl7[pl7presetNr]._1_secondMixgraph, "1Tom", trackColor[desired_instrument]);
       }
       break;
     case 1:
+      /*
+      if (pl7[pl7presetNr]._1_filter_graph != Potentiometer[0]) {
+        pl7[pl7presetNr]._1_filter_graph = Potentiometer[0];
+        pl7[pl7presetNr]._1_filter = map(pl7[pl7presetNr]._1_filter_graph, 0, 127, 20, 4600);
+        pl7filter1.frequency(pl7[pl7presetNr]._1_filter);
+        drawPot(CTRL_COL_0, CTRL_ROW_1, pl7[pl7presetNr]._1_filter_graph, pl7[pl7presetNr]._1_frequency, "1Fltr", trackColor[desired_instrument]);
+      }
+      if (pl7[pl7presetNr]._1_resonance_graph != Potentiometer[1]) {
+        pl7[pl7presetNr]._1_resonance_graph = Potentiometer[1];
+        pl7[pl7presetNr]._1_resonance = pl7[pl7presetNr]._1_resonance_graph / 127.00;
+        pl7filter1.resonance(pl7[pl7presetNr]._1_resonance);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl7[pl7presetNr]._1_resonance_graph, pl7[pl7presetNr]._1_resonance_graph, "1Reso", trackColor[desired_instrument]);
+      }
+       if (pl7[pl7presetNr]._1_pitchMod_graph != Potentiometer[2]) {
+        pl7[pl7presetNr]._1_pitchMod_graph = Potentiometer[2];
+        pl7[pl7presetNr]._1_pitchMod = pl7[pl7presetNr]._1_pitchMod_graph / 127.00;
+        pl7filter1.octaveControl(pl7[pl7presetNr]._1_pitchMod);
+        drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl7[pl7presetNr]._1_pitchMod_graph, pl7[pl7presetNr]._1_pitchMod_graph, "1Mod", trackColor[desired_instrument]);
+      }*/
+      if (pl7[pl7presetNr]._1_dc1_wavefold_graph != Potentiometer[3]) {
+        pl7[pl7presetNr]._1_dc1_wavefold_graph = Potentiometer[3];
+        pl7[pl7presetNr]._1_dc1_wavefold = pl7[pl7presetNr]._1_dc1_wavefold_graph / 4.00;
+        pl7mixer1.gain(0, pl7[pl7presetNr]._1_dc1_wavefold);
+        drawPot_4(CTRL_COL_3, CTRL_ROW_1, pl7[pl7presetNr]._1_dc1_wavefold_graph, pl7[pl7presetNr]._1_dc1_wavefold_graph, "1Gain", trackColor[desired_instrument]);
+      }
+      break;
+    case 2:
       if (pl7[pl7presetNr]._2_noise1_amp_graph != Potentiometer[0]) {
         pl7[pl7presetNr]._2_noise1_amp_graph = Potentiometer[0];
         pl7[pl7presetNr]._2_noise1_amp = pl7[pl7presetNr]._2_noise1_amp_graph / 127.00;
         pl7noise1.amplitude(pl7[pl7presetNr]._2_noise1_amp);
-        drawPot(CTRL_COL_0, CTRL_ROW_1, pl7[pl7presetNr]._2_noise1_amp_graph, pl7[pl7presetNr]._2_noise1_amp_graph, "2Noise", trackColor[desired_instrument]);
+        drawPot(CTRL_COL_0, CTRL_ROW_2, pl7[pl7presetNr]._2_noise1_amp_graph, pl7[pl7presetNr]._2_noise1_amp_graph, "2Noise", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_wfMod_begin_graph != Potentiometer[1]) {
         pl7[pl7presetNr]._2_wfMod_begin_graph = Potentiometer[1];
         pl7[pl7presetNr]._2_wfMod_begin = map(pl7[pl7presetNr]._2_wfMod_begin_graph, 0, 127, 0, 11);
         pl7waveformMod1.begin(pl7[pl7presetNr]._2_wfMod_begin);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_begin_graph, pl7[pl7presetNr]._2_wfMod_begin, "2W~F", trackColor[desired_instrument]);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_begin_graph, pl7[pl7presetNr]._2_wfMod_begin, "2W~F", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_wfMod_frequency_graph != Potentiometer[2]) {
         pl7[pl7presetNr]._2_wfMod_frequency_graph = Potentiometer[2];
         pl7[pl7presetNr]._2_wfMod_frequency = pl7[pl7presetNr]._2_wfMod_frequency_graph * 32;
         pl7waveformMod1.frequency(pl7[pl7presetNr]._2_wfMod_frequency);
-        drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_frequency_graph, pl7[pl7presetNr]._2_wfMod_frequency, "2Freq", trackColor[desired_instrument]);
+        drawPot_3(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_frequency_graph, pl7[pl7presetNr]._2_wfMod_frequency, "2Freq", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph != Potentiometer[3]) {
         pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph = Potentiometer[3];
         pl7[pl7presetNr]._2_wfMod_frequencyModulation = pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph / 10.60;
         pl7waveformMod1.frequencyModulation(pl7[pl7presetNr]._2_wfMod_frequencyModulation);
-        drawPot_4(CTRL_COL_3, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, "2N-FM", trackColor[desired_instrument]);
+        drawPot_4(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, "2N-FM", trackColor[desired_instrument]);
       }
       break;
-    case 2:
+    case 3:
       if (pl7[pl7presetNr]._2_filter_frequency_graph != Potentiometer[0]) {
         pl7[pl7presetNr]._2_filter_frequency_graph = Potentiometer[0];
         pl7[pl7presetNr]._2_filter_frequency = map(pl7[pl7presetNr]._2_filter_frequency_graph, 0, 127, 40, 5900.00);
         pl7filter2.frequency(pl7[pl7presetNr]._2_filter_frequency);
-        drawPot(CTRL_COL_0, CTRL_ROW_2, pl7[pl7presetNr]._2_filter_frequency_graph, pl7[pl7presetNr]._2_filter_frequency, "2Freq", trackColor[desired_instrument]);
+        drawPot(CTRL_COL_0, CTRL_ROW_3, pl7[pl7presetNr]._2_filter_frequency_graph, pl7[pl7presetNr]._2_filter_frequency, "2Freq", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_filter_resonance_graph != Potentiometer[1]) {
         pl7[pl7presetNr]._2_filter_resonance_graph = Potentiometer[1];
         pl7[pl7presetNr]._2_filter_resonance = pl7[pl7presetNr]._2_filter_resonance_graph / 25.40;
         pl7filter2.resonance(pl7[pl7presetNr]._2_filter_resonance);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_2, pl7[pl7presetNr]._2_filter_resonance_graph, pl7[pl7presetNr]._2_filter_resonance_graph, "2Res", trackColor[desired_instrument]);
+        drawPot_2(CTRL_COL_1, CTRL_ROW_3, pl7[pl7presetNr]._2_filter_resonance_graph, pl7[pl7presetNr]._2_filter_resonance_graph, "2Res", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_Env_Attack_graph != Potentiometer[2]) {
         pl7[pl7presetNr]._2_Env_Attack_graph = Potentiometer[2];
         pl7[pl7presetNr]._2_Env_Attack = map(pl7[pl7presetNr]._2_Env_Attack_graph, 0, 127, 0, 20);
         pl7envelope1.attack(pl7[pl7presetNr]._2_Env_Attack);
         //pl7envelope2.attack(pl7[pl7presetNr]._2_Env_Attack);
-        drawPot_3(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
+        drawPot_3(CTRL_COL_2, CTRL_ROW_3, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
       }
       if (pl7[pl7presetNr]._2_Env_Release_graph != Potentiometer[3]) {
         pl7[pl7presetNr]._2_Env_Release_graph = Potentiometer[3];
         pl7[pl7presetNr]._2_Env_Release = pl7[pl7presetNr]._2_Env_Release_graph * 2;
         pl7envelope1.release(pl7[pl7presetNr]._2_Env_Release);
         //pl7envelope2.release(pl7[pl7presetNr]._2_Env_Release);
-        drawPot_4(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
+        drawPot_4(CTRL_COL_3, CTRL_ROW_3, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
       }
-      break;
-    case 3:
       break;
   }
 }
@@ -200,7 +225,7 @@ void Plugin7_Control2() {
       }
       if (pl7[pl7presetNr]._3_Env2_Attack_graph != Potentiometer[2]) {
         pl7[pl7presetNr]._3_Env2_Attack_graph = Potentiometer[2];
-        pl7[pl7presetNr]._3_Env2_Attack = map(pl7[pl7presetNr]._3_Env2_Attack_graph, 0, 127, 6, 100);
+        pl7[pl7presetNr]._3_Env2_Attack = map(pl7[pl7presetNr]._3_Env2_Attack_graph, 0, 127, 0, 100);
         pl7envelope2.attack(pl7[pl7presetNr]._3_Env2_Attack);
         drawPot(CTRL_COL_2, CTRL_ROW_0, pl7[pl7presetNr]._3_Env2_Attack_graph, pl7[pl7presetNr]._3_Env2_Attack, "3M-At", trackColor[desired_instrument]);
       }
@@ -226,7 +251,7 @@ void Plugin7_Control2() {
       }
       if (pl7[pl7presetNr]._3_Env3_Attack_graph != Potentiometer[2]) {
         pl7[pl7presetNr]._3_Env3_Attack_graph = Potentiometer[2];
-        pl7[pl7presetNr]._3_Env3_Attack = map(pl7[pl7presetNr]._3_Env3_Attack_graph, 0, 127, 6, 100);
+        pl7[pl7presetNr]._3_Env3_Attack = map(pl7[pl7presetNr]._3_Env3_Attack_graph, 0, 127, 0, 100);
         pl7envelope2.attack(pl7[pl7presetNr]._3_Env3_Attack);
         drawPot(CTRL_COL_2, CTRL_ROW_1, pl7[pl7presetNr]._3_Env3_Attack_graph, pl7[pl7presetNr]._3_Env3_Attack, "3M-At", trackColor[desired_instrument]);
       }
@@ -297,6 +322,32 @@ void Plugin7_Page1_Dynamic() {
           Potentiometer[2] = constrain((pl7[pl7presetNr]._1_pitchMod_graph + encoded[2]), 0, 127);
         }
 
+        Potentiometer[3] = pl7[pl7presetNr]._1_secondMixgraph;
+        if (enc_moved[3]) {
+          Potentiometer[3] = constrain((pl7[pl7presetNr]._1_secondMixgraph + encoded[3]), 0, 127);
+        }
+
+
+
+        break;
+      case 1:
+
+        Potentiometer[0] = pl7[pl7presetNr]._1_filter_graph;
+        if (enc_moved[0]) {
+          Potentiometer[0] = constrain((pl7[pl7presetNr]._1_filter_graph + encoded[0]), 0, 127);
+        }
+
+        //drum length in ms
+        Potentiometer[1] = pl7[pl7presetNr]._1_resonance_graph;
+        if (enc_moved[1]) {
+          Potentiometer[1] = constrain((pl7[pl7presetNr]._1_resonance_graph + encoded[1]), 0, 127);
+        }
+        /*
+        Potentiometer[2] = pl7[pl7presetNr]._1_pitchMod_graph;
+        if (enc_moved[2]) {
+          Potentiometer[2] = constrain((pl7[pl7presetNr]._1_pitchMod_graph + encoded[2]), 0, 127);
+        }
+       */
         Potentiometer[3] = pl7[pl7presetNr]._1_dc1_wavefold_graph;
         if (enc_moved[3]) {
           Potentiometer[3] = constrain((pl7[pl7presetNr]._1_dc1_wavefold_graph + encoded[3]), 0, 127);
@@ -305,7 +356,7 @@ void Plugin7_Page1_Dynamic() {
 
 
         break;
-      case 1:
+      case 2:
 
         //noisemod noise level
         Potentiometer[0] = pl7[pl7presetNr]._2_noise1_amp_graph;
@@ -334,7 +385,7 @@ void Plugin7_Page1_Dynamic() {
 
 
         break;
-      case 2:
+      case 3:
 
         //Filter Frequency
         Potentiometer[0] = pl7[pl7presetNr]._2_filter_frequency_graph;
@@ -359,8 +410,6 @@ void Plugin7_Page1_Dynamic() {
         if (enc_moved[3]) {
           Potentiometer[3] = constrain((pl7[pl7presetNr]._2_Env_Release_graph + encoded[3]), 0, 127);
         }
-        break;
-      case 3:
         break;
     }
   }
@@ -649,17 +698,24 @@ void Plugin7_Page_Static(byte Pagenumber) {
     drawPot(CTRL_COL_0, CTRL_ROW_0, pl7[pl7presetNr]._1_frequency_graph, pl7[pl7presetNr]._1_frequency, "1Freq", trackColor[desired_instrument]);
     drawPot(CTRL_COL_1, CTRL_ROW_0, pl7[pl7presetNr]._1_length_graph, pl7[pl7presetNr]._1_length, "1Decay", trackColor[desired_instrument]);
     drawPot(CTRL_COL_2, CTRL_ROW_0, pl7[pl7presetNr]._1_pitchMod_graph, pl7[pl7presetNr]._1_pitchMod_graph, "1Sweep", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_3, CTRL_ROW_0, pl7[pl7presetNr]._1_dc1_wavefold_graph, pl7[pl7presetNr]._1_dc1_wavefold_graph, "1Fold", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_3, CTRL_ROW_0, pl7[pl7presetNr]._1_dc1_wavefold_graph, pl7[pl7presetNr]._1_dc1_wavefold_graph, "1Tom", trackColor[desired_instrument]);
 
-    drawPot(CTRL_COL_0, CTRL_ROW_1, pl7[pl7presetNr]._2_noise1_amp_graph, pl7[pl7presetNr]._2_noise1_amp_graph, "2Noise", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_begin_graph, pl7[pl7presetNr]._2_wfMod_begin, "2W~F", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_2, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_frequency_graph, pl7[pl7presetNr]._2_wfMod_frequency, "2Freq", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_3, CTRL_ROW_1, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, "2N-FM", trackColor[desired_instrument]);
+    /*
+    drawPot(CTRL_COL_0, CTRL_ROW_1, pl7[pl7presetNr]._1_filter_graph, pl7[pl7presetNr]._1_frequency, "1Fltr", trackColor[desired_instrument]);
+    drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl7[pl7presetNr]._1_resonance_graph, pl7[pl7presetNr]._1_resonance_graph, "1Reso", trackColor[desired_instrument]);
+    drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl7[pl7presetNr]._1_pitchMod_graph, pl7[pl7presetNr]._1_pitchMod_graph, "1Mod", trackColor[desired_instrument]);
+    */
+    drawPot_4(CTRL_COL_3, CTRL_ROW_1, pl7[pl7presetNr]._1_dc1_wavefold_graph, pl7[pl7presetNr]._1_dc1_wavefold_graph, "1Gain", trackColor[desired_instrument]);
 
-    drawPot(CTRL_COL_0, CTRL_ROW_2, pl7[pl7presetNr]._2_filter_frequency_graph, pl7[pl7presetNr]._2_filter_frequency, "2Freq", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, CTRL_ROW_2, pl7[pl7presetNr]._2_filter_resonance_graph, pl7[pl7presetNr]._2_filter_resonance_graph, "2Res", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_0, CTRL_ROW_2, pl7[pl7presetNr]._2_noise1_amp_graph, pl7[pl7presetNr]._2_noise1_amp_graph, "2Noise", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_1, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_begin_graph, pl7[pl7presetNr]._2_wfMod_begin, "2W~F", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_2, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_frequency_graph, pl7[pl7presetNr]._2_wfMod_frequency, "2Freq", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_3, CTRL_ROW_2, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, pl7[pl7presetNr]._2_wfMod_frequencyModulation_graph, "2N-FM", trackColor[desired_instrument]);
+
+    drawPot(CTRL_COL_0, CTRL_ROW_3, pl7[pl7presetNr]._2_filter_frequency_graph, pl7[pl7presetNr]._2_filter_frequency, "2Freq", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_1, CTRL_ROW_3, pl7[pl7presetNr]._2_filter_resonance_graph, pl7[pl7presetNr]._2_filter_resonance_graph, "2Res", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_2, CTRL_ROW_3, pl7[pl7presetNr]._2_Env_Attack_graph, pl7[pl7presetNr]._2_Env_Attack, "2Att", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_3, CTRL_ROW_3, pl7[pl7presetNr]._2_Env_Release_graph, pl7[pl7presetNr]._2_Env_Release, "2Rel", trackColor[desired_instrument]);
   }
   if (Pagenumber == 1) {
     drawPot(CTRL_COL_0, CTRL_ROW_0, pl7[pl7presetNr]._3_waveformMod3_amplitude_graph, pl7[pl7presetNr]._3_waveformMod3_amplitude_rnd, "3M-Le", trackColor[desired_instrument]);

@@ -298,6 +298,10 @@ struct plugin7 {
   int _1_pitchMod_rnd;
   float _1_secondMix;
   byte _1_secondMixgraph = 50;
+  byte _1_filter_graph;
+  int _1_filter;
+  byte _1_resonance_graph;
+  float _1_resonance;
   float _1_dc1_wavefold = 0.06;
   byte _1_dc1_wavefold_graph = 10;
   //noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
@@ -326,7 +330,7 @@ struct plugin7 {
   byte _2_Env_Attack_graph;
   byte _2_Env_Decay;
   byte _2_Env_Decay_graph;
-  byte _2_Env_Release;
+  int _2_Env_Release;
   byte _2_Env_Release_graph;
 
 
@@ -343,7 +347,7 @@ struct plugin7 {
   byte _3_Env2_Attack_graph;
   byte _3_Env2_Decay;
   byte _3_Env2_Decay_graph;
-  byte _3_Env2_Release;
+  int _3_Env2_Release;
   byte _3_Env2_Release_graph;
 
 
@@ -361,7 +365,7 @@ struct plugin7 {
   byte _3_Env3_Attack_graph;
   byte _3_Env3_Decay;
   byte _3_Env3_Decay_graph;
-  byte _3_Env3_Release;
+  int _3_Env3_Release;
   byte _3_Env3_Release_graph;
 
   //4444444444444444444444444444444444444444444444444444444444444444444444444444 noise

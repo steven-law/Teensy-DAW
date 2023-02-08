@@ -337,11 +337,11 @@ void PluginNoteOff() {
 
         //send midi noteOff´s with channel 1-16
         if (track[desired_instruments].MIDIchannel < 17) {
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+          usbMIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+          MIDI.sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
           for (int usbs = 0; usbs < 10; usbs++) {
             if (!launchpad) {
-              usb_midi_devices[usbs]->sendNoteOff(track[desired_instruments].notePlayed, VELOCITYOFF, track[desired_instruments].MIDIchannel);
+              usb_midi_devices[usbs]->sendNoteOff(track[desired_instruments].notePlayedLast, VELOCITYOFF, track[desired_instruments].MIDIchannel);
             }
           }
           track[desired_instruments].envActive = false;
