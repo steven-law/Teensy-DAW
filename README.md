@@ -8,25 +8,28 @@ https://discord.gg/N78atDz9bC
 Teensy-DAW
  clipbased Touch DAW for Teensy
 
-functions for Teensy 3.5  
-.) 8 track 16step sequencer  
-.) 8 individual clips for each of the tracks  
-.) each track can send midi out (mono on track 2-8) or play internal plugins  
-.) 8+ plugins aviable, several sampleplayers and synthesis  
-.) more plugins can be easy added. Tutorial inside  
+.) 8 tracks  
+.) 8 individual clips per track  
+.) 16 steps per clip  
+.) +4 different Sequencer Modes ("Step", "Grid", "Drop", "Rand")  
+.) sequence external Midi gear (Midichannel 1 - 16) or (if "Midichannel" is above 16)  
+.) 8+ internal plugins , several sampleplayers and synthesis  
 .) each plugin can save 8 presets to sd card  
-.) whole project or each page can be saved indiviually to sd card  
-.) mixer for the internal plugins  
-.) mixer with solo and mute function  
-.) 3 fx slots with individual sends per track  
-.) the project can be arranged in songmode  
-.) songs can be up to 255 bars long  
-.) loop function to loop desired bars  
-.) navigation via touchscreen, button (or poti)  
-.) send 12 midi cc´s when midi channel is set to 1-16  
+.) more plugins can be easily added. Tutorial inside  
+.) send 16 midi cc´s per track when Midichannel is set to 1-16  
+.) whole project or each page can be saved/loaded indiviually to sd card  
+.) Songmode /Arrangement Mode  
+.) navigation via touchscreen, buttons or encoders  
+.) control 4 paramters in a row immediatly with the knobs or 4 pots from your controller/keyboard  
+.) automatic pot assign for different pages  
+.) connect a keyboard like the keyste37 (or any other KB with 4 Knobs) for best integration  
+.) connect up to 5 usbmidi-synthesizer over a usb-hub/ or standard TRS Type A = Korg/Roland/..  
+.) Record or play live via USB Keyboard  
+.) Record external Audio to RAW files   
 .) scales can be highlighted in sequencer view  
-.)   
-.)   
+.) use a Launchpad mini (MK1) to launch Clips directly  
+.) 
+ 
   
   
 Implemented plugins:  
