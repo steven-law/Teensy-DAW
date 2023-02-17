@@ -4,6 +4,7 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawActiveDrumSteps();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
 
+
   midi01.sendControlChange(0, 0, 1);
   LP_drawStepsequencer();
   LP_drawOctave(3);
@@ -35,6 +36,11 @@ void drumStepSequencer() {
         tft.setTextSize(1);
         tft.print(drumnote[i]);
       }
+    }
+    //seqMode
+    if (enc_moved[1]) {
+      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES-1);
+      drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
     }
   }
 
@@ -176,11 +182,13 @@ void saveTrack1() {
     for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
       for (byte snote = 0; snote < 12; snote++) {
         for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-          myFile.print((char)channel1Clip[sclip][snote][sstep]);
+          int step = channel1Clip[sclip][snote][sstep] + 48;
+          myFile.print((char)step);
         }
       }
     }
-    myFile.print((char)track[0].MIDIchannel);
+    int channel = track[0].MIDIchannel + 48;
+    myFile.print((char)channel);
 
     tft.println("Done");
     // close the file:
@@ -211,11 +219,15 @@ void loadTrack1() {
     for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
       for (byte snote = 0; snote < 12; snote++) {
         for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-          channel1Clip[sclip][snote][sstep] = myFile.read();
+          int step;
+          step = myFile.read();
+          channel1Clip[sclip][snote][sstep] = step-48;
         }
       }
     }
-    track[0].MIDIchannel = myFile.read();
+    int channel;
+    channel = myFile.read();
+    track[0].MIDIchannel = channel - 48;
     tft.println("Done");
     startUpScreen();
     // close the file:

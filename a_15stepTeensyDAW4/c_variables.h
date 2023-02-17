@@ -131,12 +131,15 @@ byte selectPage;
 #define FX1_PAGE1 120
 #define FX2_PAGE1 123
 #define FX3_PAGE1 126
-
-
+#define NFX1_PAGE1 129
+#define NFX2_PAGE1 132
+#define NFX3_PAGE1 135
+#define NFX4_PAGE1 138
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
 #define MAX_WAV_FILES 11
+
 const char* wavKit[12] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
 const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
                                          "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
@@ -155,10 +158,48 @@ const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.
 
 const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+const char* showPot_Value[12]{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
+char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
+char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-
+#define BEAT_ARRAY_SIZE 33
+const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 },  //kick
+  { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },  //kick
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },  //hihat
+  { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 },  //hihat
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0 },  //perc
+  { 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 },  //perc
+  { 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1 },  //perc
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1 },  //perc
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }   //perc
+};
 //plugin 1 variables
 struct plugin1 {
 
@@ -443,6 +484,61 @@ plugin9 pl9[MAX_PRESETS];
 byte pl9presetNr = 0;
 
 
+#define MAX_SEQMODES 5
+const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR" };
+
+//seqmode "grid"
+struct Grids {
+  byte Pot_Value[12];
+  byte Pot_Value_graph[12];
+};
+Grids NFX1[MAX_PRESETS];
+byte NFX1presetNr = 0;
+byte clock_count = 0;
+
+
+//seqmode "grid"
+struct Drops {
+  byte Pot_Value[16];
+  byte Pot_Value_graph[16];
+};
+Drops NFX2[MAX_PRESETS];
+byte NFX2presetNr = 0;
+byte cc23 = 5;
+byte cc24 = 6;
+byte octave;
+byte maxValIndex;
+byte maxVal = 0;
+byte analogReadArray[16];
+char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
+char* NFX2_ROW2[4]{ "C", "C#", "D", "D#" };
+char* NFX2_ROW3[4]{ "E", "F", "F#", "G" };
+char* NFX2_ROW4[4]{ "G#", "A", "A#", "B" };
+
+
+//seqmode "Rand"
+struct rands {
+  byte Pot_Value[16];
+  byte Pot_Value_graph[16];
+  byte Oct1 = 5;
+  byte Oct2 = 6;  
+};
+rands NFX3[MAX_PRESETS];
+byte NFX3presetNr = 0;
+char* NFX3_ROW1[4]{ "--", "--", "Oct1", "Oct2" };
+char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
+char* NFX3_ROW3[4]{ "--", "--", "--", "--" };
+char* NFX3_ROW4[4]{ "--", "--", "--", "--" };
+
+//seqmode "PolyR"
+struct PolyR {
+  byte Pot_Value[12];
+  byte Pot_Value_graph[12];
+  byte reset[12];
+};
+PolyR NFX4[MAX_PRESETS];
+byte NFX4presetNr = 0;
+
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
 
@@ -483,7 +579,7 @@ byte fx2bitcrush_graph = 127;
 int fx2samplerate = 44100;
 byte fx2samplerate_graph = 127;
 
-//FX2
+//FX3
 //delay variables
 int fx3delayTime = 300;
 int fx3delayTime_graph = 30;
@@ -494,7 +590,7 @@ int fx3delayFilterFreq_graph = 40;
 float fx3delayFilterReso = 0;
 int fx3delayFilterReso_graph = 0;
 float fx3delayAmount = 0;
-int fx3delayAmount_graph = 0; 
+int fx3delayAmount_graph = 0;
 
 //notenumber to frequency chart
 float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
@@ -725,6 +821,8 @@ struct tracks {
 
   byte FX3Volume_graph = 0;
   float FX3Volume = 0;
+
+  int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks track[8];

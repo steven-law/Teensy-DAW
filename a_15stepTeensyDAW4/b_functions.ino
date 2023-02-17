@@ -65,6 +65,18 @@ void Plugin_View_Static() {
   if (selectPage == PLUGIN16_PAGE1) {
     Plugin16_Page_Static(0);
   }
+  if (selectPage == NFX1_PAGE1) {
+    NoteFX1_Page_Static(0);
+  }
+  if (selectPage == NFX2_PAGE1) {
+    NoteFX2_Page_Static(0);
+  }
+  if (selectPage == NFX3_PAGE1) {
+    NoteFX3_Page_Static(0);
+  }
+  if (selectPage == NFX4_PAGE1) {
+    NoteFX4_Page_Static(0);
+  }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
 // just add your plugin-page dynamic and Pluginx_Control function here
@@ -91,7 +103,7 @@ void Plugin_View_Dynamic() {
 
 
 
-  
+
   //-----------------------------------------
   //setting up the Plugin1 Page1-view
   if (selectPage == PLUGIN1_PAGE1) {
@@ -184,6 +196,26 @@ void Plugin_View_Dynamic() {
   if (selectPage == PLUGIN16_PAGE1) {
     Plugin16_Page1_Dynamic();
   }
+  //setting up the NoteFX1-view
+  if (selectPage == NFX1_PAGE1) {
+    NoteFX1_Page1_Dynamic();
+    NoteFX1_Control();
+  }
+  //setting up the NoteFX2-view
+  if (selectPage == NFX2_PAGE1) {
+    NoteFX2_Page1_Dynamic();
+    NoteFX2_Control();
+  }
+  //setting up the NoteFX3-view
+  if (selectPage == NFX3_PAGE1) {
+    NoteFX3_Page1_Dynamic();
+    NoteFX3_Control();
+  }
+  //setting up the NoteFX4-view
+  if (selectPage == NFX4_PAGE1) {
+    NoteFX4_Page1_Dynamic();
+    NoteFX4_Control();
+  }
 
 
 
@@ -235,9 +267,9 @@ void Plugin_View_Dynamic() {
   if (selectPage == FX2_PAGE1) {
     FX2Bitcrush_dynamic();
   }
-   if (selectPage == FX3_PAGE1) {
-  FX3Delay_dynamic();
-   }
+  if (selectPage == FX3_PAGE1) {
+    FX3Delay_dynamic();
+  }
   //setting up the Mixer Page 2
   if (selectPage == MIDICC_PAGE_1) {
     midiCCpage1_Dynamic(desired_track);
@@ -450,6 +482,22 @@ void beatComponents() {
       pl9presetNr = track[instruments].presetNr[phrase];
       Plugin9_Change();
     }
+    if (track[instruments].seqMode == 1) {
+      NFX1presetNr = track[instruments].clip_songMode;
+      NoteFX1_Change();
+    }
+    if (track[instruments].seqMode == 2) {
+      NFX2presetNr = track[instruments].clip_songMode;
+      NoteFX2_Change();
+    }
+    if (track[instruments].seqMode == 3) {
+      NFX3presetNr = track[instruments].clip_songMode;
+      NoteFX3_Change();
+    }
+    if (track[instruments].seqMode == 4) {
+      //NFX4presetNr = track[instruments].clip_songMode;
+      //NoteFX4_Change();
+    }
   }
 }
 
@@ -496,17 +544,56 @@ void selectFilterType(byte pluginchannel, byte mixerchannel) {
 
 void DrumPluginPlay() {
 
-
-
-
-
   //play drumplugin when midichannel = 18
   if (track[0].MIDIchannel == 18) {
-    for (int files = 0; files < 12; files++) {
-      if (drumnotes[files]) {
-        drumnotes[files] = false;
-        playSdWav1.play(wavKit[files]);
-      }
+
+    if (drumnotes[0]) {
+      drumnotes[0] = false;
+      playSdWav1.play(wavKit[0]);
+    }
+    if (drumnotes[1]) {
+      drumnotes[1] = false;
+      playSdWav2.play(wavKit[1]);
+    }
+    if (drumnotes[2]) {
+      drumnotes[2] = false;
+      playSdWav3.play(wavKit[2]);
+    }
+    if (drumnotes[3]) {
+      drumnotes[3] = false;
+      playSdWav4.play(wavKit[3]);
+    }
+    if (drumnotes[4]) {
+      drumnotes[4] = false;
+      playSdWav5.play(wavKit[4]);
+    }
+    if (drumnotes[5]) {
+      drumnotes[5] = false;
+      playSdWav6.play(wavKit[5]);
+    }
+    if (drumnotes[6]) {
+      drumnotes[6] = false;
+      playSdWav7.play(wavKit[6]);
+    }
+    if (drumnotes[7]) {
+      drumnotes[7] = false;
+      playSdWav8.play(wavKit[7]);
+    }
+    if (drumnotes[8]) {
+      drumnotes[8] = false;
+      playSdWav9.play(wavKit[8]);
+    }
+    if (drumnotes[9]) {
+      drumnotes[9] = false;
+      playSdWav10.play(wavKit[9]);
+    }
+    if (drumnotes[10]) {
+      drumnotes[10] = false;
+      playSdWav11.play(wavKit[10]);
+    }
+    if (drumnotes[11]) {
+      drumnotes[11] = false;
+      //playSdWav12.play(wavKit[11]);
     }
   }
   //play Memory drumplugin when midichannel = 20
@@ -762,7 +849,7 @@ void drawPotCC(byte xPos, byte yPos, byte fvaluecc, byte dvaluecc, int color) { 
   dvalue_oldcc = dvaluecc;
 }
 
-//draws a number into a rect of 2x1grids  drawActiveRect is recommended
+//draws a number into a rect of 2x1grids
 void drawNrInRect(byte xPos, byte yPos, byte dvalue, int color) {
   tft.setFont(Arial_8);
   tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
@@ -785,7 +872,7 @@ void drawNrInRect2(byte xPos, byte yPos, byte dvalue, int color) {
   tft.print(dvalue);
   dvalue_old2 = dvalue;
 }
-//draws a number into a rect of 2x1grids  drawActiveRect is recommended
+//draws a number into a rect of 2x1grids
 void drawChar(byte xPos, byte yPos, char* dvalue_char, int color) {
   tft.setFont(Arial_8);
   //tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);

@@ -81,16 +81,15 @@ void melodicStepSequencer(byte desired_instrument) {
       tft.setTextSize(1);
       tft.print(track[desired_instrument].shown_octaves);
     }
+    //seqMode
+    if (enc_moved[1]) {
+      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES-1);
+      drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+    }
   }
-
-
-
-
 
   int touched_step = gridTouchX - 2;
   byte touched_note = gridTouchY - 1;
-
-
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || button[15]) {
@@ -139,23 +138,11 @@ void melodicStepSequencer(byte desired_instrument) {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        if (desired_instrument == 1) saveTrack2();
-        if (desired_instrument == 2) saveTrack3();
-        if (desired_instrument == 3) saveTrack4();
-        if (desired_instrument == 4) saveTrack5();
-        if (desired_instrument == 5) saveTrack6();
-        if (desired_instrument == 6) saveTrack7();
-        if (desired_instrument == 7) saveTrack8();
+        saveTrack(trackNames_long[desired_instrument], trackNames_txt[desired_instrument], desired_instrument);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        if (desired_instrument == 1) loadTrack2();
-        if (desired_instrument == 2) loadTrack3();
-        if (desired_instrument == 3) loadTrack4();
-        if (desired_instrument == 4) loadTrack5();
-        if (desired_instrument == 5) loadTrack6();
-        if (desired_instrument == 6) loadTrack7();
-        if (desired_instrument == 7) loadTrack8();
+        loadTrack(trackNames_txt[desired_instrument], desired_instrument);
       }
     }
     //clipselecting
@@ -208,511 +195,92 @@ void saveMIDItrack(char* track, int trackNr) {
   writer.flush();
 }
 
-void saveTrack2() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track2.txt...");
-  SD.remove("track2.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track2.txt...");
-  myFile = SD.open("track2.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track2
-    tft.print("Writing track2 to track2.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[1].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[1].MIDIchannel);
-
-
+void saveTrack(char* trackLong, char* tracktxt, byte trackNr) {
+  if (trackNr > 0) {
+    tft.fillScreen(ILI9341_DARKGREY);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setFont(Arial_8);
+    tft.setCursor(0, 0);
+    // delete the file:
+    tft.print("Removing:");
+    tft.print(tracktxt);
+    SD.remove(tracktxt);
     tft.println("Done");
-    // close the file:
-    myFile.close();
 
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track2.txt");
-  }
-  saveMIDItrack("track2", 1);
-
-
-
-
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack2() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track2.txt");
-  if (myFile) {
-    tft.println("opening track2.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track2.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[1].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[1].MIDIchannel = myFile.read();
+    // open the file.
+    tft.print("Creating and opening:");
+    tft.print(tracktxt);
+    myFile = SD.open(tracktxt, FILE_WRITE);
     tft.println("Done");
+
+    // if the file opened okay, write to it:
+    if (myFile) {
+
+
+
+      //save track2
+      tft.print("Writing track to:");
+      tft.print(tracktxt);
+      for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+          myFile.print((char)ctrack[trackNr].sequence[sclip].step[sstep]);
+        }
+      }
+      myFile.print((char)track[trackNr].MIDIchannel);
+
+
+      tft.println("Done");
+      // close the file:
+      myFile.close();
+
+
+    } else {
+      // if the file didn't open, print an error:
+      tft.println("error opening:");
+      tft.print(tracktxt);
+    }
+    saveMIDItrack(trackLong, trackNr);
+
+
+
+
+    tft.println("Saving done.");
     startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track2.txt");
   }
 }
-void saveTrack3() {
+void loadTrack(char* tracktxt, int trackNr) {
+  if (trackNr > 0) {
+    tft.fillScreen(ILI9341_DARKGREY);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setCursor(0, 0);
+    // open the file for reading:
+    myFile = SD.open(tracktxt);
+    if (myFile) {
+      tft.println("opening:");
+      tft.println(tracktxt);
 
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track3.txt...");
-  SD.remove("track3.txt");
-  tft.println("Done");
+      // read from the file until there's nothing else in it:
 
-  // open the file.
-  tft.print("Creating and opening track3.txt...");
-  myFile = SD.open("track3.txt", FILE_WRITE);
-  tft.println("Done");
 
-  // if the file opened okay, write to it:
-  if (myFile) {
-    //save track3
-    tft.print("Writing track3 to track3.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[2].sequence[sclip].step[sstep]);
+
+      //load track 1
+      tft.print("Reading clips from:");
+      tft.println(tracktxt);
+      for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+          ctrack[trackNr].sequence[sclip].step[sstep] = myFile.read();
+        }
       }
+      track[trackNr].MIDIchannel = myFile.read();
+      tft.println("Done");
+      startUpScreen();
+      // close the file:
+      myFile.close();
+    } else {
+      // if the file didn't open, print an error:
+      tft.println("error opening:");
+      tft.println(tracktxt);
     }
-    myFile.print((char)track[2].MIDIchannel);
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track3.txt");
-  }
-  saveMIDItrack("track3", 2);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack3() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track3.txt");
-  if (myFile) {
-    tft.println("opening track3.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track3.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[2].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[2].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track3.txt");
-  }
-}
-void saveTrack4() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track4.txt...");
-  SD.remove("track4.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track4.txt...");
-  myFile = SD.open("track4.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-    //save track4
-    tft.print("Writing track4 to track4.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[3].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[3].MIDIchannel);
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track4.txt");
-  }
-  saveMIDItrack("track4", 3);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack4() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track4.txt");
-  if (myFile) {
-    tft.println("opening track4.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track4.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[3].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[3].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track4.txt");
-  }
-}
-void saveTrack5() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track5.txt...");
-  SD.remove("track5.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track5.txt...");
-  myFile = SD.open("track5.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track5
-    tft.print("Writing track5 to track5.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[4].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[4].MIDIchannel);
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track5.txt");
-  }
-  saveMIDItrack("track5", 4);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack5() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track5.txt");
-  if (myFile) {
-    tft.println("opening track5.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track5.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[4].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[4].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track5.txt");
-  }
-}
-void saveTrack6() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track6.txt...");
-  SD.remove("track6.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track6.txt...");
-  myFile = SD.open("track6.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track6
-    tft.print("Writing track6 to track6.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[5].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[5].MIDIchannel);
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track6.txt");
-  }
-  saveMIDItrack("track6", 5);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack6() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track6.txt");
-  if (myFile) {
-    tft.println("opening track6.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track6.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[5].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[5].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track6.txt");
-  }
-}
-void saveTrack7() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track7.txt...");
-  SD.remove("track7.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track7.txt...");
-  myFile = SD.open("track7.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track7
-    tft.print("Writing track7 to track7.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[6].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[6].MIDIchannel);
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track7.txt");
-  }
-  saveMIDItrack("track7", 6);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack7() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track7.txt");
-  if (myFile) {
-    tft.println("opening track7.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading clips from track7.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[6].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[6].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track7.txt");
-  }
-}
-void saveTrack8() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track8.txt...");
-  SD.remove("track8.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening track8.txt...");
-  myFile = SD.open("track8.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track8
-    tft.print("Writing track8 to track8.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        myFile.print((char)ctrack[7].sequence[sclip].step[sstep]);
-      }
-    }
-    myFile.print((char)track[7].MIDIchannel);
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track8.txt");
-  }
-  saveMIDItrack("track8", 7);
-  tft.println("Saving done.");
-  startUpScreen();
-}
-void loadTrack8() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("track8.txt");
-  if (myFile) {
-    tft.println("opening track8.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 8
-    tft.print("Reading clips from track8.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
-        ctrack[7].sequence[sclip].step[sstep] = myFile.read();
-      }
-    }
-    track[7].MIDIchannel = myFile.read();
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track8.txt");
   }
 }

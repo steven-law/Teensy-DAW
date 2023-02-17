@@ -41,15 +41,13 @@ void drawstepPosition(byte current) {
 
 void sendClock() {
   if (seq_run) {
-    //unsigned long now = micros();  // what's the time?
-    // send clock
-    //if (now >= _next_clock) {
+
     if (msecsclock > _clock) {
-      //_next_clock = now + _clock;
       MIDItick++;
 
       usbMIDI.sendRealTime(usbMIDI.Clock);
-      MIDI.sendClock();
+      MIDI.sendRealTime(0xF8);
+      // MIDI.sendClock();
       msecsclock = 0;
       //digitalWrite(22, LOW);
 
@@ -132,35 +130,116 @@ void step(int current) {
   //send midinotes for drumtrack #1
   if (!track[0].solo_mutes_state) {
     if (!track[0].mute_state) {
-      for (int i = 0; i < 12; i++) {
 
-        //if the last step was high, stop the notes
-        if (channel1Clip[track[0].clip_songMode][i][current - 1]) {
-          //drumnotes[i] = false;
-          // DrumPluginPlay();
-          if (track[0].MIDIchannel < 17) {
-            usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-            MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-            for (int usbs = 0; usbs < 10; usbs++) {
-              if (!launchpad) {
-                usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+      if (track[0].seqMode == 0) {
+        for (int i = 0; i < 12; i++) {
+          //if the last step was high, stop the notes
+          if (channel1Clip[track[0].clip_songMode][i][current - 1]) {
+            //drumnotes[i] = false;
+            // DrumPluginPlay();
+            if (track[0].MIDIchannel < 17) {
+              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              for (int usbs = 0; usbs < 10; usbs++) {
+                if (!launchpad) {
+                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                }
+              }
+            }
+            dsend_noteOff[i] = false;
+          }
+          //if the actual step is high, play the notes
+          if (channel1Clip[track[0].clip_songMode][i][current]) {
+            if (!dsend_noteOff[i]) {
+              drumnotes[i] = true;
+              dsend_noteOff[i] = true;
+              //DrumPluginPlay();
+              if (track[0].MIDIchannel < 17) {
+                usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                for (int usbs = 0; usbs < 10; usbs++) {
+                  if (!launchpad) {
+                    usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  }
+                }
               }
             }
           }
-          dsend_noteOff[i] = false;
         }
-        //if the actual step is high, play the notes
-        if (channel1Clip[track[0].clip_songMode][i][current]) {
-          if (!dsend_noteOff[i]) {
-            drumnotes[i] = true;
-            dsend_noteOff[i] = true;
-            //DrumPluginPlay();
+      }
+      if (track[0].seqMode == 1) {
+        if (track[0].clip_songMode < 8) {
+          for (int i = 0; i < 12; i++) {
+
+            if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[i]][current - 1]) {
+              if (track[0].MIDIchannel < 17) {
+                usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                for (int usbs = 0; usbs < 10; usbs++) {
+                  if (!launchpad) {
+                    usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                  }
+                }
+              }
+              dsend_noteOff[i] = false;
+            }
+            if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[i]][current]) {
+              //if (bitRead(NFX1[NFX1presetNr].Pot_Value[i], clock_count)) {
+              clock_count++;
+              drumnotes[i] = true;
+              dsend_noteOff[i] = true;
+              if (track[0].MIDIchannel < 17) {
+                usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                for (int usbs = 0; usbs < 10; usbs++) {
+                  if (!launchpad) {
+                    usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  }
+                }
+              }
+              if (clock_count == 8) {
+                clock_count = 0;
+              }
+            }
+          }
+        }
+      }
+      if (track[0].seqMode == 4) {
+        for (int i = 0; i < 12; i++) {
+          //if (NFX4[NFX4presetNr].reset[i]<=NFX4[NFX4presetNr].Pot_Value[i])
+          NFX4[NFX4presetNr].reset[i]++;
+
+          //Serial.println(NFX4[1].reset[0]);
+          if (NFX4[NFX4presetNr].reset[i] >= NFX4[NFX4presetNr].Pot_Value[i]) {
+            NFX4[NFX4presetNr].reset[i] = 0;
+          }
+          if (channel1Clip[track[0].clip_songMode][i][NFX4[NFX4presetNr].reset[i] - 1]) {
+            //drumnotes[i] = false;
+            // DrumPluginPlay();
             if (track[0].MIDIchannel < 17) {
-              usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-              MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
               for (int usbs = 0; usbs < 10; usbs++) {
                 if (!launchpad) {
-                  usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                }
+              }
+            }
+            dsend_noteOff[i] = false;
+          }
+          //if the actual step is high, play the notes
+          if (channel1Clip[track[0].clip_songMode][i][NFX4[NFX4presetNr].reset[i]]) {
+            if (!dsend_noteOff[i]) {
+              drumnotes[i] = true;
+              dsend_noteOff[i] = true;
+              //DrumPluginPlay();
+              if (track[0].MIDIchannel < 17) {
+                usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                for (int usbs = 0; usbs < 10; usbs++) {
+                  if (!launchpad) {
+                    usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  }
                 }
               }
             }
@@ -175,25 +254,103 @@ void step(int current) {
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
-        track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
-        track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase];
 
-        //if the actual step is high, play the notes
-        if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
-          track[track_number].playNoteOnce = true;
-          track[track_number].notePressed = true;
+        if (track[track_number].seqMode == 0) {
+          track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] + track[track_number].NoteOffset[phrase];
+          track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] + track[track_number].NoteOffset[phrase];
+
+          //if the actual step is high, play the notes
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
+            track[track_number].playNoteOnce = true;
+            track[track_number].notePressed = true;
+          }
           //PluginNoteOn();
+
+          //if the last step wass high, stop the notes
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
+            track[track_number].notePressed = false;
+            //PluginNoteOff();
+          }
         }
-        //if the last step wass high, stop the notes
-        if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
-          track[track_number].notePressed = false;
-          //PluginNoteOff();
+        if (track[track_number].seqMode == 2) {
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
+            maxVal = 0;
+            if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
+              for (int i = 0; i < 12; i++) {
+                if (analogReadArray[i] > maxVal) {
+                  maxVal = analogReadArray[i];
+                  maxValIndex = i;
+                  cc23 = NFX2[NFX2presetNr].Pot_Value[2];
+                  cc24 = NFX2[NFX2presetNr].Pot_Value[3];
+                  octave = random(cc23, cc24);
+                  track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
+                  ;
+                  track[track_number].notePlayedLast = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
+                  ;
+                  track[track_number].playNoteOnce = true;
+                  track[track_number].notePressed = true;
+                }
+              }
+
+
+              if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
+                analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
+                track[track_number].notePressed = false;
+                //PluginNoteOff();
+              }
+            }
+            if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
+              for (int i = 11; i > 0; i--) {
+                if (analogReadArray[i] > maxVal) {
+                  maxVal = analogReadArray[i];
+                  maxValIndex = i;
+                  cc23 = NFX2[NFX2presetNr].Pot_Value[2];
+                  cc24 = NFX2[NFX2presetNr].Pot_Value[3];
+                  octave = random(cc24, cc23);
+                  track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
+                  ;
+                  track[track_number].notePlayedLast = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
+                  ;
+                  track[track_number].playNoteOnce = true;
+                  track[track_number].notePressed = true;
+                }
+              }
+            }
+          }
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
+            analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
+            track[track_number].notePressed = false;
+            //PluginNoteOff();
+          }
+
+          if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
+            for (int i = 0; i < 12; i++) {
+              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
+            }
+          }
+        }
+
+        if (track[track_number].seqMode == 3) {
+          //if the actual step is high, play the notes
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current] > VALUE_NOTEOFF) {
+            NFX3[NFX3presetNr].Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
+            track[track_number].notePlayed = random(0, 11) + (NFX3[NFX3presetNr].Oct1 * 12);
+            track[track_number].notePlayedLast = track[track_number].notePlayed;
+            track[track_number].playNoteOnce = true;
+            track[track_number].notePressed = true;
+          }
+          //PluginNoteOn();
+
+          //if the last step wass high, stop the notes
+          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[current - 1] > VALUE_NOTEOFF) {
+            track[track_number].notePressed = false;
+            //PluginNoteOff();
+          }
         }
       }
     }
   }
 }
-
 
 void midiCC_view_Static(byte mixerpage, byte desired_instrument) {
   clearWorkSpace();
@@ -527,7 +684,6 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     // midi1.getCable() can be used to read which of the virtual
     // MIDI cables received this message.
   }
-
 }
 
 void myNoteOff(byte channel, byte note, byte velocity) {
@@ -614,7 +770,6 @@ void myNoteOff(byte channel, byte note, byte velocity) {
       track[channel - 1].notePlayedLast = note;
     }
   }
-
 }
 
 void myControlChange(byte channel, byte control, byte value) {
@@ -1295,8 +1450,32 @@ void myControlChange(byte channel, byte control, byte value) {
       }
       if (control == 106 && value == 127) {
         //delay
-         selectPage = FX3_PAGE1;
+        selectPage = FX3_PAGE1;
         FX3Delay_static();
+      }
+      if (track[desired_instrument].seqMode == 1) {
+        if (control == 108 && value == 127) {
+          selectPage = NFX1_PAGE1;
+          NoteFX1_Page_Static(0);
+        }
+      }
+      if (track[desired_instrument].seqMode == 2) {
+        if (control == 108 && value == 127) {
+          selectPage = NFX2_PAGE1;
+          NoteFX2_Page_Static(0);
+        }
+      }
+      if (track[desired_instrument].seqMode == 3) {
+        if (control == 108 && value == 127) {
+          selectPage = NFX3_PAGE1;
+          NoteFX3_Page_Static(0);
+        }
+      }
+      if (track[desired_instrument].seqMode == 4) {
+        if (control == 108 && value == 127) {
+          selectPage = NFX4_PAGE1;
+          NoteFX4_Page_Static(0);
+        }
       }
     }
   }

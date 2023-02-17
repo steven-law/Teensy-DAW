@@ -350,14 +350,11 @@ void savebutton() {
     tft.println("Done");
 
     tft.print("Writing track 2-8 to project.txt...");
-    //save plugin 1 variables
-    saveTrack2();
-    saveTrack3();
-    saveTrack4();
-    saveTrack5();
-    saveTrack6();
-    saveTrack7();
-    saveTrack8();
+    //save plugin 2-8 variables
+    for (int tracks = 1; tracks < 8; tracks++) {
+      saveTrack(trackNames_long[tracks], trackNames_txt[tracks], tracks);
+    }
+    //save Mixersettings
     saveMixer();
     tft.println("Done");
 
@@ -459,13 +456,10 @@ void loadbutton() {
     tft.println("Done");
     //load track 2-8
     tft.print("Reading track2-8 from project.txt...");
-    loadTrack2();
-    loadTrack3();
-    loadTrack4();
-    loadTrack5();
-    loadTrack6();
-    loadTrack7();
-    loadTrack8();
+    for (int tracks = 1; tracks < 8; tracks++) {
+      loadTrack(trackNames_txt[tracks], tracks);
+    }
+    //load mixer settings
     loadMixer();
     tft.println("Done");
 
