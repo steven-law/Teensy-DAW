@@ -9,8 +9,8 @@ void NoteFX1_Settings() {
 void NoteFX1_Control() {
   switch (lastPotRow) {
     case 0:
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
           NFX1[NFX1presetNr].Pot_Value[MixerColumn] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn];
@@ -21,8 +21,8 @@ void NoteFX1_Control() {
       break;
 
     case 1:
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 4] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
           NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 4];
@@ -33,8 +33,8 @@ void NoteFX1_Control() {
       break;
 
     case 2:
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 8] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
           NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 8];
@@ -55,15 +55,15 @@ void NoteFX1_Page1_Dynamic() {
       lastPotRow = 10;
       NFX1presetNr = constrain((NFX1presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, NFX1presetNr, trackColor[desired_instrument]);
-      NoteFX1_Page_Static(0);
+      NoteFX1_Page_Static();
     }
 
   }
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, BEAT_ARRAY_SIZE);
@@ -72,8 +72,8 @@ void NoteFX1_Page1_Dynamic() {
         break;
 
       case 1:
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, BEAT_ARRAY_SIZE);
@@ -82,8 +82,8 @@ void NoteFX1_Page1_Dynamic() {
         break;
 
       case 2:
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((NFX1[NFX1presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, BEAT_ARRAY_SIZE);
@@ -124,32 +124,32 @@ void NoteFX1_Page1_Dynamic() {
     }
   }
 }
-void NoteFX1_Page_Static(byte Pagenumber) {
+void NoteFX1_Page_Static() {
   clearWorkSpace();
   NoteFX1_Change();
   drawNrInRect(18, 1, NFX1presetNr, ILI9341_PURPLE);
   drawChar(18, 3, seqModes[track[desired_track].seqMode], trackColor[desired_track]);
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_0, NFX1[NFX1presetNr].Pot_Value_graph[touchX - 1], NFX1[NFX1presetNr].Pot_Value_graph[touchX - 1], showPot_Value[touchX - 1], trackColor[desired_instrument]);
   }
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_1, NFX1[NFX1presetNr].Pot_Value_graph[touchX + 3], NFX1[NFX1presetNr].Pot_Value_graph[touchX + 3], showPot_Value[touchX + 3], trackColor[desired_instrument]);
   }
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_2, NFX1[NFX1presetNr].Pot_Value_graph[touchX + 7], NFX1[NFX1presetNr].Pot_Value_graph[touchX + 7], showPot_Value[touchX + 7], trackColor[desired_instrument]);
   }
 }
 
 void NoteFX1_Change() {
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
 
     NFX1[NFX1presetNr].Pot_Value_graph[touchX - 1];
   }
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
 
     NFX1[NFX1presetNr].Pot_Value_graph[touchX + 3];
   }
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
     NFX1[NFX1presetNr].Pot_Value_graph[touchX + 7];
   }
 }
@@ -176,8 +176,8 @@ void saveNoteFX1() {
 
     tft.print("Writing NoteFX1 to NoteFX1.txt...");
     //save plugin 3 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (byte touchX = 1; touchX < 5; touchX++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      for (int touchX = 1; touchX < 5; touchX++) {
         myFile.print((char)NFX1[maxpreset].Pot_Value_graph[touchX - 1]);
         myFile.print((char)NFX1[maxpreset].Pot_Value_graph[touchX + 3]);
         myFile.print((char)NFX1[maxpreset].Pot_Value_graph[touchX + 7]);
@@ -211,8 +211,8 @@ void loadNoteFX1() {
 
     //load NoteFX1 variables
     tft.print("reading NoteFX1 from NoteFX1.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (byte touchX = 1; touchX < 5; touchX++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+      for (int touchX = 1; touchX < 5; touchX++) {
         NFX1[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
         NFX1[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
         NFX1[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
@@ -227,7 +227,7 @@ void loadNoteFX1() {
     // if the file didn't open, print an error:
     tft.println("error opening NoteFX1.txt");
   }
-  for (byte touchX = 1; touchX < 5; touchX++) {
+  for (int touchX = 1; touchX < 5; touchX++) {
     NFX1[NFX1presetNr].Pot_Value[touchX - 1] = NFX1[NFX1presetNr].Pot_Value_graph[touchX - 1];
 
     NFX1[NFX1presetNr].Pot_Value[touchX + 3] = NFX1[NFX1presetNr].Pot_Value_graph[touchX + 3];

@@ -12,7 +12,7 @@ void drumStepSequencer_Static() {  //static Display rendering
 
 void drumStepSequencer() {
   if (launchpad) {
-    for (byte LPclips = 0; LPclips < 8; LPclips++) {
+    for (int LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
         LP_drawclipRow();
       }
@@ -27,7 +27,7 @@ void drumStepSequencer() {
   if (button[14]) {
     if (enc_moved[0]) {
       int noteselector = constrain((drumnote[gridTouchY - 1] + encoded[0]), 0, 99);
-      for (byte i = 0; i < 12; i++) {
+      for (int i = 0; i < 12; i++) {
         drumnote[gridTouchY - 1] = noteselector;
         tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
         tft.setCursor(18, STEP_FRAME_H * i + 18);
@@ -48,10 +48,14 @@ void drumStepSequencer() {
     //gridTouchX
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
+      drawCursor();
+      showCoordinates();
     }
     //gridTouchY
     if (enc_moved[1]) {
       gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
+      drawCursor();
+      showCoordinates();
     }
 
     //midichannel
@@ -94,7 +98,7 @@ void drumStepSequencer() {
         int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
 
         ch1tone = (gridTouchY - 1);
-        byte step_number = gridTouchX - 2;
+        int step_number = gridTouchX - 2;
 
         if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
           channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
@@ -123,7 +127,7 @@ void drumStepSequencer() {
 
     /*if (gridTouchX == 1) {
       int noteselector = Potentiometer[3];
-      for (byte i = 0; i < 12; i++) {
+      for (int i = 0; i < 12; i++) {
         drumnote[gridTouchY - 1] = map(noteselector, 0, 127, 0, 48);
         tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
         tft.setCursor(18, STEP_FRAME_H * i + 18);
@@ -147,8 +151,8 @@ void drumStepSequencer() {
 
 
 void drawActiveDrumSteps() {
-  for (byte tone = 0; tone < 12; tone++) {
-    for (byte steps = 0; steps < STEP_QUANT; steps++) {
+  for (int tone = 0; tone < 12; tone++) {
+    for (int steps = 0; steps < STEP_QUANT; steps++) {
       if (channel1Clip[track[0].clip_selector][tone][steps]) {
         tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + ((track[0].clip_selector) * 20));
       }
@@ -179,9 +183,9 @@ void saveTrack1() {
 
     //save track1
     tft.print("Writing track 1 to track1.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte snote = 0; snote < 12; snote++) {
-        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+      for (int snote = 0; snote < 12; snote++) {
+        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           int step = channel1Clip[sclip][snote][sstep] + 48;
           myFile.print((char)step);
         }
@@ -216,9 +220,9 @@ void loadTrack1() {
 
     //load track 1
     tft.print("Reading songarrangment from track1.txt...");
-    for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (byte snote = 0; snote < 12; snote++) {
-        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+      for (int snote = 0; snote < 12; snote++) {
+        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           int step;
           step = myFile.read();
           channel1Clip[sclip][snote][sstep] = step-48;

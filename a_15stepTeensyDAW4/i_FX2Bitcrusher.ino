@@ -144,7 +144,7 @@ void saveFX2() {
 
     tft.print("Writing plugin 1 to FX2.txt...");
     //save plugin 1 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)fx2samplerate_graph);
       myFile.print((char)fx2bitcrush_graph);
     }
@@ -170,7 +170,7 @@ void loadFX2() {
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from FX2.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       fx2samplerate_graph = myFile.read();
       fx2bitcrush_graph = myFile.read();
     }

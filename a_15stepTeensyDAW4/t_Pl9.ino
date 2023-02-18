@@ -101,7 +101,7 @@ void Plugin9_Page1_Dynamic() {
       lastPotRow = 10;
       pl9presetNr = constrain((pl9presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl9presetNr, ILI9341_PURPLE);
-      Plugin9_Page_Static(0);
+      Plugin9_Page_Static();
     }
   }
   if (!button[14]) {
@@ -206,7 +206,7 @@ void Plugin9_Page1_Dynamic() {
     }
   }
 }
-void Plugin9_Page_Static(byte Pagenumber) {
+void Plugin9_Page_Static() {
   clearWorkSpace();
   Plugin9_Change();
   //place here the (copied!) shown controls for your plugin
@@ -262,7 +262,7 @@ void savePlugin9() {
 
     tft.print("Writing plugin9 to plugin9.txt...");
     //save plugin 8 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)pl9[maxpreset].wah_form_graph);
       myFile.print((char)pl9[maxpreset].wah_rate_graph);
       myFile.print((char)pl9[maxpreset].wah_sweep_graph);
@@ -299,7 +299,7 @@ void loadPlugin9() {
 
     //load plugin 8 variables
     tft.print("reading plugin9 from plugin9.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       pl9[maxpreset].wah_form_graph = myFile.read();
       pl9[maxpreset].wah_rate_graph = myFile.read();
       pl9[maxpreset].wah_sweep_graph = myFile.read();

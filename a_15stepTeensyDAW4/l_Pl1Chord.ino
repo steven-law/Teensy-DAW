@@ -76,8 +76,8 @@ void Plugin1_Control() {
   switch (lastPotRow) {
     case 0:
       //1 Row 1 note Offset
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (pl1[pl1presetNr].note_Offset_graph[MixerColumn] != Potentiometer[MixerColumn]) {
           pl1[pl1presetNr].note_Offset_graph[MixerColumn] = Potentiometer[MixerColumn];
           pl1[pl1presetNr].note_Offset[MixerColumn] = map(pl1[pl1presetNr].note_Offset_graph[MixerColumn], 0, 127, -18, 18);
@@ -87,8 +87,8 @@ void Plugin1_Control() {
       break;
     case 1:
       //1 Row 2 Waveform
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (pl1[pl1presetNr].wfSelect_graph[MixerColumn] != Potentiometer[MixerColumn]) {
           pl1[pl1presetNr].wfSelect_graph[MixerColumn] = Potentiometer[MixerColumn];
           pl1[pl1presetNr].wfSelect[MixerColumn] = map(pl1[pl1presetNr].wfSelect_graph[MixerColumn], 0, 127, 0, 12);
@@ -102,8 +102,8 @@ void Plugin1_Control() {
       break;
     case 2:
       //1 Row 2 note Velocity
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (pl1[pl1presetNr].note_Velo_graph[MixerColumn] != Potentiometer[MixerColumn]) {
           pl1[pl1presetNr].note_Velo_graph[MixerColumn] = Potentiometer[MixerColumn];
           pl1[pl1presetNr].note_Velo[MixerColumn] = pl1[pl1presetNr].note_Velo_graph[MixerColumn] / 127.00;
@@ -197,8 +197,8 @@ void Plugin1_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //1 Row 1 note Offset
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = pl1[pl1presetNr].note_Offset_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].note_Offset_graph[MixerColumn] + (encoded[MixerColumn] * 2)), 0, 127);
@@ -207,8 +207,8 @@ void Plugin1_Page1_Dynamic() {
         break;
       case 1:
         //1 Row 2 Waveform
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = pl1[pl1presetNr].wfSelect[MixerColumn] * 11;
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].wfSelect[MixerColumn] + encoded[MixerColumn]), 0, 12) * 11;
@@ -217,8 +217,8 @@ void Plugin1_Page1_Dynamic() {
         break;
       case 2:
         //1 Row 2 note Velocity
-        for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = pl1[pl1presetNr].note_Velo_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl1[pl1presetNr].note_Velo_graph[MixerColumn] + encoded[MixerColumn]), 0, 127);
@@ -403,14 +403,14 @@ void Plugin1_Page2_Dynamic() {
     }
   }
 }
-void Plugin1_Page_Static(byte Pagenumber) {
+void Plugin1_Page_Static(int Pagenumber) {
   clearWorkSpace();
   Plugin1_Change();
   //draw selecting pages buttons
   draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl1presetNr, ILI9341_PURPLE);
   if (Pagenumber == 0) {
-    for (byte voice = 0; voice < 4; voice++) {
+    for (int voice = 0; voice < 4; voice++) {
       byte voicePos = ((voice + 1) * 4) - 1;
       drawPot(voicePos, CTRL_ROW_0, pl1[pl1presetNr].note_Offset_graph[voice], pl1[pl1presetNr].note_Offset[voice], "Offset", trackColor[desired_instrument]);
       drawPot(voicePos, CTRL_ROW_1, pl1[pl1presetNr].wfSelect_graph[voice], pl1[pl1presetNr].wfSelect[voice], "W~F", trackColor[desired_instrument]);
@@ -430,7 +430,7 @@ void Plugin1_Page_Static(byte Pagenumber) {
   }
 }
 void Plugin1_Change() {
-  for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl1[pl1presetNr].note_Offset[MixerColumn];
     waveform1.begin(pl1[pl1presetNr].wfSelect[MixerColumn]);
     mixer1.gain(0, pl1[pl1presetNr].note_Velo[MixerColumn]);
@@ -471,7 +471,7 @@ void savePlugin1() {
 
     tft.print("Writing plugin 1 to plugin1.txt...");
     //save plugin 1 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)pl1[maxpreset].note_Offset_graph[0]);
       myFile.print((char)pl1[maxpreset].note_Offset_graph[1]);
       myFile.print((char)pl1[maxpreset].note_Offset_graph[2]);
@@ -516,7 +516,7 @@ void loadPlugin1() {
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from plugin1.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       pl1[maxpreset].note_Offset_graph[0] = myFile.read();
       pl1[maxpreset].note_Offset_graph[1] = myFile.read();
       pl1[maxpreset].note_Offset_graph[2] = myFile.read();
@@ -551,8 +551,8 @@ void loadPlugin1() {
   }
 
   // execute changes
-  for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-    for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+  for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
       pl1[maxpreset].note_Offset[MixerColumn] = map(pl1[maxpreset].note_Offset_graph[MixerColumn], 0, 127, -32, 32);
       pl1[maxpreset].note_Velo[MixerColumn] = pl1[maxpreset].note_Velo_graph[MixerColumn] / 127.00;
       pl1[maxpreset].wfSelect_graph[MixerColumn] = pl1[maxpreset].wfSelect[MixerColumn] * 10;

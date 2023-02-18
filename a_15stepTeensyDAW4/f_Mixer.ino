@@ -1,20 +1,20 @@
-void selectSolo(byte tracknumber) {
+void selectSolo(int tracknumber) {
 
   if (!track[tracknumber].solo_state) {
-    for (byte others = 0; others <= 7; others++) {
+    for (int others = 0; others <= 7; others++) {
       track[others].solo_mutes_state = HIGH;
     }
     track[tracknumber].solo_mutes_state = LOW;
     track[tracknumber].solo_state = HIGH;
   } else if (track[tracknumber].solo_state) {
-    for (byte others = 0; others <= 7; others++) {
+    for (int others = 0; others <= 7; others++) {
       track[others].solo_mutes_state = LOW;
     }
     track[tracknumber].solo_mutes_state = LOW;
     track[tracknumber].solo_state = LOW;
   }
 }
-void selectMute(byte tracknumber) {
+void selectMute(int tracknumber) {
   if (!track[tracknumber].mute_state) {
     track[tracknumber].mute_state = HIGH;
   } else if (track[tracknumber].mute_state) {
@@ -107,7 +107,7 @@ void Mixer_Settings() {
   FX3mixer6.gain(3, 1);
 }
 
-void mixerPage1_Static(byte mixerpage) {
+void mixerPage1_Static(int mixerpage) {
   clearWorkSpace();
   drawActiveRect(18, 3, 2, 2, true, "Main", ILI9341_LIGHTGREY);
   drawActiveRect(18, 5, 2, 2, false, "D-4", ILI9341_LIGHTGREY);
@@ -146,8 +146,8 @@ void MixerPage1_Dynamic() {
   switch (lastPotRow) {
     case 0:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         //Row1
         if (enc_moved[MixerColumn]) {
@@ -177,8 +177,8 @@ void MixerPage1_Dynamic() {
       break;
     case 1:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         //Row2
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].gain_graph = constrain((track[MixerColumn + 4].gain_graph + encoded[MixerColumn]), 0, 127);
@@ -245,13 +245,13 @@ void MixerPage1_Dynamic() {
       unsigned long currentMillis = msecs;
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-        for (byte mutes = 0; mutes < 4; mutes++) {
+        for (int mutes = 0; mutes < 4; mutes++) {
           if (gridTouchX == (((mutes + 1) * 4) - 1)) {
             selectMute(mutes);
             drawActiveRect((((mutes + 1) * 4) - 1), 5, 1, 1, track[mutes].mute_state, "M", ILI9341_RED);
           }
         }
-        for (byte solos = 0; solos < 4; solos++) {
+        for (int solos = 0; solos < 4; solos++) {
           if (gridTouchX == (solos + 1) * 4) {
             selectSolo(solos);
             drawActiveRect((solos + 1) * 4, 5, 1, 1, track[solos].solo_state, "S", ILI9341_WHITE);
@@ -265,13 +265,13 @@ void MixerPage1_Dynamic() {
       unsigned long currentMillis = msecs;
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
-        for (byte mutes = 0; mutes < 4; mutes++) {
+        for (int mutes = 0; mutes < 4; mutes++) {
           if (gridTouchX == (((mutes + 1) * 4) - 1)) {
             selectMute(mutes + 4);
             drawActiveRect((((mutes + 1) * 4) - 1), 11, 1, 1, track[mutes + 4].mute_state, "M", ILI9341_RED);
           }
         }
-        for (byte solos = 0; solos < 4; solos++) {
+        for (int solos = 0; solos < 4; solos++) {
           if (gridTouchX == (solos + 1) * 4) {
             selectSolo(solos + 4);
             drawActiveRect((solos + 1) * 4, 11, 1, 1, track[solos + 4].solo_state, "S", ILI9341_WHITE);
@@ -335,8 +335,8 @@ void mixerPage2_Static() {
 void MixerPage2_Dynamic() {
   switch (lastPotRow) {
     case 0:
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FXDryVolume_graph = constrain((track[MixerColumn].FXDryVolume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FXDryVolume = track[MixerColumn].FXDryVolume_graph / 127.00;
@@ -356,8 +356,8 @@ void MixerPage2_Dynamic() {
       break;
     case 1:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX1Volume_graph = constrain((track[MixerColumn].FX1Volume_graph + encoded[MixerColumn]), 0, 127);
@@ -378,8 +378,8 @@ void MixerPage2_Dynamic() {
       break;
     case 2:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX2Volume_graph = constrain((track[MixerColumn].FX2Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX2Volume = track[MixerColumn].FX2Volume_graph / 127.00;
@@ -400,8 +400,8 @@ void MixerPage2_Dynamic() {
       break;
     case 3:
       // if (msecs % 20 == 0) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX3Volume_graph = constrain((track[MixerColumn].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX3Volume = track[MixerColumn].FX3Volume_graph / 127.00;
@@ -507,8 +507,8 @@ void MixerPage3_Dynamic() {
   switch (lastPotRow) {
     case 0:
       // if (msecs % 20 == 0) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FXDryVolume_graph = constrain((track[MixerColumn + 4].FXDryVolume_graph + encoded[MixerColumn]), 0, 127);
@@ -531,8 +531,8 @@ void MixerPage3_Dynamic() {
       break;
     case 1:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX1Volume_graph = constrain((track[MixerColumn + 4].FX1Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX1Volume = track[MixerColumn + 4].FX1Volume_graph / 127.00;
@@ -552,8 +552,8 @@ void MixerPage3_Dynamic() {
       break;
     case 2:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX2Volume_graph = constrain((track[MixerColumn + 4].FX2Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX2Volume = track[MixerColumn + 4].FX2Volume_graph / 127.00;
@@ -573,8 +573,8 @@ void MixerPage3_Dynamic() {
       break;
     case 3:
       // if (msecs % 20 == 0) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX3Volume_graph = constrain((track[MixerColumn + 4].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX3Volume = track[MixerColumn + 4].FX3Volume_graph / 127.00;
@@ -640,7 +640,7 @@ void MixerPage3_Dynamic() {
     }
   }
 }
-void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void pluginVolume(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < 16; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       gainPerBar[pluginn]->gain(volume);
@@ -648,7 +648,7 @@ void pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (
   }
 }
 
-void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void pluginGain(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < 16; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       gainmax[pluginn]->gain(volume);
@@ -656,7 +656,7 @@ void pluginGain(byte pluginchannel, float volume) {  //track´s MIDI Channel (>1
   }
 }
 
-void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void FXDrypluginVolume(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       dryVolume[pluginn]->gain(volume);
@@ -664,7 +664,7 @@ void FXDrypluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Chan
   }
 }
 
-void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void FX1pluginVolume(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       FX1Volume[pluginn]->gain(volume);
@@ -672,7 +672,7 @@ void FX1pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channe
   }
 }
 
-void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void FX2pluginVolume(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       FX2Volume[pluginn]->gain(volume);
@@ -680,7 +680,7 @@ void FX2pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channe
   }
 }
 
-void FX3pluginVolume(byte pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
+void FX3pluginVolume(int pluginchannel, float volume) {  //track´s MIDI Channel (>16), mixer.gain 0-5
   for (int pluginn = 0; pluginn < MAX_PLUGINS; pluginn++) {
     if (pluginchannel == pluginn + 17) {
       FX3Volume[pluginn]->gain(volume);
@@ -709,7 +709,7 @@ void saveMixer() {
     tft.print("Writing mixer to mixer.txt...");
     //save mixer variables
 
-    for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
       myFile.print((char)track[MixerColumn].gain_graph);
       myFile.print((char)track[MixerColumn + 4].gain_graph);
       myFile.print((char)track[MixerColumn].FXDryVolume_graph);
@@ -750,7 +750,7 @@ void loadMixer() {
 
     //load mixer variables
     tft.print("reading mixer from mixer.txt...");
-    for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
       track[MixerColumn].gain_graph = myFile.read();
       track[MixerColumn + 4].gain_graph = myFile.read();
       track[MixerColumn].FXDryVolume_graph = myFile.read();
@@ -773,7 +773,7 @@ void loadMixer() {
     tft.println("error opening plugin2.txt");
   }
   //execute changes
-  for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     track[MixerColumn].gain = track[MixerColumn].gain_graph / 127.00;
     pluginGain(track[MixerColumn].MIDIchannel, track[MixerColumn].gain);
     track[MixerColumn + 4].gain = track[MixerColumn + 4].gain_graph / 127.00;

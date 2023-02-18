@@ -100,7 +100,7 @@ void Plugin8_Page1_Dynamic() {
       lastPotRow = 10;
       pl8presetNr = constrain((pl8presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl8presetNr, ILI9341_PURPLE);
-      Plugin8_Page_Static(0);
+      Plugin8_Page_Static();
 
     }
   }
@@ -195,13 +195,13 @@ void Plugin8_Page1_Dynamic() {
     }
   }
 }
-void Plugin8_Page_Static(byte Pagenumber) {
+void Plugin8_Page_Static() {
   clearWorkSpace();
   Plugin8_Change();
   //draw selecting pages buttons
   //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl8presetNr, ILI9341_PURPLE);
-  if (Pagenumber == 0) {
+
     pl8waveform1.begin(pl8[pl8presetNr].wfSelect);
     drawPot(CTRL_COL_0, CTRL_ROW_0, pl8[pl8presetNr].wfSelect_graph, pl8[pl8presetNr].wfSelect, "WForm", trackColor[desired_track]);
 
@@ -214,7 +214,7 @@ void Plugin8_Page_Static(byte Pagenumber) {
     drawPot(CTRL_COL_1, CTRL_ROW_2, pl8[pl8presetNr].Env1_Decay_graph, pl8[pl8presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
     drawPot(CTRL_COL_2, CTRL_ROW_2, pl8[pl8presetNr].Env1_Sustain_graph, pl8[pl8presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
     drawPot(CTRL_COL_3, CTRL_ROW_2, pl8[pl8presetNr].Env1_Release_graph, pl8[pl8presetNr].Env1_Release, "Rel", trackColor[desired_track]);
-  }
+  
 }
 void Plugin8_Change() {
   pl8waveform1.begin(pl8[pl8presetNr].wfSelect);
@@ -252,7 +252,7 @@ void savePlugin8() {
 
     tft.print("Writing plugin 8 to plugin8.txt...");
     //save plugin 8 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)pl8[maxpreset].Filter1_Frequency_graph);
       myFile.print((char)pl8[maxpreset].Filter1_Resonance_graph);
       myFile.print((char)pl8[maxpreset].Filter1_Sweep_graph);
@@ -287,7 +287,7 @@ void loadPlugin8() {
 
     //load plugin 8 variables
     tft.print("reading plugin8 from plugin8.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       pl8[maxpreset].Filter1_Frequency_graph = myFile.read();
       pl8[maxpreset].Filter1_Resonance_graph = myFile.read();
       pl8[maxpreset].Filter1_Sweep_graph = myFile.read();
@@ -306,7 +306,7 @@ void loadPlugin8() {
     tft.println("error opening plugin8.txt");
   }
 
-  for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+  for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
     pl8[maxpreset].wfSelect_graph = pl8[maxpreset].wfSelect * 10;
     pl8[maxpreset].Filter1_Frequency = note_frequency[pl8[maxpreset].Filter1_Frequency_graph];
     pl8[maxpreset].Filter1_Resonance = pl8[maxpreset].Filter1_Resonance_graph / 25.40;

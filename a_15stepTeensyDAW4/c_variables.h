@@ -33,6 +33,8 @@
 #define GRID_POSITION_POINTER_Y 232
 #define POSITION_POINTER_THICKNESS 3
 #define POTPICKUP 3
+
+#define AUDIO_MEMORYS 600
 #define SPI_FREQUENCY 40000000
 #define SPI_READ_FREQUENCY 10000000
 
@@ -160,46 +162,11 @@ const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* showPot_Value[12]{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
-char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
-char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
+const char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
+const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
+const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-#define BEAT_ARRAY_SIZE 33
-const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  //kick
-  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },  //kick
-  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
-  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0 },  //kick
-  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick
-  { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
-  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //kick
-  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },  //kick
-  { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 },  //kick
-  { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },  //kick
-  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },  //snare
-  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },  //snare
-  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
-  { 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0 },  //snare
-  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
-  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
-  { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //snare
-  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
-  { 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //hihat
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //hihat
-  { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
-  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat
-  { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },  //hihat
-  { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 },  //hihat
-  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
-  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
-  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0 },  //perc
-  { 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 },  //perc
-  { 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1 },  //perc
-  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1 },  //perc
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }   //perc
-};
+
 //plugin 1 variables
 struct plugin1 {
 
@@ -485,6 +452,7 @@ byte pl9presetNr = 0;
 
 
 #define MAX_SEQMODES 5
+
 const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR" };
 
 //seqmode "grid"
@@ -495,9 +463,44 @@ struct Grids {
 Grids NFX1[MAX_PRESETS];
 byte NFX1presetNr = 0;
 byte clock_count = 0;
+#define BEAT_ARRAY_SIZE 33
+const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 },  //kick
+  { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },  //kick
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },  //hihat
+  { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 },  //hihat
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0 },  //perc
+  { 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 },  //perc
+  { 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1 },  //perc
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1 },  //perc
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }   //perc
+};
 
-
-//seqmode "grid"
+//seqmode "dropseq"
 struct Drops {
   byte Pot_Value[16];
   byte Pot_Value_graph[16];
@@ -510,10 +513,10 @@ byte octave;
 byte maxValIndex;
 byte maxVal = 0;
 byte analogReadArray[16];
-char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
-char* NFX2_ROW2[4]{ "C", "C#", "D", "D#" };
-char* NFX2_ROW3[4]{ "E", "F", "F#", "G" };
-char* NFX2_ROW4[4]{ "G#", "A", "A#", "B" };
+
+const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
+
+
 
 
 //seqmode "Rand"
@@ -525,10 +528,10 @@ struct rands {
 };
 rands NFX3[MAX_PRESETS];
 byte NFX3presetNr = 0;
-char* NFX3_ROW1[4]{ "--", "--", "Oct1", "Oct2" };
-char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
-char* NFX3_ROW3[4]{ "--", "--", "--", "--" };
-char* NFX3_ROW4[4]{ "--", "--", "--", "--" };
+
+const char* NFX3_ROW1[4]{ "--", "--", "Oct1", "Oct2" };
+const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
+
 
 //seqmode "PolyR"
 struct PolyR {
@@ -593,7 +596,8 @@ float fx3delayAmount = 0;
 int fx3delayAmount_graph = 0;
 
 //notenumber to frequency chart
-float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
+
+const float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
                            16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
                            32.7, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55, 58.27, 61.74,
                            65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98, 103.83, 110, 116.54, 123.47,
@@ -684,7 +688,7 @@ int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 #define LP_YELLOW 62
 
 
-byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
+const byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
                         16, 17, 18, 19, 20, 21, 22, 23,
                         32, 33, 34, 35, 36, 37, 38, 39,
                         48, 49, 50, 51, 52, 53, 54, 55,
@@ -694,11 +698,11 @@ byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
                         96, 97, 98, 99, 100, 101, 102, 103,
                         112, 113, 114, 115, 116, 117, 118, 118 };
 bool LP_grid_bool[64];
-byte LP_octave_notes[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
+const byte LP_octave_notes[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
 bool LP_octave_bool[12];
-byte LP_octave_notes_keys[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
+const byte LP_octave_notes_keys[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
 bool LP_octave_bool_keys[12];
-byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
+const byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
 bool LP_step_bool[16];
 bool LP_drawOnce[16];
 
@@ -743,7 +747,7 @@ const int scalesQuant = 9;  //how many scales do we have
 int scaleSelected = 0;      //variable for scale selecting
 
 
-int scales[scalesQuant][12]{
+const int scales[scalesQuant][12]{
   //bool array for greying out notes that are not in the scale
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },  //Chromatic
   { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1 },  //Major
@@ -755,7 +759,9 @@ int scales[scalesQuant][12]{
   { 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0 },  //Phrygian
   { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 }   //Lydian
 };
+
 const char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
+
 const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
 
 
@@ -834,6 +840,7 @@ bool channel1Select = LOW;  // a handler to keep the mode active after selecting
 byte ch1tone;
 byte ch1Octaves = 3;
 bool dsend_noteOff[12];
+
 bool channel1Clip[NUM_CLIPS][12][STEP_QUANT]{
 
   { //Clip 0

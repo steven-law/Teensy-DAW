@@ -34,7 +34,7 @@ void SmfWriter::write_buf_int(unsigned int data) {
   write_buf_byte(b);
 }
 
-void SmfWriter::write_buf_byte(byte b) {
+void SmfWriter::write_buf_byte(int b) {
   if (_bufferPos > 40) {
     flush();
   }
@@ -74,7 +74,7 @@ void SmfWriter::write_buf_var_int(unsigned int deltaticks) {
 
   // read least signficicant bytes first
   for (int i = 3; i >= 0; i--) {
-    b[i] = (byte)(deltaticks & 0x7f);
+    b[i] = (int)(deltaticks & 0x7f);
     if (i < 3)  // set the bit that indicates another byte still to follow... except on the least significant byte
       b[i] |= 0x80;
     deltaticks >>= 7;

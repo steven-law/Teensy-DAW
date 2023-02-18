@@ -42,7 +42,7 @@
 //                            like OSC Waveform, Frequency, level, Filters freq and resonance,.....
 
 // Plugin3_Page1_Static(pageNumber)   -> if we open a pluginpage or change presets, we want to see the actual values, graphs and other icons immediatly
-//                                       add this function to Plugin_View_Static(byte desired_instrument){} in functions.ino
+//                                       add this function to Plugin_View_Static(int desired_instrument){} in functions.ino
 //                                       desired_instrument can be used for your plugin, for corresponding track color
 
 // Plugin3_Page1_Dynamic()   -> this is where we assign values to our variables, that will handle our module-functions
@@ -212,7 +212,7 @@ void Plugin3_Page1_Dynamic() {
       lastPotRow = 10;
       pl3presetNr = constrain((pl3presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl3presetNr, ILI9341_PURPLE);
-      Plugin3_Page_Static(0);
+      Plugin3_Page_Static();
      
     }
   }
@@ -311,7 +311,7 @@ void Plugin3_Page1_Dynamic() {
     }
   }
 }
-void Plugin3_Page_Static(byte Pagenumber) {
+void Plugin3_Page_Static() {
   clearWorkSpace();
   Plugin3_Change();
   drawNrInRect(18, 1, pl3presetNr, ILI9341_PURPLE);
@@ -368,7 +368,7 @@ void savePlugin3() {
 
     tft.print("Writing plugin 3 to plugin3.txt...");
     //save plugin 3 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)pl3[maxpreset].Filter1_Frequency_graph);
       myFile.print((char)pl3[maxpreset].Filter1_Resonance_graph);
       myFile.print((char)pl3[maxpreset].Filter1_Sweep_graph);
@@ -406,7 +406,7 @@ void loadPlugin3() {
 
     //load plugin 3 variables
     tft.print("reading plugin 3 from plugin3.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       pl3[maxpreset].Filter1_Frequency_graph = myFile.read();
       pl3[maxpreset].Filter1_Resonance_graph = myFile.read();
       pl3[maxpreset].Filter1_Sweep_graph = myFile.read();
@@ -427,7 +427,7 @@ void loadPlugin3() {
     tft.println("error opening plugin3.txt");
   }
   // execute changes
-  for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+  for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
     pl3[maxpreset].wfSelect_graph = pl3[maxpreset].wfSelect * 10;
     pl3[maxpreset].Filter1_Frequency = note_frequency[pl3[maxpreset].Filter1_Frequency_graph];
     pl3[maxpreset].Filter1_Resonance = pl3[maxpreset].Filter1_Resonance_graph / 25.40;

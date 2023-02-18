@@ -1,4 +1,4 @@
-bool debugTime = true;
+bool debugTime = false;
 /*Contributing Manual:
 
 Many Thanks to Tristan Rowley, without his immense efforts and time to explain things to me, 
@@ -85,14 +85,14 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 const byte ROWS = 4;  //four rows
 const byte COLS = 4;  //four columns
 //define the cymbols on the buttons of the keypads
-char keys[ROWS][COLS] = {
+const char keys[ROWS][COLS] = {
   { '0', '1', '2', '3' },
   { '4', '5', '6', '7' },
   { '8', '9', 'A', 'B' },
   { 'C', 'D', 'E', 'F' }
 };
-byte rowPins[ROWS] = { 37, 36, 35, 34 };  //connect to the row pinouts of the keypad
-byte colPins[COLS] = { 41, 38, 39, 40 };  //connect to the column pinouts of the keypad
+const byte rowPins[ROWS] = { 37, 36, 35, 34 };  //connect to the row pinouts of the keypad
+const byte colPins[COLS] = { 41, 38, 39, 40 };  //connect to the column pinouts of the keypad
 
 Adafruit_Keypad kpd = Adafruit_Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 //Encoder Pins
@@ -753,9 +753,11 @@ void setup() {
 
 
 
-  AudioMemory(600);
-  Serial.println("Initializing AudioMemory = 200");
-  tft.println("Initializing AudioMemory = 200");
+  AudioMemory(AUDIO_MEMORYS);
+  Serial.print("Initializing AudioMemory = ");
+  Serial.println(AUDIO_MEMORYS);
+  tft.print("Initializing AudioMemory = ");
+  tft.println(AUDIO_MEMORYS);
 
   //tft.updateScreen();
   delay(100);
@@ -822,7 +824,7 @@ void setup() {
   Plugin_4_Settings();
   Plugin_5_Settings();
   Plugin_6_Settings();
-  Plugin_7_Settings();
+  //Plugin7_Settings();
   Plugin_8_Settings();
   Plugin_9_Settings();
   Plugin_10_Settings();
@@ -881,8 +883,8 @@ void setup() {
   delay(400);
   //load the startupScreen
 
-  for (byte pixelX = 0; pixelX < 16; pixelX++) {
-    for (byte pixelY = 0; pixelY < 16; pixelY++) {
+  for (int pixelX = 0; pixelX < 16; pixelX++) {
+    for (int pixelY = 0; pixelY < 16; pixelY++) {
       tftRAM[pixelX][pixelY] = tft.readPixel(pixelX, pixelY);
     }
   }
@@ -1120,9 +1122,6 @@ void loop() {
     if (lastPotRow >= 4) {
       tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
     }
-
-    drawCursor();
-    showCoordinates();
   }
 
 
@@ -1132,7 +1131,14 @@ void loop() {
     gridTouchY = map(p.y, TS_MINY, TS_MAXY, 0, 14);
     trackTouchY = map(p.y, 800, 3200, 0, 7);
   }
-
+  if (gridTouchY == 1) trackTouchY = 0;
+  if (gridTouchY == 3) trackTouchY = 1;
+  if (gridTouchY == 4) trackTouchY = 2;
+  if (gridTouchY == 6) trackTouchY = 3;
+  if (gridTouchY == 7) trackTouchY = 4;
+  if (gridTouchY == 9) trackTouchY = 5;
+  if (gridTouchY == 10) trackTouchY = 6;
+  if (gridTouchY == 12) trackTouchY = 7;
 
   if (ts.touched() || button[15]) {
     int start_at = millis();
@@ -1177,7 +1183,7 @@ void loop() {
         selectPage = SCALESELECT;
         gridScaleSelector();
         scaleSelector();
-        for (byte i = 0; i < scalesQuant; i++) {
+        for (int i = 0; i < scalesQuant; i++) {
           tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
           tft.setFont(Arial_8);
           tft.setTextColor(ILI9341_WHITE);
@@ -1200,21 +1206,41 @@ void loop() {
         gridSongMode(songpageNumber);
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select Drumchannel
-      if (trackTouchY == 0) {
-        selectPage = DRUMTRACK;
-        desired_instrument = 0;
-        desired_track = 0;
-        drumStepSequencer_Static();
-      }
+
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      //  select channel2-8
-      for (byte tracks = 0; tracks < 8; tracks++) {
+      // assign trackcolours
+      for (int tracks = 0; tracks < 4; tracks++) {
+        tft.setFont(Arial_9);
+        tft.setTextColor(ILI9341_BLACK);
         if (trackTouchY == tracks) {
-          desired_instrument = tracks;
-          desired_track = tracks;
-          selectPage = tracks;
-          gridStepSequencer(tracks);
+
+          if (enc_moved[tracks]) {
+            trackColor[tracks] = constrain((trackColor[tracks] + (encoded[tracks])), 0, 16777215);
+            if (tracks == 0) {
+              //Drumtrack button
+              tft.fillRect(1, STEP_FRAME_H, 15, TRACK_FRAME_H, trackColor[0]);  //Xmin, Ymin, Xlength, Ylength, color
+              tft.setCursor(4, TRACK_FRAME_H);
+              tft.print("D");
+            } else {
+              //other tracks buttons
+
+              tft.fillRect(1, TRACK_FRAME_H * (tracks + 1) - 8, 15, TRACK_FRAME_H, trackColor[tracks]);  //Xmin, Ymin, Xlength, Ylength, color
+              tft.setCursor(4, TRACK_FRAME_H * (tracks + 1));
+              tft.print(tracks + 1);
+            }
+          }
+        }
+        if (trackTouchY == tracks + 4) {
+
+          if (enc_moved[tracks]) {
+            trackColor[tracks + 4] = constrain((trackColor[tracks + 4] + (encoded[tracks])), 0, 16777215);
+
+            //other tracks buttons
+
+            tft.fillRect(1, TRACK_FRAME_H * ((tracks + 1) + 4) - 8, 15, TRACK_FRAME_H, trackColor[tracks + 4]);  //Xmin, Ymin, Xlength, Ylength, color
+            tft.setCursor(4, TRACK_FRAME_H * ((tracks + 1) + 4));
+            tft.print(tracks + 5);
+          }
         }
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1242,24 +1268,28 @@ void readMainButtons() {
       //cursor
       //curser left
       if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
-        gridTouchX--;
+        gridTouchX = constrain(gridTouchX - 1, 0, 19);
         drawCursor();
+        showCoordinates();
       }
       //cursor right
       if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
-        gridTouchX++;
+        gridTouchX = constrain(gridTouchX + 1, 0, 19);
         drawCursor();
+        showCoordinates();
       }
       //cursor up
       if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
-        gridTouchY--;
+        gridTouchY = constrain(gridTouchY - 1, 0, 14);
         drawCursor();
+        showCoordinates();
         //something_was_pressed = true;
       }
       //cursor down
       if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
-        gridTouchY++;
+        gridTouchY = constrain(gridTouchY + 1, 0, 14);
         drawCursor();
+        showCoordinates();
         //something_was_pressed = true;
       }
       //last-pot-row
@@ -1363,7 +1393,7 @@ void readMainButtons() {
           desired_track = 0;
           desired_instrument = 0;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1379,7 +1409,7 @@ void readMainButtons() {
           desired_track = 1;
           desired_instrument = 1;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1395,7 +1425,7 @@ void readMainButtons() {
           desired_track = 2;
           desired_instrument = 2;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1411,7 +1441,7 @@ void readMainButtons() {
           desired_track = 3;
           desired_instrument = 3;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1427,7 +1457,7 @@ void readMainButtons() {
           desired_track = 4;
           desired_instrument = 4;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1443,7 +1473,7 @@ void readMainButtons() {
           desired_track = 5;
           desired_instrument = 5;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1459,7 +1489,7 @@ void readMainButtons() {
           desired_track = 6;
           desired_instrument = 6;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1475,7 +1505,7 @@ void readMainButtons() {
           desired_track = 7;
           desired_instrument = 7;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1606,25 +1636,25 @@ void readMainButtons() {
         if (track[desired_instrument].seqMode == 1) {
           if (key.bit.KEY == 55) {
             selectPage = NFX1_PAGE1;
-            NoteFX1_Page_Static(0);
+            NoteFX1_Page_Static();
           }
         }
         if (track[desired_instrument].seqMode == 2) {
           if (key.bit.KEY == 55) {
             selectPage = NFX2_PAGE1;
-            NoteFX2_Page_Static(0);
+            NoteFX2_Page_Static();
           }
         }
-         if (track[desired_instrument].seqMode == 3) {
+        if (track[desired_instrument].seqMode == 3) {
           if (key.bit.KEY == 55) {
             selectPage = NFX3_PAGE1;
-            NoteFX3_Page_Static(0);
+            NoteFX3_Page_Static();
           }
         }
         if (track[desired_instrument].seqMode == 4) {
           if (key.bit.KEY == 55) {
             selectPage = NFX4_PAGE1;
-            NoteFX4_Page_Static(0);
+            NoteFX4_Page_Static();
           }
         }
       }
@@ -1702,436 +1732,7 @@ void readMainButtons() {
     }
   }
 }
-/*
-void readMainButtons() {
 
-  while (kpd.available()) {
-    keypadEvent key = kpd.read();
-    if (key.bit.EVENT == KEY_JUST_PRESSED) {
-      //tft.updateScreen();
-      //cursor
-      //curser left
-      if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
-        button[0] = true;
-        gridTouchX--;
-        drawCursor();
-      }
-      //cursor right
-      if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
-        button[1] = true;
-        gridTouchX++;
-        drawCursor();
-      }
-      //cursor up
-      if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
-        button[2] = true;
-        gridTouchY--;
-        drawCursor();
-      }
-      //cursor down
-      if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
-        button[3] = true;
-        gridTouchY++;
-        drawCursor();
-      }
-      //last-pot-row
-      if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
-        button[4] = true;
-        lastPotRow++;
-        if (lastPotRow == 4) {
-          lastPotRow = 0;
-        }
-      }
-      //recbutton
-      if (otherCtrlButtons && key.bit.KEY == 53) {  //"1" 49
-        button[5] = true;
-        if (seq_rec == false) {
-          seq_rec = true;
-          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
-          if (selectPage == RECORDER_PAGE) {
-            startRecording();
-            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
-          }
-        } else {
-          seq_rec = false;
-          tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
-          if (selectPage == RECORDER_PAGE) {
-            stopRecording();
-            drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
-          }
-        }
-      }
-      //playbutton
-      if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
-        button[6] = true;
-        startSeq();
-      }
-      //stopbutton
-      if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
-        button[7] = true;
-        stopSeq();
-      }
-
-
-      // hold for track button
-      if (!button[10] && key.bit.KEY == 69) {  //"E"  69
-        button[8] = true;
-        if (button[0]) {  //"D"  68  1st button
-          selectPage = 0;
-          desired_instrument = 0;
-          desired_track = 0;
-          drumStepSequencer_Static();
-        }
-        for (int trackss = 1; trackss < 8; trackss++) {
-          //select melodic track 2
-          if (button[trackss]) {  //"F"  70 2nd button
-            selectPage = trackss;
-            desired_instrument = trackss;
-            desired_track = trackss;
-            gridStepSequencer(trackss);
-          }
-        }
-      }
-      // hold for plugin button
-      if (!button[10] && key.bit.KEY == 67) {  //"C"  67
-        button[9] = true;
-        Serial.println("Press Plugin");
-        for (int pluginss = 0; pluginss < 8; pluginss++) {
-          if (button[pluginss]) {  //"D"  68  1st button
-            desired_track = pluginss;
-            desired_instrument = pluginss;
-            Serial.println("Press 1");
-            //midicc_view
-            for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-              if (track[desired_instrument].MIDIchannel == pluginSelection) {
-                selectPage = MIDICC_PAGE_1;
-                midiCC_view_Static(0, desired_track);
-              }
-              //plugin_1_view
-              if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-                selectPage = pluginSelection + 40;
-                Plugin_View_Static();
-              }
-            }
-          }
-        }
-      }
-      //  select Songarranger page 11 & button[10]
-      if (key.bit.KEY == 65) {  //"A"  65
-        button[10] = true;
-        selectPage = SONGMODE_PAGE_11;
-        gridSongMode(10);
-        for (int pagess = 0; pagess < 16; pagess++) {
-          if (button[pagess]) {
-            selectPage = SONGMODE_PAGE_1 + pagess;
-            gridSongMode(pagess);
-            songModePage(pagess);
-          }
-        }
-      }
-      // hold for Mixer button
-      if (!button[10] && key.bit.KEY == 56) {  //"4"  52
-        button[11] = true;
-        if (button[0]) {  //"D"  68
-          selectPage = MIXER_PAGE_1;
-          mixerPage1_Static(0);
-        }
-        //select melodic track 2
-        if (button[1]) {  //"F"  70
-          selectPage = MIXER_PAGE_2;
-          mixerPage2_Static();
-        }
-        //select melodic track 3
-        if (button[2]) {  //"9"  57
-          selectPage = MIXER_PAGE_3;
-          mixerPage3_Static();
-        }
-      }
-      // hold for FX button
-      if (!button[10] && key.bit.KEY == 52) {  //"8"  56
-        button[12] = true;
-        if (button[0]) {
-          selectPage = FX1_PAGE1;
-          FX1reverb_static();
-        }
-        if (button[1]) {
-          selectPage = FX2_PAGE1;
-          FX2Bitcrush_static();
-        }
-        if (button[2]) {
-          //delay
-        }
-      }
-      //recorder
-      if (!button[10] && key.bit.KEY == 54) {  // 14th button
-        button[13] = true;
-        selectPage = RECORDER_PAGE;
-        recorder_Page_Static();
-      }
-      // hold for cursor via pot
-      if (!button[10] && key.bit.KEY == 50) {
-        button[14] = true;
-      }
-      // hold for enter button
-      if (!button[10] && key.bit.KEY == 48) {
-        button[15] = true;
-      }
-    }
-    // if the buttons whre released
-    if (key.bit.EVENT == KEY_JUST_RELEASED) {
-
-      if (key.bit.KEY == 68) {  //"D" 68 1st button
-        button[0] = false;
-      }
-      //cursor right
-      if (key.bit.KEY == 70) {  //"F"  70 2nd button
-        button[1] = false;
-      }
-      //cursor up
-      if (key.bit.KEY == 57) {  //"9"   57 3rd button
-        button[2] = false;
-      }
-      //cursor down
-      if (key.bit.KEY == 66) {  //"B"   66 4th button
-        button[3] = false;
-      }
-      //last-pot-row
-      if (key.bit.KEY == 55) {  //"B"   66 5th button
-        button[4] = false;
-      }
-      //stopbutton
-      if (key.bit.KEY == 53) {  //"1" 49
-        button[5] = false;
-      }
-      //playbutton
-      if (key.bit.KEY == 51) {  //"3" 51
-        button[6] = false;
-      }
-      //stopbutton
-      if (key.bit.KEY == 49) {  //"1" 49
-        button[7] = false;
-      }
-
-
-      // hold for track button
-      if (key.bit.KEY == 69) {  //"E"  69
-        button[8] = false;
-      }
-      // hold for plugin button
-      if (key.bit.KEY == 67) {  //"C"  67
-        button[9] = false;
-      }
-      //  select Songarranger page 11 & button[10]
-      if (key.bit.KEY == 65) {  //"A"  65
-        button[10] = false;
-      }
-      // hold for Mixer button
-      if (key.bit.KEY == 56) {  //"4"  52
-        button[11] = false;
-      }
-      // hold for FX button
-      if (key.bit.KEY == 52) {  //"8"  56
-        button[12] = false;
-      }
-      //recorder
-      if (key.bit.KEY == 54) {  // 14th button
-        button[13] = false;
-      }
-      // hold for cursor via pot
-      if (key.bit.KEY == 50) {
-        button[14] = false;
-      }
-      // hold for enter button
-      if (key.bit.KEY == 48) {
-        button[15] = false;
-      }
-    }
-  }
-}
-*/
-void doMainButtons() {
-
-  unsigned long currentMillis3 = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
-  if (currentMillis3 - previousMillis3 >= interval) {
-    previousMillis3 = currentMillis3;
-
-
-    //tft.updateScreen();
-    //cursor
-    //curser left
-    if (otherCtrlButtons && button[0]) {  //"D" 68 1st button
-      gridTouchX--;
-      drawCursor();
-    }
-    //cursor right
-    if (otherCtrlButtons && button[1]) {  //"F"  70 2nd button
-      gridTouchX++;
-      drawCursor();
-    }
-    //cursor up
-    if (otherCtrlButtons && button[2]) {  //"9"   57 3rd button
-      gridTouchY--;
-      drawCursor();
-      //something_was_pressed = true;
-    }
-    //cursor down
-    if (otherCtrlButtons && button[3]) {  //"B"   66 4th button
-      gridTouchY++;
-      drawCursor();
-      //something_was_pressed = true;
-    }
-    //last-pot-row
-    if (otherCtrlButtons && button[4]) {  //"B"   66 5th button
-      lastPotRow++;
-      if (lastPotRow >= 4) {
-        lastPotRow = 0;
-      }
-
-      //something_was_pressed = true;
-    }
-    //recbutton
-    if (otherCtrlButtons && button[5]) {  //"5" 53
-      if (seq_rec == false) {
-        seq_rec = true;
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
-        if (selectPage == RECORDER_PAGE) {
-          startRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
-        }
-      } else {
-        seq_rec = false;
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
-        if (selectPage == RECORDER_PAGE) {
-          stopRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
-        }
-      }
-    }
-    //playbutton
-    if (otherCtrlButtons && button[6]) {  //"3" 51
-      startSeq();
-    }
-    //stopbutton
-    if (otherCtrlButtons && button[7]) {  //"1" 49
-      stopSeq();
-    }
-    //select tracks
-    if (!button[10] && button[8]) {  //9th button
-      if (button[0]) {               //"D"  68  1st button
-        selectPage = 0;
-        desired_instrument = 0;
-        desired_track = 0;
-        drumStepSequencer_Static();
-      }
-      for (int trackss = 1; trackss < 8; trackss++) {
-        //select melodic track 2
-        if (button[trackss]) {  //"F"  70 2nd button
-          selectPage = trackss;
-          desired_instrument = trackss;
-          desired_track = trackss;
-          gridStepSequencer(trackss);
-        }
-      }
-    }
-    //plugin selection
-    if (!button[10] && button[9]) {
-      Serial.println("Press Plugin");
-      for (int pluginss = 0; pluginss < 8; pluginss++) {
-        if (button[pluginss]) {  //"D"  68  1st button
-          desired_track = pluginss;
-          desired_instrument = pluginss;
-          Serial.println("Press 1");
-          //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-            if (track[desired_instrument].MIDIchannel == pluginSelection) {
-              selectPage = MIDICC_PAGE_1;
-              midiCC_view_Static(0, desired_track);
-            }
-            //plugin_1_view
-            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-              selectPage = pluginSelection + 40;
-              Plugin_View_Static();
-            }
-          }
-        }
-      }
-    }
-    //  select Songarranger page 11 & button[10]
-    if (button[10]) {
-      selectPage = SONGMODE_PAGE_11;
-      gridSongMode(10);
-      for (int pagess = 0; pagess < 16; pagess++) {
-        if (button[pagess]) {
-          selectPage = SONGMODE_PAGE_1 + pagess;
-          gridSongMode(pagess);
-          songModePage(pagess);
-        }
-      }
-    }
-    //  select Mixer
-    if (!button[10] && button[11]) {  //"8"  56
-      if (button[0]) {                //"D"  68
-        selectPage = MIXER_PAGE_1;
-        mixerPage1_Static(0);
-      }
-      //select melodic track 2
-      if (button[1]) {  //"F"  70
-        selectPage = MIXER_PAGE_2;
-        mixerPage2_Static();
-      }
-      //select melodic track 3
-      if (button[2]) {  //"9"  57
-        selectPage = MIXER_PAGE_3;
-        mixerPage3_Static();
-      }
-    }
-    //FX Selection
-    if (!button[10] && button[12]) {
-      if (button[0]) {
-        selectPage = FX1_PAGE1;
-        FX1reverb_static();
-      }
-      if (button[1]) {
-        selectPage = FX2_PAGE1;
-        FX2Bitcrush_static();
-      }
-      if (button[2]) {
-        //delay
-        selectPage = FX3_PAGE1;
-        FX3Delay_static();
-      }
-      if (track[desired_instrument].seqMode == 1) {
-        if (button[4]) {
-          selectPage = NFX1_PAGE1;
-          NoteFX1_Page_Static(0);
-        }
-      }
-      if (track[desired_instrument].seqMode == 2) {
-        if (button[4]) {
-          selectPage = NFX2_PAGE1;
-          NoteFX2_Page_Static(0);
-        }
-      }
-       if (track[desired_instrument].seqMode == 3) {
-        if (button[4]) {
-          selectPage = NFX3_PAGE1;
-          NoteFX3_Page_Static(0);
-        }
-      }
-       if (track[desired_instrument].seqMode == 4) {
-        if (button[4]) {
-          selectPage = NFX4_PAGE1;
-          NoteFX4_Page_Static(0);
-        }
-      }
-    }
-    //recorder
-    if (!button[10] && button[13]) {  // 14th button
-      selectPage = RECORDER_PAGE;
-      recorder_Page_Static();
-    }
-  }
-}
 void readEncoders() {
   encoded[0] = 0;
   encoded[1] = 0;
@@ -2197,7 +1798,7 @@ void startSeq() {
   phrase = start_of_loop;
   seq_run = true;
   msecs = 0;
-  for (byte i = 1; i <= 7; i++) {
+  for (int i = 1; i <= 7; i++) {
     track[i].clip_songMode = track[i].arrangment1[start_of_loop];
   }
 }
@@ -2242,7 +1843,7 @@ void stopSeq() {
 }
 void drawCursor() {
 
-  for (byte pixel = 0; pixel < 16; pixel++) {
+  for (int pixel = 0; pixel < 16; pixel++) {
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 1, tftRAM[0][pixel]);
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 15, tftRAM[1][pixel]);
     tft.drawPixel((STEP_FRAME_W * last_button_X) + 1, pixel + (STEP_FRAME_H * last_button_Y), tftRAM[2][pixel]);
@@ -2250,7 +1851,7 @@ void drawCursor() {
   }
 
 
-  for (byte pixel = 0; pixel < 16; pixel++) {
+  for (int pixel = 0; pixel < 16; pixel++) {
     tftRAM[0][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 1);
     tftRAM[1][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 15);
     tftRAM[2][pixel] = tft.readPixel((STEP_FRAME_W * gridTouchX) + 1, pixel + (STEP_FRAME_H * gridTouchY));
@@ -2279,7 +1880,7 @@ void startUpScreen() {  //static Display rendering
   tft.print("D");
 
   //other tracks buttons
-  for (byte otherTracks = 2; otherTracks <= 8; otherTracks++) {
+  for (int otherTracks = 2; otherTracks <= 8; otherTracks++) {
     tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
     tft.print(otherTracks);
@@ -2350,7 +1951,7 @@ void scaleSelector() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    for (byte i = 0; i < scalesQuant; i++) {
+    for (int i = 0; i < scalesQuant; i++) {
       tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
       tft.setFont(Arial_8);
       tft.setTextColor(ILI9341_WHITE);
@@ -2372,21 +1973,21 @@ void scaleSelector() {
 
 void drawStepSequencerStatic(int desired_instrument) {
   //draw the Main Grid
-  for (byte i = 0; i < 17; i++) {  //vert Lines
+  for (int i = 0; i < 17; i++) {  //vert Lines
     step_Frame_X = i * STEP_FRAME_W;
     tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, STEP_FRAME_H, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
     if (i % 4 == 0) {
       tft.drawFastVLine((i * STEP_FRAME_W) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, ILI9341_LIGHTGREY);  //(x, y-start, y-length, color)
     }
   }
-  for (byte i = 0; i < 13; i++) {  //hor lines
+  for (int i = 0; i < 13; i++) {  //hor lines
     step_Frame_Y = i * 16;
     tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE);  //(x-start, y, length, color)
   }
   //seqMode
   drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
   //draw Clipselector
-  for (byte ClipNr = 0; ClipNr < 8; ClipNr++) {
+  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
     tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + (ClipNr * 20));
     tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
     tft.setFont(Arial_8);
@@ -2396,7 +1997,7 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.print(ClipNr);
   }
 
-  for (byte i = 0; i < 12; i++) {
+  for (int i = 0; i < 12; i++) {
     if (scales[scaleSelected][i]) {
       tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
@@ -2407,7 +2008,7 @@ void drawStepSequencerStatic(int desired_instrument) {
 
 
   //draw Notenames
-  for (byte n = 0; n < 12; n++) {  //hor notes
+  for (int n = 0; n < 12; n++) {  //hor notes
     tft.setCursor(18, STEP_FRAME_H * n + 18);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
@@ -2446,7 +2047,7 @@ void drawMIDIchannel() {
   tft.setTextSize(1);
   tft.print(track[desired_track].MIDIchannel);
   //draw MidiCC
-  for (byte plugintext = 0; plugintext <= 16; plugintext++) {
+  for (int plugintext = 0; plugintext <= 16; plugintext++) {
     if (track[desired_instrument].MIDIchannel == plugintext) {
       tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
       tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
@@ -2457,7 +2058,7 @@ void drawMIDIchannel() {
     }
   }
   //draw Plugin
-  for (byte plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
+  for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
     if (track[desired_track].MIDIchannel == plugintext + 17) {
       tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
       tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
@@ -2470,14 +2071,14 @@ void drawMIDIchannel() {
 }
 
 void clearStepsGrid() {  // clear all Steps from Display
-  for (byte T = 0; T < 12; T++) {
-    for (byte S = 0; S < 16; S++) {
+  for (int T = 0; T < 12; T++) {
+    for (int S = 0; S < 16; S++) {
       tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
     }
   }
 }
-void clearStepsGridY(byte X_Axis) {  // clear all Steps in the same column
-  for (byte T = 0; T < 12; T++) {
+void clearStepsGridY(int X_Axis) {  // clear all Steps in the same column
+  for (int T = 0; T < 12; T++) {
 
     tft.fillCircle((X_Axis)*STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
   }

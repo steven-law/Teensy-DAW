@@ -1,4 +1,4 @@
-void Plugin_7_Settings() {
+void Plugin7_Settings() {
 
 
   //drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum1
@@ -688,7 +688,7 @@ void Plugin7_Page2_Dynamic() {
     }
   }
 }
-void Plugin7_Page_Static(byte Pagenumber) {
+void Plugin7_Page_Static(int Pagenumber) {
   clearWorkSpace();
   Plugin7_Change();
   //draw selecting pages buttons

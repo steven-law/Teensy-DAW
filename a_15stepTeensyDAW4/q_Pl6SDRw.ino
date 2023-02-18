@@ -103,7 +103,7 @@ void Plugin6_Page1_Dynamic() {
       lastPotRow = 10;
       pl6presetNr = constrain((pl6presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
-      Plugin6_Page_Static(0);
+      Plugin6_Page_Static();
     }
   }
 
@@ -201,7 +201,7 @@ void Plugin6_Page1_Dynamic() {
     }
   }
 }
-void Plugin6_Page_Static(byte Pagenumber) {
+void Plugin6_Page_Static() {
   clearWorkSpace();
   Plugin6_Change();
   //draw selecting pages buttons
@@ -257,7 +257,7 @@ void savePlugin6() {
 
     tft.print("Writing plugin 6 to plugin6.txt...");
     //save plugin 6 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)pl6[maxpreset].Filter1_Frequency_graph);
       myFile.print((char)pl6[maxpreset].Filter1_Resonance_graph);
       myFile.print((char)pl6[maxpreset].Filter1_Sweep_graph);
@@ -296,7 +296,7 @@ void loadPlugin6() {
     // read from the file until there's nothing else in it:
     //load plugin 6 variables
     tft.print("reading plugin 6 from plugin6.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       pl6[maxpreset].Filter1_Frequency_graph = myFile.read();
       pl6[maxpreset].Filter1_Resonance_graph = myFile.read();
       pl6[maxpreset].Filter1_Sweep_graph = myFile.read();
@@ -318,7 +318,7 @@ void loadPlugin6() {
     // if the file didn't open, print an error:
     tft.println("error opening plugin6.txt");
   }
-  for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+  for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
     pl6[maxpreset].Filter1_Frequency = note_frequency[pl6[maxpreset].Filter1_Frequency_graph];
     pl6[maxpreset].Filter1_Resonance = pl6[maxpreset].Filter1_Resonance_graph / 25.40;
     pl6[maxpreset].Filter1_Sweep = pl6[maxpreset].Filter1_Sweep_graph / 18.14;

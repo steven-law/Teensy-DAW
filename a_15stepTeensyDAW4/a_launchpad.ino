@@ -1,7 +1,7 @@
 void LP_drawclipRow() {
   if (launchpad) {
 
-    for (byte LPclips = 0; LPclips < 8; LPclips++) {
+    for (int LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
         track[desired_instrument].clip_selector = LPclips;
         clearStepsGrid();
@@ -19,15 +19,15 @@ void LP_drawclipRow() {
   }
 }
 
-void LP_songmode(byte note) {
+void LP_songmode(int note) {
   //launchpadcontrols
   if (launchpad) {
     //clipselecting via launchpad mini mk1
 
     if (seq_rec) {
 
-      for (byte instruments = 0; instruments < 8; instruments++) {
-        for (byte notes = 0; notes < 8; notes++) {
+      for (int instruments = 0; instruments < 8; instruments++) {
+        for (int notes = 0; notes < 8; notes++) {
 
 
           if (note == notes + (instruments * 16)) {
@@ -39,7 +39,7 @@ void LP_songmode(byte note) {
               track[instruments].lastclip = notes;
             }
             drawarrengmentLine(songpages, instruments, phraser);
-            for (byte notes = 0; notes < 9; notes++) {
+            for (int notes = 0; notes < 9; notes++) {
               midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
             }
             if (track[instruments].arrangment1[phraser] < MAX_CLIPS) {
@@ -52,8 +52,8 @@ void LP_songmode(byte note) {
   }
 }
 
-void LP_drawOctave(byte LP_row) {
-  for (byte notes = 0; notes < 8; notes++) {
+void LP_drawOctave(int LP_row) {
+  for (int notes = 0; notes < 8; notes++) {
     byte drawnote = notes + ((LP_row + 1) * 16);
     midi01.sendNoteOn(drawnote, LP_AMBER_DIM, 1);
   }
@@ -65,7 +65,7 @@ void LP_drawOctave(byte LP_row) {
 }
 
 void LP_drawStepsequencer() {
-  for (byte stepss = 0; stepss < 16; stepss++) {
+  for (int stepss = 0; stepss < 16; stepss++) {
     midi01.sendNoteOn(LP_step_notes[stepss], LP_GREEN_DIM, 1);
   }
 }
@@ -76,8 +76,8 @@ void LP_drumstep() {
   if (currentMillis2 - previousMillis2 >= interval) {
     previousMillis2 = currentMillis2;
     //Serial.println("LP_drumstep");
-    for (byte notes = 0; notes < 12; notes++) {
-      for (byte steps = 0; steps < 16; steps++) {
+    for (int notes = 0; notes < 12; notes++) {
+      for (int steps = 0; steps < 16; steps++) {
 
         int dot_on_X = (steps)*STEP_FRAME_W + DOT_OFFSET_X;
         int dot_on_Y = (notes)*STEP_FRAME_H + DOT_OFFSET_Y;
@@ -141,8 +141,8 @@ void LP_melodicstep() {
   if (currentMillis2 - previousMillis2 >= interval) {
     previousMillis2 = currentMillis2;
 
-    for (byte notes = 0; notes < 12; notes++) {
-      for (byte steps = 0; steps < 16; steps++) {
+    for (int notes = 0; notes < 12; notes++) {
+      for (int steps = 0; steps < 16; steps++) {
 
         int touched_step = LP_step_bool[steps] * steps;
         byte touched_note = LP_octave_bool_keys[notes] * notes;

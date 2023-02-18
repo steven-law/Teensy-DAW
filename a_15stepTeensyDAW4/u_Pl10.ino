@@ -3,7 +3,7 @@ void Plugin_10_Settings() {
   pl10amp.gain(1);
   pl10amp2.gain(1);
 }
-void Plugin10_Page_Static(byte Pagenumber) {
+void Plugin10_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -47,7 +47,7 @@ void Plugin_11_Settings() {
   pl11amp.gain(1);
   pl11amp2.gain(1);
 }
-void Plugin11_Page_Static(byte Pagenumber) {
+void Plugin11_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -91,7 +91,7 @@ void Plugin_12_Settings() {
   pl12amp.gain(1);
   pl12amp2.gain(1);
 }
-void Plugin12_Page_Static(byte Pagenumber) {
+void Plugin12_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -135,7 +135,7 @@ void Plugin_13_Settings() {
   pl13amp.gain(1);
   pl13amp2.gain(1);
 }
-void Plugin13_Page_Static(byte Pagenumber) {
+void Plugin13_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -179,7 +179,7 @@ void Plugin_14_Settings() {
   pl14amp.gain(1);
   pl14amp2.gain(1);
 }
-void Plugin14_Page_Static(byte Pagenumber) {
+void Plugin14_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -223,7 +223,7 @@ void Plugin_15_Settings() {
   pl15amp.gain(1);
   pl15amp2.gain(1);
 }
-void Plugin15_Page_Static(byte Pagenumber) {
+void Plugin15_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -267,7 +267,7 @@ void Plugin_16_Settings() {
   pl16amp.gain(1);
   pl16amp2.gain(1);
 }
-void Plugin16_Page_Static(byte Pagenumber) {
+void Plugin16_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4

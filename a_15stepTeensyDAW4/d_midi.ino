@@ -26,7 +26,7 @@ void drawbarPosition() {
   }
 }
 
-void drawstepPosition(byte current) {
+void drawstepPosition(int current) {
   //draw the songpointer positions
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
@@ -352,12 +352,12 @@ void step(int current) {
   }
 }
 
-void midiCC_view_Static(byte mixerpage, byte desired_instrument) {
+void midiCC_view_Static(int mixerpage, byte desired_instrument) {
   clearWorkSpace();
 
 
-  for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
     drawPotCC(MixerColumnPos, CTRL_ROW_0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
     drawNrInRect(MixerColumnPos, CTRL_ROW_0 + 1, track[desired_instrument].midicc_number_row_1[MixerColumn], trackColor[desired_instrument]);
 
@@ -372,12 +372,12 @@ void midiCC_view_Static(byte mixerpage, byte desired_instrument) {
   }
 }
 
-void midiCCpage1_Dynamic(byte desired_instrument) {
+void midiCCpage1_Dynamic(int desired_instrument) {
   switch (lastPotRow) {
     case 0:
       //if (msecs % 20 == 0) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_1[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_1[MixerColumn] + encoded[MixerColumn]), 0, 127);
@@ -412,8 +412,8 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       break;
     case 1:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
@@ -447,8 +447,8 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       break;
     case 2:
 
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
@@ -484,8 +484,8 @@ void midiCCpage1_Dynamic(byte desired_instrument) {
       break;
     case 3:
       // if (msecs % 20 == 0) {
-      for (byte MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        byte MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
 
           if (enc_moved[MixerColumn]) {
@@ -560,7 +560,7 @@ void myClock() {
 void myStart() {
   seq_run = true;
   msecs = 0;
-  for (byte i = 1; i <= 7; i++) {
+  for (int i = 1; i <= 7; i++) {
     track[i].clip_songMode = track[i].arrangment1[0];
   }
   Serial.println("Start");
@@ -577,18 +577,18 @@ void myStop() {
   Serial.println("Stop");
 }
 
-void myNoteOn(byte channel, byte note, byte velocity) {
+void myNoteOn(int channel, byte note, byte velocity) {
 
   if (launchpad) {
 
-    for (byte songpages = 0; songpages < 16; songpages++) {
+    for (int songpages = 0; songpages < 16; songpages++) {
       if (selectPage == SONGMODE_PAGE_1 + songpages) {
         if (msecs % 100 == 0) {
           LP_songmode(note);
         }
       }
     }
-    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+    for (int gridNotes = 0; gridNotes < 64; gridNotes++) {
       if (note == LP_grid_notes[gridNotes]) {
         LP_grid_bool[gridNotes] = true;
       }
@@ -596,7 +596,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
 
 
     if (desired_instrument == 0) {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+      for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes[octNotes]) {
           LP_octave_bool[octNotes] = true;
           drumnotes[octNotes] = true;
@@ -605,7 +605,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
     }
 
     else {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+      for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes_keys[octNotes]) {
           channelPlayed = desired_instrument + 1;
           channel = desired_instrument + 1;
@@ -618,7 +618,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
       }
     }
 
-    for (byte stepss = 0; stepss < 16; stepss++) {
+    for (int stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
         LP_step_bool[stepss] = true;
       }
@@ -686,17 +686,17 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   }
 }
 
-void myNoteOff(byte channel, byte note, byte velocity) {
+void myNoteOff(int channel, byte note, byte velocity) {
   if (launchpad) {
 
-    for (byte gridNotes = 0; gridNotes < 64; gridNotes++) {
+    for (int gridNotes = 0; gridNotes < 64; gridNotes++) {
       if (note == LP_grid_notes[gridNotes]) {
         LP_grid_bool[gridNotes] = false;
       }
     }
 
     if (desired_instrument == 0) {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+      for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes[octNotes]) {
           LP_octave_bool[octNotes] = false;
         }
@@ -704,7 +704,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
     }
 
     else {
-      for (byte octNotes = 0; octNotes < 12; octNotes++) {
+      for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes_keys[octNotes]) {
           channel = desired_instrument + 1;
           LP_octave_bool_keys[octNotes] = false;
@@ -715,7 +715,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
       }
     }
 
-    for (byte stepss = 0; stepss < 16; stepss++) {
+    for (int stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
         LP_step_bool[stepss] = false;
       }
@@ -772,7 +772,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
   }
 }
 
-void myControlChange(byte channel, byte control, byte value) {
+void myControlChange(int channel, byte control, byte value) {
   if (control == 3) {
     Potentiometer[0] = value;
   }
@@ -789,7 +789,7 @@ void myControlChange(byte channel, byte control, byte value) {
   if (selectPage == PLUGIN2_PAGE1) {
     switch (lastPotRow) {
       case 0:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX - 1]) < POTPICKUP) {
             if (pl2[pl2presetNr].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_0, pl2[pl2presetNr].Vol_rnd[touchX - 1], pl2[pl2presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
@@ -801,7 +801,7 @@ void myControlChange(byte channel, byte control, byte value) {
         }
         break;
       case 1:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX + 3]) < POTPICKUP) {
             if (pl2[pl2presetNr].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_1, pl2[pl2presetNr].Vol_rnd[touchX + 3], pl2[pl2presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
@@ -813,7 +813,7 @@ void myControlChange(byte channel, byte control, byte value) {
         }
         break;
       case 2:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl2[pl2presetNr].Vol_rnd[touchX + 7]) < POTPICKUP) {
             if (pl2[pl2presetNr].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_2, pl2[pl2presetNr].Vol_rnd[touchX + 7], pl2[pl2presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
@@ -916,7 +916,7 @@ void myControlChange(byte channel, byte control, byte value) {
   if (selectPage == PLUGIN4_PAGE1) {
     switch (lastPotRow) {
       case 0:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX - 1]) < POTPICKUP) {
             if (pl4[pl4presetNr].Vol_rnd[touchX - 1] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_0, pl4[pl4presetNr].Vol_rnd[touchX - 1], pl4[pl4presetNr].Vol_rnd[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
@@ -928,7 +928,7 @@ void myControlChange(byte channel, byte control, byte value) {
         }
         break;
       case 1:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX + 3]) < POTPICKUP) {
             if (pl4[pl4presetNr].Vol_rnd[touchX + 3] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_1, pl4[pl4presetNr].Vol_rnd[touchX + 3], pl4[pl4presetNr].Vol_rnd[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
@@ -940,7 +940,7 @@ void myControlChange(byte channel, byte control, byte value) {
         }
         break;
       case 2:
-        for (byte touchX = 1; touchX < 5; touchX++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
           if (abs(Potentiometer[touchX - 1] - pl4[pl4presetNr].Vol_rnd[touchX + 7]) < POTPICKUP) {
             if (pl4[pl4presetNr].Vol_rnd[touchX + 7] != Potentiometer[touchX - 1]) {
               drawPot(touchX * 4 - 1, CTRL_ROW_2, pl4[pl4presetNr].Vol_rnd[touchX + 7], pl4[pl4presetNr].Vol_rnd[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
@@ -1304,32 +1304,36 @@ void myControlChange(byte channel, byte control, byte value) {
     //cursor left
     if (otherCtrlButtons && control == 104 && value == 127) {
       button[0] = true;
-      gridTouchX--;
+      gridTouchX = constrain(gridTouchX - 1, 0, 19);
       drawCursor();
+      showCoordinates();
     } else if (otherCtrlButtons && control == 104 && value != 127) {
       button[0] = false;
     }
     //cursor right
     if (otherCtrlButtons && control == 105 && value == 127) {
       button[1] = true;
-      gridTouchX++;
+      gridTouchX = constrain(gridTouchX + 1, 0, 19);
       drawCursor();
+      showCoordinates();
     } else if (otherCtrlButtons && control == 105 && value != 127) {
       button[1] = false;
     }
     //cursor up
     if (otherCtrlButtons && control == 106 && value == 127) {
       button[2] = true;
-      gridTouchY--;
+      gridTouchY = constrain(gridTouchY - 1, 0, 14);
       drawCursor();
+      showCoordinates();
     } else if (otherCtrlButtons && control == 106 && value != 127) {
       button[2] = false;
     }
     //cursor down
     if (otherCtrlButtons && control == 107 && value == 127) {
       button[3] = true;
-      gridTouchY++;
+      gridTouchY = constrain(gridTouchY + 1, 0, 14);
       drawCursor();
+      showCoordinates();
     } else if (otherCtrlButtons && control == 107 && value != 127) {
       button[3] = false;
     }
@@ -1406,7 +1410,7 @@ void myControlChange(byte channel, byte control, byte value) {
           desired_track = controlss;
           desired_instrument = controlss;
           //midicc_view
-          for (byte pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
+          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
             if (track[desired_instrument].MIDIchannel == pluginSelection) {
               selectPage = MIDICC_PAGE_1;
               midiCC_view_Static(0, desired_track);
@@ -1456,25 +1460,25 @@ void myControlChange(byte channel, byte control, byte value) {
       if (track[desired_instrument].seqMode == 1) {
         if (control == 108 && value == 127) {
           selectPage = NFX1_PAGE1;
-          NoteFX1_Page_Static(0);
+          NoteFX1_Page_Static();
         }
       }
       if (track[desired_instrument].seqMode == 2) {
         if (control == 108 && value == 127) {
           selectPage = NFX2_PAGE1;
-          NoteFX2_Page_Static(0);
+          NoteFX2_Page_Static();
         }
       }
       if (track[desired_instrument].seqMode == 3) {
         if (control == 108 && value == 127) {
           selectPage = NFX3_PAGE1;
-          NoteFX3_Page_Static(0);
+          NoteFX3_Page_Static();
         }
       }
       if (track[desired_instrument].seqMode == 4) {
         if (control == 108 && value == 127) {
           selectPage = NFX4_PAGE1;
-          NoteFX4_Page_Static(0);
+          NoteFX4_Page_Static();
         }
       }
     }

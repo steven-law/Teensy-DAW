@@ -11,7 +11,7 @@ void Plugin_View_Static() {
 
 
   if (selectPage == PLUGIN2_PAGE1) {
-    Plugin2_Page_Static(0);
+    Plugin2_Page_Static();
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,62 +20,64 @@ void Plugin_View_Static() {
   ///////// which is called all the time in the loop() function as long PLUGINx_PAGE1 is true, for controlling the parameters
   ////////////////////////////////////////////////////////////////////////////////////////////////
   if (selectPage == PLUGIN3_PAGE1) {
-    Plugin3_Page_Static(0);
+    Plugin3_Page_Static();
   }
   if (selectPage == PLUGIN4_PAGE1) {
-    Plugin4_Page_Static(0);
+    Plugin4_Page_Static();
   }
   if (selectPage == PLUGIN5_PAGE1) {
-    Plugin5_Page_Static(0);
+    Plugin5_Page_Static();
   }
   if (selectPage == PLUGIN6_PAGE1) {
-    Plugin6_Page_Static(0);
+    Plugin6_Page_Static();
   }
   if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page_Static(0);
+   //Plugin7_Page_Static(0);
   }
   if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page_Static(1);
+   //Plugin7_Page_Static(1);
   }
 
   if (selectPage == PLUGIN8_PAGE1) {
-    Plugin8_Page_Static(0);
+    Plugin8_Page_Static();
   }
   if (selectPage == PLUGIN9_PAGE1) {
-    Plugin9_Page_Static(0);
+    Plugin9_Page_Static();
   }
   if (selectPage == PLUGIN10_PAGE1) {
-    Plugin10_Page_Static(0);
+    Plugin10_Page_Static();
   }
   if (selectPage == PLUGIN11_PAGE1) {
-    Plugin11_Page_Static(0);
+    Plugin11_Page_Static();
   }
   if (selectPage == PLUGIN12_PAGE1) {
-    Plugin12_Page_Static(0);
+    Plugin12_Page_Static();
   }
   if (selectPage == PLUGIN13_PAGE1) {
-    Plugin13_Page_Static(0);
+    Plugin13_Page_Static();
   }
   if (selectPage == PLUGIN14_PAGE1) {
-    Plugin14_Page_Static(0);
+    Plugin14_Page_Static();
   }
   if (selectPage == PLUGIN15_PAGE1) {
-    Plugin15_Page_Static(0);
+    Plugin15_Page_Static();
   }
   if (selectPage == PLUGIN16_PAGE1) {
-    Plugin16_Page_Static(0);
+    Plugin16_Page_Static();
   }
+
+  
   if (selectPage == NFX1_PAGE1) {
-    NoteFX1_Page_Static(0);
+    NoteFX1_Page_Static();
   }
   if (selectPage == NFX2_PAGE1) {
-    NoteFX2_Page_Static(0);
+    NoteFX2_Page_Static();
   }
   if (selectPage == NFX3_PAGE1) {
-    NoteFX3_Page_Static(0);
+    NoteFX3_Page_Static();
   }
   if (selectPage == NFX4_PAGE1) {
-    NoteFX4_Page_Static(0);
+    NoteFX4_Page_Static();
   }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
@@ -148,15 +150,15 @@ void Plugin_View_Dynamic() {
     Plugin6_Page1_Dynamic();
     Plugin6_Control();
   }
-  //setting up the Plugin7 Page1-view
+  //setting up the//Plugin7 Page1-view
   if (selectPage == PLUGIN7_PAGE1) {
-    Plugin7_Page1_Dynamic();
-    Plugin7_Control1();
+   //Plugin7_Page1_Dynamic();
+   //Plugin7_Control1();
   }
-  //setting up the Plugin7 Page2-view
+  //setting up the//Plugin7 Page2-view
   if (selectPage == PLUGIN7_PAGE2) {
-    Plugin7_Page2_Dynamic();
-    Plugin7_Control2();
+   //Plugin7_Page2_Dynamic();
+   //Plugin7_Control2();
   }
   //setting up the Plugin8 Page1-view
   if (selectPage == PLUGIN8_PAGE1) {
@@ -224,7 +226,7 @@ void Plugin_View_Dynamic() {
     drumStepSequencer();
   }
   //setting up the melodicStepSequencer-view for #2-8
-  for (byte i = 1; i < 8; i++) {
+  for (int i = 1; i < 8; i++) {
     if (selectPage == i) {
       melodicStepSequencer(i);
     }
@@ -235,7 +237,7 @@ void Plugin_View_Dynamic() {
   }
 
   //setting up the songMode-view1
-  for (byte pagenr = 0; pagenr < 16; pagenr++) {
+  for (int pagenr = 0; pagenr < 16; pagenr++) {
     if (selectPage == pagenr + 10) {
       songModePage(pagenr);
     }
@@ -335,6 +337,7 @@ void PluginNoteOn() {
           }
           if (track[desired_instruments].MIDIchannel == 22) {
             double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+            
             playSdPitch2.setPlaybackRate(note_ratio);
             playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
             pl6envelope1.noteOn();
@@ -425,16 +428,16 @@ void PluginNoteOff() {
 void beatComponents() {
 
 
-  for (byte instruments = 0; instruments < 8; instruments++) {
+  for (int instruments = 0; instruments < 8; instruments++) {
 
     track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
     track[instruments].MIDI_velocity = track[instruments].volume[phrase];
     pluginVolume(track[instruments].MIDIchannel, track[instruments].volume[phrase] / 127.00);
 
-    for (byte songpages = 0; songpages < 16; songpages++) {
+    for (int songpages = 0; songpages < 16; songpages++) {
       if (selectPage == SONGMODE_PAGE_1 + songpages) {
         if (launchpad) {
-          for (byte notes = 0; notes < 9; notes++) {
+          for (int notes = 0; notes < 9; notes++) {
             midi01.sendNoteOff(notes + (instruments * 16), 0, 1);
             //Serial.println("doh");
           }
@@ -504,7 +507,7 @@ void beatComponents() {
 //if you have a filter with multiple outputs like the AudioFilterStateVariable
 //this function will switch between the different inputs of the afterwards installed mixer
 //add your filtermixer here
-void selectFilterType(byte pluginchannel, byte mixerchannel) {
+void selectFilterType(int pluginchannel, byte mixerchannel) {
   if (pluginchannel == 17) {
     pl1mixer2.gain(0, 0);
     pl1mixer2.gain(1, 0);
@@ -698,8 +701,8 @@ void DrumPluginPlay() {
 //these are some function you might want to use like the drawpot or any of the draw-rect functions
 
 //draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended
-void draw_sub_page_buttons(byte maxpages) {
-  for (byte pages = 0; pages < maxpages; pages++) {
+void draw_sub_page_buttons(int maxpages) {
+  for (int pages = 0; pages < maxpages; pages++) {
     tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
     tft.setFont(Arial_12);
     tft.setTextColor(ILI9341_WHITE);
@@ -708,7 +711,7 @@ void draw_sub_page_buttons(byte maxpages) {
   }
 }
 //draw a rectangle, if the state is high the rect gets filled
-void drawActiveRect(byte xPos, byte yPos, byte xsize, byte ysize, bool state, char* name, int color) {
+void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, char* name, int color) {
   if (state) {
     tft.fillRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, color);
     tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, color);
@@ -727,7 +730,7 @@ void drawActiveRect(byte xPos, byte yPos, byte xsize, byte ysize, bool state, ch
   }
 }
 
-void drawPot(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot(int xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos = fvalue / 63.5;
 
@@ -747,7 +750,7 @@ void drawPot(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int col
   circlePos_old = circlePos;
   dvalue_old = dvalue;
 }
-void drawPot(byte xPos, byte yPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot(int xPos, byte yPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos = fvalue / 63.5;
 
@@ -767,7 +770,7 @@ void drawPot(byte xPos, byte yPos, byte fvalue, char* dvalue_char, char* dname, 
   circlePos_old = circlePos;
   dvalue_old_char = dvalue_char;
 }
-void drawPot_2(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_2(int xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos_2 = fvalue / 63.5;
 
@@ -787,7 +790,7 @@ void drawPot_2(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int c
   circlePos_old_2 = circlePos_2;
   dvalue_old_2 = dvalue;
 }
-void drawPot_3(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_3(int xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos_3 = fvalue / 63.5;
 
@@ -807,7 +810,7 @@ void drawPot_3(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int c
   circlePos_old_3 = circlePos_3;
   dvalue_old_3 = dvalue;
 }
-void drawPot_4(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_4(int xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos_4 = fvalue / 63.5;
 
@@ -827,7 +830,7 @@ void drawPot_4(byte xPos, byte yPos, byte fvalue, int dvalue, char* dname, int c
   circlePos_old_4 = circlePos_4;
   dvalue_old_4 = dvalue;
 }
-void drawPotCC(byte xPos, byte yPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
+void drawPotCC(int xPos, byte yPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
 
   circlePoscc = fvaluecc / 63.5;
 
@@ -850,7 +853,7 @@ void drawPotCC(byte xPos, byte yPos, byte fvaluecc, byte dvaluecc, int color) { 
 }
 
 //draws a number into a rect of 2x1grids
-void drawNrInRect(byte xPos, byte yPos, byte dvalue, int color) {
+void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
   tft.setFont(Arial_8);
   tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
   tft.setTextColor(ILI9341_DARKGREY);
@@ -861,7 +864,7 @@ void drawNrInRect(byte xPos, byte yPos, byte dvalue, int color) {
   tft.print(dvalue);
   dvalue_old = dvalue;
 }
-void drawNrInRect2(byte xPos, byte yPos, byte dvalue, int color) {
+void drawNrInRect2(int xPos, byte yPos, byte dvalue, int color) {
   tft.setFont(Arial_8);
   tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
   tft.setTextColor(ILI9341_DARKGREY);
@@ -873,7 +876,7 @@ void drawNrInRect2(byte xPos, byte yPos, byte dvalue, int color) {
   dvalue_old2 = dvalue;
 }
 //draws a number into a rect of 2x1grids
-void drawChar(byte xPos, byte yPos, char* dvalue_char, int color) {
+void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
   tft.setFont(Arial_8);
   //tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
   tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);

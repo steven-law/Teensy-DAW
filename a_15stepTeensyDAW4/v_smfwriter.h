@@ -49,7 +49,7 @@ class SmfWriter
     unsigned long trackSize = 0;
 
     void write_buf_int(unsigned int data);
-    void write_buf_byte(byte a);
+    void write_buf_byte(int a);
     void write_buf_var_int(unsigned int data);
 };
 
