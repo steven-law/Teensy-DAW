@@ -101,6 +101,7 @@ void Plugin6_Page1_Dynamic() {
   if (button[14]) {
     if (enc_moved[0]) {
       lastPotRow = 10;
+      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
       pl6presetNr = constrain((pl6presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl6presetNr, ILI9341_PURPLE);
       Plugin6_Page_Static();
