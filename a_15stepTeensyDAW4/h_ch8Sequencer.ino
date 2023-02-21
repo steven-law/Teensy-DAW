@@ -1,9 +1,10 @@
-void gridStepSequencer(byte desired_instrument) {  //static Display rendering
+void gridStepSequencer(int desired_instrument) {  //static Display rendering
 
   clearWorkSpace();
   drawStepSequencerStatic(desired_instrument);
   drawActiveSteps();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+  drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
   drawMIDIchannel();
   midi01.sendControlChange(0, 0, 1);
   LP_drawStepsequencer();
@@ -26,15 +27,15 @@ void gridStepSequencer(byte desired_instrument) {  //static Display rendering
   drawOctaveNumber();
 }
 
-void melodicStepSequencer(byte desired_instrument) {
+void melodicStepSequencer(int desired_instrument) {
   if (launchpad) {
-    for (byte LPclips = 0; LPclips < 8; LPclips++) {
+    for (int LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
         LP_drawclipRow();
       }
     }
     for (int notes = 0; notes < 12; notes++) {
-      for (byte steps = 0; steps < 16; steps++) {
+      for (int steps = 0; steps < 16; steps++) {
         if (LP_octave_bool[notes] || LP_grid_bool[24] || LP_grid_bool[31] || LP_step_bool[steps])
           LP_melodicstep();
       }
@@ -45,10 +46,14 @@ void melodicStepSequencer(byte desired_instrument) {
     //gridTouchX
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
+      drawCursor();
+      showCoordinates();
     }
     //gridTouchY
     if (enc_moved[1]) {
       gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
+      drawCursor();
+      showCoordinates();
     }
 
 
@@ -83,13 +88,18 @@ void melodicStepSequencer(byte desired_instrument) {
     }
     //seqMode
     if (enc_moved[1]) {
-      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES-1);
+      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES - 1);
       drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+    }
+    //step diviion
+    if (enc_moved[2]) {
+      track[desired_instrument].MIDItick_reset = constrain((track[desired_instrument].MIDItick_reset + encoded[2]), 0, 97);
+      drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
     }
   }
 
   int touched_step = gridTouchX - 2;
-  byte touched_note = gridTouchY - 1;
+  int touched_note = gridTouchY - 1;
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || button[15]) {
@@ -156,9 +166,9 @@ void melodicStepSequencer(byte desired_instrument) {
 }
 
 void drawActiveSteps() {
-  byte tone_start = track[desired_instrument].shown_octaves * 12;
+  int tone_start = track[desired_instrument].shown_octaves * 12;
   //draw active steps
-  for (byte steps = 0; steps < STEP_QUANT; steps++) {
+  for (int steps = 0; steps < STEP_QUANT; steps++) {
     int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
     int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
     if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
@@ -181,7 +191,7 @@ void saveMIDItrack(char* track, int trackNr) {
   //double microsPerTick = writer.get_microseconds_per_tick();
   deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
-    for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+    for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
       if (ctrack[trackNr].sequence[sclip].step[sstep] > 0) {
         writer.addNoteOnEvent(deltaStep, trackNr, ctrack[trackNr].sequence[sclip].step[sstep], 127);
         writer.addNoteOffEvent(4, trackNr, ctrack[trackNr].sequence[sclip].step[sstep]);
@@ -221,8 +231,8 @@ void saveTrack(char* trackLong, char* tracktxt, byte trackNr) {
       //save track2
       tft.print("Writing track to:");
       tft.print(tracktxt);
-      for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           myFile.print((char)ctrack[trackNr].sequence[sclip].step[sstep]);
         }
       }
@@ -267,8 +277,8 @@ void loadTrack(char* tracktxt, int trackNr) {
       //load track 1
       tft.print("Reading clips from:");
       tft.println(tracktxt);
-      for (byte sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (byte sstep = 0; sstep < STEP_QUANT; sstep++) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           ctrack[trackNr].sequence[sclip].step[sstep] = myFile.read();
         }
       }

@@ -143,7 +143,7 @@ void saveFX1() {
 
     tft.print("Writing plugin 1 to FX1.txt...");
     //save plugin 1 variables
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       myFile.print((char)fx1reverbtime_graph);
     }
     tft.println("Done");
@@ -168,7 +168,7 @@ void loadFX1() {
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from FX1.txt...");
-    for (byte maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       fx1reverbtime_graph = myFile.read();
     }
     tft.println("Done");

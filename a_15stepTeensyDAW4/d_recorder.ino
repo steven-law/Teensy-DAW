@@ -199,7 +199,7 @@ void stopRecording() {
   queue1.end();
 
   while (queue1.available() > 0) {
-    frec.write((byte*)queue1.readBuffer(), 256);
+    frec.write((int*)queue1.readBuffer(), 256);
     queue1.freeBuffer();
   }
   frec.close();
