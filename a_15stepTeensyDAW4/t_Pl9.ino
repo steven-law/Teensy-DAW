@@ -99,6 +99,7 @@ void Plugin9_Page1_Dynamic() {
   if (button[14]) {
     if (enc_moved[0]) {
       lastPotRow = 10;
+      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
       pl9presetNr = constrain((pl9presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl9presetNr, ILI9341_PURPLE);
       Plugin9_Page_Static();
