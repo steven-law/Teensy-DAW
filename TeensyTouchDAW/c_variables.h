@@ -45,7 +45,6 @@ static const int VALUE_NOTEOFF = 0;
 //variables for own clock
 #define NUM_CLIPS 9
 #define NUM_TRACKS 8
-#define num_voice 12
 
 #define NUM_STEPS 16
 #define MAX_PHRASES 256
@@ -73,6 +72,7 @@ byte tempo = 120;
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
 
+const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
 byte selectPage;
 #define DRUMTRACK 0
@@ -104,13 +104,39 @@ byte selectPage;
 #define MIDICC_PAGE_1 35
 #define MIDICC_PAGE_2 36
 
-//plugin selectPage defines in c_pluginVariables.h
+#define PLUGIN1_PAGE1 40
+#define PLUGIN2_PAGE1 41
+#define PLUGIN3_PAGE1 42
+#define PLUGIN4_PAGE1 43
+#define PLUGIN5_PAGE1 44
+#define PLUGIN6_PAGE1 45
+#define PLUGIN7_PAGE1 46
+#define PLUGIN8_PAGE1 47
+#define PLUGIN9_PAGE1 48
+#define PLUGIN10_PAGE1 49
+#define PLUGIN11_PAGE1 50
+#define PLUGIN12_PAGE1 51
+#define PLUGIN13_PAGE1 52
+#define PLUGIN14_PAGE1 53
+#define PLUGIN15_PAGE1 54
+#define PLUGIN16_PAGE1 55
+
+
+
+#define PLUGIN1_PAGE2 60
+#define PLUGIN1_PAGE3 61
+#define PLUGIN1_PAGE4 62
+#define PLUGIN7_PAGE2 63
+#define PLUGIN7_PAGE3 64
 
 #define SQ1_PAGE1 119
 #define FX1_PAGE1 120
 #define FX2_PAGE1 123
 #define FX3_PAGE1 126
-
+#define NFX1_PAGE1 129
+#define NFX2_PAGE1 132
+#define NFX3_PAGE1 135
+#define NFX4_PAGE1 138
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
@@ -134,22 +160,392 @@ const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.
 
 const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
+const char* showPot_Value[12]{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 const char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
 const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
-const int steps = 16;      // number of steps in the sequence
-const int numTracks = 4;   // number of tracks in the sequence
-const int startNote = 36;  // MIDI note number of the first note
-const int channel = 9;     // MIDI channel (zero-indexed)
+//plugin 1 variables
+struct plugin1 {
+
+  int Filter1_Frequency = 560;
+  byte Filter1_Frequency_graph = 20;
+  byte Filter1_Resonance_graph = 25;
+  float Filter1_Resonance = 1;
+  byte Filter1_Sweep_graph = 80;
+  float Filter1_Sweep = 2;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 10;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 15;
+  int note_Offset[4] = { 0, 4, 7, 11 };
+  byte note_Offset_graph[4] = { 50, 65, 80, 95 };
+  float note_Velo[4] = { 1, 1, 1, 1 };
+  byte note_Velo_graph[4] = { 100, 100, 100, 100 };
+  byte wfSelect[4] = { 0, 0, 0, 0 };
+  byte wfSelect_graph[4] = { 0, 0, 0, 0 };
+};
+plugin1 pl1[MAX_PRESETS];
+byte pl1presetNr = 0;
+
+//plugin 2 variables
+struct plugin2 {
+  byte Vol_rnd[12];
+  float Vol[12];
+};
+plugin2 pl2[MAX_PRESETS];
+byte pl2presetNr = 0;
+
+//plugin 3 variables
+struct plugin3 {
+  int Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 50;
+  float note1_Velo = 1;
+  byte note1_Velo_rnd;
+  byte wfSelect;
+  byte wfSelect_graph;
+};
+plugin3 pl3[MAX_PRESETS];
+byte pl3presetNr = 0;
+
+//plugin 4 variables
+struct plugin4 {
+  byte Vol_rnd[12];
+  float Vol[12];
+};
+plugin4 pl4[MAX_PRESETS];
+byte pl4presetNr = 0;
+
+//plugin 5 variables
+struct plugin5 {
+  float Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  float Env1_Release_graph = 50;
+  byte selected_file;
+  byte selected_file_graph = 0;
+  byte Volume_graph = 50;
+  float Volume;
+};
+plugin5 pl5[MAX_PRESETS];
+byte pl5presetNr = 0;
+bool pl5enter_was_pushed = true;
+
+//plugin 6 variables
+struct plugin6 {
+  float Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
+  int Env1_Attack = 50;
+  byte Env1_Attack_graph = 50;
+  int Env1_Decay = 50;
+  byte Env1_Decay_graph = 50;
+  float Env1_Sustain = 1;
+  byte Env1_Sustain_graph = 50;
+  int Env1_Release = 150;
+  byte Env1_Release_graph = 50;
+  byte selected_file;
+  byte selected_file_graph = 0;
+  byte Volume_graph = 50;
+  float Volume_rnd;
+  float Volume;
+};
+plugin6 pl6[MAX_PRESETS];
+byte pl6presetNr = 0;
 
 
 
+//plugin7 variables
+struct plugin7 {
+  //drum11111111111111111111111111111111111111111111111111111111111111111111111111111111 drum 1
+  int _1_frequency;
+  byte _1_frequency_graph = 50;
+  byte _1_length;
+  byte _1_length_graph = 50;
+  float _1_pitchMod;  //max 2 !!
+  byte _1_pitchMod_graph = 50;
+  int _1_pitchMod_rnd;
+  float _1_secondMix;
+  byte _1_secondMixgraph = 50;
+  byte _1_filter_graph;
+  int _1_filter;
+  byte _1_resonance_graph;
+  float _1_resonance;
+  float _1_dc1_wavefold = 0.06;
+  byte _1_dc1_wavefold_graph = 10;
+  //noisemod22222222222222222222222222222222222222222222222222222222222222222222222222222 noise mode 2
+  float _2_noise1_amp = 1;
+  byte _2_noise1_amp_graph = 100;
+
+  byte _2_wfMod_begin;
+  byte _2_wfMod_begin_graph;
+  float _2_wfMod_amplitude;
+  byte _2_wfMod_amplitude_graph;
+  int _2_wfMod_frequency;
+  byte _2_wfMod_frequency_graph;
+  float _2_wfMod_frequencyModulation;
+  byte _2_wfMod_frequencyModulation_graph;
+  int _2_wfMod_frequencyModulation_rnd;
+
+  int _2_filter_frequency;
+  byte _2_filter_frequency_graph;
+  float _2_filter_resonance;
+  byte _2_filter_resonance_graph;
+  byte _2_filter_resonance_rnd;
+  float _2_filter_octaveControl;
+  byte _2_filter_octaveControl_graph;
+
+  byte _2_Env_Attack;
+  byte _2_Env_Attack_graph;
+  byte _2_Env_Decay;
+  byte _2_Env_Decay_graph;
+  int _2_Env_Release;
+  byte _2_Env_Release_graph;
+
+
+
+  //FM33333333333333333333333333333333333333333333333333333333333333333333333333333333333 FM 3
+  float _3_waveformMod3_amplitude;
+  byte _3_waveformMod3_amplitude_rnd;
+  byte _3_waveformMod3_amplitude_graph;
+  int _3_waveformMod3_frequency;
+  byte _3_waveformMod3_frequency_graph;
+
+
+  byte _3_Env2_Attack;
+  byte _3_Env2_Attack_graph;
+  byte _3_Env2_Decay;
+  byte _3_Env2_Decay_graph;
+  int _3_Env2_Release;
+  byte _3_Env2_Release_graph;
+
+
+  byte _3_waveformMod2_begin;
+  byte _3_waveformMod2_begin_graph;
+  float _3_waveformMod2_amplitude;
+  byte _3_waveformMod2_amplitude_graph;
+  int _3_waveformMod2_frequency;
+  byte _3_waveformMod2_frequency_graph;
+  float _3_waveformMod2_frequencyModulation;
+  byte _3_waveformMod2_frequencyModulation_graph;
+  int _3_waveformMod2_frequencyModulation_rnd;
+
+  byte _3_Env3_Attack;
+  byte _3_Env3_Attack_graph;
+  byte _3_Env3_Decay;
+  byte _3_Env3_Decay_graph;
+  int _3_Env3_Release;
+  byte _3_Env3_Release_graph;
+
+  //4444444444444444444444444444444444444444444444444444444444444444444444444444 noise
+  float _4_noise2_amplitude = 1;
+  int _4_noise2_amplitude_rnd = 100;
+  byte _4_noise2_amplitude_graph = 100;
+
+  float _4_pink1_amplitude = 1;
+  int _4_pink1_amplitude_rnd = 100;
+  byte _4_pink1_amplitude_graph = 100;
+
+  int _4_biquad1_frequency = 400;
+  byte _4_biquad1_frequency_graph;
+  float _4_biquad1_resonance;
+  byte _4_biquad1_resonance_graph;
+  byte _4_biquad1_resonance_rnd;
+
+  byte _4_Env4_Attack;
+  byte _4_Env4_Attack_graph;
+  byte _4_Env4_Decay;
+  byte _4_Env4_Decay_graph;
+  byte _4_Env4_Release;
+  byte _4_Env4_Release_graph;
+};
+plugin7 pl7[MAX_PRESETS];
+byte pl7presetNr = 0;
+
+//plugin 8 variables
+struct plugin8 {
+  float Filter1_Frequency;
+  byte Filter1_Frequency_graph;
+  float Filter1_Resonance;
+  byte Filter1_Resonance_graph;
+  float Filter1_Sweep;
+  byte Filter1_Sweep_graph;
+  int Env1_Attack;
+  byte Env1_Attack_graph;
+  int Env1_Decay;
+  byte Env1_Decay_graph;
+  float Env1_Sustain;
+  byte Env1_Sustain_graph;
+  int Env1_Release;
+  float Env1_Release_graph;
+  float note1_Velo = 1;
+  float note1_Velo_rnd;
+  byte wfSelect;
+  byte wfSelect_graph;
+};
+plugin8 pl8[MAX_PRESETS];
+byte pl8presetNr = 0;
+
+struct plugin9 {
+  byte wavefold_graph;
+  float wavefold;
+  byte wah_form;
+  byte wah_form_graph;
+  float wah_rate;
+  byte wah_rate_graph;
+  int wah_freq;
+  byte wah_freq_graph;
+  float wah_reso;
+  byte wah_reso_graph;
+  float wah_sweep;
+  byte wah_sweep_graph;
+  int Filter1_Frequency = 260;
+  byte Filter1_Frequency_graph = 50;
+  float Filter1_Resonance = 1;
+  byte Filter1_Resonance_graph = 50;
+  float Filter1_Sweep = 2;
+  byte Filter1_Sweep_graph = 50;
+  byte Filter1_Type = 0;
+  byte Filter1_Type_graph = 0;
+};
+plugin9 pl9[MAX_PRESETS];
+byte pl9presetNr = 0;
+
+
+#define MAX_SEQMODES 5
+
+const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR" };
+
+//seqmode "grid"
+struct Grids {
+  byte Pot_Value[12];
+  byte Pot_Value_graph[12];
+};
+Grids NFX1[MAX_PRESETS];
+byte NFX1presetNr = 0;
+byte clock_count = 0;
+#define BEAT_ARRAY_SIZE 33
+const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0 },  //kick
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },  //kick
+  { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 },  //kick
+  { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },  //kick
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0 },  //snare
+  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //snare
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
+  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat
+  { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },  //hihat
+  { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 },  //hihat
+  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //perc
+  { 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0 },  //perc
+  { 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 },  //perc
+  { 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1 },  //perc
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1 },  //perc
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }   //perc
+};
+
+//seqmode "dropseq"
+struct Drops {
+  byte Pot_Value[16];
+  byte Pot_Value_graph[16];
+};
+Drops NFX2[MAX_PRESETS];
+byte NFX2presetNr = 0;
+byte cc23 = 5;
+byte cc24 = 6;
+byte octave;
+byte maxValIndex;
+byte maxVal = 0;
+byte analogReadArray[16];
+
+const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
+
+
+
+
+//seqmode "Rand"
+struct rands {
+  byte Pot_Value[16];
+  byte Pot_Value_graph[16];
+  byte Oct1 = 5;
+  byte Oct2 = 6;  
+};
+rands NFX3[MAX_PRESETS];
+byte NFX3presetNr = 0;
+
+const char* NFX3_ROW1[4]{ "--", "--", "Oct1", "Oct2" };
+const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
+
+
+//seqmode "PolyR"
+struct PolyR {
+  byte Pot_Value[12];
+  byte Pot_Value_graph[12];
+  byte reset[12];
+};
+PolyR NFX4[MAX_PRESETS];
+byte NFX4presetNr = 0;
 
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
+
+
 //audiorecorder variables
 
 // which input on the audio shield will be used?
@@ -164,6 +560,7 @@ byte audio_rec_volume_graph = 0;
 float audio_rec_volume = 0;
 byte audio_rec_selected_file;
 byte audio_rec_selected_file_graph = 50;
+
 byte audio_rec_peak_graph;
 // The file where data is recorded
 File frec;
@@ -199,7 +596,19 @@ float fx3delayAmount = 0;
 int fx3delayAmount_graph = 0;
 
 //notenumber to frequency chart
-float* note_frequency;
+
+const float note_frequency[128]{ 8.18, 8.66, 9.18, 9.72, 10.30, 10.91, 11.56, 12.25, 12.98, 13.75, 14.57, 15.43,
+                           16.35, 17.32, 18.35, 19.45, 20.60, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87,
+                           32.7, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55, 58.27, 61.74,
+                           65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98, 103.83, 110, 116.54, 123.47,
+                           130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185, 196, 207.65, 220, 233.08, 246.94,
+                           261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88,
+                           523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61, 880, 832.33, 987.77,
+                           1046.5, 1108.73, 1174.66, 1244.66, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53,
+                           2093, 2217.46, 2349.32, 2489.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520, 3729.31, 3951.07,
+                           4186.01, 4434.92, 4698.64, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13,
+                           8372.02, 8869.84, 9397.27, 9956.06, 10548.08, 11175.30, 11839.82, 12543.85 };
+
 
 
 
@@ -278,12 +687,22 @@ int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 #define LP_AMBER_DIM 29
 #define LP_YELLOW 62
 
-byte* LP_grid_notes;
-byte* LP_step_notes;
+
+const byte LP_grid_notes[64]{ 0, 1, 2, 3, 4, 5, 6, 7,
+                        16, 17, 18, 19, 20, 21, 22, 23,
+                        32, 33, 34, 35, 36, 37, 38, 39,
+                        48, 49, 50, 51, 52, 53, 54, 55,
+
+                        64, 65, 66, 67, 68, 69, 70, 71,
+                        80, 81, 82, 83, 84, 85, 86, 87,
+                        96, 97, 98, 99, 100, 101, 102, 103,
+                        112, 113, 114, 115, 116, 117, 118, 118 };
 bool LP_grid_bool[64];
 const byte LP_octave_notes[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
 bool LP_octave_bool[12];
+const byte LP_octave_notes_keys[12]{ 64, 49, 65, 50, 66, 67, 52, 68, 53, 69, 54, 70 };
 bool LP_octave_bool_keys[12];
+const byte LP_step_notes[16]{ 16, 17, 18, 19, 20, 21, 22, 23, 32, 33, 34, 35, 36, 37, 38, 39 };
 bool LP_step_bool[16];
 bool LP_drawOnce[16];
 
@@ -343,6 +762,7 @@ const int scales[scalesQuant][12]{
 };
 
 const char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
+
 const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
 
 
@@ -393,9 +813,7 @@ struct tracks {
   bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
-  int MIDItick = 0;
-  int MIDItick_16 = 0;
-  int MIDItick_reset = 6;
+
   byte Volume_graph = 50;
   float Volume = 1;
 
@@ -414,11 +832,133 @@ struct tracks {
   int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
-tracks* track;
+tracks track[8];
 
 
 
 //channel 1 variables
+bool channel1Select = LOW;  // a handler to keep the mode active after selecting
 byte ch1tone;
-bool* dsend_noteOff;
-bool*** channel1Clip;
+byte ch1Octaves = 3;
+bool dsend_noteOff[12];
+
+bool channel1Clip[NUM_CLIPS][12][STEP_QUANT]{
+
+  { //Clip 0
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip 1
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip2
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip3
+    { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip4
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip5
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip6
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip7
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
+  { //Clip8
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+};
