@@ -320,7 +320,7 @@ struct track_t {
   byte midi_channel;               // stores the MIDI channel that this track should output on; 10 is drums
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
-track_t* ctrack;
+track_t ctrack[NUM_TRACKS];
 
 //Scales
 bool scaleSelect = LOW;

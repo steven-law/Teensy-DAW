@@ -788,7 +788,7 @@ void setup() {
   //tft.updateScreen();
   //allocate tracks
   track = new tracks[NUM_TRACKS];
-  ctrack = new track_t[NUM_TRACKS];  
+  //ctrack = new track_t[NUM_TRACKS];  
   //allocate plugins
   pl1 = new plugin1[MAX_PRESETS];
   pl2 = new plugin2[MAX_PRESETS];
