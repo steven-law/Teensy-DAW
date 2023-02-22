@@ -8,12 +8,7 @@ void NoteFX4_Control() {
         if (NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] != Potentiometer[MixerColumn]) {
           NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
           NFX4[NFX4presetNr].Pot_Value[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn];
-
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
           drawPot(MixerColumnPos, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], drumnote[MixerColumn], trackColor[desired_instrument]);
-========
-          drawPot(MixerColumnPos, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], showPot_Value[MixerColumn], trackColor[desired_instrument]);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
         }
       }
       break;
@@ -25,11 +20,7 @@ void NoteFX4_Control() {
           NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
           NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4];
 
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
           drawPot(MixerColumnPos, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], drumnote[MixerColumn + 4], trackColor[desired_instrument]);
-========
-          drawPot(MixerColumnPos, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], showPot_Value[MixerColumn + 4], trackColor[desired_instrument]);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
         }
       }
       break;
@@ -41,11 +32,7 @@ void NoteFX4_Control() {
           NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
           NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8];
 
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
           drawPot(MixerColumnPos, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], drumnote[MixerColumn + 8], trackColor[desired_instrument]);
-========
-          drawPot(MixerColumnPos, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], showPot_Value[MixerColumn + 8], trackColor[desired_instrument]);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
         }
       }
       break;
@@ -59,15 +46,11 @@ void NoteFX4_Page1_Dynamic() {
   if (button[14]) {
     if (enc_moved[0]) {
       lastPotRow = 10;
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
       tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-========
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
       NFX4presetNr = constrain((NFX4presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, NFX4presetNr, trackColor[desired_instrument]);
       NoteFX4_Page_Static();
     }
-
   }
   if (!button[14]) {
     switch (lastPotRow) {
@@ -76,11 +59,8 @@ void NoteFX4_Page1_Dynamic() {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
             Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS);
-========
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS-1);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -90,11 +70,8 @@ void NoteFX4_Page1_Dynamic() {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
             Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS);
-========
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS-1);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -104,11 +81,10 @@ void NoteFX4_Page1_Dynamic() {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
+
             Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS);
-========
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS-1);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
+
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -152,7 +128,7 @@ void NoteFX4_Page_Static() {
   drawNrInRect(18, 1, NFX4presetNr, ILI9341_PURPLE);
   drawChar(18, 3, seqModes[track[desired_track].seqMode], trackColor[desired_track]);
   for (int touchX = 1; touchX < 5; touchX++) {
-<<<<<<<< HEAD:TeensyTouchDAW/k_NoteFX4.ino
+
     drawPot(touchX * 4 - 1, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], drumnote[touchX - 1], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
@@ -160,15 +136,6 @@ void NoteFX4_Page_Static() {
   }
   for (int touchX = 1; touchX < 5; touchX++) {
     drawPot(touchX * 4 - 1, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], drumnote[touchX + 7], trackColor[desired_instrument]);
-========
-    drawPot(touchX * 4 - 1, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], showPot_Value[touchX - 1], trackColor[desired_instrument]);
-  }
-  for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3], NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3], showPot_Value[touchX + 3], trackColor[desired_instrument]);
-  }
-  for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], showPot_Value[touchX + 7], trackColor[desired_instrument]);
->>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/k_NoteFX4.ino
   }
 }
 

@@ -639,15 +639,15 @@ void DrumPluginPlay() {
     }
     if (drumnotes[6]) {
       drumnotes[6] = false;
-      playMem6.play(AudioSampleGong);
+      playMem7.play(AudioSampleGong);
     }
     if (drumnotes[7]) {
       drumnotes[7] = false;
-      //playSdWav8.play("P7.WAV");
+      playMem7.play(AudioSamplePongblip);
     }
     if (drumnotes[8]) {
       drumnotes[8] = false;
-      //playSdWav9.play("P8.WAV");
+      playMem7.play(AudioSampleClap);
     }
     if (drumnotes[9]) {
       drumnotes[9] = false;

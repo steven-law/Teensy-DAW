@@ -1,4 +1,7 @@
-bool debugTime = false;
+bool debugTime = true;
+extern unsigned long _heap_start;
+extern unsigned long _heap_end;
+extern char *__brkval;
 /*Contributing Manual:
 
 Many Thanks to Tristan Rowley, without his immense efforts and time to explain things to me, 
@@ -52,6 +55,7 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <TeensyVariablePlayback.h>
 #include "flashloader.h"
 #include "c_variables.h"
+#include "c_pluginVariables.h"
 #include "Adafruit_Keypad.h"
 #include <ResponsiveAnalogRead.h>
 #include <USBHost_t36.h>
@@ -101,13 +105,6 @@ Encoder Enc2(27, 28);
 Encoder Enc3(24, 25);
 Encoder Enc4(2, 3);
 
-
-
-//Potentiometer Pins
-//#define POTENTIOMETER_1_PIN 255
-#define POTENTIOMETER_2_PIN 255
-#define POTENTIOMETER_3_PIN 255
-#define POTENTIOMETER_4_PIN 255
 
 
 //calibrate your Screen
@@ -765,17 +762,33 @@ void setup() {
 
 
 
-  // start sequencer and set callbacks
+  // start sequencer and set callbacks and load big arrays
 
   Serial.println("Initializing Sequencer");
   tft.println("Initializing Sequencer");
+  // Allocate channel1Clip array during runtime
+
+  channel1Clip = new bool **[NUM_CLIPS];
+  for (int i = 0; i < NUM_CLIPS; i++) {
+    channel1Clip[i] = new bool *[num_voice];
+    for (int j = 0; j < num_voice; j++) {
+      channel1Clip[i][j] = new bool[STEP_QUANT];
+    }
+  }
+  // fill the array
+  for (int i = 0; i < NUM_CLIPS; i++) {
+    for (int j = 0; j < num_voice; j++) {
+      for (int k = 0; k < STEP_QUANT; k++) {
+        channel1Clip[i][j][k] = 0;
+      }
+    }
+  }
+  // Allocate dsend_noteOff array during runtime
+  dsend_noteOff = new bool[num_voice];
   //tft.updateScreen();
-<<<<<<< HEAD:TeensyTouchDAW/TeensyTouchDAW.ino
-<<<<<<< HEAD:TeensyTouchDAW/TeensyTouchDAW.ino
-<<<<<<< HEAD
   //allocate tracks
   track = new tracks[NUM_TRACKS];
-  //ctrack = new track_t[NUM_TRACKS];  
+  ctrack = new track_t[NUM_TRACKS];  
   //allocate plugins
   pl1 = new plugin1[MAX_PRESETS];
   pl2 = new plugin2[MAX_PRESETS];
@@ -814,12 +827,6 @@ void setup() {
   for (int r = 0; r < 128; r++) {
     note_frequency[r] = pow(2.0, ((double)(r - SAMPLE_ROOT) / 12.0)) * 440;
   }
-=======
->>>>>>> parent of d7c700b (clock divisions cause a crash)
-=======
->>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/a_15stepTeensyDAW4.ino
-=======
->>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/a_15stepTeensyDAW4.ino
   delay(100);
 
 
@@ -874,7 +881,7 @@ void setup() {
   Plugin_4_Settings();
   Plugin_5_Settings();
   Plugin_6_Settings();
-  //Plugin7_Settings();
+  Plugin7_Settings();
   Plugin_8_Settings();
   Plugin_9_Settings();
   Plugin_10_Settings();
@@ -939,7 +946,7 @@ void setup() {
     }
   }
   bmpDraw("StartUpPic.bmp", 0, 0);
-  delay(4000);
+  delay(4000);  //just to look how beautiful this image is
   tft.fillScreen(ILI9341_DARKGREY);
   startUpScreen();
   delay(500);
@@ -954,10 +961,12 @@ long oldEnc[4] = { -999, -999, -999, -999 };
 
 
 void SerialPrintSeq() {
+
   Serial.print(tempo);
   Serial.print("-");
   Serial.print(tick_16);
   Serial.print("-   ");
+
   for (int i = 0; i < 12; i++) {
     Serial.print(drumnotes[i]);
     Serial.print("-");
@@ -971,7 +980,7 @@ void SerialPrintSeq() {
     Serial.print(track[desired_tracks].envActive);
     Serial.print("-   ");
   }
-  Serial.println("");
+  debug_free_ram();
 }
 void SerialPrintPlugins() {
   Serial.print("PL1");
@@ -1025,29 +1034,29 @@ void SerialPrintPlugins() {
 
   Serial.print("PL2");
   Serial.print("-   ");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[0]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[0]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[1]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[1]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[2]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[2]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[3]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[3]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[4]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[4]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[5]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[5]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[6]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[6]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[7]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[7]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[8]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[8]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[9]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[9]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[10]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[10]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Vol_rnd[11]);
+  Serial.print(pl2[pl2presetNr].Pot_Value_graph[11]);
   Serial.println();
 
   Serial.print("PL3");
@@ -1076,29 +1085,29 @@ void SerialPrintPlugins() {
 
   Serial.print("PL4");
   Serial.print("-   ");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[0]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[0]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[1]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[1]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[2]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[2]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[3]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[3]);
   Serial.print("  ");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[4]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[4]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[5]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[5]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[6]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[6]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[7]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[7]);
   Serial.print("  ");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[8]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[8]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[9]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[9]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[10]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[10]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Vol_rnd[11]);
+  Serial.print(pl4[pl4presetNr].Pot_Value_graph[11]);
   Serial.println();
 
   Serial.print("PL8");
@@ -1126,6 +1135,13 @@ void SerialPrintPlugins() {
 
   showSerialonce = false;
 }
+int freeRam() {
+  return (char *)&_heap_end - __brkval;
+}
+
+void debug_free_ram() {
+  Serial.printf(F("debug_free_ram: %i\n"), freeRam());
+}
 void loop() {
   //Serial.println("==== start of loop ====");
   usbMIDI.read();
@@ -1143,7 +1159,7 @@ void loop() {
   detect_and_assign_midi_devices();
   kpd.tick();
   sendClock();
-
+  step();
 
   readMainButtons();
   readEncoders();
@@ -1162,16 +1178,9 @@ void loop() {
   }
 
   if (msecs % 100 == 0) {
-    //Serial.print(pl2[0].Vol_rnd[0]);
+    //Serial.print(Potentiometer[0]);
     //Serial.print("-");
-    //Serial.println(pl2[0].Vol_rnd[1]);
-    if (lastPotRow < 4) {
-      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-      tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
-    }
-    if (lastPotRow >= 4) {
-      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-    }
+    //Serial.println(pl1[0].note_Offset[0]);
   }
 
 
@@ -1264,8 +1273,8 @@ void loop() {
         tft.setTextColor(ILI9341_BLACK);
         if (trackTouchY == tracks) {
 
-          if (enc_moved[tracks]) {
-            trackColor[tracks] = constrain((trackColor[tracks] + (encoded[tracks])), 0, 16777215);
+          if (enc_moved[0]) {
+            trackColor[tracks] = constrain((trackColor[tracks] + (encoded[0])), 0, 16777215);
             if (tracks == 0) {
               //Drumtrack button
               tft.fillRect(1, STEP_FRAME_H, 15, TRACK_FRAME_H, trackColor[0]);  //Xmin, Ymin, Xlength, Ylength, color
@@ -1282,8 +1291,8 @@ void loop() {
         }
         if (trackTouchY == tracks + 4) {
 
-          if (enc_moved[tracks]) {
-            trackColor[tracks + 4] = constrain((trackColor[tracks + 4] + (encoded[tracks])), 0, 16777215);
+          if (enc_moved[0]) {
+            trackColor[tracks + 4] = constrain((trackColor[tracks + 4] + (encoded[0])), 0, 16777215);
 
             //other tracks buttons
 
@@ -1345,9 +1354,16 @@ void readMainButtons() {
       //last-pot-row
       if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
         lastPotRow++;
+
         if (lastPotRow >= 4) {
           lastPotRow = 0;
         }
+
+        if (lastPotRow >= 4) {
+          tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+        }
+        tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+        tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
       }
 
       //recbutton
@@ -1683,28 +1699,26 @@ void readMainButtons() {
           selectPage = FX3_PAGE1;
           FX3Delay_static();
         }
-        if (track[desired_instrument].seqMode == 1) {
-          if (key.bit.KEY == 55) {
+        if (key.bit.KEY == 55) {
+          if (track[desired_instrument].seqMode == 1) {
             selectPage = NFX1_PAGE1;
             NoteFX1_Page_Static();
           }
-        }
-        if (track[desired_instrument].seqMode == 2) {
-          if (key.bit.KEY == 55) {
+          if (track[desired_instrument].seqMode == 2) {
             selectPage = NFX2_PAGE1;
             NoteFX2_Page_Static();
           }
-        }
-        if (track[desired_instrument].seqMode == 3) {
-          if (key.bit.KEY == 55) {
+          if (track[desired_instrument].seqMode == 3) {
             selectPage = NFX3_PAGE1;
             NoteFX3_Page_Static();
           }
-        }
-        if (track[desired_instrument].seqMode == 4) {
-          if (key.bit.KEY == 55) {
+          if (track[desired_instrument].seqMode == 4) {
             selectPage = NFX4_PAGE1;
             NoteFX4_Page_Static();
+          }
+          if (track[desired_instrument].seqMode == 5) {
+            selectPage = NFX5_PAGE1;
+            //NoteFX5_Page_Static();
           }
         }
       }
@@ -1861,6 +1875,7 @@ void stopSeq() {
   msecs = 0;
 
   for (int track_number = 1; track_number <= 7; track_number++) {
+    track[track_number].MIDItick_16 = -1;
     if (track[track_number].MIDIchannel < 17) {
       usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
       MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);

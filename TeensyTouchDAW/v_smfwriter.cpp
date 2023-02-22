@@ -110,11 +110,7 @@ void SmfWriter::addNoteOffEvent(unsigned int deltaticks, byte channel, byte key)
   addEvent(deltaticks, data, 3);
 }
 
-void SmfWriter::addProgramChange(unsigned int deltaticks, byte programNumber, byte channel) {
-  byte statusByte = 0xD0 | channel;
-  byte data[2] = { statusByte, programNumber };
-  addEvent(deltaticks, data, 2);
-}
+
 
 void SmfWriter::addControlChange(unsigned int deltaticks, byte controlNumber, byte controlValue, byte channel) {
   byte statusByte = 0xC0 | channel;
@@ -136,32 +132,7 @@ void SmfWriter::addPitchBend(unsigned int deltaticks, double pitchValue, byte ch
   addPitchBend(deltaticks, pitch, channel);
 }
 
-void SmfWriter::addAfterTouch(unsigned int deltaticks, byte pressure, byte channel) {
-  byte statusByte = 0xA0 | channel;
-  byte data[2] = { statusByte, pressure };
-  addEvent(deltaticks, data, 2);
-}
 
-void SmfWriter::addAfterTouch(unsigned int deltaticks, byte noteNumber, byte pressure, byte channel) {
-  byte statusByte = 0xA0 | channel;
-  byte data[3] = { statusByte, noteNumber, pressure };
-  addEvent(deltaticks, data, 3);
-}
-
-void SmfWriter::addKeySignature(unsigned int deltaticks, byte sf, uint8_t mi) {
-  byte data[4] = { 0xFF, 0x59, sf, mi };
-  addEvent(deltaticks, data, 4);
-}
-
-void SmfWriter::addTimeSignature(unsigned int deltaticks, byte nn, byte dd, byte cc, byte bb) {
-  byte data[6] = { 0xFF, 0x58, nn, dd, cc, bb };
-  addEvent(deltaticks, data, 6);
-}
-
-void SmfWriter::addSMPTEOffset(unsigned int deltaticks, byte hr, byte mn, byte se, byte fr, byte ff) {
-  byte data[6] = { 0x80, hr, mn, se, fr, ff };
-  addEvent(deltaticks, data, 6);
-}
 
 void SmfWriter::addSetTempo(unsigned int deltaticks, double tempo) {
   unsigned int microseconds_per_quarter_note = 60000000 / tempo;
@@ -172,59 +143,7 @@ void SmfWriter::addSetTempo(unsigned int deltaticks, double tempo) {
   addEvent(deltaticks, data, 6);
 }
 
-void SmfWriter::addEndofTrack(unsigned int deltaticks, byte trackNumber) {
-  byte data[3] = { 0xFF, 0x2F, trackNumber };
-  addEvent(deltaticks, data, 3);
-}
 
-void SmfWriter::addSequenceNumber(unsigned int deltaticks, byte sequenceNumber) {
-  byte data[3] = { 0xFF, 0x00, sequenceNumber };
-  addEvent(deltaticks, data, 3);
-}
-
-void SmfWriter::addSysEx(unsigned int deltaticks, void* sysex, unsigned int length) {
-  byte data[length + 1];
-  data[0] = 0xF0;
-  memcpy(&data[1], sysex, length);
-  addEvent(deltaticks, data, length + 1);
-}
-
-void SmfWriter::addMetaText(unsigned int deltaticks, byte textType, const char* text) {
-  const size_t length = strlen(text);
-  byte data[length + 2];
-  data[0] = 0xFF;
-  data[1] = textType;
-  memcpy(&data[2], text, length);
-  addEvent(deltaticks, data, length + 2);
-}
-
-void SmfWriter::addTextEvent(unsigned int deltaticks, const char* text) {
-  addMetaText(deltaticks, 01, text);
-}
-
-void SmfWriter::addCopyrightNotice(unsigned int deltaticks, const char* text) {
-  addMetaText(deltaticks, 02, text);
-}
-
-void SmfWriter::addTrackName(unsigned int deltaticks, const char* text) {
-  addMetaText(deltaticks, 03, text);
-}
-
-void SmfWriter::addInstrumentName(unsigned int deltaticks, const char* text) {  // FF 04
-  addMetaText(deltaticks, 04, text);
-}
-
-void SmfWriter::addLyricText(unsigned int deltaticks, const char* text) {  // FF 05
-  addMetaText(deltaticks, 05, text);
-}
-
-void SmfWriter::addMarkerText(unsigned int deltaticks, const char* text) {  // FF 06
-  addMetaText(deltaticks, 06, text);
-}
-
-void SmfWriter::addCuePointText(unsigned int deltaticks, const char* text) {  // FF 07
-  addMetaText(deltaticks, 07, text);
-}
 
 void SmfWriter::flush() {
   if (_bufferPos == 0) return;

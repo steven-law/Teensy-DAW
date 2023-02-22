@@ -423,4 +423,3 @@ Chat1* NFX5;
 byte NFX5presetNr = 0;
 int stepValues[numTracks];
 
-
