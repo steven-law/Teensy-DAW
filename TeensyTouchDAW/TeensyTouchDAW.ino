@@ -770,6 +770,8 @@ void setup() {
   Serial.println("Initializing Sequencer");
   tft.println("Initializing Sequencer");
   //tft.updateScreen();
+<<<<<<< HEAD:TeensyTouchDAW/TeensyTouchDAW.ino
+<<<<<<< HEAD:TeensyTouchDAW/TeensyTouchDAW.ino
 <<<<<<< HEAD
   //allocate tracks
   track = new tracks[NUM_TRACKS];
@@ -814,6 +816,10 @@ void setup() {
   }
 =======
 >>>>>>> parent of d7c700b (clock divisions cause a crash)
+=======
+>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/a_15stepTeensyDAW4.ino
+=======
+>>>>>>> parent of d7c700b (clock divisions cause a crash):a_15stepTeensyDAW4/a_15stepTeensyDAW4.ino
   delay(100);
 
 
