@@ -320,7 +320,7 @@ struct track_t {
   byte midi_channel;               // stores the MIDI channel that this track should output on; 10 is drums
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
-track_t* ctrack;
+track_t ctrack[NUM_TRACKS];
 
 //Scales
 bool scaleSelect = LOW;
@@ -386,8 +386,8 @@ struct tracks {
   int lastpresetNr = 0;
   int volume[256];
   int lastvolume = 100;
-  int notePlayed;
-  int notePlayedLast;
+  int notePlayed = 0;
+  int notePlayedLast = 0;
   bool notePressed;
   bool envActive;
   bool playNoteOnce;
@@ -413,7 +413,7 @@ struct tracks {
   int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
-tracks* track;
+tracks track[NUM_TRACKS];
 
 
 

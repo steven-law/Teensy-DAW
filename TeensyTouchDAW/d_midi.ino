@@ -63,7 +63,7 @@ void sendClock() {
         tick_16++;
         //digitalWrite(22, HIGH);
 
-        
+
         if (debugTime) {
           SerialPrintSeq();
         }
@@ -143,8 +143,7 @@ void step() {
         for (int i = 0; i < 12; i++) {
           //if the last step was high, stop the notes
           if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16 - 1]) {
-            //drumnotes[i] = false;
-            // DrumPluginPlay();
+
             if (track[0].MIDIchannel < 17) {
               usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
               MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
@@ -254,7 +253,6 @@ void step() {
           }
         }
       }
-
       if (track[0].seqMode == 5) {
         if (track[0].clip_songMode < 8) {
         }
@@ -270,19 +268,23 @@ void step() {
 
         if (track[track_number].seqMode == 0) {
           track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] + track[track_number].NoteOffset[phrase];
-          track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] + track[track_number].NoteOffset[phrase];
+          if (track[track_number].MIDItick_16 <= 0) {
+            track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[NUM_STEPS - 1] + track[track_number].NoteOffset[phrase];
+          } else {
+            track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] + track[track_number].NoteOffset[phrase];
+          }
 
+          //if the last step wass high, stop the notes
+          if ((ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] || ctrack[track_number].sequence[track[track_number].clip_songMode].step[NUM_STEPS - 1]) > VALUE_NOTEOFF) {
+            track[track_number].notePressed = false;
+
+            //PluginNoteOff();
+          }
           //if the actual step is high, play the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
             track[track_number].playNoteOnce = true;
             track[track_number].notePressed = true;
-          }
-          //PluginNoteOn();
-
-          //if the last step wass high, stop the notes
-          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
-            track[track_number].notePressed = false;
-            //PluginNoteOff();
+            //PluginNoteOn();
           }
         }
         if (track[track_number].seqMode == 2) {
@@ -342,7 +344,6 @@ void step() {
             }
           }
         }
-
         if (track[track_number].seqMode == 3) {
           //if the actual step is high, play the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
@@ -562,7 +563,7 @@ void myClock() {
   msecs = 0;
   if (MIDItick % 6 == 0) {
     tick_16++;
-    
+
     drawstepPosition(tick_16);
     drawbarPosition();
   }

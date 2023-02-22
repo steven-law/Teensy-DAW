@@ -787,8 +787,8 @@ void setup() {
   dsend_noteOff = new bool[num_voice];
   //tft.updateScreen();
   //allocate tracks
-  track = new tracks[NUM_TRACKS];
-  ctrack = new track_t[NUM_TRACKS];  
+  //track = new tracks[NUM_TRACKS];
+  //ctrack = new track_t[NUM_TRACKS];  
   //allocate plugins
   pl1 = new plugin1[MAX_PRESETS];
   pl2 = new plugin2[MAX_PRESETS];
