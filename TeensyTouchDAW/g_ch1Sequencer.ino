@@ -209,6 +209,7 @@ void saveTrack1() {
     // if the file didn't open, print an error:
     tft.println("error opening track1.txt");
   }
+  saveMIDItrackDrum();
 }
 void loadTrack1() {
   tft.fillScreen(ILI9341_DARKGREY);
@@ -246,4 +247,28 @@ void loadTrack1() {
     // if the file didn't open, print an error:
     tft.println("error opening track1.txt");
   }
+}
+void saveMIDItrackDrum() {
+  SmfWriter writer;
+  writer.setFilename("track1");
+  writer.writeHeader();
+  //Serial.print("Start saving-> ");
+  //writer.addSetTempo(tempo);
+  //double microsPerTick = writer.get_microseconds_per_tick();
+  deltaStep = 0;
+  for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
+    for (int svoice = 0; svoice < num_voice; svoice++) {
+      for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+        if (channel1Clip[sclip][svoice][sstep] > 0) {
+          writer.addNoteOnEvent(deltaStep, desired_instrument, drumnote[svoice], 127);
+          writer.addNoteOffEvent(4, desired_instrument, drumnote[svoice]);
+          deltaStep = 0;
+        }
+        if (channel1Clip[sclip][svoice][sstep] <= 0) {
+          deltaStep = deltaStep + 4;
+        }
+      }
+    }
+  }
+  writer.flush();
 }
