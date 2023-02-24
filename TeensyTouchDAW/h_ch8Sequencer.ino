@@ -5,6 +5,7 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   drawActiveSteps();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
+  drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
   drawMIDIchannel();
   midi01.sendControlChange(0, 0, 1);
   LP_drawStepsequencer();
@@ -88,13 +89,18 @@ void melodicStepSequencer(int desired_instrument) {
     }
     //seqMode
     if (enc_moved[1]) {
-      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES-1);
+      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES - 1);
       drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
     }
     //step diviion
     if (enc_moved[2]) {
       track[desired_instrument].MIDItick_reset = constrain((track[desired_instrument].MIDItick_reset + encoded[2]), 0, 97);
       drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
+    }
+    //step length
+    if (enc_moved[3]) {
+      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, (track[desired_instrument].MIDItick_reset-1));
+      drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
     }
   }
 

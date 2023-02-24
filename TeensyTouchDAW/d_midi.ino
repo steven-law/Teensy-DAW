@@ -45,13 +45,19 @@ void sendClock() {
     if (msecsclock > _clock) {
       MIDItick++;
       for (int i = 0; i < NUM_TRACKS; i++) {
+        track[i].MIDItick++;
         if (MIDItick % track[i].MIDItick_reset == 0) {
           track[i].MIDItick_16++;
+          track[i].MIDItick = 0;
+          for (int b = 0; b < num_voice; b++) {
+            dsend_noteOff[b] = false;
+          }
           if (track[i].MIDItick_16 == NUM_STEPS) {
             track[i].MIDItick_16 = 0;
           }
         }
       }
+      
       //Serial.println(track[0].MIDItick_16);
       usbMIDI.sendRealTime(usbMIDI.Clock);
       MIDI.sendRealTime(0xF8);
@@ -141,20 +147,7 @@ void step() {
 
       if (track[0].seqMode == 0) {
         for (int i = 0; i < 12; i++) {
-          //if the last step was high, stop the notes
-          if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16 - 1]) {
 
-            if (track[0].MIDIchannel < 17) {
-              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              for (int usbs = 0; usbs < 10; usbs++) {
-                if (!launchpad) {
-                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                }
-              }
-            }
-            dsend_noteOff[i] = false;
-          }
           //if the actual step is high, play the notes
           if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16]) {
             if (!dsend_noteOff[i]) {
@@ -170,6 +163,22 @@ void step() {
                   }
                 }
               }
+            }
+          }
+          //if the last step was high, stop the notes
+          if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16 - 1]) {
+
+            if (track[0].MIDIchannel < 17) {
+              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+              for (int usbs = 0; usbs < 10; usbs++) {
+                if (!launchpad) {
+                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
+                }
+              }
+            }
+            if (track[0].MIDItick == (track[0].MIDItick_reset)) {
+              //dsend_noteOff[i] = false;
             }
           }
         }
@@ -261,6 +270,7 @@ void step() {
   }
 
 
+
   //send midinoteOn/Off´s for melodic track #2 -8
   for (int track_number = 1; track_number <= 7; track_number++) {
     if (!track[track_number].solo_mutes_state) {
@@ -274,17 +284,20 @@ void step() {
             track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] + track[track_number].NoteOffset[phrase];
           }
 
-          //if the last step wass high, stop the notes
+          /* //if the last step wass high, stop the notes
           if ((ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] || ctrack[track_number].sequence[track[track_number].clip_songMode].step[NUM_STEPS - 1]) > VALUE_NOTEOFF) {
             track[track_number].notePressed = false;
 
             //PluginNoteOff();
-          }
+          }*/
           //if the actual step is high, play the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
             track[track_number].playNoteOnce = true;
             track[track_number].notePressed = true;
-            //PluginNoteOn();
+            //NoteOff
+            if (track[track_number].MIDItick >= track[track_number].stepLength) {
+              track[track_number].notePressed = false;
+            }
           }
         }
         if (track[track_number].seqMode == 2) {
@@ -304,15 +317,19 @@ void step() {
                   ;
                   track[track_number].playNoteOnce = true;
                   track[track_number].notePressed = true;
+                  //NoteOff
+                  if (track[track_number].MIDItick >= track[track_number].stepLength) {
+                    track[track_number].notePressed = false;
+                  }
                 }
               }
 
-
+              /*
               if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
                 analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
                 track[track_number].notePressed = false;
                 //PluginNoteOff();
-              }
+              }*/
             }
             if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
               for (int i = 11; i > 0; i--) {
@@ -328,15 +345,21 @@ void step() {
                   ;
                   track[track_number].playNoteOnce = true;
                   track[track_number].notePressed = true;
+                  //NoteOff
+                  if (track[track_number].MIDItick >= track[track_number].stepLength) {
+                    track[track_number].notePressed = false;
+                  }
                 }
               }
             }
           }
+
+          /*
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
             analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
             track[track_number].notePressed = false;
             //PluginNoteOff();
-          }
+          }*/
 
           if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
             for (int i = 0; i < 12; i++) {
@@ -352,14 +375,18 @@ void step() {
             track[track_number].notePlayedLast = track[track_number].notePlayed;
             track[track_number].playNoteOnce = true;
             track[track_number].notePressed = true;
+            //NoteOff
+            if (track[track_number].MIDItick >= track[track_number].stepLength) {
+              track[track_number].notePressed = false;
+            }
           }
           //PluginNoteOn();
-
+          /*
           //if the last step wass high, stop the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
             track[track_number].notePressed = false;
             //PluginNoteOff();
-          }
+          }*/
         }
       }
     }
@@ -555,7 +582,57 @@ void midiCCpage1_Dynamic(int desired_instrument) {
   }
 }
 
-
+void startSeq() {
+  phrase = start_of_loop;
+  seq_run = true;
+  msecs = 0;
+  for (int i = 1; i <= 7; i++) {
+    track[i].clip_songMode = track[i].arrangment1[start_of_loop];
+  }
+}
+void stopSeq() {
+  seq_run = false;
+  tick_16 = -1;
+  phrase = start_of_loop - 1;
+  pixelphrase = -1;
+  phrase = 0;
+  msecs = 0;
+  for (int track_number = 0; track_number < NUM_TRACKS; track_number++) {
+    track[track_number].MIDItick_16 = -1;
+    track[track_number].MIDItick = -1;
+  }
+  for (int track_number = 1; track_number <= 7; track_number++) {
+    track[track_number].MIDItick_16 = -1;
+    if (track[track_number].MIDIchannel < 17) {
+      usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+      MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+    }
+    if (track[track_number].MIDIchannel == 17) {
+      envelope1.noteOff();
+      envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 19) {
+      pl3envelope1.noteOff();
+      pl3envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 21) {
+      pl5envelope1.noteOff();
+      pl5envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 22) {
+      pl6envelope1.noteOff();
+      pl6envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 24) {
+      pl8envelope1.noteOff();
+      pl8envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 25) {
+      pl9string1.noteOff(VELOCITYOFF);
+    }
+  }
+  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+}
 
 void myClock() {
   MIDItick++;

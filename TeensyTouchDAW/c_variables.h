@@ -395,6 +395,7 @@ struct tracks {
   int MIDItick = 0;
   int MIDItick_16 = 0;
   int MIDItick_reset = 6;
+  int stepLength = 5;
   byte Volume_graph = 50;
   float Volume = 1;
 
