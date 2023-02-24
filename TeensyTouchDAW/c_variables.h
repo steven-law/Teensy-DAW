@@ -414,7 +414,7 @@ struct tracks {
   int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
-tracks track[NUM_TRACKS];
+tracks* track;
 
 
 
