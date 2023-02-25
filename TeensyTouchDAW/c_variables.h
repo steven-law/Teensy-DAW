@@ -222,6 +222,7 @@ byte songpages;
 byte stepOld;
 int deltaStep = 0;
 
+
 byte step_Frame_X;
 byte step_Frame_Y;
 
@@ -387,7 +388,7 @@ struct tracks {
   int volume[256];
   int lastvolume = 100;
   int notePlayed = 0;
-  int notePlayedLast = 0;
+  //int notePlayedLast = 0;
   bool notePressed;
   bool envActive;
   bool playNoteOnce;
@@ -395,6 +396,7 @@ struct tracks {
   int MIDItick = 0;
   int MIDItick_16 = 0;
   int MIDItick_reset = 6;
+  bool tick_true = false;
   int stepLength = 5;
   byte Volume_graph = 50;
   float Volume = 1;

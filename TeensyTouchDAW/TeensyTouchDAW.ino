@@ -1,4 +1,4 @@
-bool debugTime = true;
+bool debugTime = false;
 extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
