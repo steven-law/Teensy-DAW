@@ -445,7 +445,8 @@ byte maxVal = 0;
 byte analogReadArray[16];
 const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
 
-
+//seqmode ratcheting
+bool*** ratchet;
 
 
 //seqmode "Rand"

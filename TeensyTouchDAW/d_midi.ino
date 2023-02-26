@@ -237,6 +237,27 @@ void step() {
       }
       if (track[0].seqMode == 5) {
         if (track[0].clip_songMode < 8) {
+          for (int i = 0; i < 12; i++) {
+
+
+            //if the actual step is high, play the notes
+            if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16]) {
+              if (!dsend_noteOff[i]) {
+                drumnotes[i] = true;
+                dsend_noteOff[i] = true;
+                if ()
+                if (track[0].MIDIchannel < 17) {
+                  usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  for (int usbs = 0; usbs < 10; usbs++) {
+                    if (!launchpad) {
+                      usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -292,23 +313,23 @@ void step() {
               }
               track[track_number].playNoteOnce = true;
               track[track_number].notePressed = true;
-
               track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
               Serial.print(track[track_number].notePlayed);
               Serial.print("--");
+
               analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
               Serial.println(maxValIndex);
-              if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
-                for (int i = 0; i < 12; i++) {
-                  analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
-                }
-              }
             }
 
             //NoteOff
             if (track[track_number].MIDItick >= track[track_number].stepLength) {
               track[track_number].notePressed = false;
               Serial.println(track[track_number].notePlayed);
+            }
+          }
+          if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
+            for (int i = 0; i < 12; i++) {
+              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
             }
           }
         }
