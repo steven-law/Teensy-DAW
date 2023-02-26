@@ -45,6 +45,29 @@ void sendClock() {
     if (msecsclock > _clock) {
       MIDItick++;
 
+
+      if (track[0].seqMode == 5) {
+
+        for (int b = 0; b < 12; b++) {
+          if (MIDItick % 2 == 0) {
+            if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
+              if (dsend_noteOff[b]) {
+                dsend_noteOff[b] = false;
+                if (track[0].MIDIchannel < 17) {
+                  usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  for (int usbs = 0; usbs < 10; usbs++) {
+                    if (!launchpad) {
+                      usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
       for (int i = 0; i < NUM_TRACKS; i++) {
         track[i].MIDItick++;
 
@@ -241,11 +264,10 @@ void step() {
 
 
             //if the actual step is high, play the notes
-            if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16]) {
+            if (channel1Clip[NFX5presetNr][i][track[0].MIDItick_16]) {
               if (!dsend_noteOff[i]) {
                 drumnotes[i] = true;
                 dsend_noteOff[i] = true;
-                if ()
                 if (track[0].MIDIchannel < 17) {
                   usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
                   MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
@@ -1034,7 +1056,7 @@ void myControlChange(int channel, byte control, byte value) {
         }
         if (track[desired_instrument].seqMode == 5) {
           selectPage = NFX5_PAGE1;
-          //NoteFX5_Page_Static();
+          NoteFX5_Page_Static();
         }
       }
     }

@@ -80,7 +80,7 @@ void Plugin_View_Static() {
     NoteFX4_Page_Static();
   }
   if (selectPage == NFX5_PAGE1) {
-    //NoteFX5_Page_Static();
+    NoteFX5_Page_Static();
   }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
@@ -221,10 +221,10 @@ void Plugin_View_Dynamic() {
     NoteFX4_Page1_Dynamic();
     NoteFX4_Control();
   }
-  //setting up the //NoteFX5-view
+  //setting up the NoteFX5-view
   if (selectPage == NFX5_PAGE1) {
-    //NoteFX5_Page1_Dynamic();
-    //NoteFX5_Control();
+    NoteFX5_Page1_Dynamic();
+    NoteFX5_Control();
   }
 
 
@@ -511,7 +511,7 @@ void beatComponents() {
     }
     if (track[instruments].seqMode == 5) {
       //NFX5presetNr = track[instruments].clip_songMode;
-      ////NoteFX5_Change();
+      //NoteFX5_Change();
     }
   }
 }

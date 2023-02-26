@@ -314,7 +314,7 @@ byte pl9presetNr = 0;
 #define NFX3_PAGE1 135
 #define NFX4_PAGE1 138
 #define NFX5_PAGE1 140
-const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Chat1" };
+const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ratch" };
 
 //seqmode "grid"
 struct Grids {
@@ -445,8 +445,7 @@ byte maxVal = 0;
 byte analogReadArray[16];
 const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
 
-//seqmode ratcheting
-bool*** ratchet;
+
 
 
 //seqmode "Rand"
@@ -480,6 +479,8 @@ struct Chat1 {
   int Pot_Value[4];
   int Pot_Value_graph[4] = { 64, 64, 64, 64 };
 };
+//seqmode ratcheting
+bool*** ratchet;
 Chat1* NFX5;
 byte NFX5presetNr = 0;
 int stepValues[numTracks];

@@ -784,18 +784,19 @@ void setup() {
     }
   }
 
-    channel1Clip = new bool **[NUM_CLIPS];
+//ratcheting array
+    ratchet = new bool **[NUM_CLIPS];
   for (int i = 0; i < NUM_CLIPS; i++) {
-    channel1Clip[i] = new bool *[num_voice];
+    ratchet[i] = new bool *[num_voice];
     for (int j = 0; j < num_voice; j++) {
-      channel1Clip[i][j] = new bool[STEP_QUANT];
+      ratchet[i][j] = new bool[STEP_QUANT];
     }
   }
   // fill the array
   for (int i = 0; i < NUM_CLIPS; i++) {
     for (int j = 0; j < num_voice; j++) {
       for (int k = 0; k < STEP_QUANT; k++) {
-        channel1Clip[i][j][k] = 0;
+        ratchet[i][j][k] = 0;
       }
     }
   }
@@ -1734,7 +1735,7 @@ void readMainButtons() {
           }
           if (track[desired_instrument].seqMode == 5) {
             selectPage = NFX5_PAGE1;
-            //NoteFX5_Page_Static();
+            NoteFX5_Page_Static();
           }
         }
       }
