@@ -315,7 +315,7 @@ void step() {
             if (track[track_number].tick_true) {
               track[track_number].tick_true = false;
               maxVal = 0;
-              if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
+              if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value) {
                 for (int i = 0; i < 12; i++) {
                   if (analogReadArray[i] > maxVal) {
                     maxVal = analogReadArray[i];
@@ -325,7 +325,7 @@ void step() {
                 }
               }
 
-              if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
+              if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value) {
                 for (int i = 11; i >= 0; i--) {
                   if (analogReadArray[i] > maxVal) {
                     maxVal = analogReadArray[i];
@@ -352,7 +352,7 @@ void step() {
           }
           if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
             for (int i = 0; i < 12; i++) {
-              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
+              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value;
             }
           }
         }

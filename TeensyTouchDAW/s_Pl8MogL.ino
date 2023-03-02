@@ -37,32 +37,11 @@ void Plugin8_Control() {
         drawPot(CTRL_COL_0, CTRL_ROW_0, pl8[pl8presetNr].wfSelect_graph, pl8[pl8presetNr].wfSelect, "WForm", trackColor[desired_track]);
       }
       break;
-
     case 1:
-      if (pl8[pl8presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
-        pl8[pl8presetNr].Filter1_Frequency_graph = Potentiometer[0];
-        pl8[pl8presetNr].Filter1_Frequency = note_frequency[pl8[pl8presetNr].Filter1_Frequency_graph];
-        pl8filter1.frequency(pl8[pl8presetNr].Filter1_Frequency);
-        drawPot(CTRL_COL_0, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Frequency_graph, pl8[pl8presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
-      }
-
-      if (pl8[pl8presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
-        pl8[pl8presetNr].Filter1_Resonance_graph = Potentiometer[1];
-        pl8[pl8presetNr].Filter1_Resonance = pl8[pl8presetNr].Filter1_Resonance_graph / 25.40;
-        pl8filter1.resonance(pl8[pl8presetNr].Filter1_Resonance);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Resonance_graph, pl8[pl8presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
-      }
-      if (pl8[pl8presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
-        pl8[pl8presetNr].Filter1_Sweep_graph = Potentiometer[2];
-        pl8[pl8presetNr].Filter1_Sweep = pl8[pl8presetNr].Filter1_Sweep_graph / 18.14;
-        pl8filter1.octaveControl(pl8[pl8presetNr].Filter1_Sweep);
-        drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl8[pl8presetNr].Filter1_Sweep_graph, pl8[pl8presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
-      }
-
+      Ladder_Filter(0, 0, CTRL_ROW_1);
       break;
-
     case 2:
-      ADSR(4, 0, CTRL_ROW_2); 
+      ADSR(4, 0, CTRL_ROW_2);
       break;
   }
 }

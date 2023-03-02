@@ -173,9 +173,9 @@ void loadNoteFX4() {
     tft.print("reading NoteFX4 from NoteFX4.txt...");
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        //  NFX4[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
-        //  NFX4[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
-        //  NFX4[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value[touchX + 7] = myFile.read();
       }
     }
 

@@ -121,63 +121,11 @@ void Plugin1_Control2() {
 
   switch (lastPotRow) {
     case 0:
-      if (pl1[pl1presetNr].Filter1_Frequency_graph != Potentiometer[0]) {
-        pl1[pl1presetNr].Filter1_Frequency_graph = Potentiometer[0];
-        pl1[pl1presetNr].Filter1_Frequency = note_frequency[pl1[pl1presetNr].Filter1_Frequency_graph];
-        filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
-        drawPot(CTRL_COL_0, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Frequency_graph, pl1[pl1presetNr].Filter1_Frequency, "Freq", trackColor[desired_track]);
-      }
-
-      if (pl1[pl1presetNr].Filter1_Resonance_graph != Potentiometer[1]) {
-        pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer[1];
-        pl1[pl1presetNr].Filter1_Resonance = pl1[pl1presetNr].Filter1_Resonance_graph / 25.40;
-        filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
-      }
-      if (pl1[pl1presetNr].Filter1_Sweep_graph != Potentiometer[2]) {
-        pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer[2];
-        pl1[pl1presetNr].Filter1_Sweep = pl1[pl1presetNr].Filter1_Sweep_graph / 18.14;
-        filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-        drawPot_3(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
-      }
-      if (pl1[pl1presetNr].Filter1_Type_graph != Potentiometer[3]) {
-        pl1[pl1presetNr].Filter1_Type_graph = Potentiometer[3];
-        pl1[pl1presetNr].Filter1_Type = pl1[pl1presetNr].Filter1_Type_graph /SVF_TYP;
-        selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
-        drawPot_4(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
-        drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
-      }
+      StateVar_Filter(0, 0, CTRL_ROW_1);
 
       break;
     case 1:
-      if (pl1[pl1presetNr].Env1_Attack_graph != Potentiometer[0]) {
-        pl1[pl1presetNr].Env1_Attack_graph = Potentiometer[0];
-        pl1[pl1presetNr].Env1_Attack = map(pl1[pl1presetNr].Env1_Attack_graph, 0, 127, 10, 700);
-        envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-        envelope2.attack(pl1[pl1presetNr].Env1_Attack);
-        drawPot(CTRL_COL_0, CTRL_ROW_1, pl1[pl1presetNr].Env1_Attack_graph, pl1[pl1presetNr].Env1_Attack, "Atck", trackColor[desired_track]);
-      }
-      if (pl1[pl1presetNr].Env1_Decay_graph != Potentiometer[1]) {
-        pl1[pl1presetNr].Env1_Decay_graph = Potentiometer[1];
-        pl1[pl1presetNr].Env1_Decay = map(pl1[pl1presetNr].Env1_Decay_graph, 0, 127, 10, 700);
-        envelope1.decay(pl1[pl1presetNr].Env1_Decay);
-        envelope2.decay(pl1[pl1presetNr].Env1_Decay);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Env1_Decay_graph, pl1[pl1presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
-      }
-      if (pl1[pl1presetNr].Env1_Sustain_graph != Potentiometer[2]) {
-        pl1[pl1presetNr].Env1_Sustain_graph = Potentiometer[2];
-        pl1[pl1presetNr].Env1_Sustain = pl1[pl1presetNr].Env1_Sustain_graph / 127.00;
-        envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
-        envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
-        drawPot_3(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Env1_Sustain_graph, pl1[pl1presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
-      }
-      if (pl1[pl1presetNr].Env1_Release_graph != Potentiometer[3]) {
-        pl1[pl1presetNr].Env1_Release_graph = Potentiometer[3];
-        pl1[pl1presetNr].Env1_Release = map(pl1[pl1presetNr].Env1_Release_graph, 0, 127, 180, 1200);
-        envelope1.release(pl1[pl1presetNr].Env1_Release);
-        envelope2.release(pl1[pl1presetNr].Env1_Release);
-        drawPot_4(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_track]);
-      }
+      ADSR(1, 0, CTRL_ROW_2);
       break;
   }
 }
@@ -190,7 +138,6 @@ void Plugin1_Page1_Dynamic() {
       pl1presetNr = constrain((pl1presetNr + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, pl1presetNr, ILI9341_PURPLE);
       Plugin1_Page_Static(0);
-      
     }
   }
 
@@ -304,24 +251,28 @@ void Plugin1_Page2_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Filter Frequency
-        Potentiometer[0] = pl1[pl1presetNr].Filter1_Frequency_graph;
+
         if (enc_moved[0]) {
           Potentiometer[0] = constrain((pl1[pl1presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
+          pl1[pl1presetNr].Filter1_Frequency_graph = Potentiometer[0];
         }
         //Resonance
-        Potentiometer[1] = pl1[pl1presetNr].Filter1_Resonance_graph;
+
         if (enc_moved[1]) {
           Potentiometer[1] = constrain((pl1[pl1presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
+          pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer[1];
         }
         //Sweep
-        Potentiometer[2] = pl1[pl1presetNr].Filter1_Sweep_graph;
+
         if (enc_moved[2]) {
           Potentiometer[2] = constrain((pl1[pl1presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
+          pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer[2];
         }
         //Filtertype
-        Potentiometer[3] = pl1[pl1presetNr].Filter1_Type *SVF_TYP;
+
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 2) *SVF_TYP;
+          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 127);
+          pl1[pl1presetNr].Filter1_Type = Potentiometer[3] / SVF_TYP;
         }
         break;
 
@@ -453,4 +404,3 @@ void Plugin1_Change() {
   envelope1.release(pl1[pl1presetNr].Env1_Release);
   envelope2.release(pl1[pl1presetNr].Env1_Release);
 }
-

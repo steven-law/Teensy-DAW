@@ -43,6 +43,10 @@ float PotValueSVF_RES; //state variable filter reso
 float PotValueSVF_SWP; //state variable filter sweep
 int PotValueSVF_TYP; //state variable filter type
 
+int PotValueLDF_FREQ; //state variable filter freq
+float PotValueLDF_RES; //state variable filter reso
+float PotValueLDF_SWP; //state variable filter sweep
+
 
 
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
@@ -86,18 +90,21 @@ byte pl2presetNr = 0;
 
 //plugin 3 variables
 struct plugin3 {
-  byte Filter1_Frequency_graph = 50;
-  byte Filter1_Resonance_graph = 0;
-  byte Filter1_Sweep_graph = 50;
-  byte Filter1_Type = 0;
-  byte Env1_Attack_graph = 50;
-  byte Env1_Decay_graph = 50;
-  byte Env1_Sustain_graph = 127;
-  byte Env1_Release_graph = 50;
+  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
+  //Pot_Value[0] = waveform
+
+  //Pot_Value[4] = Filt_Freq
+  //Pot_Value[5] = Filt_Reso
+  //Pot_Value[6] = Filt_swep
+  //Pot_Value[7] = Filt_Type
+
+  //Pot_Value[8] = Attack
+  //Pot_Value[9] = Decay
+  //Pot_Value[10] = Sustain
+  //Pot_Value[11] = Release
   float note1_Velo = 1;
   byte note1_Velo_rnd;
   byte wfSelect;
-  byte wfSelect_graph;
 };
 plugin3* pl3;
 byte pl3presetNr = 0;
@@ -112,16 +119,20 @@ byte pl4presetNr = 0;
 
 //plugin 5 variables
 struct plugin5 {
-  byte Filter1_Frequency_graph = 50;
-  byte Filter1_Resonance_graph = 50;
-  byte Filter1_Sweep_graph = 50;
-  byte Filter1_Type = 0;
-  byte Env1_Attack_graph = 50;
-  byte Env1_Decay_graph = 50;
-  byte Env1_Sustain_graph = 127;
-  byte Env1_Release_graph = 50;
-  byte selected_file;
-  byte selected_file_graph = 0;
+  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
+  //Pot_Value[0] = selected file
+
+  //Pot_Value[4] = Filt_Freq
+  //Pot_Value[5] = Filt_Reso
+  //Pot_Value[6] = Filt_swep
+  //Pot_Value[7] = Filt_Type
+
+  //Pot_Value[8] = Attack
+  //Pot_Value[9] = Decay
+  //Pot_Value[10] = Sustain
+  //Pot_Value[11] = Release
+
+
   byte Volume_graph = 50;
   float Volume;
 };
@@ -131,16 +142,19 @@ bool pl5enter_was_pushed = true;
 
 //plugin 6 variables
 struct plugin6 {
-  byte Filter1_Frequency_graph = 50;
-  byte Filter1_Resonance_graph = 50;
-  byte Filter1_Sweep_graph = 50;
-  byte Filter1_Type = 0;
-  byte Env1_Attack_graph = 50;
-  byte Env1_Decay_graph = 50;
-  byte Env1_Sustain_graph = 127;
-  byte Env1_Release_graph = 50;
-  byte selected_file;
-  byte selected_file_graph = 0;
+  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
+  //Pot_Value[0] = selected file
+
+  //Pot_Value[4] = Filt_Freq
+  //Pot_Value[5] = Filt_Reso
+  //Pot_Value[6] = Filt_swep
+  //Pot_Value[7] = Filt_Type
+
+  //Pot_Value[8] = Attack
+  //Pot_Value[9] = Decay
+  //Pot_Value[10] = Sustain
+  //Pot_Value[11] = Release
+
   byte Volume_graph = 50;
   float Volume_rnd;
   float Volume;
@@ -257,6 +271,7 @@ byte pl7presetNr = 0;
 
 //plugin 8 variables
 struct plugin8 {
+  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
   float Filter1_Frequency;
   byte Filter1_Frequency_graph;
   float Filter1_Resonance;
@@ -280,6 +295,18 @@ plugin8* pl8;
 byte pl8presetNr = 0;
 
 struct plugin9 {
+    byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
+  //Pot_Value[0] = selected file
+
+  //Pot_Value[4] = Filt_Freq
+  //Pot_Value[5] = Filt_Reso
+  //Pot_Value[6] = Filt_swep
+  //Pot_Value[7] = Filt_Type
+
+  //Pot_Value[8] = Attack
+  //Pot_Value[9] = Decay
+  //Pot_Value[10] = Sustain
+  //Pot_Value[11] = Release
   byte wavefold_graph;
   float wavefold;
   byte wah_form;
@@ -317,7 +344,7 @@ const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ra
 //seqmode "grid"
 struct Grids {
   byte Pot_Value[12]{0};
-  byte Pot_Value_graph[12]{0};
+//  byte Pot_Value_graph[12]{0};
 };
 Grids* NFX1;
 byte NFX1presetNr = 0;
@@ -431,7 +458,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
 //seqmode "dropseq"
 struct Drops {
   byte Pot_Value[16]{0};
-  byte Pot_Value_graph[16]{0};
+//  byte Pot_Value_graph[16]{0};
 };
 Drops* NFX2;
 byte NFX2presetNr = 0;
@@ -449,7 +476,7 @@ const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
 //seqmode "Rand"
 struct rands {
   byte Pot_Value[16]{5};
-  byte Pot_Value_graph[16]{5};
+//  byte Pot_Value_graph[16]{5};
   byte Oct1 = 5;
   byte Oct2 = 6;
 };

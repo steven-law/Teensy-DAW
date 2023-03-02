@@ -347,7 +347,7 @@ void PluginNoteOn() {
             double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
 
             playSdPitch2.setPlaybackRate(note_ratio);
-            playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
+            playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].Pot_Value[0]], 1);
             pl6envelope1.noteOn();
             pl6envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
@@ -616,15 +616,15 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 19) {
       //save plugin 3 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)pl3[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl3[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl3[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl3[maxpreset].Env1_Attack_graph);
-        myFile.print((char)pl3[maxpreset].Env1_Decay_graph);
-        myFile.print((char)pl3[maxpreset].Env1_Sustain_graph);
-        myFile.print((char)pl3[maxpreset].Env1_Release_graph);
-        myFile.print((char)pl3[maxpreset].wfSelect);
-        myFile.print((char)pl3[maxpreset].Filter1_Type);
+        myFile.print((char)pl3[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[8]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[9]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[10]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[11]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[0]);
+        myFile.print((char)pl3[maxpreset].Pot_Value[7]);
       }
     }
     if (trackNr == 20) {
@@ -640,44 +640,44 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 21) {
       //save plugin 5 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)pl5[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl5[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl5[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl5[maxpreset].Env1_Attack_graph);
-        myFile.print((char)pl5[maxpreset].Env1_Decay_graph);
-        myFile.print((char)pl5[maxpreset].Env1_Sustain_graph);
-        myFile.print((char)pl5[maxpreset].Env1_Release_graph);
-        myFile.print((char)pl5[maxpreset].selected_file_graph);
+        myFile.print((char)pl5[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[8]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[9]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[10]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[11]);
+        myFile.print((char)pl5[maxpreset].Pot_Value[0]);
         myFile.print((char)pl5[maxpreset].Volume_graph);
-        myFile.print((char)pl5[maxpreset].Filter1_Type);
+        myFile.print((char)pl5[maxpreset].Pot_Value[7]);
       }
     }
     if (trackNr == 22) {
       //save plugin 6 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)pl6[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl6[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl6[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl6[maxpreset].Env1_Attack_graph);
-        myFile.print((char)pl6[maxpreset].Env1_Decay_graph);
-        myFile.print((char)pl6[maxpreset].Env1_Sustain_graph);
-        myFile.print((char)pl6[maxpreset].Env1_Release_graph);
-        myFile.print((char)pl6[maxpreset].selected_file_graph);
+        myFile.print((char)pl6[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[8]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[9]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[10]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[11]);
+        myFile.print((char)pl6[maxpreset].Pot_Value[0]);
         myFile.print((char)pl6[maxpreset].Volume_graph);
-        myFile.print((char)pl6[maxpreset].Filter1_Type);
+        myFile.print((char)pl6[maxpreset].Pot_Value[7]);
       }
     }
     if (trackNr == 24) {
       //save plugin 8 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)pl8[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl8[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl8[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl8[maxpreset].Env1_Attack_graph);
-        myFile.print((char)pl8[maxpreset].Env1_Decay_graph);
-        myFile.print((char)pl8[maxpreset].Env1_Sustain_graph);
-        myFile.print((char)pl8[maxpreset].Env1_Release_graph);
-        myFile.print((char)pl8[maxpreset].wfSelect);
+        myFile.print((char)pl8[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[8]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[9]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[10]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[11]);
+        myFile.print((char)pl8[maxpreset].Pot_Value[0]);
       }
     }
     if (trackNr == 25) {
@@ -689,10 +689,10 @@ void savePlugin(const char* trackname, byte trackNr) {
         myFile.print((char)pl9[maxpreset].wah_freq_graph);
         myFile.print((char)pl9[maxpreset].wah_reso_graph);
         myFile.print((char)pl9[maxpreset].wavefold_graph);
-        myFile.print((char)pl9[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl9[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl9[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl9[maxpreset].Filter1_Type_graph);
+        myFile.print((char)pl9[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl9[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl9[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl9[maxpreset].Pot_Value[7]);
       }
     }
 
@@ -767,15 +767,15 @@ void loadPlugin(const char* trackname, int trackNr) {
     if (trackNr == 19) {
       //load plugin 3 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        pl3[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl3[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl3[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl3[maxpreset].Env1_Attack_graph = myFile.read();
-        pl3[maxpreset].Env1_Decay_graph = myFile.read();
-        pl3[maxpreset].Env1_Sustain_graph = myFile.read();
-        pl3[maxpreset].Env1_Release_graph = myFile.read();
-        pl3[maxpreset].wfSelect = myFile.read();
-        pl3[maxpreset].Filter1_Type = myFile.read();
+        pl3[maxpreset].Pot_Value[4] = myFile.read();
+        pl3[maxpreset].Pot_Value[5] = myFile.read();
+        pl3[maxpreset].Pot_Value[6] = myFile.read();
+        pl3[maxpreset].Pot_Value[8] = myFile.read();
+        pl3[maxpreset].Pot_Value[9] = myFile.read();
+        pl3[maxpreset].Pot_Value[10] = myFile.read();
+        pl3[maxpreset].Pot_Value[11] = myFile.read();
+        pl3[maxpreset].Pot_Value[0] = myFile.read();
+        pl3[maxpreset].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 20) {
@@ -793,44 +793,44 @@ void loadPlugin(const char* trackname, int trackNr) {
       //load plugin 5 variables
       tft.print("reading plugin 5 from plugin5.txt...");
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        pl5[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl5[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl5[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl5[maxpreset].Env1_Attack_graph = myFile.read();
-        pl5[maxpreset].Env1_Decay_graph = myFile.read();
-        pl5[maxpreset].Env1_Sustain_graph = myFile.read();
-        pl5[maxpreset].Env1_Release_graph = myFile.read();
-        pl5[maxpreset].selected_file_graph = myFile.read();
+        pl5[maxpreset].Pot_Value[4] = myFile.read();
+        pl5[maxpreset].Pot_Value[5] = myFile.read();
+        pl5[maxpreset].Pot_Value[6] = myFile.read();
+        pl5[maxpreset].Pot_Value[8] = myFile.read();
+        pl5[maxpreset].Pot_Value[9] = myFile.read();
+        pl5[maxpreset].Pot_Value[10] = myFile.read();
+        pl5[maxpreset].Pot_Value[11] = myFile.read();
+        pl5[maxpreset].Pot_Value[0] = myFile.read();
         pl5[maxpreset].Volume_graph = myFile.read();
-        pl5[maxpreset].Filter1_Type = myFile.read();
+        pl5[maxpreset].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 22) {
       //load plugin 6 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        pl6[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl6[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl6[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl6[maxpreset].Env1_Attack_graph = myFile.read();
-        pl6[maxpreset].Env1_Decay_graph = myFile.read();
-        pl6[maxpreset].Env1_Sustain_graph = myFile.read();
-        pl6[maxpreset].Env1_Release_graph = myFile.read();
-        pl6[maxpreset].selected_file_graph = myFile.read();
+        pl6[maxpreset].Pot_Value[4] = myFile.read();
+        pl6[maxpreset].Pot_Value[5] = myFile.read();
+        pl6[maxpreset].Pot_Value[6] = myFile.read();
+        pl6[maxpreset].Pot_Value[8] = myFile.read();
+        pl6[maxpreset].Pot_Value[9] = myFile.read();
+        pl6[maxpreset].Pot_Value[10] = myFile.read();
+        pl6[maxpreset].Pot_Value[11] = myFile.read();
+        pl6[maxpreset].Pot_Value[0] = myFile.read();
         pl6[maxpreset].Volume_graph = myFile.read();
-        pl6[maxpreset].Filter1_Type = myFile.read();
+        pl6[maxpreset].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 24) {
       //load plugin 8 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        pl8[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl8[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl8[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl8[maxpreset].Env1_Attack_graph = myFile.read();
-        pl8[maxpreset].Env1_Decay_graph = myFile.read();
-        pl8[maxpreset].Env1_Sustain_graph = myFile.read();
-        pl8[maxpreset].Env1_Release_graph = myFile.read();
-        pl8[maxpreset].wfSelect = myFile.read();
+        pl8[maxpreset].Pot_Value[4] = myFile.read();
+        pl8[maxpreset].Pot_Value[5] = myFile.read();
+        pl8[maxpreset].Pot_Value[6] = myFile.read();
+        pl8[maxpreset].Pot_Value[8] = myFile.read();
+        pl8[maxpreset].Pot_Value[9] = myFile.read();
+        pl8[maxpreset].Pot_Value[10] = myFile.read();
+        pl8[maxpreset].Pot_Value[11] = myFile.read();
+        pl8[maxpreset].Pot_Value[0] = myFile.read();
       }
     }
     if (trackNr == 25) {
@@ -842,10 +842,10 @@ void loadPlugin(const char* trackname, int trackNr) {
         pl9[maxpreset].wah_freq_graph = myFile.read();
         pl9[maxpreset].wah_reso_graph = myFile.read();
         pl9[maxpreset].wavefold_graph = myFile.read();
-        pl9[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl9[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl9[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl9[maxpreset].Filter1_Type_graph = myFile.read();
+        pl9[maxpreset].Pot_Value[4] = myFile.read();
+        pl9[maxpreset].Pot_Value[5] = myFile.read();
+        pl9[maxpreset].Pot_Value[6] = myFile.read();
+        pl9[maxpreset].Pot_Value[7] = myFile.read();
       }
     }
 
@@ -1091,7 +1091,7 @@ void StateVar_Frequency(int des_env, int cols, int ROW) {
    int MixerColumnPos = ((cols + 1) * 4) - 1;
   if (PotValueSVF_FREQ != Potentiometer[cols]) {
     PotValueSVF_FREQ = Potentiometer[cols];
-    STATEFILTER[des_env]->frequency(note_frequency[PotValueSVF_FREQ]);
+    STATEFILTER[des_env]->frequency(note_frequency[Potentiometer[cols]]);
     drawPot(MixerColumnPos, ROW, Potentiometer[cols], note_frequency[PotValueSVF_FREQ], "Freq", trackColor[desired_track]);
   }
 }
@@ -1118,6 +1118,38 @@ void StateVar_Type(int des_env, int cols, int ROW) {
     selectFilterType(track[desired_instrument].MIDIchannel, PotValueSVF_TYP);
     drawPot_4(MixerColumnPos, ROW, Potentiometer[cols], PotValueSVF_TYP, "", trackColor[desired_track]);
     drawChar(MixerColumnPos, ROW + 1, filterType[PotValueSVF_TYP], ILI9341_WHITE);
+  }
+}
+
+
+void Ladder_Filter(int des_env, int COL, int ROW) {
+  Ladder_Frequency(des_env, COL, ROW);
+  Ladder_Resonance(des_env, COL + 1, ROW);
+  Ladder_Sweep(des_env, COL + 2, ROW);
+  
+}
+void Ladder_Frequency(int des_env, int cols, int ROW) {
+   int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueLDF_FREQ != Potentiometer[cols]) {
+    PotValueLDF_FREQ = Potentiometer[cols];
+    LADDERFILTER[des_env]->frequency(note_frequency[Potentiometer[cols]]);
+    drawPot(MixerColumnPos, ROW, Potentiometer[cols], note_frequency[Potentiometer[cols]], "Freq", trackColor[desired_track]);
+  }
+}
+void Ladder_Resonance(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueLDF_RES != (float)(Potentiometer[cols] / SVF_RES)) {
+    PotValueLDF_RES = (float)(Potentiometer[cols] / SVF_RES);
+    LADDERFILTER[des_env]->resonance(PotValueLDF_RES);
+    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Reso", trackColor[desired_track]);
+  }
+}
+void Ladder_Sweep(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueLDF_SWP != (float)(Potentiometer[cols] / SVF_SWP)) {
+    PotValueLDF_SWP = (float)(Potentiometer[cols] / SVF_SWP);
+    LADDERFILTER[des_env]->octaveControl(PotValueLDF_SWP);
+    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Swp", trackColor[desired_track]);
   }
 }
 //these are some function you might want to use like the drawpot or any of the draw-rect functions

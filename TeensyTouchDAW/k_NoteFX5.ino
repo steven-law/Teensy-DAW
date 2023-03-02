@@ -209,10 +209,10 @@ void loadNoteFX5() {
     tft.println("error opening NoteFX5.txt");
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    // NFX5[NFX5presetNr].Pot_Value[touchX - 1] = NFX5[NFX5presetNr].Pot_Value_graph[touchX - 1];
+    // NFX5[NFX5presetNr].Pot_Value[touchX - 1] = NFX5[NFX5presetNr].Pot_Value[touchX - 1];
 
-    //NFX5[NFX5presetNr].Pot_Value[touchX + 3] = NFX5[NFX5presetNr].Pot_Value_graph[touchX + 3];
+    //NFX5[NFX5presetNr].Pot_Value[touchX + 3] = NFX5[NFX5presetNr].Pot_Value[touchX + 3];
 
-    //NFX5[NFX5presetNr].Pot_Value[touchX + 7] = NFX5[NFX5presetNr].Pot_Value_graph[touchX + 7];
+    //NFX5[NFX5presetNr].Pot_Value[touchX + 7] = NFX5[NFX5presetNr].Pot_Value[touchX + 7];
   }
 }

@@ -1,23 +1,23 @@
 void Plugin_5_Settings() {
 
 
-  pl5filter1.frequency(note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph]);
-  pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance_graph / SVF_RES);
-  pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep_graph / SVF_SWP);
+  pl5filter1.frequency(note_frequency[pl5[pl5presetNr].Pot_Value[4]]);
+  pl5filter1.resonance(pl5[pl5presetNr].Pot_Value[5] / SVF_RES);
+  pl5filter1.octaveControl(pl5[pl5presetNr].Pot_Value[6] / SVF_SWP);
 
   pl5envelope1.delay(0);
-  pl5envelope1.attack(map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 0, ATTACK_TIME));
+  pl5envelope1.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
   pl5envelope1.hold(0);
-  pl5envelope1.decay(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, DECAY_TIME));
-  pl5envelope1.sustain(pl5[pl5presetNr].Env1_Decay_graph / SUSTAIN_LVL);
-  pl5envelope1.release(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, RELEASE_TIME));
+  pl5envelope1.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl5envelope1.sustain(pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
+  pl5envelope1.release(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, RELEASE_TIME));
 
   pl5envelope2.delay(0);
-  pl5envelope2.attack(map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 0, ATTACK_TIME));
+  pl5envelope2.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
   pl5envelope2.hold(0);
-  pl5envelope2.decay(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, DECAY_TIME));
-  pl5envelope2.sustain(pl5[pl5presetNr].Env1_Decay_graph / SUSTAIN_LVL);
-  pl5envelope2.release(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, RELEASE_TIME));
+  pl5envelope2.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl5envelope2.sustain(pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
+  pl5envelope2.release(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, RELEASE_TIME));
 
   pl5mixer1.gain(0, 1);
   pl5mixer1.gain(1, 0);
@@ -31,10 +31,9 @@ void Plugin_5_Settings() {
 void Plugin5_Control() {
   switch (lastPotRow) {
     case 0:
-      if (pl5[pl5presetNr].selected_file_graph != Potentiometer[0]) {
-        pl5[pl5presetNr].selected_file_graph = Potentiometer[0];
-        pl5[pl5presetNr].selected_file = map(pl5[pl5presetNr].selected_file_graph, 0, 127, 0, MAX_RAW_FILES);
-        drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
+      if (pl5[pl5presetNr].Pot_Value[0] != Potentiometer[0]) {
+        pl5[pl5presetNr].Pot_Value[0] = Potentiometer[0];
+        drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].Pot_Value[0], pl5[pl5presetNr].Pot_Value[0], "RAW", trackColor[desired_instrument]);
         pl5enter_was_pushed = false;
         drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
       }
@@ -62,13 +61,13 @@ void Plugin5_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        Potentiometer[0] = pl5[pl5presetNr].selected_file_graph;
+        Potentiometer[0] = pl5[pl5presetNr].Pot_Value[0];
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl5[pl5presetNr].selected_file_graph + encoded[0]), 0, 127);
+          Potentiometer[0] = pl5[pl5presetNr].Pot_Value[0];
         }
         if (button[15]) {
           newdigate::flashloader loader;
-          pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
+          pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].Pot_Value[0]]);
           pl5enter_was_pushed = true;
           drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
         }
@@ -77,46 +76,46 @@ void Plugin5_Page1_Dynamic() {
       case 1:
         //Filter Frequency
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl5[pl5presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
-          pl5[pl5presetNr].Filter1_Frequency_graph = Potentiometer[0];
+          Potentiometer[0] = constrain((pl5[pl5presetNr].Pot_Value[4] + encoded[0]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[4] = Potentiometer[0];
         }
         //Resonance
         if (enc_moved[1]) {
-          Potentiometer[1] = constrain((pl5[pl5presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
-          pl5[pl5presetNr].Filter1_Resonance_graph = Potentiometer[1];
+          Potentiometer[1] = constrain((pl5[pl5presetNr].Pot_Value[5] + encoded[1]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[5] = Potentiometer[1];
         }
         //Sweep
         if (enc_moved[2]) {
-          Potentiometer[2] = constrain((pl5[pl5presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
-          pl5[pl5presetNr].Filter1_Sweep_graph = Potentiometer[2];
+          Potentiometer[2] = constrain((pl5[pl5presetNr].Pot_Value[6] + encoded[2]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[6] = Potentiometer[2];
         }
         //Filtertype
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl5[pl5presetNr].Filter1_Type + encoded[3]), 0, 127);
-          pl5[pl5presetNr].Filter1_Type = Potentiometer[3] / SVF_TYP;
+          Potentiometer[3] = constrain((pl5[pl5presetNr].Pot_Value[7] + encoded[3]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[7] = Potentiometer[3] / SVF_TYP;
         }
         break;
 
       case 2:
         //Attack
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl5[pl5presetNr].Env1_Attack_graph + encoded[0]), 0, 127);
-          pl5[pl5presetNr].Env1_Attack_graph = Potentiometer[0];
+          Potentiometer[0] = constrain((pl5[pl5presetNr].Pot_Value[8] + encoded[0]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[8] = Potentiometer[0];
         }
         //Decay
         if (enc_moved[1]) {
-          Potentiometer[1] = constrain((pl5[pl5presetNr].Env1_Decay_graph + encoded[1]), 0, 127);
-          pl5[pl5presetNr].Env1_Decay_graph = Potentiometer[1];
+          Potentiometer[1] = constrain((pl5[pl5presetNr].Pot_Value[9] + encoded[1]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[9] = Potentiometer[1];
         }
         //Sustain
         if (enc_moved[2]) {
-          Potentiometer[2] = constrain((pl5[pl5presetNr].Env1_Sustain_graph + encoded[2]), 0, 127);
-          pl5[pl5presetNr].Env1_Sustain_graph = Potentiometer[2];
+          Potentiometer[2] = constrain((pl5[pl5presetNr].Pot_Value[10] + encoded[2]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[10] = Potentiometer[2];
         }
         //Release
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl5[pl5presetNr].Env1_Release_graph + encoded[3]), 0, 127);
-          pl5[pl5presetNr].Env1_Release_graph = Potentiometer[3];
+          Potentiometer[3] = constrain((pl5[pl5presetNr].Pot_Value[11] + encoded[3]), 0, 127);
+          pl5[pl5presetNr].Pot_Value[11] = Potentiometer[3];
         }
         break;
     }
@@ -165,37 +164,37 @@ void Plugin5_Page_Static() {
   //draw selecting pages buttons
   //draw_sub_page_buttons(2);
   drawNrInRect(18, 1, pl5presetNr, ILI9341_PURPLE);
-  drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].selected_file_graph, pl5[pl5presetNr].selected_file, "RAW", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, CTRL_ROW_0, pl5[pl5presetNr].Pot_Value[0], pl5[pl5presetNr].Pot_Value[0], "RAW", trackColor[desired_instrument]);
   drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
   //case 1
-  drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Frequency_graph, note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Resonance_graph, pl5[pl5presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Sweep_graph, pl5[pl5presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_track]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, pl5[pl5presetNr].Filter1_Type * SVF_TYP, pl5[pl5presetNr].Filter1_Type, "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[pl5[pl5presetNr].Filter1_Type], ILI9341_WHITE);
+  drawPot(CTRL_COL_0, CTRL_ROW_1, pl5[pl5presetNr].Pot_Value[4], note_frequency[pl5[pl5presetNr].Pot_Value[4]], "Freq", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_1, pl5[pl5presetNr].Pot_Value[5], pl5[pl5presetNr].Pot_Value[5], "Reso", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_1, pl5[pl5presetNr].Pot_Value[6], pl5[pl5presetNr].Pot_Value[6], "Swp", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_1, pl5[pl5presetNr].Pot_Value[7] * SVF_TYP, pl5[pl5presetNr].Pot_Value[7], "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 7, filterType[pl5[pl5presetNr].Pot_Value[7]], ILI9341_WHITE);
   //case 2
-  drawPot(CTRL_COL_0, CTRL_ROW_2, pl5[pl5presetNr].Env1_Attack_graph, map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, pl5[pl5presetNr].Env1_Decay_graph, map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, pl5[pl5presetNr].Env1_Sustain_graph, map(pl5[pl5presetNr].Env1_Sustain_graph, 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, pl5[pl5presetNr].Env1_Release_graph, map(pl5[pl5presetNr].Env1_Release_graph, 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
+  drawPot(CTRL_COL_0, CTRL_ROW_2, pl5[pl5presetNr].Pot_Value[8], map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
+  drawPot(CTRL_COL_1, CTRL_ROW_2, pl5[pl5presetNr].Pot_Value[9], map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
+  drawPot(CTRL_COL_2, CTRL_ROW_2, pl5[pl5presetNr].Pot_Value[10], map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
+  drawPot(CTRL_COL_3, CTRL_ROW_2, pl5[pl5presetNr].Pot_Value[11], map(pl5[pl5presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
 }
 void Plugin5_Change() {
-  pl5[pl5presetNr].selected_file;
+  pl5[pl5presetNr].Pot_Value[0];
   newdigate::flashloader loader;
-  pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].selected_file]);
-  pl5filter1.frequency(note_frequency[pl5[pl5presetNr].Filter1_Frequency_graph]);
-  pl5filter1.resonance(pl5[pl5presetNr].Filter1_Resonance_graph / SVF_RES);
-  pl5filter1.octaveControl(pl5[pl5presetNr].Filter1_Sweep_graph / SVF_SWP);
-  selectFilterType(21, pl5[pl5presetNr].Filter1_Type);
+  pl5sample = loader.loadSample(RAW_files[pl5[pl5presetNr].Pot_Value[0]]);
+  pl5filter1.frequency(note_frequency[pl5[pl5presetNr].Pot_Value[4]]);
+  pl5filter1.resonance(pl5[pl5presetNr].Pot_Value[5] / SVF_RES);
+  pl5filter1.octaveControl(pl5[pl5presetNr].Pot_Value[6] / SVF_SWP);
+  selectFilterType(21, pl5[pl5presetNr].Pot_Value[7]);
 
-  pl5envelope1.attack(map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 0, ATTACK_TIME));
-  pl5envelope2.attack(map(pl5[pl5presetNr].Env1_Attack_graph, 0, 127, 0, ATTACK_TIME));
-  pl5envelope1.decay(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, DECAY_TIME));
-  pl5envelope2.decay(map(pl5[pl5presetNr].Env1_Decay_graph, 0, 127, 0, DECAY_TIME));
-  pl5envelope1.sustain(map(pl5[pl5presetNr].Env1_Sustain_graph, 0, 127, 0, SUSTAIN_LVL));
-  pl5envelope2.sustain(map(pl5[pl5presetNr].Env1_Sustain_graph, 0, 127, 0, SUSTAIN_LVL));
-  pl5envelope1.release(map(pl5[pl5presetNr].Env1_Release_graph, 0, 127, 0, RELEASE_TIME));
-  pl5envelope2.release(map(pl5[pl5presetNr].Env1_Release_graph, 0, 127, 0, RELEASE_TIME));
+  pl5envelope1.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
+  pl5envelope2.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
+  pl5envelope1.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl5envelope2.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl5envelope1.sustain(map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
+  pl5envelope2.sustain(map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
+  pl5envelope1.release(map(pl5[pl5presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
+  pl5envelope2.release(map(pl5[pl5presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
 }
 
 
