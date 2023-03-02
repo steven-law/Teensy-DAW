@@ -30,7 +30,7 @@ class SmfWriter
   private:
     byte _buffer[50];
     byte _bufferPos = 0;
-    char _filename[80];
+    char _filename[20];
     unsigned long trackSize = 0;
 
     void write_buf_int(unsigned int data);

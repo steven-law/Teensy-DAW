@@ -2,6 +2,10 @@ void drumStepSequencer_Static() {  //static Display rendering
   clearWorkSpace();
   drawStepSequencerStatic(0);
   drawActiveDrumSteps();
+  draw_Drumnotes();
+  drawMIDIchannel();
+  draw_Clipselector();
+  draw_SeqMode();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
 
@@ -121,11 +125,12 @@ void drumStepSequencer() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        saveTrack1();
+        saveTrack(trackNames_long[desired_instrument], desired_instrument);
+        saveMIDItrackDrum();
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadTrack1();
+        loadTrack(trackNames_long[desired_instrument], desired_instrument);
       }
     }
     //assign drumnotes on the left
@@ -165,21 +170,21 @@ void drawActiveDrumSteps() {
     }
   }
 }
-
-void saveTrack1() {
-
+/*
+void saveTrack1(const char* track) {
+  sprintf(_trackname, "%s.txt\0", track);
   tft.fillScreen(ILI9341_DARKGREY);
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(Arial_8);
   tft.setCursor(0, 0);
   // delete the file:
   tft.print("Removing track1.txt...");
-  SD.remove("track1.txt");
+  SD.remove(_trackname);
   tft.println("Done");
 
   // open the file.
   tft.print("Creating and opening track1.txt...");
-  myFile = SD.open("track1.txt", FILE_WRITE);
+  myFile = SD.open(_trackname, FILE_WRITE);
   tft.println("Done");
 
   // if the file opened okay, write to it:
@@ -211,13 +216,15 @@ void saveTrack1() {
   }
   saveMIDItrackDrum();
 }
-void loadTrack1() {
+
+void loadTrack1(const char* track) {
+  sprintf(_trackname, "%s.txt\0", track);
   tft.fillScreen(ILI9341_DARKGREY);
   tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(0, 0);
   // open the file for reading:
-  myFile = SD.open("track1.txt");
+  myFile = SD.open(_trackname);
   if (myFile) {
     tft.println("opening track1.txt:");
 
@@ -247,7 +254,8 @@ void loadTrack1() {
     // if the file didn't open, print an error:
     tft.println("error opening track1.txt");
   }
-}
+}*/
+
 void saveMIDItrackDrum() {
   SmfWriter writer;
   writer.setFilename("track1");

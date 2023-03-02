@@ -708,7 +708,11 @@ AudioAmplifier *FX2Volume[MAX_PLUGINS]{ &pl1FX2, &pl2FX2, &pl3FX2, &pl4FX2, &pl5
 AudioAmplifier *FX3Volume[MAX_PLUGINS]{ &pl1FX3, &pl2FX3, &pl3FX3, &pl4FX3, &pl5FX3, &pl6FX3, &pl7FX3, &pl8FX3,
                                         &pl9FX3, &pl10FX3, &pl11FX3, &pl12FX3, &pl13FX3, &pl14FX3, &pl15FX3, &pl16FX3 };
 
+AudioEffectEnvelope *ENVELOPE1[5] {&envelope1, &pl3envelope1, &pl5envelope1, &pl6envelope1, &pl8envelope1}; //pl1, pl3, pl5, pl6, pl8
+AudioEffectEnvelope *ENVELOPE2[5] {&envelope2, &pl3envelope2, &pl5envelope2, &pl6envelope2, &pl8envelope2}; //pl1, pl3, pl5, pl6, pl8
 
+AudioFilterStateVariable *STATEFILTER[4]{&filter1, &pl3filter1, &pl5filter1, &pl6filter1}; //pl1, pl3, pl5, pl6
+AudioFilterLadder *LADDERFILTER[1]{&pl8filter1}; //pl8
 newdigate::audiosample *pl5sample;
 
 void setup() {
@@ -784,8 +788,8 @@ void setup() {
     }
   }
 
-//ratcheting array
-    ratchet = new bool **[NUM_CLIPS];
+  //ratcheting array
+  ratchet = new bool **[NUM_CLIPS];
   for (int i = 0; i < NUM_CLIPS; i++) {
     ratchet[i] = new bool *[num_voice];
     for (int j = 0; j < num_voice; j++) {
@@ -805,7 +809,7 @@ void setup() {
   //tft.updateScreen();
   //allocate tracks
   track = new tracks[NUM_TRACKS];
-  //ctrack = new track_t[NUM_TRACKS];  
+  //ctrack = new track_t[NUM_TRACKS];
   //allocate plugins
   pl1 = new plugin1[MAX_PRESETS];
   pl2 = new plugin2[MAX_PRESETS];
@@ -1088,7 +1092,7 @@ void SerialPrintPlugins() {
   Serial.print("-");
   Serial.print(pl3[pl3presetNr].Filter1_Sweep_graph);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Filter1_Type_graph);
+  Serial.print(pl3[pl3presetNr].Filter1_Type);
   Serial.print("   ");
   Serial.print("ADSR: ");
   Serial.print(pl3[pl3presetNr].Env1_Attack_graph);
@@ -2019,9 +2023,33 @@ void drawStepSequencerStatic(int desired_instrument) {
     step_Frame_Y = i * 16;
     tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE);  //(x-start, y, length, color)
   }
-  //seqMode
-  drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
-  //draw Clipselector
+}
+
+void draw_Notenames() {
+  for (int n = 0; n < 12; n++) {  //hor notes
+    if (scales[scaleSelected][n]) {
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
+    }
+
+    tft.setCursor(18, STEP_FRAME_H * n + 18);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_BLACK);
+    tft.setTextSize(1);
+    tft.print(noteNames[n]);
+  }
+}
+void draw_Drumnotes() {
+  for (int n = 0; n < 12; n++) {  //hor notes
+    tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
+    tft.setCursor(18, STEP_FRAME_H * n + 18);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_BLACK);
+    tft.setTextSize(1);
+    tft.print(drumnote[n]);
+  }
+}
+
+void draw_Clipselector() {
   for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
     tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + (ClipNr * 20));
     tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
@@ -2031,39 +2059,10 @@ void drawStepSequencerStatic(int desired_instrument) {
     tft.print("Clip ");
     tft.print(ClipNr);
   }
-
-  for (int i = 0; i < 12; i++) {
-    if (scales[scaleSelected][i]) {
-      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
-    }
-  }
-
-
-
-
-
-  //draw Notenames
-  for (int n = 0; n < 12; n++) {  //hor notes
-    tft.setCursor(18, STEP_FRAME_H * n + 18);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setTextSize(1);
-    tft.print(noteNames[n]);
-  }
-  //MIDIChannel assign button
-  tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 10 + 2);
-  tft.setFont(Arial_8);
-  tft.setTextColor(trackColor[desired_instrument]);
-  tft.setTextSize(1);
-  tft.print("MCh:");
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-
-  //Pluginbutton
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-  drawActiveSteps();
-  drawMIDIchannel();
 }
-
+void draw_SeqMode() {
+  drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+}
 void drawOctaveNumber() {
   //draw the octave number
   tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
@@ -2074,6 +2073,13 @@ void drawOctaveNumber() {
   tft.print(track[desired_instrument].shown_octaves);
 }
 void drawMIDIchannel() {
+  //MIDIChannel assign button
+  tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 10 + 2);
+  tft.setFont(Arial_8);
+  tft.setTextColor(trackColor[desired_instrument]);
+  tft.setTextSize(1);
+  tft.print("MCh:");
+  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
   //show midichannel
   tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
@@ -2081,6 +2087,7 @@ void drawMIDIchannel() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setTextSize(1);
   tft.print(track[desired_track].MIDIchannel);
+  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
   //draw MidiCC
   for (int plugintext = 0; plugintext <= 16; plugintext++) {
     if (track[desired_instrument].MIDIchannel == plugintext) {

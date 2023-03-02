@@ -122,11 +122,11 @@ void Plugin2_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin2();
+        savePlugin("plugin2", 18);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin2();
+        loadPlugin("plugin2", 18);
       }
     }
 
@@ -165,85 +165,3 @@ void Plugin2_Change() {
 }
 
 
-void savePlugin2() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing plugin2.txt...");
-  SD.remove("plugin2.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening plugin2.txt...");
-  myFile = SD.open("plugin2.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing plugin2 to plugin2.txt...");
-    //save plugin 3 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX - 1]);
-        myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 3]);
-        myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 7]);
-      }
-    }
-
-    tft.println("Done");
-
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin2.txt");
-  }
-}
-
-void loadPlugin2() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("plugin2.txt");
-  if (myFile) {
-    tft.println("opening plugin2.txt:");
-
-    // read from the file until there's nothing else in it:
-
-    //load plugin2 variables
-    tft.print("reading plugin2 from plugin2.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        pl2[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
-        pl2[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
-        pl2[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
-      }
-    }
-
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin2.txt");
-  }
-  //execute changes
-  for (int touchX = 1; touchX < 5; touchX++) {
-    pl2[pl2presetNr].Pot_Value[touchX - 1] = pl2[pl2presetNr].Pot_Value_graph[touchX - 1] / 127.00;
-    drummixer1.gain(touchX - 1, pl2[pl2presetNr].Pot_Value[touchX - 1]);
-    pl2[pl2presetNr].Pot_Value[touchX + 3] = pl2[pl2presetNr].Pot_Value_graph[touchX + 3] / 127.00;
-    drummixer2.gain(touchX - 1, pl2[pl2presetNr].Pot_Value[touchX + 3]);
-    pl2[pl2presetNr].Pot_Value[touchX + 7] = pl2[pl2presetNr].Pot_Value_graph[touchX + 7] / 127.00;
-    drummixer3.gain(touchX - 1, pl2[pl2presetNr].Pot_Value[touchX + 7]);
-  }
-}

@@ -44,21 +44,22 @@ void sendClock() {
 
     if (msecsclock > _clock) {
       MIDItick++;
-
-
       if (track[0].seqMode == 5) {
 
         for (int b = 0; b < 12; b++) {
-          if (MIDItick % 2 == 0) {
+
+          if (MIDItick % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
             if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
-              if (dsend_noteOff[b]) {
-                dsend_noteOff[b] = false;
-                if (track[0].MIDIchannel < 17) {
-                  usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  for (int usbs = 0; usbs < 10; usbs++) {
-                    if (!launchpad) {
-                      usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+              for (int r = 0; r <= NFX5[NFX5presetNr].repeats[b]; r++) {
+                if (dsend_noteOff[b]) {
+                  dsend_noteOff[b] = false;
+                  if (track[0].MIDIchannel < 17) {
+                    usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    for (int usbs = 0; usbs < 10; usbs++) {
+                      if (!launchpad) {
+                        usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                      }
                     }
                   }
                 }

@@ -1,45 +1,6 @@
 void NoteFX4_Settings() {
 }
 void NoteFX4_Control() {
-  switch (lastPotRow) {
-    case 0:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] != Potentiometer[MixerColumn]) {
-          NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
-          NFX4[NFX4presetNr].Pot_Value[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn];
-          drawPot(MixerColumnPos, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn], drumnote[MixerColumn], trackColor[desired_instrument]);
-        }
-      }
-      break;
-
-    case 1:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] != Potentiometer[MixerColumn]) {
-          NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
-          NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4];
-
-          drawPot(MixerColumnPos, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4], drumnote[MixerColumn + 4], trackColor[desired_instrument]);
-        }
-      }
-      break;
-
-    case 2:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] != Potentiometer[MixerColumn]) {
-          NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
-          NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8];
-
-          drawPot(MixerColumnPos, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8], drumnote[MixerColumn + 8], trackColor[desired_instrument]);
-        }
-      }
-      break;
-
-    case 3:
-      break;
-  }
 }
 void NoteFX4_Page1_Dynamic() {
   //change preset
@@ -57,10 +18,10 @@ void NoteFX4_Page1_Dynamic() {
       case 0:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn];
+          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn];
           if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS);
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -68,10 +29,10 @@ void NoteFX4_Page1_Dynamic() {
       case 1:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4];
+          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS);
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -79,12 +40,12 @@ void NoteFX4_Page1_Dynamic() {
       case 2:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8];
+          Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
 
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS);
 
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
         break;
@@ -129,27 +90,27 @@ void NoteFX4_Page_Static() {
   drawChar(18, 3, seqModes[track[desired_track].seqMode], trackColor[desired_track]);
   for (int touchX = 1; touchX < 5; touchX++) {
 
-    drawPot(touchX * 4 - 1, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1], drumnote[touchX - 1], trackColor[desired_instrument]);
+    drawPotDrum(touchX * 4 - 1, CTRL_ROW_0, NFX4[NFX4presetNr].Pot_Value[touchX - 1], NFX4[NFX4presetNr].Pot_Value[touchX - 1], drumnote[touchX - 1], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3], NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3], drumnote[touchX + 3], trackColor[desired_instrument]);
+    drawPotDrum(touchX * 4 - 1, CTRL_ROW_1, NFX4[NFX4presetNr].Pot_Value[touchX + 3], NFX4[NFX4presetNr].Pot_Value[touchX + 3], drumnote[touchX + 3], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7], drumnote[touchX + 7], trackColor[desired_instrument]);
+    drawPotDrum(touchX * 4 - 1, CTRL_ROW_2, NFX4[NFX4presetNr].Pot_Value[touchX + 7], NFX4[NFX4presetNr].Pot_Value[touchX + 7], drumnote[touchX + 7], trackColor[desired_instrument]);
   }
 }
 
 void NoteFX4_Change() {
   for (int touchX = 1; touchX < 5; touchX++) {
 
-    NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1];
+    NFX4[NFX4presetNr].Pot_Value[touchX - 1];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
 
-    NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3];
+    NFX4[NFX4presetNr].Pot_Value[touchX + 3];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7];
+    NFX4[NFX4presetNr].Pot_Value[touchX + 7];
   }
 }
 
@@ -177,9 +138,9 @@ void saveNoteFX4() {
     //save plugin 3 variables
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)NFX4[maxpreset].Pot_Value_graph[touchX - 1]);
-        myFile.print((char)NFX4[maxpreset].Pot_Value_graph[touchX + 3]);
-        myFile.print((char)NFX4[maxpreset].Pot_Value_graph[touchX + 7]);
+        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX - 1]);
+        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 3]);
+        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 7]);
       }
     }
 
@@ -212,9 +173,9 @@ void loadNoteFX4() {
     tft.print("reading NoteFX4 from NoteFX4.txt...");
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int touchX = 1; touchX < 5; touchX++) {
-        NFX4[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
-        NFX4[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
-        NFX4[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
+        //  NFX4[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
       }
     }
 
@@ -227,10 +188,10 @@ void loadNoteFX4() {
     tft.println("error opening NoteFX4.txt");
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    NFX4[NFX4presetNr].Pot_Value[touchX - 1] = NFX4[NFX4presetNr].Pot_Value_graph[touchX - 1];
+    NFX4[NFX4presetNr].Pot_Value[touchX - 1] = NFX4[NFX4presetNr].Pot_Value[touchX - 1];
 
-    NFX4[NFX4presetNr].Pot_Value[touchX + 3] = NFX4[NFX4presetNr].Pot_Value_graph[touchX + 3];
+    NFX4[NFX4presetNr].Pot_Value[touchX + 3] = NFX4[NFX4presetNr].Pot_Value[touchX + 3];
 
-    NFX4[NFX4presetNr].Pot_Value[touchX + 7] = NFX4[NFX4presetNr].Pot_Value_graph[touchX + 7];
+    NFX4[NFX4presetNr].Pot_Value[touchX + 7] = NFX4[NFX4presetNr].Pot_Value[touchX + 7];
   }
 }

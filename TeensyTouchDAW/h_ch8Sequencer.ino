@@ -3,10 +3,13 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   clearWorkSpace();
   drawStepSequencerStatic(desired_instrument);
   drawActiveSteps();
+  draw_Notenames();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
   drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
   drawMIDIchannel();
+  draw_Clipselector();
+  draw_SeqMode();
   midi01.sendControlChange(0, 0, 1);
   LP_drawStepsequencer();
   LP_drawOctave(3);
@@ -99,7 +102,7 @@ void melodicStepSequencer(int desired_instrument) {
     }
     //step length
     if (enc_moved[3]) {
-      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, (track[desired_instrument].MIDItick_reset-1));
+      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, (track[desired_instrument].MIDItick_reset - 1));
       drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
     }
   }
@@ -154,11 +157,12 @@ void melodicStepSequencer(int desired_instrument) {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        saveTrack(trackNames_long[desired_instrument], trackNames_txt[desired_instrument], desired_instrument);
+        saveTrack(trackNames_long[desired_instrument], desired_instrument);
+        saveMIDItrack(trackNames_long[desired_instrument], desired_instrument);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadTrack(trackNames_txt[desired_instrument], desired_instrument);
+        loadTrack(trackNames_long[desired_instrument], desired_instrument);
       }
     }
     //clipselecting
@@ -188,7 +192,8 @@ void drawActiveSteps() {
 #define STEP_LENGTH 6
 #define NOTE_OFF 0  // presuming you are still using 0 for 'no note'
 
-void saveMIDItrack(char* track, int trackNr) {
+void saveMIDItrack(const char* track, int trackNr) {
+  //sprintf(_trackname, "%s.mid\0", track);
   SmfWriter writer;
   writer.setFilename(track);
   writer.writeHeader();
@@ -211,92 +216,118 @@ void saveMIDItrack(char* track, int trackNr) {
   writer.flush();
 }
 
-void saveTrack(char* trackLong, char* tracktxt, byte trackNr) {
-  if (trackNr > 0) {
-    tft.fillScreen(ILI9341_DARKGREY);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setFont(Arial_8);
-    tft.setCursor(0, 0);
-    // delete the file:
-    tft.print("Removing:");
-    tft.print(tracktxt);
-    SD.remove(tracktxt);
-    tft.println("Done");
-
-    // open the file.
-    tft.print("Creating and opening:");
-    tft.print(tracktxt);
-    myFile = SD.open(tracktxt, FILE_WRITE);
-    tft.println("Done");
-
-    // if the file opened okay, write to it:
-    if (myFile) {
+void saveTrack(const char* trackname, byte trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
 
 
+  // delete the file:
+  tft.print("Removing:");
+  tft.print(_trackname);
+  SD.remove(_trackname);
+  tft.println("Done");
 
-      //save track2
-      tft.print("Writing track to:");
-      tft.print(tracktxt);
+  // open the file.
+  tft.print("Creating and opening:");
+  tft.print(_trackname);
+  myFile = SD.open(_trackname, FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    //save tracks
+    tft.print("Writing track to:");
+    tft.print(_trackname);
+
+    if (trackNr == 0) {
+      //save track1
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int snote = 0; snote < 12; snote++) {
+          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+            int step = channel1Clip[sclip][snote][sstep] + 48;
+            myFile.print((char)step);
+          }
+        }
+      }
+    }
+
+    if (trackNr > 0) {
       for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
         for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           myFile.print((char)ctrack[trackNr].sequence[sclip].step[sstep]);
         }
       }
-      myFile.print((char)track[trackNr].MIDIchannel);
-
-
-      tft.println("Done");
-      // close the file:
-      myFile.close();
-
-
-    } else {
-      // if the file didn't open, print an error:
-      tft.println("error opening:");
-      tft.print(tracktxt);
     }
-    saveMIDItrack(trackLong, trackNr);
 
+   // int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
 
+    // close the file:
+    myFile.close();
+    tft.println("Done");
 
-
-    tft.println("Saving done.");
-    startUpScreen();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.print(_trackname);
   }
+
+  tft.println("Saving done.");
+  startUpScreen();
 }
-void loadTrack(char* tracktxt, int trackNr) {
-  if (trackNr > 0) {
-    tft.fillScreen(ILI9341_DARKGREY);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setCursor(0, 0);
-    // open the file for reading:
-    myFile = SD.open(tracktxt);
-    if (myFile) {
-      tft.println("opening:");
-      tft.println(tracktxt);
 
-      // read from the file until there's nothing else in it:
+void loadTrack(char* trackname, int trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open(_trackname);
 
 
+  if (myFile) {
+    tft.println("opening:");
+    tft.println(_trackname);
 
-      //load track 1
-      tft.print("Reading clips from:");
-      tft.println(tracktxt);
+    // read from the file until there's nothing else in it:
+    //load track 1
+    tft.print("Reading clips from:");
+    tft.println(_trackname);
+
+    if (trackNr == 0) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int snote = 0; snote < 12; snote++) {
+          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+            int step;
+            step = myFile.read();
+            channel1Clip[sclip][snote][sstep] = step - 48;
+          }
+        }
+      }
+    }
+
+    if (trackNr > 0) {
       for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
         for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
           ctrack[trackNr].sequence[sclip].step[sstep] = myFile.read();
         }
       }
-      track[trackNr].MIDIchannel = myFile.read();
-      tft.println("Done");
-      startUpScreen();
-      // close the file:
-      myFile.close();
-    } else {
-      // if the file didn't open, print an error:
-      tft.println("error opening:");
-      tft.println(tracktxt);
     }
+
+    //int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
+
+    tft.println("Done");
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.println(_trackname);
   }
 }

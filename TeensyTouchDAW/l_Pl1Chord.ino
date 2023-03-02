@@ -142,7 +142,7 @@ void Plugin1_Control2() {
       }
       if (pl1[pl1presetNr].Filter1_Type_graph != Potentiometer[3]) {
         pl1[pl1presetNr].Filter1_Type_graph = Potentiometer[3];
-        pl1[pl1presetNr].Filter1_Type = pl1[pl1presetNr].Filter1_Type_graph / 43;
+        pl1[pl1presetNr].Filter1_Type = pl1[pl1presetNr].Filter1_Type_graph /SVF_TYP;
         selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
         drawPot_4(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
         drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
@@ -234,11 +234,11 @@ void Plugin1_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin1();
+        savePlugin("plugin1", 17);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin1();
+        loadPlugin("plugin1", 17);
       }
     }
     //change preset
@@ -319,9 +319,9 @@ void Plugin1_Page2_Dynamic() {
           Potentiometer[2] = constrain((pl1[pl1presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
         }
         //Filtertype
-        Potentiometer[3] = pl1[pl1presetNr].Filter1_Type * 43;
+        Potentiometer[3] = pl1[pl1presetNr].Filter1_Type *SVF_TYP;
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 2) * 43;
+          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 2) *SVF_TYP;
         }
         break;
 
@@ -357,11 +357,11 @@ void Plugin1_Page2_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin1();
+        savePlugin("plugin1", 17);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin1();
+        loadPlugin("plugin1", 17);
       }
     }
     //change preset
@@ -454,121 +454,3 @@ void Plugin1_Change() {
   envelope2.release(pl1[pl1presetNr].Env1_Release);
 }
 
-void savePlugin1() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing plugin1.txt...");
-  SD.remove("plugin1.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening plugin1.txt...");
-  myFile = SD.open("plugin1.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing plugin 1 to plugin1.txt...");
-    //save plugin 1 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      myFile.print((char)pl1[maxpreset].note_Offset_graph[0]);
-      myFile.print((char)pl1[maxpreset].note_Offset_graph[1]);
-      myFile.print((char)pl1[maxpreset].note_Offset_graph[2]);
-      myFile.print((char)pl1[maxpreset].note_Offset_graph[3]);
-      myFile.print((char)pl1[maxpreset].wfSelect[0]);
-      myFile.print((char)pl1[maxpreset].wfSelect[1]);
-      myFile.print((char)pl1[maxpreset].wfSelect[2]);
-      myFile.print((char)pl1[maxpreset].wfSelect[3]);
-      myFile.print((char)pl1[maxpreset].note_Velo_graph[0]);
-      myFile.print((char)pl1[maxpreset].note_Velo_graph[1]);
-      myFile.print((char)pl1[maxpreset].note_Velo_graph[2]);
-      myFile.print((char)pl1[maxpreset].note_Velo_graph[3]);
-      myFile.print((char)pl1[maxpreset].Filter1_Frequency_graph);
-      myFile.print((char)pl1[maxpreset].Filter1_Resonance_graph);
-      myFile.print((char)pl1[maxpreset].Filter1_Sweep_graph);
-      myFile.print((char)pl1[maxpreset].Env1_Attack_graph);
-      myFile.print((char)pl1[maxpreset].Env1_Decay_graph);
-      myFile.print((char)pl1[maxpreset].Env1_Sustain_graph);
-      myFile.print((char)pl1[maxpreset].Env1_Release_graph);
-      myFile.print((char)pl1[maxpreset].Filter1_Type_graph);
-    }
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin1.txt");
-  }
-}
-void loadPlugin1() {
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("plugin1.txt");
-  if (myFile) {
-    tft.println("opening plugin1.txt:");
-
-    //load plugin 1 variables
-    tft.print("reading plugin 1 from plugin1.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      pl1[maxpreset].note_Offset_graph[0] = myFile.read();
-      pl1[maxpreset].note_Offset_graph[1] = myFile.read();
-      pl1[maxpreset].note_Offset_graph[2] = myFile.read();
-      pl1[maxpreset].note_Offset_graph[3] = myFile.read();
-      pl1[maxpreset].wfSelect[0] = myFile.read();
-      pl1[maxpreset].wfSelect[1] = myFile.read();
-      pl1[maxpreset].wfSelect[2] = myFile.read();
-      pl1[maxpreset].wfSelect[3] = myFile.read();
-      pl1[maxpreset].note_Velo_graph[0] = myFile.read();
-      pl1[maxpreset].note_Velo_graph[1] = myFile.read();
-      pl1[maxpreset].note_Velo_graph[2] = myFile.read();
-      pl1[maxpreset].note_Velo_graph[3] = myFile.read();
-      pl1[maxpreset].Filter1_Frequency_graph = myFile.read();
-      pl1[maxpreset].Filter1_Resonance_graph = myFile.read();
-      pl1[maxpreset].Filter1_Sweep_graph = myFile.read();
-      pl1[maxpreset].Env1_Attack_graph = myFile.read();
-      pl1[maxpreset].Env1_Decay_graph = myFile.read();
-      pl1[maxpreset].Env1_Sustain_graph = myFile.read();
-      pl1[maxpreset].Env1_Release_graph = myFile.read();
-      pl1[maxpreset].Filter1_Type_graph = myFile.read();
-    }
-
-    tft.println("Done");
-
-
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin1.txt");
-  }
-
-  // execute changes
-  for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-    for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-      pl1[maxpreset].note_Offset[MixerColumn] = map(pl1[maxpreset].note_Offset_graph[MixerColumn], 0, 127, -32, 32);
-      pl1[maxpreset].note_Velo[MixerColumn] = pl1[maxpreset].note_Velo_graph[MixerColumn] / 127.00;
-      pl1[maxpreset].wfSelect_graph[MixerColumn] = pl1[maxpreset].wfSelect[MixerColumn] * 10;
-    }
-
-    pl1[maxpreset].Filter1_Frequency = note_frequency[pl1[maxpreset].Filter1_Frequency_graph];
-    pl1[maxpreset].Filter1_Resonance = pl1[maxpreset].Filter1_Resonance_graph / 25.40;
-    pl1[maxpreset].Filter1_Sweep = pl1[maxpreset].Filter1_Sweep_graph / 18.14;
-    pl1[maxpreset].Filter1_Type = pl1[maxpreset].Filter1_Type_graph / 43;
-    pl1[maxpreset].Env1_Attack = map(pl1[maxpreset].Env1_Attack_graph, 0, 127, 10, 700);
-    pl1[maxpreset].Env1_Decay = map(pl1[maxpreset].Env1_Decay_graph, 0, 127, 10, 700);
-    pl1[maxpreset].Env1_Sustain = pl1[maxpreset].Env1_Sustain_graph / 127.00;
-    pl1[maxpreset].Env1_Release = map(pl1[maxpreset].Env1_Release_graph, 0, 127, 180, 1200);
-  }
-}

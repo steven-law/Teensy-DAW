@@ -1,9 +1,6 @@
 //this is a simple sampleplayer. It reads directly from the sdcard, maybe this is something to change
 //about 6-8 samples can be played simultaniously, WHEN WAV-files are Mono and as short as possible (16-bit, 44100Hz)
 
-
-
-
 void Plugin_4_Settings() {
   pl4drummixer1.gain(0, 1);
   pl4drummixer1.gain(1, 1);
@@ -122,11 +119,11 @@ void Plugin4_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin4();
+        savePlugin("plugin4", 20);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin4();
+        loadPlugin("plugin4", 20);
       }
     }
 
@@ -168,92 +165,9 @@ void Plugin4_Change() {
   }
   for (int touchX = 1; touchX < 5; touchX++) {
     pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 3]);
-    pl4[pl4presetNr].Pot_Value_graph[touchX +3];
+    pl4[pl4presetNr].Pot_Value_graph[touchX + 3];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 7]);
-  }
-}
-
-
-void savePlugin4() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing plugin4.txt...");
-  SD.remove("plugin4.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening plugin4.txt...");
-  myFile = SD.open("plugin4.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing plugin4 to plugin4.txt...");
-    //save plugin 3 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX - 1]);
-        myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX + 3]);
-        myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX + 7]);
-      }
-    }
-
-    tft.println("Done");
-
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin4.txt");
-  }
-}
-
-void loadPlugin4() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("plugin4.txt");
-  if (myFile) {
-    tft.println("opening plugin4.txt:");
-
-    // read from the file until there's nothing else in it:
-
-    //load plugin4 variables
-    tft.print("reading plugin4 from plugin4.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        pl4[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
-        pl4[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
-        pl4[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
-      }
-    }
-
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening plugin4.txt");
-  }
-  for (int touchX = 1; touchX < 5; touchX++) {
-    pl4[pl4presetNr].Pot_Value[touchX - 1] = pl4[pl4presetNr].Pot_Value_graph[touchX - 1] / 127.00;
-    pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX - 1]);
-    pl4[pl4presetNr].Pot_Value[touchX + 3] = pl4[pl4presetNr].Pot_Value_graph[touchX + 3] / 127.00;
-    pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 3]);
-    pl4[pl4presetNr].Pot_Value[touchX + 7] = pl4[pl4presetNr].Pot_Value_graph[touchX + 7] / 127.00;
     pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 7]);
   }
 }

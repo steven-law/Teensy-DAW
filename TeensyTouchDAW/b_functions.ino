@@ -224,7 +224,7 @@ void Plugin_View_Dynamic() {
   //setting up the NoteFX5-view
   if (selectPage == NFX5_PAGE1) {
     NoteFX5_Page1_Dynamic();
-    NoteFX5_Control();
+    //NoteFX5_Control();
   }
 
 
@@ -291,81 +291,81 @@ void PluginNoteOn() {
   for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
     if (track[desired_instruments].notePressed) {
       if (track[desired_instruments].playNoteOnce) {
-         if (!track[desired_instruments].envActive) {
+        if (!track[desired_instruments].envActive) {
 
-        //send midi noteOn´s with channel 1-16
-        if (track[desired_instruments].MIDIchannel < 17) {
-          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
-          MIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
-          for (int usbs = 0; usbs < 10; usbs++) {
-            if (!launchpad) {
-              usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+          //send midi noteOn´s with channel 1-16
+          if (track[desired_instruments].MIDIchannel < 17) {
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+            for (int usbs = 0; usbs < 10; usbs++) {
+              if (!launchpad) {
+                usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed, track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+              }
             }
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
           }
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-        }
-        //send plugin noteOn´s to plugins
-        if (track[desired_instruments].MIDIchannel == 17) {
-          waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
-          waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
-          waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);
-          waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
-          envelope1.noteOn();
-          envelope2.noteOn();
-          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
-          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
-          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
-          usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
-          MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
-          MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
-          MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
-          MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-          //Serial.println("crackling");
-        }
-        if (track[desired_instruments].MIDIchannel == 19) {
-          pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
-          pl3envelope1.noteOn();
-          pl3envelope2.noteOn();
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-        }
-        if (track[desired_instruments].MIDIchannel == 21) {
-          double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
-          playSdPitch1.setPlaybackRate(note_ratio);
-          //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
-          playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
-          pl5envelope1.noteOn();
-          pl5envelope2.noteOn();
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-          //Serial.println("crackling2");
-        }
-        if (track[desired_instruments].MIDIchannel == 22) {
-          double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+          //send plugin noteOn´s to plugins
+          if (track[desired_instruments].MIDIchannel == 17) {
+            waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0]]);
+            waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1]]);
+            waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2]]);
+            waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3]]);
+            envelope1.noteOn();
+            envelope2.noteOn();
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[0], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[0], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[1], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[1], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[2], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[2], desired_instruments + 1);
+            MIDI.sendNoteOn(track[desired_instruments].notePlayed + pl1[track[desired_instruments].presetNr[phrase]].note_Offset[3], pl1[track[desired_instruments].presetNr[phrase]].note_Velo_graph[3], desired_instruments + 1);
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+            //Serial.println("crackling");
+          }
+          if (track[desired_instruments].MIDIchannel == 19) {
+            pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+            pl3envelope1.noteOn();
+            pl3envelope2.noteOn();
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+          }
+          if (track[desired_instruments].MIDIchannel == 21) {
+            double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+            playSdPitch1.setPlaybackRate(note_ratio);
+            //playSdPitch1.playRaw(RAW_files[pl5[track[desired_track].presetNr[phrase]].selected_file], 1);
+            playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
+            pl5envelope1.noteOn();
+            pl5envelope2.noteOn();
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+            //Serial.println("crackling2");
+          }
+          if (track[desired_instruments].MIDIchannel == 22) {
+            double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
 
-          playSdPitch2.setPlaybackRate(note_ratio);
-          playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
-          pl6envelope1.noteOn();
-          pl6envelope2.noteOn();
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
+            playSdPitch2.setPlaybackRate(note_ratio);
+            playSdPitch2.playRaw(RAW_files[pl6[track[desired_instruments].presetNr[phrase]].selected_file], 1);
+            pl6envelope1.noteOn();
+            pl6envelope2.noteOn();
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+          }
+          if (track[desired_instruments].MIDIchannel == 24) {
+            pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+            pl8envelope1.noteOn();
+            pl8envelope2.noteOn();
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+          }
+          if (track[desired_instruments].MIDIchannel == 25) {
+            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+          }
         }
-        if (track[desired_instruments].MIDIchannel == 24) {
-          pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
-          pl8envelope1.noteOn();
-          pl8envelope2.noteOn();
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-        }
-        if (track[desired_instruments].MIDIchannel == 25) {
-          pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
-          track[desired_instruments].playNoteOnce = false;
-          track[desired_instruments].envActive = true;
-        }
-         }
       }
     }
   }
@@ -510,7 +510,7 @@ void beatComponents() {
       //NoteFX4_Change();
     }
     if (track[instruments].seqMode == 5) {
-      //NFX5presetNr = track[instruments].clip_songMode;
+      NFX5presetNr = track[instruments].clip_songMode;
       //NoteFX5_Change();
     }
   }
@@ -551,7 +551,317 @@ void selectFilterType(int pluginchannel, byte mixerchannel) {
     pl9mixer1.gain(mixerchannel, 1);
   }
 }
+void savePlugin(const char* trackname, byte trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
 
+
+  // delete the file:
+  tft.print("Removing:");
+  tft.print(_trackname);
+  SD.remove(_trackname);
+  tft.println("Done");
+
+  // open the file.
+  tft.print("Creating and opening:");
+  tft.print(_trackname);
+  myFile = SD.open(_trackname, FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    //save tracks
+    tft.print("Writing track to:");
+    tft.print(_trackname);
+
+
+    if (trackNr == 17) {
+      //save plugin 1 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl1[maxpreset].note_Offset_graph[0]);
+        myFile.print((char)pl1[maxpreset].note_Offset_graph[1]);
+        myFile.print((char)pl1[maxpreset].note_Offset_graph[2]);
+        myFile.print((char)pl1[maxpreset].note_Offset_graph[3]);
+        myFile.print((char)pl1[maxpreset].wfSelect[0]);
+        myFile.print((char)pl1[maxpreset].wfSelect[1]);
+        myFile.print((char)pl1[maxpreset].wfSelect[2]);
+        myFile.print((char)pl1[maxpreset].wfSelect[3]);
+        myFile.print((char)pl1[maxpreset].note_Velo_graph[0]);
+        myFile.print((char)pl1[maxpreset].note_Velo_graph[1]);
+        myFile.print((char)pl1[maxpreset].note_Velo_graph[2]);
+        myFile.print((char)pl1[maxpreset].note_Velo_graph[3]);
+        myFile.print((char)pl1[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl1[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl1[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl1[maxpreset].Env1_Attack_graph);
+        myFile.print((char)pl1[maxpreset].Env1_Decay_graph);
+        myFile.print((char)pl1[maxpreset].Env1_Sustain_graph);
+        myFile.print((char)pl1[maxpreset].Env1_Release_graph);
+        myFile.print((char)pl1[maxpreset].Filter1_Type_graph);
+      }
+    }
+    if (trackNr == 18) {
+      //save plugin 2 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX - 1]);
+          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 3]);
+          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 7]);
+        }
+      }
+    }
+    if (trackNr == 19) {
+      //save plugin 3 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl3[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl3[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl3[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl3[maxpreset].Env1_Attack_graph);
+        myFile.print((char)pl3[maxpreset].Env1_Decay_graph);
+        myFile.print((char)pl3[maxpreset].Env1_Sustain_graph);
+        myFile.print((char)pl3[maxpreset].Env1_Release_graph);
+        myFile.print((char)pl3[maxpreset].wfSelect);
+        myFile.print((char)pl3[maxpreset].Filter1_Type);
+      }
+    }
+    if (trackNr == 20) {
+      //save plugin 4 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX - 1]);
+          myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX + 3]);
+          myFile.print((char)pl4[maxpreset].Pot_Value_graph[touchX + 7]);
+        }
+      }
+    }
+    if (trackNr == 21) {
+      //save plugin 5 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl5[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl5[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl5[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl5[maxpreset].Env1_Attack_graph);
+        myFile.print((char)pl5[maxpreset].Env1_Decay_graph);
+        myFile.print((char)pl5[maxpreset].Env1_Sustain_graph);
+        myFile.print((char)pl5[maxpreset].Env1_Release_graph);
+        myFile.print((char)pl5[maxpreset].selected_file_graph);
+        myFile.print((char)pl5[maxpreset].Volume_graph);
+        myFile.print((char)pl5[maxpreset].Filter1_Type);
+      }
+    }
+    if (trackNr == 22) {
+      //save plugin 6 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl6[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl6[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl6[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl6[maxpreset].Env1_Attack_graph);
+        myFile.print((char)pl6[maxpreset].Env1_Decay_graph);
+        myFile.print((char)pl6[maxpreset].Env1_Sustain_graph);
+        myFile.print((char)pl6[maxpreset].Env1_Release_graph);
+        myFile.print((char)pl6[maxpreset].selected_file_graph);
+        myFile.print((char)pl6[maxpreset].Volume_graph);
+        myFile.print((char)pl6[maxpreset].Filter1_Type);
+      }
+    }
+    if (trackNr == 24) {
+      //save plugin 8 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl8[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl8[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl8[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl8[maxpreset].Env1_Attack_graph);
+        myFile.print((char)pl8[maxpreset].Env1_Decay_graph);
+        myFile.print((char)pl8[maxpreset].Env1_Sustain_graph);
+        myFile.print((char)pl8[maxpreset].Env1_Release_graph);
+        myFile.print((char)pl8[maxpreset].wfSelect);
+      }
+    }
+    if (trackNr == 25) {
+      //save plugin 9 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        myFile.print((char)pl9[maxpreset].wah_form_graph);
+        myFile.print((char)pl9[maxpreset].wah_rate_graph);
+        myFile.print((char)pl9[maxpreset].wah_sweep_graph);
+        myFile.print((char)pl9[maxpreset].wah_freq_graph);
+        myFile.print((char)pl9[maxpreset].wah_reso_graph);
+        myFile.print((char)pl9[maxpreset].wavefold_graph);
+        myFile.print((char)pl9[maxpreset].Filter1_Frequency_graph);
+        myFile.print((char)pl9[maxpreset].Filter1_Resonance_graph);
+        myFile.print((char)pl9[maxpreset].Filter1_Sweep_graph);
+        myFile.print((char)pl9[maxpreset].Filter1_Type_graph);
+      }
+    }
+
+
+    // close the file:
+    myFile.close();
+    tft.println("Done");
+
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.print(_trackname);
+  }
+
+  tft.println("Saving done.");
+  startUpScreen();
+}
+void loadPlugin(const char* trackname, int trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open(_trackname);
+
+
+  if (myFile) {
+    tft.println("opening:");
+    tft.println(_trackname);
+
+    // read from the file until there's nothing else in it:
+    //load track 1
+    tft.print("Reading clips from:");
+    tft.println(_trackname);
+
+    if (trackNr == 17) {
+      //load pl1
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl1[maxpreset].note_Offset_graph[0] = myFile.read();
+        pl1[maxpreset].note_Offset_graph[1] = myFile.read();
+        pl1[maxpreset].note_Offset_graph[2] = myFile.read();
+        pl1[maxpreset].note_Offset_graph[3] = myFile.read();
+        pl1[maxpreset].wfSelect[0] = myFile.read();
+        pl1[maxpreset].wfSelect[1] = myFile.read();
+        pl1[maxpreset].wfSelect[2] = myFile.read();
+        pl1[maxpreset].wfSelect[3] = myFile.read();
+        pl1[maxpreset].note_Velo_graph[0] = myFile.read();
+        pl1[maxpreset].note_Velo_graph[1] = myFile.read();
+        pl1[maxpreset].note_Velo_graph[2] = myFile.read();
+        pl1[maxpreset].note_Velo_graph[3] = myFile.read();
+        pl1[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl1[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl1[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl1[maxpreset].Env1_Attack_graph = myFile.read();
+        pl1[maxpreset].Env1_Decay_graph = myFile.read();
+        pl1[maxpreset].Env1_Sustain_graph = myFile.read();
+        pl1[maxpreset].Env1_Release_graph = myFile.read();
+        pl1[maxpreset].Filter1_Type_graph = myFile.read();
+      }
+    }
+    if (trackNr == 18) {
+      //load plugin2 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          pl2[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
+          pl2[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
+          pl2[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 19) {
+      //load plugin 3 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl3[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl3[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl3[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl3[maxpreset].Env1_Attack_graph = myFile.read();
+        pl3[maxpreset].Env1_Decay_graph = myFile.read();
+        pl3[maxpreset].Env1_Sustain_graph = myFile.read();
+        pl3[maxpreset].Env1_Release_graph = myFile.read();
+        pl3[maxpreset].wfSelect = myFile.read();
+        pl3[maxpreset].Filter1_Type = myFile.read();
+      }
+    }
+    if (trackNr == 20) {
+      //load plugin4 variables
+
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          pl4[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
+          pl4[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
+          pl4[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 21) {
+      //load plugin 5 variables
+      tft.print("reading plugin 5 from plugin5.txt...");
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl5[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl5[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl5[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl5[maxpreset].Env1_Attack_graph = myFile.read();
+        pl5[maxpreset].Env1_Decay_graph = myFile.read();
+        pl5[maxpreset].Env1_Sustain_graph = myFile.read();
+        pl5[maxpreset].Env1_Release_graph = myFile.read();
+        pl5[maxpreset].selected_file_graph = myFile.read();
+        pl5[maxpreset].Volume_graph = myFile.read();
+        pl5[maxpreset].Filter1_Type = myFile.read();
+      }
+    }
+    if (trackNr == 22) {
+      //load plugin 6 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl6[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl6[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl6[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl6[maxpreset].Env1_Attack_graph = myFile.read();
+        pl6[maxpreset].Env1_Decay_graph = myFile.read();
+        pl6[maxpreset].Env1_Sustain_graph = myFile.read();
+        pl6[maxpreset].Env1_Release_graph = myFile.read();
+        pl6[maxpreset].selected_file_graph = myFile.read();
+        pl6[maxpreset].Volume_graph = myFile.read();
+        pl6[maxpreset].Filter1_Type = myFile.read();
+      }
+    }
+    if (trackNr == 24) {
+      //load plugin 8 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl8[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl8[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl8[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl8[maxpreset].Env1_Attack_graph = myFile.read();
+        pl8[maxpreset].Env1_Decay_graph = myFile.read();
+        pl8[maxpreset].Env1_Sustain_graph = myFile.read();
+        pl8[maxpreset].Env1_Release_graph = myFile.read();
+        pl8[maxpreset].wfSelect = myFile.read();
+      }
+    }
+    if (trackNr == 25) {
+      //load plugin 8 variables
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        pl9[maxpreset].wah_form_graph = myFile.read();
+        pl9[maxpreset].wah_rate_graph = myFile.read();
+        pl9[maxpreset].wah_sweep_graph = myFile.read();
+        pl9[maxpreset].wah_freq_graph = myFile.read();
+        pl9[maxpreset].wah_reso_graph = myFile.read();
+        pl9[maxpreset].wavefold_graph = myFile.read();
+        pl9[maxpreset].Filter1_Frequency_graph = myFile.read();
+        pl9[maxpreset].Filter1_Resonance_graph = myFile.read();
+        pl9[maxpreset].Filter1_Sweep_graph = myFile.read();
+        pl9[maxpreset].Filter1_Type_graph = myFile.read();
+      }
+    }
+
+    //int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
+
+    tft.println("Done");
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.println(_trackname);
+  }
+}
 //end of the plugin-function-nightmare
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -706,10 +1016,110 @@ void DrumPluginPlay() {
 }
 
 
+void envelopeA(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueA != map(Potentiometer[cols], 0, 127, 0, ATTACK_TIME)) {
+    PotValueA = map(Potentiometer[cols], 0, 127, 0, ATTACK_TIME);
+    ENVELOPE1[des_env]->attack(PotValueA);
+    ENVELOPE2[des_env]->attack(PotValueA);
+    drawPot(MixerColumnPos, ROW, Potentiometer[cols], PotValueA, "Atck", trackColor[desired_track]);
+  }
+}
+void envelopeD(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueD != map(Potentiometer[cols], 0, 127, 0, DECAY_TIME)) {
+    PotValueD = map(Potentiometer[cols], 0, 127, 0, DECAY_TIME);
+    ENVELOPE1[des_env]->decay(PotValueD);
+    ENVELOPE2[des_env]->decay(PotValueD);
+    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], PotValueD, "Dec", trackColor[desired_track]);
+  }
+}
+void envelopeS(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueS != (float)(Potentiometer[cols] / SUSTAIN_LVL)) {
+    PotValueS = (float)(Potentiometer[cols] / SUSTAIN_LVL);
+    ENVELOPE1[des_env]->sustain(PotValueS);
+    ENVELOPE2[des_env]->sustain(PotValueS);
+    drawPot_3(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Sus", trackColor[desired_track]);
+  }
+}
+void envelopeR(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueR != map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME)) {
+    PotValueR = map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME);
+    ENVELOPE1[des_env]->release(PotValueR);
+    ENVELOPE2[des_env]->release(PotValueR);
+    drawPot_4(MixerColumnPos, ROW, Potentiometer[cols], PotValueR, "Rel", trackColor[desired_track]);
+  }
+}
+void envelopeH(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueH != map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME)) {
+    PotValueH = map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME);
+    ENVELOPE1[des_env]->hold(PotValueH);
+    ENVELOPE2[des_env]->hold(PotValueH);
+    drawPot_3(MixerColumnPos, ROW, Potentiometer[cols], PotValueH, "Hld", trackColor[desired_track]);
+  }
+}
+void ADSR(int des_env, int COL, int ROW) {
+  envelopeA(des_env, COL, ROW);
+  envelopeD(des_env, COL + 1, ROW);
+  envelopeS(des_env, COL + 2, ROW);
+  envelopeR(des_env, COL + 3, ROW);
+}
+void AR(int des_env, int COL, int ROW) {
+  envelopeA(des_env, COL, ROW);
+  envelopeR(des_env, COL+1, ROW);
+}
+void AD(int des_env, int COL, int ROW) {
+  envelopeA(des_env, COL, ROW);
+  envelopeD(des_env, COL+1, ROW);
+}
+void AHR(int des_env, int COL, int ROW) {
+  envelopeA(des_env, COL, ROW);
+  envelopeH(des_env, COL+1, ROW);
+  envelopeR(des_env, COL+2, ROW);
+}
 
-
-
-
+void StateVar_Filter(int des_env, int COL, int ROW) {
+  StateVar_Frequency(des_env, COL, ROW);
+  StateVar_Resonance(des_env, COL + 1, ROW);
+  StateVar_Sweep(des_env, COL + 2, ROW);
+  StateVar_Type(des_env, COL + 3, ROW);
+}
+void StateVar_Frequency(int des_env, int cols, int ROW) {
+   int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueSVF_FREQ != Potentiometer[cols]) {
+    PotValueSVF_FREQ = Potentiometer[cols];
+    STATEFILTER[des_env]->frequency(note_frequency[PotValueSVF_FREQ]);
+    drawPot(MixerColumnPos, ROW, Potentiometer[cols], note_frequency[PotValueSVF_FREQ], "Freq", trackColor[desired_track]);
+  }
+}
+void StateVar_Resonance(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueSVF_RES != (float)(Potentiometer[cols] / SVF_RES)) {
+    PotValueSVF_RES = (float)(Potentiometer[cols] / SVF_RES);
+    STATEFILTER[des_env]->resonance(PotValueSVF_RES);
+    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Reso", trackColor[desired_track]);
+  }
+}
+void StateVar_Sweep(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueSVF_SWP != (float)(Potentiometer[cols] / SVF_SWP)) {
+    PotValueSVF_SWP = (float)(Potentiometer[cols] / SVF_SWP);
+    STATEFILTER[des_env]->octaveControl(PotValueSVF_SWP);
+    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Swp", trackColor[desired_track]);
+  }
+}
+void StateVar_Type(int des_env, int cols, int ROW) {
+  int MixerColumnPos = ((cols + 1) * 4) - 1;
+  if (PotValueSVF_TYP != (float)Potentiometer[cols] / SVF_TYP) {
+    PotValueSVF_TYP = (float)Potentiometer[cols] / SVF_TYP;
+    selectFilterType(track[desired_instrument].MIDIchannel, PotValueSVF_TYP);
+    drawPot_4(MixerColumnPos, ROW, Potentiometer[cols], PotValueSVF_TYP, "", trackColor[desired_track]);
+    drawChar(MixerColumnPos, ROW + 1, filterType[PotValueSVF_TYP], ILI9341_WHITE);
+  }
+}
 //these are some function you might want to use like the drawpot or any of the draw-rect functions
 
 //draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended
@@ -743,6 +1153,26 @@ void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, cha
 }
 
 void drawPot(int xPos, byte yPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+
+  circlePos = fvalue / 63.5;
+
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_DARKGREY);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
+  tft.print(dvalue_old);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
+  tft.print(dvalue);
+  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
+  tft.print(dname);
+
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old) + 2.25), 4, ILI9341_DARKGREY);
+  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
+  circlePos_old = circlePos;
+  dvalue_old = dvalue;
+}
+void drawPotDrum(int xPos, byte yPos, byte fvalue, int dvalue, byte dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   circlePos = fvalue / 63.5;
 

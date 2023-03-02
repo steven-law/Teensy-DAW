@@ -137,7 +137,8 @@ const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7",
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 const char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
-const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
+char _trackname[20];
+//const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
 const int steps = 16;      // number of steps in the sequence
@@ -377,27 +378,32 @@ struct tracks {
   byte midicc_number_row_3[4];
   byte midicc_value_row_4[4];
   byte midicc_number_row_4[4];
+
   byte clip[MAX_CLIPS][NUM_STEPS];
+
   byte arrangment1[256];
-  byte lastclip = 0;
   int NoteOffset[256];
-  int lastNoteOffset = 0;
   int NoteOffset_graph[256];
   int presetNr[256];
-  int lastpresetNr = 0;
   int volume[256];
+  //copy clipinfo to next clip (in songmode when rec is active)
+  byte lastclip = 0;
+  int lastNoteOffset = 0;
+  int lastpresetNr = 0;
   int lastvolume = 100;
+
   int notePlayed = 0;
-  //int notePlayedLast = 0;
   bool notePressed;
   bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
+  
   int MIDItick = 0;
   int MIDItick_16 = 0;
   int MIDItick_reset = 6;
   bool tick_true = false;
   int stepLength = 5;
+
   byte Volume_graph = 50;
   float Volume = 1;
 

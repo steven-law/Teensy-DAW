@@ -46,8 +46,8 @@ void SmfWriter::setFilename(const char* filename) {
 
   sprintf(_filename, "%s.mid\0", filename);
 
-  if (SD.exists(_filename)) {
-    SD.remove(_filename);
+  if (SD.exists(filename)) {
+    SD.remove(filename);
   }
   //Serial.printf("using filename '%s'\n", _filename);
 }
