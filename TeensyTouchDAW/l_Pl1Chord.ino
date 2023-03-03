@@ -27,9 +27,9 @@ void Plugin_1_Settings() {
   mixer1.gain(2, 1);
   mixer1.gain(3, 1);
 
-  filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
-  filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-  filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
+  filter1.frequency(note_frequency[pl1[pl1presetNr].Pot_Value[0]]);
+  filter1.resonance((float)pl1[pl1presetNr].Pot_Value[1] / SVF_RES);
+  filter1.octaveControl((float)(pl1[pl1presetNr].Pot_Value[1] / SVF_SWP));
 
   pl1mixer2.gain(0, 1);
   pl1mixer2.gain(1, 0);
@@ -37,20 +37,20 @@ void Plugin_1_Settings() {
   pl1mixer2.gain(3, 0);
 
   envelope1.delay(0);
-  envelope1.attack(pl1[pl1presetNr].Env1_Attack);
+  envelope1.attack(map(pl1[pl1presetNr].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
   envelope1.hold(0);
-  envelope1.decay(500);
+  envelope1.decay(map(pl1[pl1presetNr].Pot_Value[5], 0, 127, 0, DECAY_TIME));
   envelope1.sustain(0.8);
-  envelope1.release(pl1[pl1presetNr].Env1_Release);
+  envelope1.release(map(pl1[pl1presetNr].Pot_Value[6], 0, 127, 0, RELEASE_TIME));
 
   pl1dc1.amplitude(1);
 
   envelope2.delay(0);
-  envelope2.attack(pl1[pl1presetNr].Env1_Attack);
+  envelope2.attack(map(pl1[pl1presetNr].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
   envelope2.hold(0);
-  envelope2.decay(500);
+  envelope2.decay(map(pl1[pl1presetNr].Pot_Value[5], 0, 127, 0, DECAY_TIME));
   envelope2.sustain(0.8);
-  envelope2.release(pl1[pl1presetNr].Env1_Release);
+  envelope2.release(map(pl1[pl1presetNr].Pot_Value[6], 0, 127, 0, RELEASE_TIME));
 
   //bitcrusher1 controlled by startKnob on page 3
   bitcrusher1.bits(16);
@@ -253,49 +253,48 @@ void Plugin1_Page2_Dynamic() {
         //Filter Frequency
 
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl1[pl1presetNr].Filter1_Frequency_graph + encoded[0]), 0, 127);
-          pl1[pl1presetNr].Filter1_Frequency_graph = Potentiometer[0];
+          Potentiometer[0] = constrain((pl1[pl1presetNr].Pot_Value[0] + encoded[0]), 0, 127);
+          pl1[pl1presetNr].Pot_Value[0] = Potentiometer[0];
         }
         //Resonance
 
         if (enc_moved[1]) {
-          Potentiometer[1] = constrain((pl1[pl1presetNr].Filter1_Resonance_graph + encoded[1]), 0, 127);
-          pl1[pl1presetNr].Filter1_Resonance_graph = Potentiometer[1];
+          Potentiometer[1] = constrain((pl1[pl1presetNr].Pot_Value[1] + encoded[1]), 0, 127);
+          pl1[pl1presetNr].Pot_Value[1] = Potentiometer[1];
         }
         //Sweep
 
         if (enc_moved[2]) {
-          Potentiometer[2] = constrain((pl1[pl1presetNr].Filter1_Sweep_graph + encoded[2]), 0, 127);
-          pl1[pl1presetNr].Filter1_Sweep_graph = Potentiometer[2];
+          Potentiometer[2] = constrain((pl1[pl1presetNr].Pot_Value[2] + encoded[2]), 0, 127);
+          pl1[pl1presetNr].Pot_Value[2] = Potentiometer[2];
         }
         //Filtertype
-
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl1[pl1presetNr].Filter1_Type + encoded[3]), 0, 127);
-          pl1[pl1presetNr].Filter1_Type = Potentiometer[3] / SVF_TYP;
+          Potentiometer[3] = constrain((pl3[pl3presetNr].Pot_Value[4] + encoded[3]), 0, 2);
+          pl3[pl3presetNr].Pot_Value[4] = Potentiometer[3];
         }
         break;
 
       case 1:
         //Attack
-        Potentiometer[0] = pl1[pl1presetNr].Env1_Attack_graph;
+        Potentiometer[0] = pl1[pl1presetNr].Pot_Value[4];
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl1[pl1presetNr].Env1_Attack_graph + encoded[0]), 0, 127);
+          Potentiometer[0] = constrain((pl1[pl1presetNr].Pot_Value[4] + encoded[0]), 0, 127);
         }
         //Decay
-        Potentiometer[1] = pl1[pl1presetNr].Env1_Decay_graph;
+        Potentiometer[1] = pl1[pl1presetNr].Pot_Value[5];
         if (enc_moved[1]) {
-          Potentiometer[1] = constrain((pl1[pl1presetNr].Env1_Decay_graph + encoded[1]), 0, 127);
+          Potentiometer[1] = constrain((pl1[pl1presetNr].Pot_Value[5] + encoded[1]), 0, 127);
         }
         //Sustain
-        Potentiometer[2] = pl1[pl1presetNr].Env1_Sustain_graph;
+        Potentiometer[2] = pl1[pl1presetNr].Pot_Value[6];
         if (enc_moved[2]) {
-          Potentiometer[2] = constrain((pl1[pl1presetNr].Env1_Sustain_graph + encoded[2]), 0, 127);
+          Potentiometer[2] = constrain((pl1[pl1presetNr].Pot_Value[6] + encoded[2]), 0, 127);
         }
         //Release
-        Potentiometer[3] = pl1[pl1presetNr].Env1_Release_graph;
+        Potentiometer[3] = pl1[pl1presetNr].Pot_Value[7];
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl1[pl1presetNr].Env1_Release_graph + encoded[3]), 0, 127);
+          Potentiometer[3] = constrain((pl1[pl1presetNr].Pot_Value[7] + encoded[3]), 0, 127);
         }
         break;
     }
@@ -373,15 +372,15 @@ void Plugin1_Page_Static(int Pagenumber) {
     }
   }
   if (Pagenumber == 1) {
-    drawPot(CTRL_COL_0, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Frequency_graph, note_frequency[pl1[pl1presetNr].Filter1_Frequency_graph], "Freq", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Resonance_graph, pl1[pl1presetNr].Filter1_Resonance_graph, "Reso", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Sweep_graph, pl1[pl1presetNr].Filter1_Sweep_graph, "Swp", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Filter1_Type_graph, pl1[pl1presetNr].Filter1_Type, "", trackColor[desired_track]);
-    drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Filter1_Type], ILI9341_WHITE);
-    drawPot(CTRL_COL_0, CTRL_ROW_1, pl1[pl1presetNr].Env1_Attack_graph, pl1[pl1presetNr].Env1_Attack, "Atck", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Env1_Decay_graph, pl1[pl1presetNr].Env1_Decay, "Dec", trackColor[desired_track]);
-    drawPot(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Env1_Sustain_graph, pl1[pl1presetNr].Env1_Sustain_graph, "Sus", trackColor[desired_track]);
-    drawPot(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Env1_Release_graph, pl1[pl1presetNr].Env1_Release, "Rel", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_0, CTRL_ROW_0, pl1[pl1presetNr].Pot_Value[0], note_frequency[pl1[pl1presetNr].Pot_Value[0]], "Freq", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_1, CTRL_ROW_0, pl1[pl1presetNr].Pot_Value[1], pl1[pl1presetNr].Pot_Value[1], "Reso", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_2, CTRL_ROW_0, pl1[pl1presetNr].Pot_Value[2], pl1[pl1presetNr].Pot_Value[2], "Swp", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_3, CTRL_ROW_0, pl1[pl1presetNr].Pot_Value[3] * SVF_TYP, pl1[pl1presetNr].Pot_Value[3], "", trackColor[desired_track]);
+    drawChar(CTRL_COL_3, 4, filterType[pl1[pl1presetNr].Pot_Value[3]], ILI9341_WHITE);
+    drawPot(CTRL_COL_0, CTRL_ROW_1, pl1[pl1presetNr].Pot_Value[4], map(pl1[pl1presetNr].Pot_Value[4], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_instrument]);
+    drawPot(CTRL_COL_1, CTRL_ROW_1, pl1[pl1presetNr].Pot_Value[5], map(pl1[pl1presetNr].Pot_Value[5], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
+    drawPot(CTRL_COL_2, CTRL_ROW_1, pl1[pl1presetNr].Pot_Value[6], pl1[pl1presetNr].Pot_Value[6], "Sus", trackColor[desired_track]);
+    drawPot(CTRL_COL_3, CTRL_ROW_1, pl1[pl1presetNr].Pot_Value[7], map(pl1[pl1presetNr].Pot_Value[6], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_instrument]);
   }
 }
 void Plugin1_Change() {
@@ -391,16 +390,16 @@ void Plugin1_Change() {
     mixer1.gain(0, pl1[pl1presetNr].note_Velo[MixerColumn]);
   }
 
-  filter1.frequency(pl1[pl1presetNr].Filter1_Frequency);
-  filter1.resonance(pl1[pl1presetNr].Filter1_Resonance);
-  filter1.octaveControl(pl1[pl1presetNr].Filter1_Sweep);
-  selectFilterType(17, pl1[pl1presetNr].Filter1_Type);
-  envelope1.attack(pl1[pl1presetNr].Env1_Attack);
-  envelope2.attack(pl1[pl1presetNr].Env1_Attack);
-  envelope1.decay(pl1[pl1presetNr].Env1_Decay);
-  envelope2.decay(pl1[pl1presetNr].Env1_Decay);
-  envelope1.sustain(pl1[pl1presetNr].Env1_Sustain);
-  envelope2.sustain(pl1[pl1presetNr].Env1_Sustain);
-  envelope1.release(pl1[pl1presetNr].Env1_Release);
-  envelope2.release(pl1[pl1presetNr].Env1_Release);
+  filter1.frequency(note_frequency[pl1[pl1presetNr].Pot_Value[0]]);
+  filter1.resonance((float)(pl1[pl1presetNr].Pot_Value[1] / SVF_RES));
+  filter1.octaveControl((float)(pl1[pl1presetNr].Pot_Value[2] / SVF_SWP));
+  selectFilterType(17, pl1[pl1presetNr].Pot_Value[3]);
+  envelope1.attack(map(pl1[pl1presetNr].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
+  envelope2.attack(map(pl1[pl1presetNr].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
+  envelope1.decay(map(pl1[pl1presetNr].Pot_Value[5], 0, 127, 0, DECAY_TIME));
+  envelope2.decay(map(pl1[pl1presetNr].Pot_Value[5], 0, 127, 0, DECAY_TIME));
+  envelope1.sustain((float)(pl1[pl1presetNr].Pot_Value[6] / SUSTAIN_LVL));
+  envelope2.sustain((float)(pl1[pl1presetNr].Pot_Value[6] / SUSTAIN_LVL));
+  envelope1.release(map(pl1[pl1presetNr].Pot_Value[6], 0, 127, 0, RELEASE_TIME));
+  envelope2.release(map(pl1[pl1presetNr].Pot_Value[6], 0, 127, 0, RELEASE_TIME));
 }

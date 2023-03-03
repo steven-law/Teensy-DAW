@@ -29,47 +29,33 @@
 #define SUSTAIN_LVL 127.00
 #define RELEASE_TIME 1600
 
-int PotValueA; //attack
-int PotValueD; //decay
-float PotValueS;//sustain
-int PotValueR;//release
-int PotValueH; //hold
+int PotValueA;    //attack
+int PotValueD;    //decay
+float PotValueS;  //sustain
+int PotValueR;    //release
+int PotValueH;    //hold
 
 #define SVF_RES 25.40
 #define SVF_SWP 18.14
 #define SVF_TYP 43
-int PotValueSVF_FREQ; //state variable filter freq
-float PotValueSVF_RES; //state variable filter reso
-float PotValueSVF_SWP; //state variable filter sweep
-int PotValueSVF_TYP; //state variable filter type
+int PotValueSVF_FREQ;   //state variable filter freq
+float PotValueSVF_RES;  //state variable filter reso
+float PotValueSVF_SWP;  //state variable filter sweep
+int PotValueSVF_TYP;    //state variable filter type
 
-int PotValueLDF_FREQ; //state variable filter freq
-float PotValueLDF_RES; //state variable filter reso
-float PotValueLDF_SWP; //state variable filter sweep
+int PotValueLDF_FREQ;   //state variable filter freq
+float PotValueLDF_RES;  //state variable filter reso
+float PotValueLDF_SWP;  //state variable filter sweep
 
 
 
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
+int oldValue;
+
 //plugin 1 variables
 struct plugin1 {
-
-  int Filter1_Frequency = 560;
-  byte Filter1_Frequency_graph = 20;
-  byte Filter1_Resonance_graph = 25;
-  float Filter1_Resonance = 1;
-  byte Filter1_Sweep_graph = 80;
-  float Filter1_Sweep = 2;
-  byte Filter1_Type = 0;
-  byte Filter1_Type_graph = 0;
-  int Env1_Attack = 50;
-  byte Env1_Attack_graph = 10;
-  int Env1_Decay = 50;
-  byte Env1_Decay_graph = 50;
-  float Env1_Sustain = 1;
-  byte Env1_Sustain_graph = 127;
-  int Env1_Release = 150;
-  byte Env1_Release_graph = 15;
+  byte Pot_Value[16]{ 10, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   int note_Offset[4] = { 0, 4, 7, 11 };
   byte note_Offset_graph[4] = { 50, 65, 80, 95 };
   float note_Velo[4] = { 1, 1, 1, 1 };
@@ -82,15 +68,15 @@ byte pl1presetNr = 0;
 
 //plugin 2 variables
 struct plugin2 {
-  byte Pot_Value_graph[12];
-  float Pot_Value[12];
+  byte Pot_Value_graph[12]{ 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127 };
+  byte Pot_Value[12]{ 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127 };
 };
 plugin2* pl2;
 byte pl2presetNr = 0;
 
 //plugin 3 variables
 struct plugin3 {
-  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
+  byte Pot_Value[16]{ 10, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   //Pot_Value[0] = waveform
 
   //Pot_Value[4] = Filt_Freq
@@ -111,28 +97,15 @@ byte pl3presetNr = 0;
 
 //plugin 4 variables
 struct plugin4 {
-  byte Pot_Value_graph[12];
-  float Pot_Value[12];
+  byte Pot_Value_graph[12]{ 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127 };
+  byte Pot_Value[12]{ 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127 };
 };
 plugin4* pl4;
 byte pl4presetNr = 0;
 
 //plugin 5 variables
 struct plugin5 {
-  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
-  //Pot_Value[0] = selected file
-
-  //Pot_Value[4] = Filt_Freq
-  //Pot_Value[5] = Filt_Reso
-  //Pot_Value[6] = Filt_swep
-  //Pot_Value[7] = Filt_Type
-
-  //Pot_Value[8] = Attack
-  //Pot_Value[9] = Decay
-  //Pot_Value[10] = Sustain
-  //Pot_Value[11] = Release
-
-
+  byte Pot_Value[16]{ 10, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   byte Volume_graph = 50;
   float Volume;
 };
@@ -142,19 +115,7 @@ bool pl5enter_was_pushed = true;
 
 //plugin 6 variables
 struct plugin6 {
-  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
-  //Pot_Value[0] = selected file
-
-  //Pot_Value[4] = Filt_Freq
-  //Pot_Value[5] = Filt_Reso
-  //Pot_Value[6] = Filt_swep
-  //Pot_Value[7] = Filt_Type
-
-  //Pot_Value[8] = Attack
-  //Pot_Value[9] = Decay
-  //Pot_Value[10] = Sustain
-  //Pot_Value[11] = Release
-
+  byte Pot_Value[16]{ 10, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   byte Volume_graph = 50;
   float Volume_rnd;
   float Volume;
@@ -271,21 +232,7 @@ byte pl7presetNr = 0;
 
 //plugin 8 variables
 struct plugin8 {
-  byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
-  float Filter1_Frequency;
-  byte Filter1_Frequency_graph;
-  float Filter1_Resonance;
-  byte Filter1_Resonance_graph;
-  float Filter1_Sweep;
-  byte Filter1_Sweep_graph;
-  int Env1_Attack;
-  byte Env1_Attack_graph;
-  int Env1_Decay;
-  byte Env1_Decay_graph;
-  float Env1_Sustain = 1;
-  byte Env1_Sustain_graph = 127;
-  int Env1_Release;
-  float Env1_Release_graph;
+  byte Pot_Value[16]{ 1, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   float note1_Velo = 1;
   float note1_Velo_rnd;
   byte wfSelect;
@@ -295,18 +242,7 @@ plugin8* pl8;
 byte pl8presetNr = 0;
 
 struct plugin9 {
-    byte Pot_Value[16]{10, 0, 0, 0,  63, 0, 64, 0,  0, 0, 15, 0,  0, 0, 0, 0}; 
-  //Pot_Value[0] = selected file
-
-  //Pot_Value[4] = Filt_Freq
-  //Pot_Value[5] = Filt_Reso
-  //Pot_Value[6] = Filt_swep
-  //Pot_Value[7] = Filt_Type
-
-  //Pot_Value[8] = Attack
-  //Pot_Value[9] = Decay
-  //Pot_Value[10] = Sustain
-  //Pot_Value[11] = Release
+  byte Pot_Value[16]{ 10, 0, 0, 0, 63, 0, 64, 0, 0, 0, 15, 0, 0, 0, 0, 0 };
   byte wavefold_graph;
   float wavefold;
   byte wah_form;
@@ -343,8 +279,8 @@ const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ra
 
 //seqmode "grid"
 struct Grids {
-  byte Pot_Value[12]{0};
-//  byte Pot_Value_graph[12]{0};
+  byte Pot_Value[12]{ 0 };
+  //  byte Pot_Value_graph[12]{0};
 };
 Grids* NFX1;
 byte NFX1presetNr = 0;
@@ -366,7 +302,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0 },
   { 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
   { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0 },  //kick
-  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick  
+  { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0 },  //kick
   { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },  //kick
   { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  //kick
   { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },  //kick
@@ -376,7 +312,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },  //snare
   { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
   { 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0 },  //snare
-  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare  
+  { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0 },  //snare
   { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
   { 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0 },  //snare
   { 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1 },  //snare
@@ -386,7 +322,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },  //hihat
   { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },  //hihat
   { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  //hihat
-  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat 
+  { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //hihat
   { 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 },  //hihat
   { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },  //hihat
   { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 },  //hihat
@@ -396,7 +332,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 },
   { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 },
-  { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },  //      
+  { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },  //
   { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
   { 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0 },
   { 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -406,7 +342,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
   { 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0 },
   { 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
-  { 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //       
+  { 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 },  //
   { 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0 },
   { 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0 },
   { 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
@@ -416,7 +352,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0 },
   { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0 },
   { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 },
-  { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 },  //      
+  { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0 },  //
   { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 },
   { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 },
@@ -457,8 +393,7 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
 
 //seqmode "dropseq"
 struct Drops {
-  byte Pot_Value[16]{0};
-//  byte Pot_Value_graph[16]{0};
+  byte Pot_Value[16]{ 0 };
 };
 Drops* NFX2;
 byte NFX2presetNr = 0;
@@ -475,8 +410,7 @@ const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
 
 //seqmode "Rand"
 struct rands {
-  byte Pot_Value[16]{5};
-//  byte Pot_Value_graph[16]{5};
+  byte Pot_Value[16]{ 5 };
   byte Oct1 = 5;
   byte Oct2 = 6;
 };
@@ -488,8 +422,7 @@ const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
 
 //seqmode "PolyR"
 struct PolyR {
-  byte Pot_Value[12]{15};
-//  byte Pot_Value_graph[12]{15};
+  byte Pot_Value[12]{ 15 };
   byte reset[12];
 };
 PolyR* NFX4;
@@ -498,14 +431,15 @@ byte NFX4presetNr = 0;
 
 
 
-//seqmode Chat1
-struct Chat1 {
+//seqmode Ratch
+struct Ratch {
   // Initialize the array of input values (assuming they are provided by some external source)
-  int Pot_Value[12] {3};
+  int Pot_Value[12]{ 3 };
   int repeats[12] = { 0 };
 };
 //seqmode ratcheting
 bool*** ratchet;
-Chat1* NFX5;
+Ratch* NFX5;
 byte NFX5presetNr = 0;
+byte repeatED[12]{ 5 };
 int stepValues[numTracks];

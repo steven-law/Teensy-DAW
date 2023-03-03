@@ -113,11 +113,11 @@ void NoteFX2_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        saveNoteFX2();
+        saveNoteFX("NoteFX2", 1);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadNoteFX2();
+        loadNoteFX("NoteFX2", 1);
       }
     }
 
@@ -174,86 +174,4 @@ void NoteFX2_Change() {
 }
 
 
-void saveNoteFX2() {
 
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing NoteFX2.txt...");
-  SD.remove("NoteFX2.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening NoteFX2.txt...");
-  myFile = SD.open("NoteFX2.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing NoteFX2 to NoteFX2.txt...");
-    //save plugin 3 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)NFX2[maxpreset].Pot_Value[touchX - 1]);
-        myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 3]);
-        myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 7]);
-        myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 11]);
-      }
-    }
-
-    tft.println("Done");
-
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX2.txt");
-  }
-}
-
-void loadNoteFX2() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("NoteFX2.txt");
-  if (myFile) {
-    tft.println("opening NoteFX2.txt:");
-
-    // read from the file until there's nothing else in it:
-
-    //load NoteFX2 variables
-    tft.print("reading NoteFX2 from NoteFX2.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        NFX2[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-        NFX2[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-        NFX2[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-        NFX2[maxpreset].Pot_Value[touchX + 11] = myFile.read();
-      }
-    }
-
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX2.txt");
-  }
-  for (int touchX = 1; touchX < 5; touchX++) {
-    NFX2[NFX2presetNr].Pot_Value[touchX - 1] = NFX2[NFX2presetNr].Pot_Value[touchX - 1];
-
-    NFX2[NFX2presetNr].Pot_Value[touchX + 3] = NFX2[NFX2presetNr].Pot_Value[touchX + 3];
-
-    NFX2[NFX2presetNr].Pot_Value[touchX + 7] = NFX2[NFX2presetNr].Pot_Value[touchX + 7];
-    NFX2[NFX2presetNr].Pot_Value[touchX + 11] = NFX2[NFX2presetNr].Pot_Value[touchX + 11];
-  }
-}

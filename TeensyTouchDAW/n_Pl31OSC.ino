@@ -138,17 +138,16 @@ void Plugin3_Control() {
     case 0:
       if (pl3[pl3presetNr].Pot_Value[0] != Potentiometer[0]) {
         pl3[pl3presetNr].Pot_Value[0] = Potentiometer[0];
-        pl3[pl3presetNr].wfSelect = map(pl3[pl3presetNr].Pot_Value[0], 0, 127, 0, 12);
-        pl3waveform1.begin(pl3[pl3presetNr].wfSelect);
-        drawPot(CTRL_COL_0, CTRL_ROW_0, pl3[pl3presetNr].Pot_Value[0], pl3[pl3presetNr].wfSelect, "WForm", trackColor[desired_track]);
+        pl3waveform1.begin(pl3[pl3presetNr].Pot_Value[0]);
+        drawPot(CTRL_COL_0, CTRL_ROW_0, pl3[pl3presetNr].Pot_Value[0]*10, pl3[pl3presetNr].Pot_Value[0], "WForm", trackColor[desired_track]);
       }
       break;
 
     case 1:
-      StateVar_Filter(1, 0, CTRL_ROW_1); 
+      StateVar_Filter(1, 0, CTRL_ROW_1);
       break;
     case 2:
-      ADSR(1, 0, CTRL_ROW_2); 
+      ADSR(1, 0, CTRL_ROW_2);
       break;
   }
 }
@@ -166,9 +165,9 @@ void Plugin3_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        Potentiometer[0] = pl3[pl3presetNr].Pot_Value[0] * 11;
         if (enc_moved[0]) {
-          Potentiometer[0] = constrain((pl3[pl3presetNr].Pot_Value[0] + encoded[0]), 0, 12) * 11;
+          Potentiometer[0] = constrain((pl3[pl3presetNr].Pot_Value[0] + encoded[0]), 0, 12);
+          pl3[pl3presetNr].Pot_Value[0] = Potentiometer[0];
         }
         break;
 
@@ -192,10 +191,9 @@ void Plugin3_Page1_Dynamic() {
           pl3[pl3presetNr].Pot_Value[6] = Potentiometer[2];
         }
         //Filtertype
-
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl3[pl3presetNr].Pot_Value[7] + encoded[3]), 0, 2) * SVF_TYP;
-          pl3[pl3presetNr].Pot_Value[7] = Potentiometer[3] / SVF_TYP;
+          Potentiometer[3] = constrain((pl3[pl3presetNr].Pot_Value[7] + encoded[3]), 0, 2);
+          pl3[pl3presetNr].Pot_Value[7] = Potentiometer[3];
         }
         break;
 
@@ -295,9 +293,3 @@ void Plugin3_Change() {
   pl3envelope1.release(map(pl3[pl3presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
   pl3envelope2.release(map(pl3[pl3presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
 }
-
-
-
-
-
-

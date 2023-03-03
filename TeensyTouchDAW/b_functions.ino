@@ -593,23 +593,23 @@ void savePlugin(const char* trackname, byte trackNr) {
         myFile.print((char)pl1[maxpreset].note_Velo_graph[1]);
         myFile.print((char)pl1[maxpreset].note_Velo_graph[2]);
         myFile.print((char)pl1[maxpreset].note_Velo_graph[3]);
-        myFile.print((char)pl1[maxpreset].Filter1_Frequency_graph);
-        myFile.print((char)pl1[maxpreset].Filter1_Resonance_graph);
-        myFile.print((char)pl1[maxpreset].Filter1_Sweep_graph);
-        myFile.print((char)pl1[maxpreset].Env1_Attack_graph);
-        myFile.print((char)pl1[maxpreset].Env1_Decay_graph);
-        myFile.print((char)pl1[maxpreset].Env1_Sustain_graph);
-        myFile.print((char)pl1[maxpreset].Env1_Release_graph);
-        myFile.print((char)pl1[maxpreset].Filter1_Type_graph);
+        myFile.print((char)pl1[maxpreset].Pot_Value[0]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[1]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[2]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[4]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[5]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[6]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[7]);
+        myFile.print((char)pl1[maxpreset].Pot_Value[3]);
       }
     }
     if (trackNr == 18) {
       //save plugin 2 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
         for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX - 1]);
-          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 3]);
-          myFile.print((char)pl2[maxpreset].Pot_Value_graph[touchX + 7]);
+          myFile.print((char)pl2[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)pl2[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)pl2[maxpreset].Pot_Value[touchX + 7]);
         }
       }
     }
@@ -744,23 +744,23 @@ void loadPlugin(const char* trackname, int trackNr) {
         pl1[maxpreset].note_Velo_graph[1] = myFile.read();
         pl1[maxpreset].note_Velo_graph[2] = myFile.read();
         pl1[maxpreset].note_Velo_graph[3] = myFile.read();
-        pl1[maxpreset].Filter1_Frequency_graph = myFile.read();
-        pl1[maxpreset].Filter1_Resonance_graph = myFile.read();
-        pl1[maxpreset].Filter1_Sweep_graph = myFile.read();
-        pl1[maxpreset].Env1_Attack_graph = myFile.read();
-        pl1[maxpreset].Env1_Decay_graph = myFile.read();
-        pl1[maxpreset].Env1_Sustain_graph = myFile.read();
-        pl1[maxpreset].Env1_Release_graph = myFile.read();
-        pl1[maxpreset].Filter1_Type_graph = myFile.read();
+        pl1[maxpreset].Pot_Value[0] = myFile.read();
+        pl1[maxpreset].Pot_Value[1] = myFile.read();
+        pl1[maxpreset].Pot_Value[2] = myFile.read();
+        pl1[maxpreset].Pot_Value[4] = myFile.read();
+        pl1[maxpreset].Pot_Value[5] = myFile.read();
+        pl1[maxpreset].Pot_Value[6] = myFile.read();
+        pl1[maxpreset].Pot_Value[7] = myFile.read();
+        pl1[maxpreset].Pot_Value[3] = myFile.read();
       }
     }
     if (trackNr == 18) {
       //load plugin2 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
         for (int touchX = 1; touchX < 5; touchX++) {
-          pl2[maxpreset].Pot_Value_graph[touchX - 1] = myFile.read();
-          pl2[maxpreset].Pot_Value_graph[touchX + 3] = myFile.read();
-          pl2[maxpreset].Pot_Value_graph[touchX + 7] = myFile.read();
+          pl2[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          pl2[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          pl2[maxpreset].Pot_Value[touchX + 7] = myFile.read();
         }
       }
     }
@@ -866,6 +866,196 @@ void loadPlugin(const char* trackname, int trackNr) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+void saveNoteFX(const char* trackname, byte trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
+
+
+  // delete the file:
+  tft.print("Removing:");
+  tft.print(_trackname);
+  SD.remove(_trackname);
+  tft.println("Done");
+
+  // open the file.
+  tft.print("Creating and opening:");
+  tft.print(_trackname);
+  myFile = SD.open(_trackname, FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    //save tracks
+    tft.print("Writing track to:");
+    tft.print(_trackname);
+
+    //save NFX1
+    if (trackNr == 0) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 7]);
+        }
+      }
+    }
+    if (trackNr == 1) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 7]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 11]);
+        }
+      }
+    }
+    if (trackNr == 2) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 7]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 11]);
+        }
+      }
+    }
+    if (trackNr == 3) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 7]);
+          myFile.print((char)NFX4[maxpreset].reset[touchX - 1]);
+          myFile.print((char)NFX4[maxpreset].reset[touchX + 3]);
+          myFile.print((char)NFX4[maxpreset].reset[touchX + 7]);
+        }
+      }
+    }
+    if (trackNr == 4) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX - 1]);
+          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX + 3]);
+          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX + 7]);
+          myFile.print((char)NFX5[maxpreset].repeats[touchX - 1]);
+          myFile.print((char)NFX5[maxpreset].repeats[touchX + 3]);
+          myFile.print((char)NFX5[maxpreset].repeats[touchX + 7]);
+  //        myFile.print((char)NFX5[maxpreset].repeatED[touchX - 1]);
+   //       myFile.print((char)NFX5[maxpreset].repeatED[touchX + 3]);
+     //     myFile.print((char)NFX5[maxpreset].repeatED[touchX + 7]);
+        }
+      }
+    }
+    // close the file:
+    myFile.close();
+    tft.println("Done");
+
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.print(_trackname);
+  }
+
+  tft.println("Saving done.");
+  startUpScreen();
+}
+void loadNoteFX(const char* trackname, int trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open(_trackname);
+
+
+  if (myFile) {
+    tft.println("opening:");
+    tft.println(_trackname);
+
+    // read from the file until there's nothing else in it:
+    //load track 1
+    tft.print("Reading clips from:");
+    tft.println(_trackname);
+
+    if (trackNr == 0) {
+      //load NFX1
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          NFX1[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          NFX1[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          NFX1[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 1) {
+      //load NFX2
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          NFX2[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          NFX2[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          NFX2[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+          NFX2[maxpreset].Pot_Value[touchX + 11] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 2) {
+      //load NFX3
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          NFX3[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          NFX3[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          NFX3[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+          NFX3[maxpreset].Pot_Value[touchX + 11] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 3) {
+      //load NFX4
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          NFX4[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          NFX4[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          NFX4[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+          NFX4[maxpreset].reset[touchX - 1] = myFile.read();
+          NFX4[maxpreset].reset[touchX + 3] = myFile.read();
+          NFX4[maxpreset].reset[touchX + 7] = myFile.read();
+        }
+      }
+    }
+    if (trackNr == 4) {
+      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
+        for (int touchX = 1; touchX < 5; touchX++) {
+          NFX5[maxpreset].Pot_Value[touchX - 1] = myFile.read();
+          NFX5[maxpreset].Pot_Value[touchX + 3] = myFile.read();
+          NFX5[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+          NFX5[maxpreset].repeats[touchX - 1] = myFile.read();
+          NFX5[maxpreset].repeats[touchX + 3] = myFile.read();
+          NFX5[maxpreset].repeats[touchX + 7] = myFile.read();
+   //       NFX5[maxpreset].repeatED[touchX - 1] = myFile.read();
+     //     NFX5[maxpreset].repeatED[touchX + 3] = myFile.read();
+       //   NFX5[maxpreset].repeatED[touchX + 7] = myFile.read();
+        }
+      }
+    }
+
+
+    //int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
+
+    tft.println("Done");
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.println(_trackname);
+  }
+}
 
 void DrumPluginPlay() {
 
@@ -1016,142 +1206,8 @@ void DrumPluginPlay() {
 }
 
 
-void envelopeA(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueA != map(Potentiometer[cols], 0, 127, 0, ATTACK_TIME)) {
-    PotValueA = map(Potentiometer[cols], 0, 127, 0, ATTACK_TIME);
-    ENVELOPE1[des_env]->attack(PotValueA);
-    ENVELOPE2[des_env]->attack(PotValueA);
-    drawPot(MixerColumnPos, ROW, Potentiometer[cols], PotValueA, "Atck", trackColor[desired_track]);
-  }
-}
-void envelopeD(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueD != map(Potentiometer[cols], 0, 127, 0, DECAY_TIME)) {
-    PotValueD = map(Potentiometer[cols], 0, 127, 0, DECAY_TIME);
-    ENVELOPE1[des_env]->decay(PotValueD);
-    ENVELOPE2[des_env]->decay(PotValueD);
-    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], PotValueD, "Dec", trackColor[desired_track]);
-  }
-}
-void envelopeS(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueS != (float)(Potentiometer[cols] / SUSTAIN_LVL)) {
-    PotValueS = (float)(Potentiometer[cols] / SUSTAIN_LVL);
-    ENVELOPE1[des_env]->sustain(PotValueS);
-    ENVELOPE2[des_env]->sustain(PotValueS);
-    drawPot_3(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Sus", trackColor[desired_track]);
-  }
-}
-void envelopeR(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueR != map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME)) {
-    PotValueR = map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME);
-    ENVELOPE1[des_env]->release(PotValueR);
-    ENVELOPE2[des_env]->release(PotValueR);
-    drawPot_4(MixerColumnPos, ROW, Potentiometer[cols], PotValueR, "Rel", trackColor[desired_track]);
-  }
-}
-void envelopeH(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueH != map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME)) {
-    PotValueH = map(Potentiometer[cols], 0, 127, 0, RELEASE_TIME);
-    ENVELOPE1[des_env]->hold(PotValueH);
-    ENVELOPE2[des_env]->hold(PotValueH);
-    drawPot_3(MixerColumnPos, ROW, Potentiometer[cols], PotValueH, "Hld", trackColor[desired_track]);
-  }
-}
-void ADSR(int des_env, int COL, int ROW) {
-  envelopeA(des_env, COL, ROW);
-  envelopeD(des_env, COL + 1, ROW);
-  envelopeS(des_env, COL + 2, ROW);
-  envelopeR(des_env, COL + 3, ROW);
-}
-void AR(int des_env, int COL, int ROW) {
-  envelopeA(des_env, COL, ROW);
-  envelopeR(des_env, COL+1, ROW);
-}
-void AD(int des_env, int COL, int ROW) {
-  envelopeA(des_env, COL, ROW);
-  envelopeD(des_env, COL+1, ROW);
-}
-void AHR(int des_env, int COL, int ROW) {
-  envelopeA(des_env, COL, ROW);
-  envelopeH(des_env, COL+1, ROW);
-  envelopeR(des_env, COL+2, ROW);
-}
-
-void StateVar_Filter(int des_env, int COL, int ROW) {
-  StateVar_Frequency(des_env, COL, ROW);
-  StateVar_Resonance(des_env, COL + 1, ROW);
-  StateVar_Sweep(des_env, COL + 2, ROW);
-  StateVar_Type(des_env, COL + 3, ROW);
-}
-void StateVar_Frequency(int des_env, int cols, int ROW) {
-   int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueSVF_FREQ != Potentiometer[cols]) {
-    PotValueSVF_FREQ = Potentiometer[cols];
-    STATEFILTER[des_env]->frequency(note_frequency[Potentiometer[cols]]);
-    drawPot(MixerColumnPos, ROW, Potentiometer[cols], note_frequency[PotValueSVF_FREQ], "Freq", trackColor[desired_track]);
-  }
-}
-void StateVar_Resonance(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueSVF_RES != (float)(Potentiometer[cols] / SVF_RES)) {
-    PotValueSVF_RES = (float)(Potentiometer[cols] / SVF_RES);
-    STATEFILTER[des_env]->resonance(PotValueSVF_RES);
-    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Reso", trackColor[desired_track]);
-  }
-}
-void StateVar_Sweep(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueSVF_SWP != (float)(Potentiometer[cols] / SVF_SWP)) {
-    PotValueSVF_SWP = (float)(Potentiometer[cols] / SVF_SWP);
-    STATEFILTER[des_env]->octaveControl(PotValueSVF_SWP);
-    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Swp", trackColor[desired_track]);
-  }
-}
-void StateVar_Type(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueSVF_TYP != (float)Potentiometer[cols] / SVF_TYP) {
-    PotValueSVF_TYP = (float)Potentiometer[cols] / SVF_TYP;
-    selectFilterType(track[desired_instrument].MIDIchannel, PotValueSVF_TYP);
-    drawPot_4(MixerColumnPos, ROW, Potentiometer[cols], PotValueSVF_TYP, "", trackColor[desired_track]);
-    drawChar(MixerColumnPos, ROW + 1, filterType[PotValueSVF_TYP], ILI9341_WHITE);
-  }
-}
 
 
-void Ladder_Filter(int des_env, int COL, int ROW) {
-  Ladder_Frequency(des_env, COL, ROW);
-  Ladder_Resonance(des_env, COL + 1, ROW);
-  Ladder_Sweep(des_env, COL + 2, ROW);
-  
-}
-void Ladder_Frequency(int des_env, int cols, int ROW) {
-   int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueLDF_FREQ != Potentiometer[cols]) {
-    PotValueLDF_FREQ = Potentiometer[cols];
-    LADDERFILTER[des_env]->frequency(note_frequency[Potentiometer[cols]]);
-    drawPot(MixerColumnPos, ROW, Potentiometer[cols], note_frequency[Potentiometer[cols]], "Freq", trackColor[desired_track]);
-  }
-}
-void Ladder_Resonance(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueLDF_RES != (float)(Potentiometer[cols] / SVF_RES)) {
-    PotValueLDF_RES = (float)(Potentiometer[cols] / SVF_RES);
-    LADDERFILTER[des_env]->resonance(PotValueLDF_RES);
-    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Reso", trackColor[desired_track]);
-  }
-}
-void Ladder_Sweep(int des_env, int cols, int ROW) {
-  int MixerColumnPos = ((cols + 1) * 4) - 1;
-  if (PotValueLDF_SWP != (float)(Potentiometer[cols] / SVF_SWP)) {
-    PotValueLDF_SWP = (float)(Potentiometer[cols] / SVF_SWP);
-    LADDERFILTER[des_env]->octaveControl(PotValueLDF_SWP);
-    drawPot_2(MixerColumnPos, ROW, Potentiometer[cols], Potentiometer[cols], "Swp", trackColor[desired_track]);
-  }
-}
 //these are some function you might want to use like the drawpot or any of the draw-rect functions
 
 //draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended

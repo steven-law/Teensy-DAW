@@ -29,37 +29,19 @@ void Plugin4_Control() {
   switch (lastPotRow) {
     case 0:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (pl4[pl4presetNr].Pot_Value_graph[MixerColumn] != Potentiometer[MixerColumn]) {
-          pl4[pl4presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
-          pl4[pl4presetNr].Pot_Value[MixerColumn] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn] / 127.00;
-          pl4drummixer1.gain(MixerColumn, pl4[pl4presetNr].Pot_Value[MixerColumn]);
-          drawPot(MixerColumnPos, CTRL_ROW_0, pl4[pl4presetNr].Pot_Value_graph[MixerColumn], pl4[pl4presetNr].Pot_Value_graph[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
-        }
+        pl4MIX(0, MixerColumn, 0);
       }
       break;
 
     case 1:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] != Potentiometer[MixerColumn]) {
-          pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
-          pl4[pl4presetNr].Pot_Value[MixerColumn + 4] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] / 127.00;
-          pl4drummixer2.gain(MixerColumn, pl4[pl4presetNr].Pot_Value[MixerColumn + 4]);
-          drawPot(MixerColumnPos, CTRL_ROW_1, pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4], pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
-        }
+        pl4MIX(1, MixerColumn, 1);
       }
       break;
 
     case 2:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-        if (pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] != Potentiometer[MixerColumn]) {
-          pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
-          pl4[pl4presetNr].Pot_Value[MixerColumn + 8] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] / 127.00;
-          pl4drummixer3.gain(MixerColumn, pl4[pl4presetNr].Pot_Value[MixerColumn + 8]);
-          drawPot(MixerColumnPos, CTRL_ROW_2, pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8], pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
-        }
+        pl4MIX(2, MixerColumn, 2);
       }
       break;
 
@@ -83,9 +65,9 @@ void Plugin4_Page1_Dynamic() {
       case 0:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, 127);
+            pl4[pl4presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
           }
         }
         break;
@@ -93,9 +75,9 @@ void Plugin4_Page1_Dynamic() {
       case 1:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, 127);
+            pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
           }
         }
         break;
@@ -103,9 +85,9 @@ void Plugin4_Page1_Dynamic() {
       case 2:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          Potentiometer[MixerColumn] = pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
             Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, 127);
+            pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
           }
         }
         break;
@@ -160,14 +142,14 @@ void Plugin4_Page_Static() {
 
 void Plugin4_Change() {
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer1.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX - 1]);
+    pl4drummixer1.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX - 1] / 127.00));
     pl4[pl4presetNr].Pot_Value_graph[touchX - 1];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer2.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 3]);
+    pl4drummixer2.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX + 3] / 127.00));
     pl4[pl4presetNr].Pot_Value_graph[touchX + 3];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer3.gain(touchX - 1, pl4[pl4presetNr].Pot_Value[touchX + 7]);
+    pl4drummixer3.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX + 7] / 127.00));
   }
 }

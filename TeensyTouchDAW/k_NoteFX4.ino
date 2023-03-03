@@ -42,9 +42,7 @@ void NoteFX4_Page1_Dynamic() {
           int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
-
             Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS);
-
             Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
           }
         }
@@ -59,11 +57,11 @@ void NoteFX4_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        saveNoteFX4();
+        saveNoteFX("NoteFX4", 3);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadNoteFX4();
+        loadNoteFX("NoteFX4", 3);
       }
     }
 
@@ -115,83 +113,3 @@ void NoteFX4_Change() {
 }
 
 
-void saveNoteFX4() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing NoteFX4.txt...");
-  SD.remove("NoteFX4.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening NoteFX4.txt...");
-  myFile = SD.open("NoteFX4.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing NoteFX4 to NoteFX4.txt...");
-    //save plugin 3 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX - 1]);
-        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 3]);
-        myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 7]);
-      }
-    }
-
-    tft.println("Done");
-
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX4.txt");
-  }
-}
-
-void loadNoteFX4() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("NoteFX4.txt");
-  if (myFile) {
-    tft.println("opening NoteFX4.txt:");
-
-    // read from the file until there's nothing else in it:
-
-    //load NoteFX4 variables
-    tft.print("reading NoteFX4 from NoteFX4.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        //  NFX4[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-        //  NFX4[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-        //  NFX4[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-      }
-    }
-
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX4.txt");
-  }
-  for (int touchX = 1; touchX < 5; touchX++) {
-    NFX4[NFX4presetNr].Pot_Value[touchX - 1] = NFX4[NFX4presetNr].Pot_Value[touchX - 1];
-
-    NFX4[NFX4presetNr].Pot_Value[touchX + 3] = NFX4[NFX4presetNr].Pot_Value[touchX + 3];
-
-    NFX4[NFX4presetNr].Pot_Value[touchX + 7] = NFX4[NFX4presetNr].Pot_Value[touchX + 7];
-  }
-}

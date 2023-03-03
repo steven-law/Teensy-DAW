@@ -13,8 +13,6 @@ void NoteFX1_Control() {
         int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value[MixerColumn] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value[MixerColumn] = Potentiometer[MixerColumn];
-
-
           drawPotDrum(MixerColumnPos, CTRL_ROW_0, NFX1[NFX1presetNr].Pot_Value[MixerColumn], NFX1[NFX1presetNr].Pot_Value[MixerColumn], drumnote[MixerColumn], trackColor[desired_instrument]);
         }
       }
@@ -25,8 +23,6 @@ void NoteFX1_Control() {
         int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4] = Potentiometer[MixerColumn];
-
-
           drawPotDrum(MixerColumnPos, CTRL_ROW_1, NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4], NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4], drumnote[MixerColumn + 4], trackColor[desired_instrument]);
         }
       }
@@ -37,13 +33,10 @@ void NoteFX1_Control() {
         int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8] != Potentiometer[MixerColumn]) {
           NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8] = Potentiometer[MixerColumn];
-
-
           drawPotDrum(MixerColumnPos, CTRL_ROW_2, NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8], NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8], drumnote[MixerColumn + 8], trackColor[desired_instrument]);
         }
       }
       break;
-
     case 3:
       break;
   }
@@ -100,11 +93,11 @@ void NoteFX1_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        saveNoteFX1();
+        saveNoteFX("NoteFX1", 0);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadNoteFX1();
+        loadNoteFX("NoteFX1", 0);
       }
     }
 
@@ -155,77 +148,4 @@ void NoteFX1_Change() {
 }
 
 
-void saveNoteFX1() {
 
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing NoteFX1.txt...");
-  SD.remove("NoteFX1.txt");
-  tft.println("Done");
-
-  // open the file.
-  tft.print("Creating and opening NoteFX1.txt...");
-  myFile = SD.open("NoteFX1.txt", FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-    tft.print("Writing NoteFX1 to NoteFX1.txt...");
-    //save plugin 3 variables
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        myFile.print((char)NFX1[maxpreset].Pot_Value[touchX - 1]);
-        myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 3]);
-        myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 7]);
-      }
-    }
-
-    tft.println("Done");
-
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX1.txt");
-  }
-}
-
-void loadNoteFX1() {
-
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open("NoteFX1.txt");
-  if (myFile) {
-    tft.println("opening NoteFX1.txt:");
-
-    // read from the file until there's nothing else in it:
-
-    //load NoteFX1 variables
-    tft.print("reading NoteFX1 from NoteFX1.txt...");
-    for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      for (int touchX = 1; touchX < 5; touchX++) {
-        NFX1[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-        NFX1[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-        NFX1[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-      }
-    }
-
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening NoteFX1.txt");
-  }
-
-}

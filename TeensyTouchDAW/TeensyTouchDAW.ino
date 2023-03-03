@@ -713,6 +713,11 @@ AudioEffectEnvelope *ENVELOPE2[5] {&envelope2, &pl3envelope2, &pl5envelope2, &pl
 
 AudioFilterStateVariable *STATEFILTER[4]{&filter1, &pl3filter1, &pl5filter1, &pl6filter1}; //pl1, pl3, pl5, pl6
 AudioFilterLadder *LADDERFILTER[1]{&pl8filter1}; //pl8
+
+AudioMixer4 *PL2MIX[3]{&drummixer1, &drummixer1,&drummixer1};
+AudioMixer4 *PL4MIX[3]{&pl4drummixer1, &pl4drummixer1,&pl4drummixer1};
+
+
 newdigate::audiosample *pl5sample;
 
 void setup() {
@@ -829,7 +834,7 @@ void setup() {
   //allocate NFX4
   NFX4 = new PolyR[MAX_PRESETS];
   //allocate NFX5
-  NFX5 = new Chat1[MAX_PRESETS];
+  NFX5 = new Ratch[MAX_PRESETS];
   //allocate LaunchPad arrays
   LP_grid_notes = new byte[64];
   for (int r = 0; r < 8; r++) {
@@ -1034,50 +1039,50 @@ void SerialPrintPlugins() {
   Serial.print(pl1[pl1presetNr].note_Velo_graph[3]);
   Serial.print("     ");
   Serial.print("Filter: ");
-  Serial.print(pl1[pl1presetNr].Filter1_Frequency_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[0]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Filter1_Resonance_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[1]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Filter1_Sweep_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[2]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Filter1_Type_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[3]);
   Serial.print("   ");
   Serial.print("ADSR: ");
-  Serial.print(pl1[pl1presetNr].Env1_Attack_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Env1_Decay_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Env1_Sustain_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Env1_Release_graph);
+  Serial.print(pl1[pl1presetNr].Pot_Value[7]);
 
   Serial.println();
 
   Serial.print("PL2");
   Serial.print("-   ");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[0]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[0]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[1]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[1]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[2]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[2]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[3]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[3]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[4]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[5]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[6]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[7]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[7]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[8]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[8]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[9]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[9]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[10]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[10]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value_graph[11]);
+  Serial.print(pl2[pl2presetNr].Pot_Value[11]);
   Serial.println();
 
   Serial.print("PL3");

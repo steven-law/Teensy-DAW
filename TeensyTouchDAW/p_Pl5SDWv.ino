@@ -2,21 +2,21 @@ void Plugin_5_Settings() {
 
 
   pl5filter1.frequency(note_frequency[pl5[pl5presetNr].Pot_Value[4]]);
-  pl5filter1.resonance(pl5[pl5presetNr].Pot_Value[5] / SVF_RES);
+  pl5filter1.resonance((float)pl5[pl5presetNr].Pot_Value[5] / SVF_RES);
   pl5filter1.octaveControl(pl5[pl5presetNr].Pot_Value[6] / SVF_SWP);
 
   pl5envelope1.delay(0);
   pl5envelope1.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
   pl5envelope1.hold(0);
   pl5envelope1.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl5envelope1.sustain(pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
+  pl5envelope1.sustain((float)pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
   pl5envelope1.release(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, RELEASE_TIME));
 
   pl5envelope2.delay(0);
   pl5envelope2.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
   pl5envelope2.hold(0);
   pl5envelope2.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl5envelope2.sustain(pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
+  pl5envelope2.sustain((float)pl5[pl5presetNr].Pot_Value[9] / SUSTAIN_LVL);
   pl5envelope2.release(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, RELEASE_TIME));
 
   pl5mixer1.gain(0, 1);
@@ -91,8 +91,8 @@ void Plugin5_Page1_Dynamic() {
         }
         //Filtertype
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl5[pl5presetNr].Pot_Value[7] + encoded[3]), 0, 127);
-          pl5[pl5presetNr].Pot_Value[7] = Potentiometer[3] / SVF_TYP;
+          Potentiometer[3] = constrain((pl3[pl3presetNr].Pot_Value[7] + encoded[3]), 0, 2);
+          pl3[pl3presetNr].Pot_Value[7] = Potentiometer[3];
         }
         break;
 
@@ -191,8 +191,8 @@ void Plugin5_Change() {
   pl5envelope2.attack(map(pl5[pl5presetNr].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
   pl5envelope1.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
   pl5envelope2.decay(map(pl5[pl5presetNr].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl5envelope1.sustain(map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
-  pl5envelope2.sustain(map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
+  pl5envelope1.sustain((float)map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
+  pl5envelope2.sustain((float)map(pl5[pl5presetNr].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
   pl5envelope1.release(map(pl5[pl5presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
   pl5envelope2.release(map(pl5[pl5presetNr].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
 }

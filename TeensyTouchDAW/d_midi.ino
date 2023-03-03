@@ -50,7 +50,8 @@ void sendClock() {
 
           if (MIDItick % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
             if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
-              for (int r = 0; r <= NFX5[NFX5presetNr].repeats[b]; r++) {
+              repeatED[b]++;
+             if (repeatED[b]<=NFX5[NFX5presetNr].repeats[b]) {
                 if (dsend_noteOff[b]) {
                   dsend_noteOff[b] = false;
                   if (track[0].MIDIchannel < 17) {
@@ -106,6 +107,10 @@ void sendClock() {
 
       if (MIDItick % 6 == 0) {
         tick_16++;
+        for (int b=0; b<12;b++){
+        repeatED[b]=0;
+        }
+        
         //digitalWrite(22, HIGH);
 
 

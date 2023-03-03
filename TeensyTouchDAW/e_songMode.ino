@@ -397,12 +397,27 @@ void savebutton() {
 
     tft.print("Writing FX 1 to project.txt...");
     //save FX1 variables
-    saveFX1();
+    saveNoteFX("NoteFX1", 0);
     tft.println("Done");
 
     tft.print("Writing FX 2 to project.txt...");
     //save FX2 variables
-    saveFX2();
+    saveNoteFX("NoteFX2", 1);
+    tft.println("Done");
+
+    tft.print("Writing FX 3 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX3", 2);
+    tft.println("Done");
+
+    tft.print("Writing FX 4 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX4", 3);
+    tft.println("Done");
+
+    tft.print("Writing FX 5 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX5", 4);
     tft.println("Done");
 
 
@@ -503,14 +518,30 @@ void loadbutton() {
 
 
     //load FX 1 variables
-    tft.print("reading FX 1 from project.txt...");
-    loadFX1();
+    tft.print("reading NoteFX 1 from project.txt...");
+    loadNoteFX("NoteFX1", 0);
     tft.println("Done");
 
     //load FX 2 variables
-    tft.print("reading FX 2 from project.txt...");
-    loadFX2();
+    tft.print("reading NoteFX 2 from project.txt...");
+    loadNoteFX("NoteFX2", 1);
     tft.println("Done");
+
+    //load FX 3 variables
+    tft.print("reading NoteFX 3 from project.txt...");
+    loadNoteFX("NoteFX3", 2);
+    tft.println("Done");
+
+    //load FX 4 variables
+    tft.print("reading NoteFX 4 from project.txt...");
+    loadNoteFX("NoteFX4", 3);
+    tft.println("Done");
+
+    //load FX 5 variables
+    tft.print("reading NoteFX 5 from project.txt...");
+    loadNoteFX("NoteFX5", 4);
+    tft.println("Done");
+
     startUpScreen();
   } else {
     // if the file didn't open, print an error:

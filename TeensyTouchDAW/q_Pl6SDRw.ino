@@ -82,8 +82,8 @@ void Plugin6_Page1_Dynamic() {
         }
         //Filtertype
         if (enc_moved[3]) {
-          Potentiometer[3] = constrain((pl6[pl6presetNr].Pot_Value[7] + encoded[3]), 0, 127);
-          pl6[pl6presetNr].Pot_Value[7] = Potentiometer[3] / SVF_TYP;
+          Potentiometer[3] = constrain((pl3[pl3presetNr].Pot_Value[7] + encoded[3]), 0, 2);
+          pl3[pl3presetNr].Pot_Value[7] = Potentiometer[3];
         }
         break;
 
