@@ -79,7 +79,7 @@ void clearArrangment() {
     for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
       track[ctrack].arrangment1[cphrase] = 8;
       track[ctrack].NoteOffset[cphrase] = 0;
-      track[ctrack].presetNr[cphrase] = 0;
+      track[ctrack].Ttrckprst[cphrase] = 0;
       track[ctrack].volume[cphrase] = 99;
     }
   }
@@ -174,7 +174,7 @@ void songModePage(int songpageNumber) {
     if (seq_rec) {
       track[trackTouchY].arrangment1[touched_phrase] = track[trackTouchY].lastclip;
       track[trackTouchY].NoteOffset[touched_phrase] = track[trackTouchY].lastNoteOffset;
-      track[trackTouchY].presetNr[touched_phrase] = track[trackTouchY].lastpresetNr;
+      track[trackTouchY].Ttrckprst[touched_phrase] = track[trackTouchY].lastpresetNr;
       track[trackTouchY].volume[touched_phrase] = track[trackTouchY].lastvolume;
     }
 
@@ -190,8 +190,8 @@ void songModePage(int songpageNumber) {
     }
     //presetnr
     if (enc_moved[2]) {
-      track[trackTouchY].presetNr[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
-      track[trackTouchY].lastpresetNr = track[trackTouchY].presetNr[touched_phrase];
+      track[trackTouchY].Ttrckprst[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
+      track[trackTouchY].lastpresetNr = track[trackTouchY].Ttrckprst[touched_phrase];
     }
     //volume
     if (enc_moved[3]) {
@@ -202,7 +202,7 @@ void songModePage(int songpageNumber) {
     if (msecs % 100 == 0) {
       drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
       drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawNrInRect(18, 10, track[trackTouchY].presetNr[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
     }
@@ -244,11 +244,11 @@ void songModePage(int songpageNumber) {
         track[trackTouchY].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
       }
       // }
-      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].presetNr[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].presetNr[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
-        track[trackTouchY].presetNr[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
+      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].Ttrckprst[touched_phrase]) < POTPICKUP) {
+      if (track[trackTouchY].Ttrckprst[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
+        track[trackTouchY].Ttrckprst[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
         drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 10, track[trackTouchY].presetNr[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+        drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       }
       // }
       //if (abs(Potentiometer[3] - track[trackTouchY].volume[touched_phrase]) < POTPICKUP) {
@@ -328,7 +328,7 @@ void savebutton() {
       for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         myFile.print((char)track[ctrack].arrangment1[cphrase]);
         myFile.print((char)track[ctrack].NoteOffset_graph[cphrase]);
-        myFile.print((char)track[ctrack].presetNr[cphrase]);
+        myFile.print((char)track[ctrack].Ttrckprst[cphrase]);
         myFile.print((char)track[ctrack].volume[cphrase]);
       }
     }
@@ -446,7 +446,7 @@ void loadbutton() {
       for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         track[ctrack].arrangment1[cphrase] = myFile.read();
         track[ctrack].NoteOffset_graph[cphrase] = myFile.read();
-        track[ctrack].presetNr[cphrase] = myFile.read();
+        track[ctrack].Ttrckprst[cphrase] = myFile.read();
         track[ctrack].volume[cphrase] = myFile.read();
       }
     }

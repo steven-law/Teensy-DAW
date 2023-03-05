@@ -15,7 +15,7 @@ void NoteFX2_Control() {
           NFX2[NFX2presetNr].Pot_Value[MixerColumn] = Potentiometer[MixerColumn];
           NFX2[NFX2presetNr].Pot_Value[MixerColumn] = NFX2[NFX2presetNr].Pot_Value[MixerColumn];
 
-          drawPot(MixerColumnPos, CTRL_ROW_0, NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2_ROW1[MixerColumn], trackColor[desired_instrument]);
+          drawPot(MixerColumnPos, lastPotRow, NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2_ROW1[MixerColumn], trackColor[desired_instrument]);
         }
       }
       break;
@@ -27,7 +27,7 @@ void NoteFX2_Control() {
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4] = Potentiometer[MixerColumn];
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4] = NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4];
 
-          drawPot(MixerColumnPos, CTRL_ROW_1, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4], noteNames[MixerColumn], trackColor[desired_instrument]);
+          drawPot(MixerColumnPos, lastPotRow, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4], noteNames[MixerColumn], trackColor[desired_instrument]);
         }
       }
       break;
@@ -39,7 +39,7 @@ void NoteFX2_Control() {
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8] = Potentiometer[MixerColumn];
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8] = NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8];
 
-          drawPot(MixerColumnPos, CTRL_ROW_2, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8], noteNames[MixerColumn + 4], trackColor[desired_instrument]);
+          drawPot(MixerColumnPos, lastPotRow, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8], noteNames[MixerColumn + 4], trackColor[desired_instrument]);
         }
       }
       break;
@@ -51,7 +51,7 @@ void NoteFX2_Control() {
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12] = Potentiometer[MixerColumn];
           NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12] = NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12];
 
-          drawPot(MixerColumnPos, CTRL_ROW_3, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], noteNames[MixerColumn + 8], trackColor[desired_instrument]);
+          drawPot(MixerColumnPos, lastPotRow, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], noteNames[MixerColumn + 8], trackColor[desired_instrument]);
         }
       }
       break;
@@ -143,16 +143,16 @@ void NoteFX2_Page_Static() {
   drawNrInRect(18, 1, NFX2presetNr, ILI9341_PURPLE);
   drawChar(18, 3, seqModes[track[desired_track].seqMode], trackColor[desired_track]);
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_0, NFX2[NFX2presetNr].Pot_Value[touchX - 1], NFX2[NFX2presetNr].Pot_Value[touchX - 1], NFX2_ROW1[touchX - 1], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 0, NFX2[NFX2presetNr].Pot_Value[touchX - 1], NFX2[NFX2presetNr].Pot_Value[touchX - 1], NFX2_ROW1[touchX - 1], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_1, NFX2[NFX2presetNr].Pot_Value[touchX + 3], NFX2[NFX2presetNr].Pot_Value[touchX + 3], noteNames[touchX - 1], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 1, NFX2[NFX2presetNr].Pot_Value[touchX + 3], NFX2[NFX2presetNr].Pot_Value[touchX + 3], noteNames[touchX - 1], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_2, NFX2[NFX2presetNr].Pot_Value[touchX + 7], NFX2[NFX2presetNr].Pot_Value[touchX + 7], noteNames[touchX + 3], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 2, NFX2[NFX2presetNr].Pot_Value[touchX + 7], NFX2[NFX2presetNr].Pot_Value[touchX + 7], noteNames[touchX + 3], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_3, NFX2[NFX2presetNr].Pot_Value[touchX + 11], NFX2[NFX2presetNr].Pot_Value[touchX + 11], noteNames[touchX + 7], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 3, NFX2[NFX2presetNr].Pot_Value[touchX + 11], NFX2[NFX2presetNr].Pot_Value[touchX + 11], noteNames[touchX + 7], trackColor[desired_instrument]);
   }
 }
 
@@ -172,6 +172,3 @@ void NoteFX2_Change() {
     NFX2[NFX2presetNr].Pot_Value[touchX + 11];
   }
 }
-
-
-

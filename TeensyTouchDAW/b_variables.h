@@ -314,6 +314,12 @@ int dvalue_oldcc;
 int dname_oldcc;
 
 
+
+
+
+
+
+
 struct sequence_t {
   int step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
 };
@@ -355,7 +361,6 @@ const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi",
 byte desired_track;
 byte desired_instrument;
 //track 2-8 variables
-
 struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
@@ -384,7 +389,7 @@ struct tracks {
   byte arrangment1[256];
   int NoteOffset[256];
   int NoteOffset_graph[256];
-  int presetNr[256];
+  int Ttrckprst[256];
   int volume[256];
   //copy clipinfo to next clip (in songmode when rec is active)
   byte lastclip = 0;
@@ -397,7 +402,7 @@ struct tracks {
   bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
-  
+
   int MIDItick = 0;
   int MIDItick_16 = 0;
   int MIDItick_reset = 6;

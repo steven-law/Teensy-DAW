@@ -8,9 +8,9 @@ void recorder_Page_Static() {
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
-  drawPot(CTRL_COL_1, CTRL_ROW_0, audio_rec_volume_graph, audio_rec_volume, "Volume", ILI9341_OLIVE);
-  drawPot_4(CTRL_COL_3, CTRL_ROW_0, audio_rec_peak_graph, 0, "Meter", ILI9341_OLIVE);
+  drawPot(CTRL_COL_0, 0, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
+  drawPot(CTRL_COL_1, 0, audio_rec_volume_graph, audio_rec_volume, "Volume", ILI9341_OLIVE);
+  drawPot_4(CTRL_COL_3, 0, audio_rec_peak_graph, 0, "Meter", ILI9341_OLIVE);
 
   drawActiveRect(CTRL_COL_0, CTRL_ROW_1, 2, 2, audio_rec_listen, "Listen", ILI9341_ORANGE);
   drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_now, "Rec", ILI9341_RED);
@@ -26,7 +26,7 @@ void recorder_Page1_Dynamic() {
     //level meter
     if (millis() % 100 == 0) {
       audio_rec_peak_graph = peak1.read() * 127;
-      drawPot_4(CTRL_COL_3, CTRL_ROW_0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
+      drawPot_4(CTRL_COL_3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
     }
   }
 
@@ -38,13 +38,13 @@ void recorder_Page1_Dynamic() {
       if (enc_moved[0]) {
         audio_rec_selected_file_graph = constrain((audio_rec_selected_file_graph + encoded[0]), 0, 127);
         audio_rec_selected_file = audio_rec_selected_file_graph;
-        drawPot(CTRL_COL_0, CTRL_ROW_0, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
+        drawPot(CTRL_COL_0, lastPotRow, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
       }
       /*if (abs(Potentiometer[0] - audio_rec_selected_file_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
         if (audio_rec_selected_file_graph != Potentiometer[0]) {
           audio_rec_selected_file_graph = Potentiometer[0];
           audio_rec_selected_file = map(audio_rec_selected_file_graph, 0, 127, 0, MAX_RAW_FILES);
-          drawPot(CTRL_COL_0, CTRL_ROW_0, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
+          drawPot(CTRL_COL_0, lastPotRow, audio_rec_selected_file_graph, audio_rec_selected_file, "RAW", ILI9341_OLIVE);
         }
       }*/
       //rec volume
@@ -52,14 +52,14 @@ void recorder_Page1_Dynamic() {
         audio_rec_volume_graph = constrain((audio_rec_volume_graph + encoded[1]), 0, 127);
         audio_rec_volume = audio_rec_volume_graph / 64.00;
         amp1.gain(audio_rec_volume);
-        drawPot_2(CTRL_COL_1, CTRL_ROW_0, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
+        drawPot_2(CTRL_COL_1, lastPotRow, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
       }
       /*if (abs(Potentiometer[1] - audio_rec_volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
         if (audio_rec_volume_graph != Potentiometer[1]) {
           audio_rec_volume_graph = Potentiometer[1];
           audio_rec_volume = audio_rec_volume_graph / 64.00;
           amp1.gain(audio_rec_volume);
-          drawPot_2(CTRL_COL_1, CTRL_ROW_0, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
+          drawPot_2(CTRL_COL_1, lastPotRow, audio_rec_volume_graph, audio_rec_volume_graph, "Volume", ILI9341_OLIVE);
         }
       }*/
 

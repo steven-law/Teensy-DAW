@@ -147,7 +147,7 @@ void MixerPage1_Dynamic() {
     case 0:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         //Row1
         if (enc_moved[MixerColumn]) {
@@ -178,7 +178,7 @@ void MixerPage1_Dynamic() {
     case 1:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         //Row2
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].gain_graph = constrain((track[MixerColumn + 4].gain_graph + encoded[MixerColumn]), 0, 127);
@@ -312,40 +312,40 @@ void mixerPage2_Static() {
   drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, track[0].FXDryVolume_graph, track[0].FXDryVolume_graph, trackNames_short[8], trackColor[0]);
-  drawPot(CTRL_COL_1, CTRL_ROW_0, track[1].FXDryVolume_graph, track[1].FXDryVolume_graph, trackNames_short[8], trackColor[1]);
-  drawPot(CTRL_COL_2, CTRL_ROW_0, track[2].FXDryVolume_graph, track[2].FXDryVolume_graph, trackNames_short[8], trackColor[2]);
-  drawPot(CTRL_COL_3, CTRL_ROW_0, track[3].FXDryVolume_graph, track[3].FXDryVolume_graph, trackNames_short[8], trackColor[3]);
+  drawPot(CTRL_COL_0, 0, track[0].FXDryVolume_graph, track[0].FXDryVolume_graph, trackNames_short[8], trackColor[0]);
+  drawPot(CTRL_COL_1, 0, track[1].FXDryVolume_graph, track[1].FXDryVolume_graph, trackNames_short[8], trackColor[1]);
+  drawPot(CTRL_COL_2, 0, track[2].FXDryVolume_graph, track[2].FXDryVolume_graph, trackNames_short[8], trackColor[2]);
+  drawPot(CTRL_COL_3, 0, track[3].FXDryVolume_graph, track[3].FXDryVolume_graph, trackNames_short[8], trackColor[3]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_1, track[0].FX1Volume_graph, track[0].FX1Volume_graph, trackNames_short[8], trackColor[0]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, track[1].FX1Volume_graph, track[1].FX1Volume_graph, trackNames_short[8], trackColor[1]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, track[2].FX1Volume_graph, track[2].FX1Volume_graph, trackNames_short[8], trackColor[2]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, track[3].FX1Volume_graph, track[3].FX1Volume_graph, trackNames_short[8], trackColor[3]);
+  drawPot(CTRL_COL_0, 1, track[0].FX1Volume_graph, track[0].FX1Volume_graph, trackNames_short[8], trackColor[0]);
+  drawPot(CTRL_COL_1, 1, track[1].FX1Volume_graph, track[1].FX1Volume_graph, trackNames_short[8], trackColor[1]);
+  drawPot(CTRL_COL_2, 1, track[2].FX1Volume_graph, track[2].FX1Volume_graph, trackNames_short[8], trackColor[2]);
+  drawPot(CTRL_COL_3, 1, track[3].FX1Volume_graph, track[3].FX1Volume_graph, trackNames_short[8], trackColor[3]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_2, track[0].FX2Volume_graph, track[0].FX2Volume_graph, trackNames_short[8], trackColor[0]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, track[1].FX2Volume_graph, track[1].FX2Volume_graph, trackNames_short[8], trackColor[1]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, track[2].FX2Volume_graph, track[2].FX2Volume_graph, trackNames_short[8], trackColor[2]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, track[3].FX2Volume_graph, track[3].FX2Volume_graph, trackNames_short[8], trackColor[3]);
+  drawPot(CTRL_COL_0, 2, track[0].FX2Volume_graph, track[0].FX2Volume_graph, trackNames_short[8], trackColor[0]);
+  drawPot(CTRL_COL_1, 2, track[1].FX2Volume_graph, track[1].FX2Volume_graph, trackNames_short[8], trackColor[1]);
+  drawPot(CTRL_COL_2, 2, track[2].FX2Volume_graph, track[2].FX2Volume_graph, trackNames_short[8], trackColor[2]);
+  drawPot(CTRL_COL_3, 2, track[3].FX2Volume_graph, track[3].FX2Volume_graph, trackNames_short[8], trackColor[3]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_3, track[0].FX3Volume_graph, track[0].FX3Volume_graph, trackNames_short[0], trackColor[0]);
-  drawPot(CTRL_COL_1, CTRL_ROW_3, track[1].FX3Volume_graph, track[1].FX3Volume_graph, trackNames_short[1], trackColor[1]);
-  drawPot(CTRL_COL_2, CTRL_ROW_3, track[2].FX3Volume_graph, track[2].FX3Volume_graph, trackNames_short[2], trackColor[2]);
-  drawPot(CTRL_COL_3, CTRL_ROW_3, track[3].FX3Volume_graph, track[3].FX3Volume_graph, trackNames_short[3], trackColor[3]);
+  drawPot(CTRL_COL_0, 3, track[0].FX3Volume_graph, track[0].FX3Volume_graph, trackNames_short[0], trackColor[0]);
+  drawPot(CTRL_COL_1, 3, track[1].FX3Volume_graph, track[1].FX3Volume_graph, trackNames_short[1], trackColor[1]);
+  drawPot(CTRL_COL_2, 3, track[2].FX3Volume_graph, track[2].FX3Volume_graph, trackNames_short[2], trackColor[2]);
+  drawPot(CTRL_COL_3, 3, track[3].FX3Volume_graph, track[3].FX3Volume_graph, trackNames_short[3], trackColor[3]);
 }
 void MixerPage2_Dynamic() {
   switch (lastPotRow) {
     case 0:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FXDryVolume_graph = constrain((track[MixerColumn].FXDryVolume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FXDryVolume = track[MixerColumn].FXDryVolume_graph / 127.00;
           FXDrypluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FXDryVolume);
-          drawPot(MixerColumnPos, CTRL_ROW_0, track[MixerColumn].FXDryVolume_graph, track[MixerColumn].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FXDryVolume_graph, track[MixerColumn].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn].FXDryVolume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn].FXDryVolume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_0, track[MixerColumn].FXDryVolume_graph, track[MixerColumn].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FXDryVolume_graph, track[MixerColumn].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn]);
             track[MixerColumn].FXDryVolume_graph = Potentiometer[MixerColumn];
             track[MixerColumn].FXDryVolume = track[MixerColumn].FXDryVolume_graph / 127.00;
             FXDrypluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FXDryVolume);
@@ -357,17 +357,17 @@ void MixerPage2_Dynamic() {
     case 1:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX1Volume_graph = constrain((track[MixerColumn].FX1Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX1Volume = track[MixerColumn].FX1Volume_graph / 127.00;
           FX1pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX1Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_1, track[MixerColumn].FX1Volume_graph, track[MixerColumn].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX1Volume_graph, track[MixerColumn].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn].FX1Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn].FX1Volume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_1, track[MixerColumn].FX1Volume_graph, track[MixerColumn].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX1Volume_graph, track[MixerColumn].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
             track[MixerColumn].FX1Volume_graph = Potentiometer[MixerColumn];
             track[MixerColumn].FX1Volume = track[MixerColumn].FX1Volume_graph / 127.00;
             FX1pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX1Volume);
@@ -379,17 +379,17 @@ void MixerPage2_Dynamic() {
     case 2:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX2Volume_graph = constrain((track[MixerColumn].FX2Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX2Volume = track[MixerColumn].FX2Volume_graph / 127.00;
           FX2pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX2Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_2, track[MixerColumn].FX2Volume_graph, track[MixerColumn].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX2Volume_graph, track[MixerColumn].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
         }
 
         /* if (abs(Potentiometer[MixerColumn] - track[MixerColumn].FX2Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn].FX2Volume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_2, track[MixerColumn].FX2Volume_graph, track[MixerColumn].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX2Volume_graph, track[MixerColumn].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
             track[MixerColumn].FX2Volume_graph = Potentiometer[MixerColumn];
             track[MixerColumn].FX2Volume = track[MixerColumn].FX2Volume_graph / 127.00;
             FX2pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX2Volume);
@@ -401,17 +401,17 @@ void MixerPage2_Dynamic() {
     case 3:
       // if (msecs % 20 == 0) {
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].FX3Volume_graph = constrain((track[MixerColumn].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn].FX3Volume = track[MixerColumn].FX3Volume_graph / 127.00;
           FX3pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX3Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_3, track[MixerColumn].FX3Volume_graph, track[MixerColumn].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX3Volume_graph, track[MixerColumn].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
         }
 
         /* if (abs(Potentiometer[MixerColumn] - track[MixerColumn].FX3Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn].FX3Volume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_3, track[MixerColumn].FX3Volume_graph, track[MixerColumn].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn].FX3Volume_graph, track[MixerColumn].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn]);
             track[MixerColumn].FX3Volume_graph = Potentiometer[MixerColumn];
             track[MixerColumn].FX3Volume = track[MixerColumn].FX3Volume_graph / 127.00;
             FX3pluginVolume(track[MixerColumn].MIDIchannel, track[MixerColumn].FX3Volume);
@@ -483,38 +483,38 @@ void mixerPage3_Static() {
   drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, track[4].FXDryVolume_graph, track[4].FXDryVolume_graph, trackNames_short[8], trackColor[4]);
-  drawPot(CTRL_COL_1, CTRL_ROW_0, track[5].FXDryVolume_graph, track[5].FXDryVolume_graph, trackNames_short[8], trackColor[5]);
-  drawPot(CTRL_COL_2, CTRL_ROW_0, track[6].FXDryVolume_graph, track[6].FXDryVolume_graph, trackNames_short[8], trackColor[6]);
-  drawPot(CTRL_COL_3, CTRL_ROW_0, track[7].FXDryVolume_graph, track[7].FXDryVolume_graph, trackNames_short[8], trackColor[7]);
+  drawPot(CTRL_COL_0, 0, track[4].FXDryVolume_graph, track[4].FXDryVolume_graph, trackNames_short[8], trackColor[4]);
+  drawPot(CTRL_COL_1, 0, track[5].FXDryVolume_graph, track[5].FXDryVolume_graph, trackNames_short[8], trackColor[5]);
+  drawPot(CTRL_COL_2, 0, track[6].FXDryVolume_graph, track[6].FXDryVolume_graph, trackNames_short[8], trackColor[6]);
+  drawPot(CTRL_COL_3, 0, track[7].FXDryVolume_graph, track[7].FXDryVolume_graph, trackNames_short[8], trackColor[7]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_1, track[4].FX1Volume_graph, track[4].FX1Volume_graph, trackNames_short[8], trackColor[4]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, track[5].FX1Volume_graph, track[5].FX1Volume_graph, trackNames_short[8], trackColor[5]);
-  drawPot(CTRL_COL_2, CTRL_ROW_1, track[6].FX1Volume_graph, track[6].FX1Volume_graph, trackNames_short[8], trackColor[6]);
-  drawPot(CTRL_COL_3, CTRL_ROW_1, track[7].FX1Volume_graph, track[7].FX1Volume_graph, trackNames_short[8], trackColor[7]);
+  drawPot(CTRL_COL_0, 1, track[4].FX1Volume_graph, track[4].FX1Volume_graph, trackNames_short[8], trackColor[4]);
+  drawPot(CTRL_COL_1, 1, track[5].FX1Volume_graph, track[5].FX1Volume_graph, trackNames_short[8], trackColor[5]);
+  drawPot(CTRL_COL_2, 1, track[6].FX1Volume_graph, track[6].FX1Volume_graph, trackNames_short[8], trackColor[6]);
+  drawPot(CTRL_COL_3, 1, track[7].FX1Volume_graph, track[7].FX1Volume_graph, trackNames_short[8], trackColor[7]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_2, track[4].FX2Volume_graph, track[4].FX2Volume_graph, trackNames_short[8], trackColor[4]);
-  drawPot(CTRL_COL_1, CTRL_ROW_2, track[5].FX2Volume_graph, track[5].FX2Volume_graph, trackNames_short[8], trackColor[5]);
-  drawPot(CTRL_COL_2, CTRL_ROW_2, track[6].FX2Volume_graph, track[6].FX2Volume_graph, trackNames_short[8], trackColor[6]);
-  drawPot(CTRL_COL_3, CTRL_ROW_2, track[7].FX2Volume_graph, track[7].FX2Volume_graph, trackNames_short[8], trackColor[7]);
+  drawPot(CTRL_COL_0, 2, track[4].FX2Volume_graph, track[4].FX2Volume_graph, trackNames_short[8], trackColor[4]);
+  drawPot(CTRL_COL_1, 2, track[5].FX2Volume_graph, track[5].FX2Volume_graph, trackNames_short[8], trackColor[5]);
+  drawPot(CTRL_COL_2, 2, track[6].FX2Volume_graph, track[6].FX2Volume_graph, trackNames_short[8], trackColor[6]);
+  drawPot(CTRL_COL_3, 2, track[7].FX2Volume_graph, track[7].FX2Volume_graph, trackNames_short[8], trackColor[7]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_3, track[4].FX3Volume_graph, track[4].FX3Volume_graph, trackNames_short[4], trackColor[4]);
-  drawPot(CTRL_COL_1, CTRL_ROW_3, track[5].FX3Volume_graph, track[5].FX3Volume_graph, trackNames_short[5], trackColor[5]);
-  drawPot(CTRL_COL_2, CTRL_ROW_3, track[6].FX3Volume_graph, track[6].FX3Volume_graph, trackNames_short[6], trackColor[6]);
-  drawPot(CTRL_COL_3, CTRL_ROW_3, track[7].FX3Volume_graph, track[7].FX3Volume_graph, trackNames_short[7], trackColor[7]);
+  drawPot(CTRL_COL_0, 3, track[4].FX3Volume_graph, track[4].FX3Volume_graph, trackNames_short[4], trackColor[4]);
+  drawPot(CTRL_COL_1, 3, track[5].FX3Volume_graph, track[5].FX3Volume_graph, trackNames_short[5], trackColor[5]);
+  drawPot(CTRL_COL_2, 3, track[6].FX3Volume_graph, track[6].FX3Volume_graph, trackNames_short[6], trackColor[6]);
+  drawPot(CTRL_COL_3, 3, track[7].FX3Volume_graph, track[7].FX3Volume_graph, trackNames_short[7], trackColor[7]);
 }
 void MixerPage3_Dynamic() {
   switch (lastPotRow) {
     case 0:
       // if (msecs % 20 == 0) {
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
 
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FXDryVolume_graph = constrain((track[MixerColumn + 4].FXDryVolume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FXDryVolume = track[MixerColumn + 4].FXDryVolume_graph / 127.00;
           FXDrypluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FXDryVolume);
-          drawPot(MixerColumnPos, CTRL_ROW_0, track[MixerColumn + 4].FXDryVolume_graph, track[MixerColumn + 4].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FXDryVolume_graph, track[MixerColumn + 4].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
         }
 
 
@@ -523,7 +523,7 @@ void MixerPage3_Dynamic() {
             track[MixerColumn + 4].FXDryVolume_graph = Potentiometer[MixerColumn];
             track[MixerColumn + 4].FXDryVolume = track[MixerColumn + 4].FXDryVolume_graph / 127.00;
             FXDrypluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FXDryVolume);
-            drawPot(MixerColumnPos, CTRL_ROW_0, track[MixerColumn + 4].FXDryVolume_graph, track[MixerColumn + 4].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FXDryVolume_graph, track[MixerColumn + 4].FXDryVolume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
           }
         }*/
       }
@@ -532,16 +532,16 @@ void MixerPage3_Dynamic() {
     case 1:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX1Volume_graph = constrain((track[MixerColumn + 4].FX1Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX1Volume = track[MixerColumn + 4].FX1Volume_graph / 127.00;
           FX1pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX1Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_1, track[MixerColumn + 4].FX1Volume_graph, track[MixerColumn + 4].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FX1Volume_graph, track[MixerColumn + 4].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn + 4].FX1Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn + 4].FX1Volume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_1, track[MixerColumn + 4].FX1Volume_graph, track[MixerColumn + 4].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FX1Volume_graph, track[MixerColumn + 4].FX1Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
             track[MixerColumn + 4].FX1Volume_graph = Potentiometer[MixerColumn];
             track[MixerColumn + 4].FX1Volume = track[MixerColumn + 4].FX1Volume_graph / 127.00;
             FX1pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX1Volume);
@@ -553,16 +553,16 @@ void MixerPage3_Dynamic() {
     case 2:
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX2Volume_graph = constrain((track[MixerColumn + 4].FX2Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX2Volume = track[MixerColumn + 4].FX2Volume_graph / 127.00;
           FX2pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX2Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_2, track[MixerColumn + 4].FX2Volume_graph, track[MixerColumn + 4].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FX2Volume_graph, track[MixerColumn + 4].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn + 4].FX2Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn + 4].FX2Volume_graph != Potentiometer[MixerColumn]) {
-            drawPot(MixerColumnPos, CTRL_ROW_2, track[MixerColumn + 4].FX2Volume_graph, track[MixerColumn + 4].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+            drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FX2Volume_graph, track[MixerColumn + 4].FX2Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
             track[MixerColumn + 4].FX2Volume_graph = Potentiometer[MixerColumn];
             track[MixerColumn + 4].FX2Volume = track[MixerColumn + 4].FX2Volume_graph / 127.00;
             FX2pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX2Volume);
@@ -574,12 +574,12 @@ void MixerPage3_Dynamic() {
     case 3:
       // if (msecs % 20 == 0) {
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].FX3Volume_graph = constrain((track[MixerColumn + 4].FX3Volume_graph + encoded[MixerColumn]), 0, 127);
           track[MixerColumn + 4].FX3Volume = track[MixerColumn + 4].FX3Volume_graph / 127.00;
           FX3pluginVolume(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].FX3Volume);
-          drawPot(MixerColumnPos, CTRL_ROW_3, track[MixerColumn + 4].FX3Volume_graph, track[MixerColumn + 4].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumnPos, lastPotRow, track[MixerColumn + 4].FX3Volume_graph, track[MixerColumn + 4].FX3Volume_graph, trackNames_short[8], trackColor[MixerColumn + 4]);
         }
         /*if (abs(Potentiometer[MixerColumn] - track[MixerColumn + 4].FX3Volume_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
           if (track[MixerColumn + 4].FX3Volume_graph != Potentiometer[MixerColumn]) {

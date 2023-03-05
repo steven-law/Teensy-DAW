@@ -54,8 +54,8 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <SD.h>
 #include <TeensyVariablePlayback.h>
 #include "flashloader.h"
-#include "c_variables.h"
-#include "c_pluginVariables.h"
+#include "b_variables.h"
+#include "b_pluginVariables.h"
 #include "Adafruit_Keypad.h"
 #include <ResponsiveAnalogRead.h>
 #include <USBHost_t36.h>
@@ -720,6 +720,8 @@ AudioMixer4 *PL4MIX[3]{&pl4drummixer1, &pl4drummixer1,&pl4drummixer1};
 
 newdigate::audiosample *pl5sample;
 
+
+
 void setup() {
   Serial.begin(9600);  // set MIDI baud
 
@@ -816,15 +818,8 @@ void setup() {
   track = new tracks[NUM_TRACKS];
   //ctrack = new track_t[NUM_TRACKS];
   //allocate plugins
-  pl1 = new plugin1[MAX_PRESETS];
-  pl2 = new plugin2[MAX_PRESETS];
-  pl3 = new plugin3[MAX_PRESETS];
-  pl4 = new plugin4[MAX_PRESETS];
-  pl5 = new plugin5[MAX_PRESETS];
-  pl6 = new plugin6[MAX_PRESETS];
-  pl7 = new plugin7[MAX_PRESETS];
-  pl8 = new plugin8[MAX_PRESETS];
-  pl9 = new plugin9[MAX_PRESETS];
+  plugin = new plugin_t[MAX_PLUGINS];
+
   //allocate NFX1
   NFX1 = new Grids[MAX_PRESETS];
   //allocate NFX2
@@ -901,13 +896,14 @@ void setup() {
   track[7].MIDIchannel = 8;
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //load the pluginsettings
+  
   Plugin_1_Settings();
   Plugin_2_Settings();
   Plugin_3_Settings();
   Plugin_4_Settings();
   Plugin_5_Settings();
   Plugin_6_Settings();
-  Plugin7_Settings();
+  //Plugin7_Settings();
   Plugin_8_Settings();
   Plugin_9_Settings();
   Plugin_10_Settings();
@@ -921,6 +917,7 @@ void setup() {
   FX1reverb_settings();
   FX2Bitcrush_settings();
   FX3Delay_settings();
+  
   clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
@@ -1012,150 +1009,150 @@ void SerialPrintPlugins() {
   Serial.print("PL1");
   Serial.print("-   ");
   Serial.print("note: ");
-  Serial.print(pl1[pl1presetNr].note_Offset_graph[0]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[0]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Offset_graph[1]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[1]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Offset_graph[2]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[2]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Offset_graph[3]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[3]);
   Serial.print("   ");
   Serial.print("W~F: ");
-  Serial.print(pl1[pl1presetNr].wfSelect[0]);
+  //Serial.print(plugin[0].preset[plpreset[0]].wfSelect[0]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].wfSelect[1]);
+  //Serial.print(plugin[0].preset[plpreset[0]].wfSelect[1]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].wfSelect[2]);
+  //Serial.print(plugin[0].preset[plpreset[0]].wfSelect[2]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].wfSelect[3]);
+  //Serial.print(plugin[0].preset[plpreset[0]].wfSelect[3]);
   Serial.print("   ");
   Serial.print("Velo: ");
-  Serial.print(pl1[pl1presetNr].note_Velo_graph[0]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[0]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Velo_graph[1]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[1]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Velo_graph[2]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[2]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].note_Velo_graph[3]);
+  //Serial.print(plugin[0].preset[plpreset[0]].Pot_Value2[3]);
   Serial.print("     ");
   Serial.print("Filter: ");
-  Serial.print(pl1[pl1presetNr].Pot_Value[0]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[0]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[1]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[1]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[2]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[2]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[3]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[3]);
   Serial.print("   ");
   Serial.print("ADSR: ");
-  Serial.print(pl1[pl1presetNr].Pot_Value[4]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[5]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[6]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl1[pl1presetNr].Pot_Value[7]);
+  Serial.print(plugin[0].preset[plpreset[0]].Pot_Value[7]);
 
   Serial.println();
 
   Serial.print("PL2");
   Serial.print("-   ");
-  Serial.print(pl2[pl2presetNr].Pot_Value[0]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[0]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[1]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[1]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[2]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[2]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[3]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[3]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Pot_Value[4]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[5]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[6]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[7]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[7]);
   Serial.print("  ");
-  Serial.print(pl2[pl2presetNr].Pot_Value[8]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[8]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[9]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[9]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[10]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[10]);
   Serial.print("-");
-  Serial.print(pl2[pl2presetNr].Pot_Value[11]);
+  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[11]);
   Serial.println();
 
   Serial.print("PL3");
   Serial.print("-   ");
   Serial.print("W~F: ");
-  Serial.print(pl3[pl3presetNr].Pot_Value[0]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[0]);
   Serial.print("   ");
   Serial.print("Filter: ");
-  Serial.print(pl3[pl3presetNr].Pot_Value[4]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[5]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[6]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[7]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[7]);
   Serial.print("   ");
   Serial.print("ADSR: ");
-  Serial.print(pl3[pl3presetNr].Pot_Value[8]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[8]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[9]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[9]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[10]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[10]);
   Serial.print("-");
-  Serial.print(pl3[pl3presetNr].Pot_Value[11]);
+  Serial.print(plugin[2].preset[plpreset[2]].Pot_Value[11]);
   Serial.println();
 
   Serial.print("PL4");
   Serial.print("-   ");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[0]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[0]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[1]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[1]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[2]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[2]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[3]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[3]);
   Serial.print("  ");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[4]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[5]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[6]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[6]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[7]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[7]);
   Serial.print("  ");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[8]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[8]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[9]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[9]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[10]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[10]);
   Serial.print("-");
-  Serial.print(pl4[pl4presetNr].Pot_Value_graph[11]);
+  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[11]);
   Serial.println();
 
   Serial.print("PL8");
   Serial.print("-   ");
   Serial.print("W~F: ");
-  Serial.print(pl8[pl8presetNr].Pot_Value[0]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[0]);
   Serial.print("   ");
   Serial.print("Filter: ");
-  Serial.print(pl8[pl8presetNr].Pot_Value[4]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[4]);
   Serial.print("-");
-  Serial.print(pl8[pl8presetNr].Pot_Value[5]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[5]);
   Serial.print("-");
-  Serial.print(pl8[pl8presetNr].Pot_Value[6]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[6]);
   Serial.print("   ");
   Serial.print("ADSR: ");
-  Serial.print(pl8[pl8presetNr].Pot_Value[8]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[8]);
   Serial.print("-");
-  Serial.print(pl8[pl8presetNr].Pot_Value[9]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[9]);
   Serial.print("-");
-  Serial.print(pl8[pl8presetNr].Pot_Value[10]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[10]);
   Serial.print("-");
-  Serial.print(pl8[pl8presetNr].Pot_Value[11]);
+  Serial.print(plugin[7].preset[plpreset[7]].Pot_Value[11]);
   Serial.println();
 
 
@@ -1195,18 +1192,11 @@ void loop() {
   PluginNoteOff();
 
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
-  /* if (digitalRead(5)) {
-    tick_16++;
-  }*/
 
-  //assigning the current clip/noteoffset/presets/Volume from the arrangment array for each track
-  if (seq_run) {
-  }
+
+
 
   if (msecs % 100 == 0) {
-    //Serial.print(Potentiometer[0]);
-    //Serial.print("-");
-    //Serial.println(pl1[0].note_Offset[0]);
   }
 
 

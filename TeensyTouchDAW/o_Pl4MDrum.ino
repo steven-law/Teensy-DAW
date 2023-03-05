@@ -2,20 +2,7 @@
 //about 6-8 samples can be played simultaniously, WHEN WAV-files are Mono and as short as possible (16-bit, 44100Hz)
 
 void Plugin_4_Settings() {
-  pl4drummixer1.gain(0, 1);
-  pl4drummixer1.gain(1, 1);
-  pl4drummixer1.gain(2, 1);
-  pl4drummixer1.gain(3, 1);
 
-  pl4drummixer2.gain(0, 1);
-  pl4drummixer2.gain(1, 1);
-  pl4drummixer2.gain(2, 1);
-  pl4drummixer2.gain(3, 1);
-
-  pl4drummixer3.gain(0, 1);
-  pl4drummixer3.gain(1, 1);
-  pl4drummixer3.gain(2, 1);
-  pl4drummixer3.gain(3, 1);
 
   pl4drummixer4.gain(0, 1);
   pl4drummixer4.gain(1, 1);
@@ -29,22 +16,19 @@ void Plugin4_Control() {
   switch (lastPotRow) {
     case 0:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl4MIX(0, MixerColumn, 0);
+        pl4MIX(0, MixerColumn, lastPotRow);
       }
       break;
-
     case 1:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl4MIX(1, MixerColumn, 1);
+        pl4MIX(1, MixerColumn, lastPotRow);
       }
       break;
-
     case 2:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl4MIX(2, MixerColumn, 2);
+        pl4MIX(2, MixerColumn, lastPotRow);
       }
       break;
-
     case 3:
       break;
   }
@@ -55,43 +39,22 @@ void Plugin4_Page1_Dynamic() {
     if (enc_moved[0]) {
       lastPotRow = 10;
       tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-      pl4presetNr = constrain((pl4presetNr + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
+      plpreset[3] = constrain((plpreset[3] + encoded[0]), 0, MAX_PRESETS - 1);
+      drawNrInRect(18, 1, plpreset[3], ILI9341_PURPLE);
       Plugin4_Page_Static();
     }
   }
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn] + encoded[MixerColumn]), 0, 127);
-            pl4[pl4presetNr].Pot_Value_graph[MixerColumn] = Potentiometer[MixerColumn];
-          }
-        }
+       Encoder_to_4x127(1, 0, lastPotRow);
         break;
-
       case 1:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] + encoded[MixerColumn]), 0, 127);
-            pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 4] = Potentiometer[MixerColumn];
-          }
-        }
+        Encoder_to_4x127(1, 0, lastPotRow);
         break;
-
       case 2:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-          if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] + encoded[MixerColumn]), 0, 127);
-            pl4[pl4presetNr].Pot_Value_graph[MixerColumn + 8] = Potentiometer[MixerColumn];
-          }
-        }
+        Encoder_to_4x127(1, 0, lastPotRow);
         break;
-
       case 3:
         break;
     }
@@ -128,28 +91,28 @@ void Plugin4_Page1_Dynamic() {
 void Plugin4_Page_Static() {
   clearWorkSpace();
   Plugin4_Change();
-  drawNrInRect(18, 1, pl4presetNr, ILI9341_PURPLE);
+  drawNrInRect(18, 1, plpreset[3], ILI9341_PURPLE);
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_0, pl4[pl4presetNr].Pot_Value_graph[touchX - 1], pl4[pl4presetNr].Pot_Value_graph[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 0, plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1], plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_1, pl4[pl4presetNr].Pot_Value_graph[touchX + 3], pl4[pl4presetNr].Pot_Value_graph[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 1, plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3], plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, CTRL_ROW_2, pl4[pl4presetNr].Pot_Value_graph[touchX + 7], pl4[pl4presetNr].Pot_Value_graph[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+    drawPot(touchX * 4 - 1, 2, plugin[3].preset[plpreset[3]].Pot_Value[touchX + 7], plugin[3].preset[plpreset[3]].Pot_Value[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
   }
 }
 
 void Plugin4_Change() {
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer1.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX - 1] / 127.00));
-    pl4[pl4presetNr].Pot_Value_graph[touchX - 1];
+    pl4drummixer1.gain(touchX - 1, (float)(plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1] / 127.00));
+    plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer2.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX + 3] / 127.00));
-    pl4[pl4presetNr].Pot_Value_graph[touchX + 3];
+    pl4drummixer2.gain(touchX - 1, (float)(plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3] / 127.00));
+    plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3];
   }
   for (int touchX = 1; touchX < 5; touchX++) {
-    pl4drummixer3.gain(touchX - 1, (float)(pl4[pl4presetNr].Pot_Value[touchX + 7] / 127.00));
+    pl4drummixer3.gain(touchX - 1, (float)(plugin[3].preset[plpreset[3]].Pot_Value[touchX + 7] / 127.00));
   }
 }

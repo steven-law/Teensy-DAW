@@ -49,12 +49,12 @@ void FX3Delay_static() {
   drawActiveRect(1, 8, 2, 2, false, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, true, "Dly", ILI9341_BLUE);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback, "Fdbk", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_2, CTRL_ROW_0, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, 0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, 0, fx3delayFeedback_graph, fx3delayFeedback, "Fdbk", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_2, 0, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
 
-  drawPot(CTRL_COL_0, CTRL_ROW_1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
-  drawPot(CTRL_COL_1, CTRL_ROW_1, fx3delayFilterReso_graph, fx3delayFilterReso, "Reso", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_0, 1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
+  drawPot(CTRL_COL_1, 1, fx3delayFilterReso_graph, fx3delayFilterReso, "Reso", trackColor[desired_instrument]);
 }
 
 void FX3Delay_dynamic() {
@@ -67,7 +67,7 @@ void FX3Delay_dynamic() {
           fx3delayTime_graph = constrain((fx3delayTime_graph + encoded[0]), 0, 127);
           fx3delayTime = map(fx3delayTime_graph, 0, 127, 0, 2000);
           dldelay1.delay(0, fx3delayTime);
-          drawPot(CTRL_COL_0, CTRL_ROW_0, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_0, lastPotRow, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
         }
         //feedback
         Potentiometer[1] = fx3delayFeedback_graph;
@@ -75,7 +75,7 @@ void FX3Delay_dynamic() {
           fx3delayFeedback_graph = constrain((fx3delayFeedback_graph + encoded[1]), 0, 127);
           fx3delayFeedback = fx3delayFeedback_graph / 127.00;
           dlmixer1.gain(1, fx3delayFeedback);
-          drawPot(CTRL_COL_1, CTRL_ROW_0, fx3delayFeedback_graph, fx3delayFeedback_graph, "Fdbk", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_1, lastPotRow, fx3delayFeedback_graph, fx3delayFeedback_graph, "Fdbk", trackColor[desired_instrument]);
         }
         //feedback
         Potentiometer[2] = fx3delayAmount_graph;
@@ -83,7 +83,7 @@ void FX3Delay_dynamic() {
           fx3delayAmount_graph = constrain((fx3delayAmount_graph + encoded[2]), 0, 127);
           fx3delayAmount = fx3delayAmount_graph / 127.00;
           dlmixer1.gain(0, fx3delayAmount);
-          drawPot(CTRL_COL_2, CTRL_ROW_0, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_2, lastPotRow, fx3delayAmount_graph, fx3delayAmount_graph, "Amnt", trackColor[desired_instrument]);
         }
         break;
 
@@ -94,7 +94,7 @@ void FX3Delay_dynamic() {
           fx3delayFilterFreq_graph = constrain((fx3delayFilterFreq_graph + encoded[0]), 0, 127);
           fx3delayFilterFreq = note_frequency[fx3delayFilterFreq_graph];
           dlfilter1.frequency(fx3delayFilterFreq);
-          drawPot(CTRL_COL_0, CTRL_ROW_1, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_0, lastPotRow, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
         }
         //filterreso
         Potentiometer[1] = fx3delayFilterReso_graph;
@@ -102,7 +102,7 @@ void FX3Delay_dynamic() {
           fx3delayFilterReso_graph = constrain((fx3delayFilterReso_graph + encoded[1]), 0, 127);
           fx3delayFilterReso = fx3delayFilterReso_graph / 127.00;
           dlfilter1.resonance(fx3delayFilterReso);
-          drawPot(CTRL_COL_1, CTRL_ROW_1, fx3delayFilterReso_graph, fx3delayFilterReso_graph, "Reso", trackColor[desired_instrument]);
+          drawPot(CTRL_COL_1, lastPotRow, fx3delayFilterReso_graph, fx3delayFilterReso_graph, "Reso", trackColor[desired_instrument]);
         }
         break;
     }
