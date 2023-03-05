@@ -24,17 +24,17 @@ void Plugin9_Control() {
       if (plugin[8].preset[plpreset[8]].Pot_Value[0] != Potentiometer[0]) {
         plugin[8].preset[plpreset[8]].Pot_Value[0] = Potentiometer[0] / 10;
         pl9bpinput.begin(plugin[8].preset[plpreset[8]].Pot_Value[0] / 10);
-        drawPot(CTRL_COL_0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[0], plugin[8].preset[plpreset[8]].Pot_Value[0] / 10, "WForm", trackColor[desired_track]);
+        drawPot(0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[0], plugin[8].preset[plpreset[8]].Pot_Value[0] / 10, "WForm", trackColor[desired_track]);
       }
       if (plugin[8].preset[plpreset[8]].Pot_Value[1] != Potentiometer[1]) {
         plugin[8].preset[plpreset[8]].Pot_Value[1] = (Potentiometer[1]);
         pl9bpinput.frequency((float)(plugin[8].preset[plpreset[8]].Pot_Value[1])/16.00);
-        drawPot_2(CTRL_COL_1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1], "Rate", trackColor[desired_track]);
+        drawPot_2(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1], "Rate", trackColor[desired_track]);
       }
       if (plugin[8].preset[plpreset[8]].Pot_Value[2] != Potentiometer[2]) {
         plugin[8].preset[plpreset[8]].Pot_Value[2] = Potentiometer[2];
         pl9bpfilter.octaveControl((float)(plugin[8].preset[plpreset[8]].Pot_Value[2] / 127.00));
-        drawPot_2(CTRL_COL_2, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
+        drawPot_2(2, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
       }
 
       break;
@@ -42,12 +42,12 @@ void Plugin9_Control() {
       if (plugin[8].preset[plpreset[8]].Pot_Value[4] != Potentiometer[0]) {
         plugin[8].preset[plpreset[8]].Pot_Value[4] = Potentiometer[0];
         pl9bpfilter.frequency(plugin[8].preset[plpreset[8]].Pot_Value[4]*16);
-        drawPot(CTRL_COL_0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
+        drawPot(0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
       }
       if (plugin[8].preset[plpreset[8]].Pot_Value[5] != Potentiometer[1]) {
         plugin[8].preset[plpreset[8]].Pot_Value[5] = Potentiometer[1];
         pl9bpfilter.resonance((float)(plugin[8].preset[plpreset[8]].Pot_Value[5] / 25.40));
-        drawPot_2(CTRL_COL_1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
+        drawPot_2(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
       }
 
       break;
@@ -56,7 +56,7 @@ void Plugin9_Control() {
         plugin[8].preset[plpreset[8]].Pot_Value[8] = Potentiometer[0];
 
         pl9dc1.amplitude((float)((plugin[8].preset[plpreset[8]].Pot_Value[8] / 64.00) + 0.06));
-        drawPot(CTRL_COL_0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
+        drawPot(0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
       }
       break;
     case 3:
@@ -193,19 +193,19 @@ void Plugin9_Page_Static() {
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
   drawNrInRect(18, 1, plpreset[8], ILI9341_PURPLE);
-  drawPot(CTRL_COL_0, 0, plugin[8].preset[plpreset[8]].Pot_Value[0], plugin[8].preset[plpreset[8]].Pot_Value[0]/10, "WForm", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, 0, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1]/16.00, "Rate", trackColor[desired_track]);
-  drawPot(CTRL_COL_2, 0, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
+  drawPot(0, 0, plugin[8].preset[plpreset[8]].Pot_Value[0], plugin[8].preset[plpreset[8]].Pot_Value[0]/10, "WForm", trackColor[desired_track]);
+  drawPot(1, 0, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1]/16.00, "Rate", trackColor[desired_track]);
+  drawPot(2, 0, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
 
-  drawPot(CTRL_COL_0, 1, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
-  drawPot(CTRL_COL_1, 1, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
+  drawPot(0, 1, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
+  drawPot(1, 1, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
 
-  //drawPot(CTRL_COL_0, CTRL_ROW_2, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
+  //drawPot(0, CTRL_ROW_2, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
 
-  //drawPot(CTRL_COL_0, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Filter1_Frequency, "Freq", trackColor[desired_track]);
-  //drawPot(CTRL_COL_1, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
-  //drawPot(CTRL_COL_2, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[6], plugin[8].preset[plpreset[8]].Pot_Value[6], "Swp", trackColor[desired_track]);
-  //drawPot(CTRL_COL_3, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[7]_graph, plugin[8].preset[plpreset[8]].Pot_Value[7], "", trackColor[desired_track]);
+  //drawPot(0, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Filter1_Frequency, "Freq", trackColor[desired_track]);
+  //drawPot(1, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
+  //drawPot(2, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[6], plugin[8].preset[plpreset[8]].Pot_Value[6], "Swp", trackColor[desired_track]);
+  //drawPot(3, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[7]_graph, plugin[8].preset[plpreset[8]].Pot_Value[7], "", trackColor[desired_track]);
   //drawChar(CTRL_COL_3, 13, filterType[plugin[8].preset[plpreset[8]].Pot_Value[7]], ILI9341_WHITE);
 }
 void Plugin9_Change() {

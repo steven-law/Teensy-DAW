@@ -98,10 +98,10 @@ void Plugin2_Page_Static() {
   clearWorkSpace();
   Plugin2_Change();
   drawNrInRect(18, 1, plpreset[1], ILI9341_PURPLE);
-  for (int touchX = 1; touchX < 5; touchX++) {
-    drawPot(touchX * 4 - 1, 0, plugin[1].preset[plpreset[1]].Pot_Value[touchX - 1], plugin[1].preset[plpreset[1]].Pot_Value[touchX - 1], showVOL[touchX - 1], trackColor[desired_instrument]);
-    drawPot(touchX * 4 - 1, 1, plugin[1].preset[plpreset[1]].Pot_Value[touchX + 3], plugin[1].preset[plpreset[1]].Pot_Value[touchX + 3], showVOL[touchX + 3], trackColor[desired_instrument]);
-    drawPot(touchX * 4 - 1, 2, plugin[1].preset[plpreset[1]].Pot_Value[touchX + 7], plugin[1].preset[plpreset[1]].Pot_Value[touchX + 7], showVOL[touchX + 7], trackColor[desired_instrument]);
+  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    drawPot(MixerColumn , 0, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
+    drawPot(MixerColumn, 1, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
+    drawPot(MixerColumn, 2, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
   }
 }
 void Plugin2_Change() {

@@ -28,16 +28,19 @@
 #define DECAY_TIME 700
 #define SUSTAIN_LVL 127.00
 #define RELEASE_TIME 1600
+#define SVF_RES 25.40
+#define SVF_SWP 18.14
+#define SVF_TYP 42
+
 
 int PotValueA;    //attack
 int PotValueD;    //decay
 float PotValueS;  //sustain
 int PotValueR;    //release
 int PotValueH;    //hold
+int oldWave; //wfselect
 
-#define SVF_RES 25.40
-#define SVF_SWP 18.14
-#define SVF_TYP 42
+
 int PotValueSVF_FREQ;   //state variable filter freq
 float PotValueSVF_RES;  //state variable filter reso
 float PotValueSVF_SWP;  //state variable filter sweep
@@ -47,6 +50,8 @@ int PotValueLDF_FREQ;   //state variable filter freq
 float PotValueLDF_RES;  //state variable filter reso
 float PotValueLDF_SWP;  //state variable filter sweep
 
+int pl2Pot[num_voice];
+int pl4Pot[num_voice];
 
 
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };

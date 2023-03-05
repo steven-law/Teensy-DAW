@@ -969,7 +969,7 @@ void setup() {
     }
   }
   bmpDraw("StartUpPic.bmp", 0, 0);
-  delay(4000);  //just to look how beautiful this image is
+  delay(400);  //just to look how beautiful this image is
   tft.fillScreen(ILI9341_DARKGREY);
   startUpScreen();
   delay(500);

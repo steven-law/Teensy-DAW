@@ -70,20 +70,20 @@ void Plugin1_Control() {
     case 0:
       //1 Row 1 note Offset
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       
         if (plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn] != Potentiometer[MixerColumn]) {
           plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn] = Potentiometer[MixerColumn];
-          drawPot(MixerColumnPos, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], map(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], 0, 127, -18, 18), "Offset", trackColor[desired_instrument]);
+          drawPot(MixerColumn, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], map(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], 0, 127, -18, 18), "Offset", trackColor[desired_instrument]);
         }
       }
       break;
     case 1:
       //1 Row 2 Waveform
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       
         if (plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 4] != Potentiometer[MixerColumn]) {
           plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 4] = Potentiometer[MixerColumn] / 10;
-          drawPot(MixerColumnPos, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn] * 10, map(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 4], 0, 127, 0, 12), "W~F", trackColor[desired_instrument]);
+          drawPot(MixerColumn, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn] * 10, map(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 4], 0, 127, 0, 12), "W~F", trackColor[desired_instrument]);
           waveform1.begin(plugin[0].preset[plpreset[0]].Pot_Value2[4]);
           waveform2.begin(plugin[0].preset[plpreset[0]].Pot_Value2[5]);
           waveform3.begin(plugin[0].preset[plpreset[0]].Pot_Value2[6]);
@@ -94,10 +94,10 @@ void Plugin1_Control() {
     case 2:
       //1 Row 2 note Velocity
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-       int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
+       
         if (plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8] != Potentiometer[MixerColumn]) {
           plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8] = Potentiometer[MixerColumn];
-          drawPot(MixerColumnPos, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8], "Vel", trackColor[desired_instrument]);
+          drawPot(MixerColumn, lastPotRow, plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn], plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8], "Vel", trackColor[desired_instrument]);
           mixer1.gain(0, (float)(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8] / 127.00));
           mixer1.gain(1, (float)(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8] / 127.00));
           mixer1.gain(2, (float)(plugin[0].preset[plpreset[0]].Pot_Value2[MixerColumn + 8] / 127.00));
@@ -301,22 +301,22 @@ void Plugin1_Page_Static(int Pagenumber) {
   drawNrInRect(18, 1, plpreset[0], ILI9341_PURPLE);
   if (Pagenumber == 0) {
     for (int voice = 0; voice < 4; voice++) {
-      byte voicePos = ((voice + 1) * 4) - 1;
-      drawPot(voicePos, 0, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice], "Offset", trackColor[desired_instrument]);
-      drawPot(voicePos, 1, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice + 4] / 10, "W~F", trackColor[desired_instrument]);
-      drawPot(voicePos, 2, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice + 8], "Vel", trackColor[desired_instrument]);
+
+      drawPot(voice, 0, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice], "Offset", trackColor[desired_instrument]);
+      drawPot(voice, 1, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice + 4] / 10, "W~F", trackColor[desired_instrument]);
+      drawPot(voice, 2, plugin[0].preset[plpreset[0]].Pot_Value2[voice], plugin[0].preset[plpreset[0]].Pot_Value2[voice + 8], "Vel", trackColor[desired_instrument]);
     }
   }
   if (Pagenumber == 1) {
-    drawPot(CTRL_COL_0, 0, plugin[0].preset[plpreset[0]].Pot_Value[0], note_frequency[plugin[0].preset[plpreset[0]].Pot_Value[0]], "Freq", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, 0, plugin[0].preset[plpreset[0]].Pot_Value[1], plugin[0].preset[plpreset[0]].Pot_Value[1], "Reso", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_2, 0, plugin[0].preset[plpreset[0]].Pot_Value[2], plugin[0].preset[plpreset[0]].Pot_Value[2], "Swp", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_3, 0, plugin[0].preset[plpreset[0]].Pot_Value[3] * SVF_TYP, plugin[0].preset[plpreset[0]].Pot_Value[3], "", trackColor[desired_track]);
+    drawPot(0, 0, plugin[0].preset[plpreset[0]].Pot_Value[0], note_frequency[plugin[0].preset[plpreset[0]].Pot_Value[0]], "Freq", trackColor[desired_instrument]);
+    drawPot(1, 0, plugin[0].preset[plpreset[0]].Pot_Value[1], plugin[0].preset[plpreset[0]].Pot_Value[1], "Reso", trackColor[desired_instrument]);
+    drawPot(2, 0, plugin[0].preset[plpreset[0]].Pot_Value[2], plugin[0].preset[plpreset[0]].Pot_Value[2], "Swp", trackColor[desired_instrument]);
+    drawPot(3, 0, plugin[0].preset[plpreset[0]].Pot_Value[3] * SVF_TYP, plugin[0].preset[plpreset[0]].Pot_Value[3], "", trackColor[desired_track]);
     drawChar(CTRL_COL_3, 4, filterType[plugin[0].preset[plpreset[0]].Pot_Value[3]], ILI9341_WHITE);
-    drawPot(CTRL_COL_0, 1, plugin[0].preset[plpreset[0]].Pot_Value[4], map(plugin[0].preset[plpreset[0]].Pot_Value[4], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_instrument]);
-    drawPot(CTRL_COL_1, 1, plugin[0].preset[plpreset[0]].Pot_Value[5], map(plugin[0].preset[plpreset[0]].Pot_Value[5], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-    drawPot(CTRL_COL_2, 1, plugin[0].preset[plpreset[0]].Pot_Value[6], plugin[0].preset[plpreset[0]].Pot_Value[6], "Sus", trackColor[desired_track]);
-    drawPot(CTRL_COL_3, 1, plugin[0].preset[plpreset[0]].Pot_Value[7], map(plugin[0].preset[plpreset[0]].Pot_Value[7], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_instrument]);
+    drawPot(0, 1, plugin[0].preset[plpreset[0]].Pot_Value[4], map(plugin[0].preset[plpreset[0]].Pot_Value[4], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_instrument]);
+    drawPot(1, 1, plugin[0].preset[plpreset[0]].Pot_Value[5], map(plugin[0].preset[plpreset[0]].Pot_Value[5], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
+    drawPot(2, 1, plugin[0].preset[plpreset[0]].Pot_Value[6], plugin[0].preset[plpreset[0]].Pot_Value[6], "Sus", trackColor[desired_track]);
+    drawPot(3, 1, plugin[0].preset[plpreset[0]].Pot_Value[7], map(plugin[0].preset[plpreset[0]].Pot_Value[7], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_instrument]);
   }
 }
 void Plugin1_Change() {

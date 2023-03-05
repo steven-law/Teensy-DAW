@@ -605,10 +605,10 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 18) {
       //save plugin 2 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[touchX - 1]);
-          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[touchX + 3]);
-          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[touchX + 7]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn]);
+          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8]);
         }
       }
     }
@@ -629,10 +629,10 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 20) {
       //save plugin 4 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1]);
-          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3]);
-          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[touchX + 7]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn]);
+          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8]);
         }
       }
     }
@@ -754,10 +754,10 @@ void loadPlugin(const char* trackname, int trackNr) {
     if (trackNr == 18) {
       //load plugin2 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          plugin[1].preset[plpreset[1]].Pot_Value[touchX - 1] = myFile.read();
-          plugin[1].preset[plpreset[1]].Pot_Value[touchX + 3] = myFile.read();
-          plugin[1].preset[plpreset[1]].Pot_Value[touchX + 7] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn] = myFile.read();
+          plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4] = myFile.read();
+          plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8] = myFile.read();
         }
       }
     }
@@ -779,10 +779,10 @@ void loadPlugin(const char* trackname, int trackNr) {
       //load plugin4 variables
 
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          plugin[3].preset[plpreset[3]].Pot_Value[touchX - 1] = myFile.read();
-          plugin[3].preset[plpreset[3]].Pot_Value[touchX + 3] = myFile.read();
-          plugin[3].preset[plpreset[3]].Pot_Value[touchX + 7] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn] = myFile.read();
+          plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 4] = myFile.read();
+          plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8] = myFile.read();
         }
       }
     }
@@ -890,57 +890,57 @@ void saveNoteFX(const char* trackname, byte trackNr) {
     //save NFX1
     if (trackNr == 0) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX - 1]);
-          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 3]);
-          myFile.print((char)NFX1[maxpreset].Pot_Value[touchX + 7]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)NFX1[maxpreset].Pot_Value[MixerColumn]);
+          myFile.print((char)NFX1[maxpreset].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)NFX1[maxpreset].Pot_Value[MixerColumn + 8]);
         }
       }
     }
     if (trackNr == 1) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX - 1]);
-          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 3]);
-          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 7]);
-          myFile.print((char)NFX2[maxpreset].Pot_Value[touchX + 11]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)NFX2[maxpreset].Pot_Value[MixerColumn]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[MixerColumn + 8]);
+          myFile.print((char)NFX2[maxpreset].Pot_Value[MixerColumn + 12]);
         }
       }
     }
     if (trackNr == 2) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX - 1]);
-          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 3]);
-          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 7]);
-          myFile.print((char)NFX3[maxpreset].Pot_Value[touchX + 11]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)NFX3[maxpreset].Pot_Value[MixerColumn]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[MixerColumn + 8]);
+          myFile.print((char)NFX3[maxpreset].Pot_Value[MixerColumn + 12]);
         }
       }
     }
     if (trackNr == 3) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX - 1]);
-          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 3]);
-          myFile.print((char)NFX4[maxpreset].Pot_Value[touchX + 7]);
-          myFile.print((char)NFX4[maxpreset].reset[touchX - 1]);
-          myFile.print((char)NFX4[maxpreset].reset[touchX + 3]);
-          myFile.print((char)NFX4[maxpreset].reset[touchX + 7]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)NFX4[maxpreset].Pot_Value[MixerColumn]);
+          myFile.print((char)NFX4[maxpreset].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)NFX4[maxpreset].Pot_Value[MixerColumn + 8]);
+          myFile.print((char)NFX4[maxpreset].reset[MixerColumn]);
+          myFile.print((char)NFX4[maxpreset].reset[MixerColumn + 4]);
+          myFile.print((char)NFX4[maxpreset].reset[MixerColumn + 8]);
         }
       }
     }
     if (trackNr == 4) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX - 1]);
-          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX + 3]);
-          myFile.print((char)NFX5[maxpreset].Pot_Value[touchX + 7]);
-          myFile.print((char)NFX5[maxpreset].repeats[touchX - 1]);
-          myFile.print((char)NFX5[maxpreset].repeats[touchX + 3]);
-          myFile.print((char)NFX5[maxpreset].repeats[touchX + 7]);
-          //        myFile.print((char)NFX5[maxpreset].repeatED[touchX - 1]);
-          //       myFile.print((char)NFX5[maxpreset].repeatED[touchX + 3]);
-          //     myFile.print((char)NFX5[maxpreset].repeatED[touchX + 7]);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn]);
+          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn + 4]);
+          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn + 8]);
+          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn]);
+          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn + 4]);
+          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn + 8]);
+          //        myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn]);
+          //       myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn + 4]);
+          //     myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn + 8]);
         }
       }
     }
@@ -979,60 +979,60 @@ void loadNoteFX(const char* trackname, int trackNr) {
     if (trackNr == 0) {
       //load NFX1
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          NFX1[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-          NFX1[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-          NFX1[maxpreset].Pot_Value[touchX + 7] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          NFX1[maxpreset].Pot_Value[MixerColumn] = myFile.read();
+          NFX1[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
+          NFX1[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
         }
       }
     }
     if (trackNr == 1) {
       //load NFX2
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          NFX2[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-          NFX2[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-          NFX2[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-          NFX2[maxpreset].Pot_Value[touchX + 11] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          NFX2[maxpreset].Pot_Value[MixerColumn] = myFile.read();
+          NFX2[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
+          NFX2[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
+          NFX2[maxpreset].Pot_Value[MixerColumn + 12] = myFile.read();
         }
       }
     }
     if (trackNr == 2) {
       //load NFX3
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          NFX3[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-          NFX3[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-          NFX3[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-          NFX3[maxpreset].Pot_Value[touchX + 11] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          NFX3[maxpreset].Pot_Value[MixerColumn] = myFile.read();
+          NFX3[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
+          NFX3[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
+          NFX3[maxpreset].Pot_Value[MixerColumn + 12] = myFile.read();
         }
       }
     }
     if (trackNr == 3) {
       //load NFX4
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          NFX4[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-          NFX4[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-          NFX4[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-          NFX4[maxpreset].reset[touchX - 1] = myFile.read();
-          NFX4[maxpreset].reset[touchX + 3] = myFile.read();
-          NFX4[maxpreset].reset[touchX + 7] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          NFX4[maxpreset].Pot_Value[MixerColumn] = myFile.read();
+          NFX4[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
+          NFX4[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
+          NFX4[maxpreset].reset[MixerColumn] = myFile.read();
+          NFX4[maxpreset].reset[MixerColumn + 4] = myFile.read();
+          NFX4[maxpreset].reset[MixerColumn + 8] = myFile.read();
         }
       }
     }
     if (trackNr == 4) {
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int touchX = 1; touchX < 5; touchX++) {
-          NFX5[maxpreset].Pot_Value[touchX - 1] = myFile.read();
-          NFX5[maxpreset].Pot_Value[touchX + 3] = myFile.read();
-          NFX5[maxpreset].Pot_Value[touchX + 7] = myFile.read();
-          NFX5[maxpreset].repeats[touchX - 1] = myFile.read();
-          NFX5[maxpreset].repeats[touchX + 3] = myFile.read();
-          NFX5[maxpreset].repeats[touchX + 7] = myFile.read();
-          //       NFX5[maxpreset].repeatED[touchX - 1] = myFile.read();
-          //     NFX5[maxpreset].repeatED[touchX + 3] = myFile.read();
-          //   NFX5[maxpreset].repeatED[touchX + 7] = myFile.read();
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          NFX5[maxpreset].Pot_Value[MixerColumn] = myFile.read();
+          NFX5[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
+          NFX5[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
+          NFX5[maxpreset].repeats[MixerColumn] = myFile.read();
+          NFX5[maxpreset].repeats[MixerColumn + 4] = myFile.read();
+          NFX5[maxpreset].repeats[MixerColumn + 8] = myFile.read();
+          //       NFX5[maxpreset].repeatED[MixerColumn] = myFile.read();
+          //     NFX5[maxpreset].repeatED[MixerColumn + 4] = myFile.read();
+          //   NFX5[maxpreset].repeatED[MixerColumn + 8] = myFile.read();
         }
       }
     }
@@ -1235,7 +1235,8 @@ void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, cha
   }
 }
 
-void drawPot(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+  int xPos = ((XPos + 1) * 4) - 1;
   int yPos = (YPos + 1) * 3;
   circlePos = fvalue / 63.5;
 
@@ -1255,8 +1256,9 @@ void drawPot(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int colo
   circlePos_old = circlePos;
   dvalue_old = dvalue;
 }
-void drawPotDrum(int xPos, byte YPos, byte fvalue, int dvalue, byte dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPotDrum(int XPos, byte YPos, byte fvalue, int dvalue, byte dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePos = fvalue / 63.5;
 
   tft.setFont(Arial_8);
@@ -1275,8 +1277,9 @@ void drawPotDrum(int xPos, byte YPos, byte fvalue, int dvalue, byte dname, int c
   circlePos_old = circlePos;
   dvalue_old = dvalue;
 }
-void drawPot(int xPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot(int XPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePos = fvalue / 63.5;
 
   tft.setFont(Arial_8);
@@ -1295,8 +1298,9 @@ void drawPot(int xPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, i
   circlePos_old = circlePos;
   dvalue_old_char = dvalue_char;
 }
-void drawPot_2(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_2(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePos_2 = fvalue / 63.5;
 
   tft.setFont(Arial_8);
@@ -1315,8 +1319,9 @@ void drawPot_2(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int co
   circlePos_old_2 = circlePos_2;
   dvalue_old_2 = dvalue;
 }
-void drawPot_3(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_3(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePos_3 = fvalue / 63.5;
 
   tft.setFont(Arial_8);
@@ -1335,8 +1340,9 @@ void drawPot_3(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int co
   circlePos_old_3 = circlePos_3;
   dvalue_old_3 = dvalue;
 }
-void drawPot_4(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_4(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePos_4 = fvalue / 63.5;
 
   tft.setFont(Arial_8);
@@ -1355,8 +1361,9 @@ void drawPot_4(int xPos, byte YPos, byte fvalue, int dvalue, char* dname, int co
   circlePos_old_4 = circlePos_4;
   dvalue_old_4 = dvalue;
 }
-void drawPotCC(int xPos, byte YPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
+void drawPotCC(int XPos, byte YPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
   int yPos = (YPos + 1) * 3;
+  int xPos = ((XPos + 1) * 4) - 1;
   circlePoscc = fvaluecc / 63.5;
 
   tft.setFont(Arial_8);
