@@ -14,23 +14,6 @@ void Plugin_8_Settings() {
   pl8amp.gain(1);
   pl8amp2.gain(1);
 }
-void Plugin8_Control() {
-  switch (lastPotRow) {
-    case 0:
-      if (plugin[7].preset[plpreset[7]].Pot_Value[0] != Potentiometer[0]) {
-        plugin[7].preset[plpreset[7]].Pot_Value[0] = Potentiometer[0];
-        pl8waveform1.begin(plugin[7].preset[plpreset[7]].Pot_Value[0]);
-        drawPot(0, lastPotRow, plugin[7].preset[plpreset[7]].Pot_Value[0] * 10, plugin[7].preset[plpreset[7]].Pot_Value[0], "WForm", trackColor[desired_track]);
-      }
-      break;
-    case 1:
-      Ladder_Filter(0, 0, lastPotRow);
-      break;
-    case 2:
-      ADSR(4, 0, lastPotRow);
-      break;
-  }
-}
 void Plugin8_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -45,14 +28,15 @@ void Plugin8_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        Encoder_to_Pot_Value_max12(7, 0, lastPotRow);
+        OSC_Waveform(7, 2, 0, lastPotRow);
         break;
       case 1:
-        Encoder_to_Ladder(7, 0, lastPotRow);
+        Ladder_Filter(7, 0, 0, lastPotRow);
         break;
 
       case 2:
-        Encoder_to_4x127(7, 0, lastPotRow);
+        ADSR(7, 7, 0, lastPotRow, 0);
+        ADSR(7, 5, 0, lastPotRow, 1);
         break;
     }
   }
@@ -71,27 +55,6 @@ void Plugin8_Page1_Dynamic() {
         loadPlugin("plugin8", 24);
       }
     }
-    //change preset
-    //if (gridTouchX >= 18 && gridTouchY == 1) {
-
-
-    /*drawNrInRect(18, 1, plpreset[7], ILI9341_PURPLE);
-    if ((abs(map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1) - plpreset[7]) < 2)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-      plpreset[7] = map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1);
-    }*/
-    // }
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
   }
 }
 void Plugin8_Page_Static() {
@@ -100,7 +63,7 @@ void Plugin8_Page_Static() {
   drawNrInRect(18, 1, plpreset[7], ILI9341_PURPLE);
 
   //case 0
-  drawPot(0, 0, plugin[7].preset[plpreset[7]].Pot_Value[0]*10, plugin[7].preset[plpreset[7]].Pot_Value[0], "WForm", trackColor[desired_track]);
+  drawPot(0, 0, plugin[7].preset[plpreset[7]].Pot_Value[0] * 10, plugin[7].preset[plpreset[7]].Pot_Value[0], "W~F", trackColor[desired_track]);
   //case 1
   drawPot(0, 1, plugin[7].preset[plpreset[7]].Pot_Value[4], note_frequency[plugin[7].preset[plpreset[7]].Pot_Value[4]], "Freq", trackColor[desired_track]);
   drawPot(1, 1, plugin[7].preset[plpreset[7]].Pot_Value[5], plugin[7].preset[plpreset[7]].Pot_Value[5], "Reso", trackColor[desired_track]);
@@ -109,7 +72,7 @@ void Plugin8_Page_Static() {
   //case 2
   drawPot(0, 2, plugin[7].preset[plpreset[7]].Pot_Value[8], map(plugin[7].preset[plpreset[7]].Pot_Value[8], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
   drawPot(1, 2, plugin[7].preset[plpreset[7]].Pot_Value[9], map(plugin[7].preset[plpreset[7]].Pot_Value[9], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-  drawPot(2, 2, plugin[7].preset[plpreset[7]].Pot_Value[10], map(plugin[7].preset[plpreset[7]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
+  drawPot(2, 2, plugin[7].preset[plpreset[7]].Pot_Value[10], (float)(plugin[7].preset[plpreset[7]].Pot_Value[10] / SUSTAIN_LVL), "Sus", trackColor[desired_track]);
   drawPot(3, 2, plugin[7].preset[plpreset[7]].Pot_Value[11], map(plugin[7].preset[plpreset[7]].Pot_Value[11], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
 }
 void Plugin8_Change() {

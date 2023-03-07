@@ -1,11 +1,7 @@
 void Plugin_6_Settings() {
 
-
-
-
   pl6envelope1.delay(0);
   pl6envelope1.hold(0);
-
   pl6envelope2.delay(0);
   pl6envelope2.hold(0);
 
@@ -13,26 +9,12 @@ void Plugin_6_Settings() {
   pl6mixer1.gain(1, 0);
   pl6mixer1.gain(2, 0);
   pl6mixer1.gain(3, 0);
+
   pl6dc1.amplitude(1);
   pl6amp.gain(1);
   pl6amp2.gain(1);
 }
-void Plugin6_Control() {
-  switch (lastPotRow) {
-    case 0:
-      Potentiometer[0] = plugin[5].preset[plpreset[5]].Pot_Value[0];
-      if (plugin[5].preset[plpreset[5]].Pot_Value[0] != Potentiometer[0]) {
-        drawPot(0, lastPotRow, plugin[5].preset[plpreset[5]].Pot_Value[0], plugin[5].preset[plpreset[5]].Pot_Value[0], "RAW", trackColor[desired_instrument]);
-      }
-      break;
-    case 1:
-      StateVar_Filter(3, 0, lastPotRow);
-      break;
-    case 2:
-      ADSR(3, 0, lastPotRow);
-      break;
-  }
-}
+
 void Plugin6_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -48,14 +30,19 @@ void Plugin6_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        Encoder_to_Pot_Value(5, 0, lastPotRow);
+        Encoder_to_Pot_Value(5, 0, lastPotRow, 127);
+        Potentiometer[0] = plugin[5].preset[plpreset[5]].Pot_Value[0];
+        if (plugin[5].preset[plpreset[5]].Pot_Value[0] != Potentiometer[0]) {
+          drawPot(0, lastPotRow, plugin[5].preset[plpreset[5]].Pot_Value[0], plugin[5].preset[plpreset[5]].Pot_Value[0], "RAW", trackColor[desired_instrument]);
+        }
         break;
       case 1:
-        Encoder_to_SVF(5, 0, lastPotRow);
+        StateVar_Filter(5, 3, 0, lastPotRow);
         break;
 
       case 2:
-        Encoder_to_4x127(5, 0, lastPotRow);
+        ADSR(5, 3, 0, lastPotRow, 0);
+        ADSR(5, 3, 0, lastPotRow, 1);
         break;
     }
   }
@@ -72,28 +59,6 @@ void Plugin6_Page1_Dynamic() {
       if (gridTouchX == POSITION_LOAD_BUTTON) {
         loadPlugin("plugin6", 22);
       }
-    }
-    //change preset
-    /*if (gridTouchX >= 18 && gridTouchY == 1) {
-      drawNrInRect(18, 1, plpreset[5], ILI9341_PURPLE);
-      if ((abs(map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1) - plpreset[5]) < 2)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-        plpreset[5] = map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1);
-      }
-    }*/
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-    if (gridTouchY >= 11 && gridTouchY <= 13) {
-      lastPotRow = 3;
     }
   }
 }

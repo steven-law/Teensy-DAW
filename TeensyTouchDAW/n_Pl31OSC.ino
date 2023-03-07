@@ -106,7 +106,8 @@ void Plugin_3_Settings() {
   pl3waveform1.pulseWidth(0.15);
   pl3envelope1.delay(0);
   pl3envelope1.hold(0);
-
+  pl3waveformMod1.amplitude(1);
+  pl3waveformMod1.frequencyModulation(1);
 
   pl3envelope2.delay(0);
   pl3envelope2.hold(0);
@@ -121,36 +122,15 @@ void Plugin_3_Settings() {
   pl3amp.gain(1);
   pl3amp2.gain(1);
 }
-void Plugin3_Control() {
-  switch (lastPotRow) {
-    case 0:
-    
-      if (oldWave != Potentiometer[0]) {
-        oldWave = Potentiometer[0];
-        pl3waveform1.begin(oldWave);
-        drawPot(0, lastPotRow, oldWave * 12, oldWave, "WForm", trackColor[desired_track]);
-        Serial.println(plugin[2].preset[plpreset[2]].Pot_Value[0]);
-      }
-      break;
 
-    case 1:
-      StateVar_Filter(1, 0, lastPotRow);
-      Serial.println(plugin[2].preset[plpreset[2]].Pot_Value[7]);
-      break;
-    case 2:
-      ADSR(1, 0, lastPotRow);
-      Serial.println(plugin[2].preset[plpreset[2]].Pot_Value[8]);
-      break;
-  }
-}
 
 void Plugin3_Page1_Dynamic() {
   //change preset
   if (button[14]) {
     if (enc_moved[0]) {
       lastPotRow = 10;
-      plpreset[2] = constrain((plpreset[2] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[2], ILI9341_PURPLE);
+      plpreset[pl3NR] = constrain((plpreset[pl3NR] + encoded[0]), 0, MAX_PRESETS - 1);
+      drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
       Plugin3_Page_Static();
     }
   }
@@ -158,18 +138,17 @@ void Plugin3_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        Encoder_to_Pot_Value_max12(2, 0, lastPotRow);
-        
+        OSC_MOD_Waveform(pl3NR, pl3OSC_MOD, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
+        OSC_ModRate(pl3NR, pl3OSC, 1, lastPotRow, 15);   //pluginNr, pointerarrayPos, column, row, max freq
+        OSC_LVL(pl3NR, pl3OSC, 2, lastPotRow, 127.00);           //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl3NR, pl3OSC, 3, lastPotRow);      //pluginNr, pointerarrayPos, column, row
         break;
-
       case 1:
-        Encoder_to_SVF(2, 0, lastPotRow);
-        
+        StateVar_Filter(pl3NR, pl3SVF, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         break;
-
       case 2:
-        Encoder_to_4x127(2, 0, lastPotRow);
-        
+        ADSR(pl3NR, pl3ADSR1, 0, lastPotRow, 0);  //pluginNr, pointerarrayPos, column, row
+        ADSR(pl3NR, pl3ADSR2, 0, lastPotRow, 1);  //pluginNr, pointerarrayPos, column, row
         break;
     }
   }
@@ -188,52 +167,49 @@ void Plugin3_Page1_Dynamic() {
         loadPlugin("plugin3", 19);
       }
     }
-
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
   }
 }
 void Plugin3_Page_Static() {
   clearWorkSpace();
   Plugin3_Change();
-  drawNrInRect(18, 1, plpreset[2], ILI9341_PURPLE);
+  drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
 
   //case 0
-  drawPot(0, 0, plugin[2].preset[plpreset[2]].Pot_Value[0]*10, plugin[2].preset[plpreset[2]].Pot_Value[0], "WForm", trackColor[desired_track]);
+  drawPot(0, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0] * 10, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0], "W~F", trackColor[desired_track]);
+  drawPot(2, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], "LVL", trackColor[desired_track]);
+  drawPot(1, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2], "ModRate", trackColor[desired_track]);
+  drawPot(3, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3] * 10, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3], "W~F", trackColor[desired_track]);
   //case 1
-  drawPot(0, 1, plugin[2].preset[plpreset[2]].Pot_Value[4], note_frequency[plugin[2].preset[plpreset[2]].Pot_Value[4]], "Freq", trackColor[desired_track]);
-  drawPot(1, 1, plugin[2].preset[plpreset[2]].Pot_Value[5], plugin[2].preset[plpreset[2]].Pot_Value[5], "Reso", trackColor[desired_track]);
-  drawPot(2, 1, plugin[2].preset[plpreset[2]].Pot_Value[6], plugin[2].preset[plpreset[2]].Pot_Value[6], "Swp", trackColor[desired_track]);
-  drawPot(3, 1, plugin[2].preset[plpreset[2]].Pot_Value[7] * SVF_TYP, plugin[2].preset[plpreset[2]].Pot_Value[7], "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[plugin[2].preset[plpreset[2]].Pot_Value[7]], ILI9341_WHITE);
+  drawPot(0, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4], note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]], "Freq", trackColor[desired_track]);
+  drawPot(1, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5], "Reso", trackColor[desired_track]);
+  drawPot(2, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6], "Swp", trackColor[desired_track]);
+  drawPot(3, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7] * SVF_TYP, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7], "", trackColor[desired_track]);
+  drawChar(CTRL_COL_3, 7, filterType[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]], ILI9341_WHITE);
   //case 2
-  drawPot(0, 2, plugin[2].preset[plpreset[2]].Pot_Value[8], map(plugin[2].preset[plpreset[2]].Pot_Value[8], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
-  drawPot(1, 2, plugin[2].preset[plpreset[2]].Pot_Value[9], map(plugin[2].preset[plpreset[2]].Pot_Value[9], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-  drawPot(2, 2, plugin[2].preset[plpreset[2]].Pot_Value[10], map(plugin[2].preset[plpreset[2]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
-  drawPot(3, 2, plugin[2].preset[plpreset[2]].Pot_Value[11], map(plugin[2].preset[plpreset[2]].Pot_Value[11], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
+  drawPot(0, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
+  drawPot(1, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
+  drawPot(2, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
+  drawPot(3, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
 }
+
 void Plugin3_Change() {
-  pl3waveform1.begin(plugin[2].preset[plpreset[2]].Pot_Value[0]);
-  pl3filter1.frequency(note_frequency[plugin[2].preset[plpreset[2]].Pot_Value[4]]);
-  pl3filter1.resonance(plugin[2].preset[plpreset[2]].Pot_Value[5] / SVF_RES);
-  pl3filter1.octaveControl(plugin[2].preset[plpreset[2]].Pot_Value[6] / SVF_SWP);
-  selectFilterType(19, plugin[2].preset[plpreset[2]].Pot_Value[7]);
-  pl3envelope1.attack(map(plugin[2].preset[plpreset[2]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl3envelope2.attack(map(plugin[2].preset[plpreset[2]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl3envelope1.decay(map(plugin[2].preset[plpreset[2]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl3envelope2.decay(map(plugin[2].preset[plpreset[2]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl3envelope1.sustain(map(plugin[2].preset[plpreset[2]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
-  pl3envelope2.sustain(map(plugin[2].preset[plpreset[2]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
-  pl3envelope1.release(map(plugin[2].preset[plpreset[2]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
-  pl3envelope2.release(map(plugin[2].preset[plpreset[2]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
+  pl3waveformMod1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0]);
+  pl3waveform1.amplitude((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2] / 127.00));
+  pl3waveform1.frequency((float)(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], 0, MAX_ENC_RANGE, 0, 15)));
+  pl3waveform1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3]);
+
+
+  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]]);
+  pl3filter1.resonance(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5] / SVF_RES);
+  pl3filter1.octaveControl(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6] / SVF_SWP);
+  selectFilterType(19, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);
+
+  pl3envelope1.attack(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
+  pl3envelope2.attack(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
+  pl3envelope1.decay(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl3envelope2.decay(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
+  pl3envelope1.sustain((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10] / SUSTAIN_LVL));
+  pl3envelope2.sustain((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10] / SUSTAIN_LVL));
+  pl3envelope1.release(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
+  pl3envelope2.release(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
 }

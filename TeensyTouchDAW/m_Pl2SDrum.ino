@@ -15,30 +15,7 @@ void Plugin_2_Settings() {
   pl2amp.gain(1);
   pl2amp2.gain(1);
 }
-void Plugin2_Control() {
-  switch (lastPotRow) {
-    case 0:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl2MIX(lastPotRow, MixerColumn, lastPotRow);
-      }
-      break;
 
-    case 1:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl2MIX(lastPotRow, MixerColumn, lastPotRow);
-      }
-      break;
-
-    case 2:
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        pl2MIX(lastPotRow, MixerColumn, lastPotRow);
-      }
-      break;
-
-    case 3:
-      break;
-  }
-}
 void Plugin2_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -53,13 +30,19 @@ void Plugin2_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        Encoder_to_4x127(1, 0, lastPotRow);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2MIX(1, 0, MixerColumn, lastPotRow);
+        }
         break;
       case 1:
-        Encoder_to_4x127(1, 0, lastPotRow);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2MIX(1, 1, MixerColumn, lastPotRow);
+        }
         break;
       case 2:
-        Encoder_to_4x127(1, 0, lastPotRow);
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2MIX(1, 2, MixerColumn, lastPotRow);
+        }
         break;
       case 3:
         break;
@@ -77,21 +60,6 @@ void Plugin2_Page1_Dynamic() {
         loadPlugin("plugin2", 18);
       }
     }
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-    if (gridTouchY >= 11 && gridTouchY <= 13) {
-      lastPotRow = 3;
-    }
   }
 }
 void Plugin2_Page_Static() {
@@ -99,7 +67,7 @@ void Plugin2_Page_Static() {
   Plugin2_Change();
   drawNrInRect(18, 1, plpreset[1], ILI9341_PURPLE);
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    drawPot(MixerColumn , 0, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
+    drawPot(MixerColumn, 0, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
     drawPot(MixerColumn, 1, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
     drawPot(MixerColumn, 2, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
   }

@@ -118,13 +118,13 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin1 Page2-view
   if (selectPage == PLUGIN1_PAGE2) {
     Plugin1_Page2_Dynamic();
-    Plugin1_Control2();
+    //Plugin1_Control2();
   }
 
   //setting up the Plugin2 Page1-view
   if (selectPage == PLUGIN2_PAGE1) {
     Plugin2_Page1_Dynamic();
-    Plugin2_Control();
+    //Plugin2_Control();
   }
 
 
@@ -132,7 +132,7 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin3 Page1-view
   if (selectPage == PLUGIN3_PAGE1) {
     Plugin3_Page1_Dynamic();
-    Plugin3_Control();
+    //Plugin3_Control();
   }
   /////////////////////////////////////////////////////////////////////////////
 
@@ -140,18 +140,18 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin4 Page1-view
   if (selectPage == PLUGIN4_PAGE1) {
     Plugin4_Page1_Dynamic();
-    Plugin4_Control();
+    //Plugin4_Control();
   }
 
   //setting up the Plugin5 Page1-view
   if (selectPage == PLUGIN5_PAGE1) {
     Plugin5_Page1_Dynamic();
-    Plugin5_Control();
+    //Plugin5_Control();
   }
   //setting up the Plugin6 Page1-view
   if (selectPage == PLUGIN6_PAGE1) {
     Plugin6_Page1_Dynamic();
-    Plugin6_Control();
+    //Plugin6_Control();
   }
   //setting up thePlugin7 Page1-view
   if (selectPage == PLUGIN7_PAGE1) {
@@ -166,11 +166,11 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin8 Page1-view
   if (selectPage == PLUGIN8_PAGE1) {
     Plugin8_Page1_Dynamic();
-    Plugin8_Control();
+    //Plugin8_Control();
   }
   //setting up the Plugin9 Page1-view
   if (selectPage == PLUGIN9_PAGE1) {
-    //Plugin9_Page1_Dynamic();
+    Plugin9_Page1_Dynamic();
     //Plugin9_Control();
   }
   //setting up the Plugin10 Page1-view
@@ -307,26 +307,21 @@ void PluginNoteOn() {
           }
           //send plugin noteOn´s to plugins
           if (track[desired_instruments].MIDIchannel == 17) {
-            waveform1.frequency(note_frequency[track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0]]);
-            waveform2.frequency(note_frequency[track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1]]);
-            waveform3.frequency(note_frequency[track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2]]);
-            waveform4.frequency(note_frequency[track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3]]);
+            for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+              int Note2play = track[desired_instruments].notePlayed + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
+              int veloCity = plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn + 8];
+              OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play]);
+              usbMIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
+              MIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
+            }
             envelope1.noteOn();
             envelope2.noteOn();
-            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], desired_instruments + 1);
-            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], desired_instruments + 1);
-            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], desired_instruments + 1);
-            usbMIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], desired_instruments + 1);
-            MIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], desired_instruments + 1);
-            MIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], desired_instruments + 1);
-            MIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], desired_instruments + 1);
-            MIDI.sendNoteOn(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], desired_instruments + 1);
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
             //Serial.println("crackling");
           }
           if (track[desired_instruments].MIDIchannel == 19) {
-            pl3waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+            OSC_MOD[4]->frequency(note_frequency[track[desired_instruments].notePlayed]);
             pl3envelope1.noteOn();
             pl3envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
@@ -390,17 +385,14 @@ void PluginNoteOff() {
         }
         //send plugin noteOff´s to plugins
         if (track[desired_instruments].MIDIchannel == 17) {
+          for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+            int Note2play = track[desired_instruments].notePlayed + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
+            usbMIDI.sendNoteOff(Note2play, 0, desired_instruments + 1);
+            MIDI.sendNoteOff(Note2play, 0, desired_instruments + 1);
+          }
           track[desired_instruments].envActive = false;
           envelope1.noteOff();
           envelope2.noteOff();
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], desired_instruments + 1);
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], desired_instruments + 1);
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], desired_instruments + 1);
-          usbMIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], desired_instruments + 1);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[0], desired_instruments + 1);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[1], desired_instruments + 1);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[2], desired_instruments + 1);
-          MIDI.sendNoteOff(track[desired_instruments].notePlayed + plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], plugin[0].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[3], desired_instruments + 1);
         }
         if (track[desired_instruments].MIDIchannel == 19) {
           track[desired_instruments].envActive = false;
@@ -458,7 +450,7 @@ void beatComponents() {
     }
 
     if (track[instruments].MIDIchannel == 17) {
-      plpreset[0] = track[instruments].Ttrckprst[phrase];
+      plpreset[pl1NR] = track[instruments].Ttrckprst[phrase];
       Plugin1_Change();
     }
     if (track[instruments].MIDIchannel == 18) {
@@ -466,7 +458,7 @@ void beatComponents() {
       Plugin2_Change();
     }
     if (track[instruments].MIDIchannel == 19) {
-      plpreset[2] = track[instruments].Ttrckprst[phrase];
+      plpreset[pl3NR] = track[instruments].Ttrckprst[phrase];
       Plugin3_Change();
     }
     if (track[instruments].MIDIchannel == 20) {
@@ -580,26 +572,26 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 17) {
       //save plugin 1 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[0]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[1]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[2]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[3]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[4]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[5]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[6]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[7]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[0]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[1]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[2]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value2[3]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[0]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[1]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[2]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[4]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[5]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[6]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[7]);
-        myFile.print((char)plugin[0].preset[plpreset[0]].Pot_Value[3]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[0]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[1]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[2]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[3]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[4]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[5]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[6]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[7]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[0]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[1]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[2]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[3]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7]);
+        myFile.print((char)plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3]);
       }
     }
     if (trackNr == 18) {
@@ -615,15 +607,15 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 19) {
       //save plugin 3 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[4]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[5]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[6]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[8]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[9]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[10]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[11]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[0]);
-        myFile.print((char)plugin[2].preset[plpreset[2]].Pot_Value[7]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0]);
+        myFile.print((char)plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);
       }
     }
     if (trackNr == 20) {
@@ -729,26 +721,26 @@ void loadPlugin(const char* trackname, int trackNr) {
     if (trackNr == 17) {
       //load pl1
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        plugin[0].preset[plpreset[0]].Pot_Value2[0] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[1] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[2] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[3] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[4] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[5] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[6] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[7] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[8] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[9] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[10] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value2[11] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[0] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[1] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[2] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[4] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[5] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[6] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[7] = myFile.read();
-        plugin[0].preset[plpreset[0]].Pot_Value[3] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[0] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[1] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[2] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[3] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[4] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[5] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[6] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[7] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[8] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[9] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[10] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[11] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7] = myFile.read();
+        plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3] = myFile.read();
       }
     }
     if (trackNr == 18) {
@@ -764,15 +756,15 @@ void loadPlugin(const char* trackname, int trackNr) {
     if (trackNr == 19) {
       //load plugin 3 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        plugin[2].preset[plpreset[2]].Pot_Value[4] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[5] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[6] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[8] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[9] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[10] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[11] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[0] = myFile.read();
-        plugin[2].preset[plpreset[2]].Pot_Value[7] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0] = myFile.read();
+        plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 20) {

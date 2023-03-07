@@ -15,25 +15,6 @@ void Plugin_5_Settings() {
   pl5amp.gain(1);
   pl5amp2.gain(1);
 }
-void Plugin5_Control() {
-  switch (lastPotRow) {
-    case 0:
-      if (oldWave != Potentiometer[0]) {
-        oldWave = Potentiometer[0];
-        drawPot(0, lastPotRow, plugin[4].preset[plpreset[4]].Pot_Value[0], plugin[4].preset[plpreset[4]].Pot_Value[0], "RAW", trackColor[desired_instrument]);
-        pl5enter_was_pushed = false;
-        drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
-      }
-      break;
-    case 1:
-      StateVar_Filter(2, 0, lastPotRow);
-      break;
-
-    case 2:
-      ADSR(2, 0, lastPotRow);
-      break;
-  }
-}
 void Plugin5_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -49,8 +30,13 @@ void Plugin5_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        Encoder_to_Pot_Value(4, 0, lastPotRow);
-
+        Encoder_to_Pot_Value(4, 0, lastPotRow, 127);
+        if (oldWave != Potentiometer[0]) {
+          oldWave = Potentiometer[0];
+          drawPot(0, lastPotRow, plugin[4].preset[plpreset[4]].Pot_Value[0], plugin[4].preset[plpreset[4]].Pot_Value[0], "RAW", trackColor[desired_instrument]);
+          pl5enter_was_pushed = false;
+          drawActiveRect(CTRL_COL_1, 2, 2, 2, pl5enter_was_pushed, "LOAD", ILI9341_GREEN);
+        }
         if (button[15]) {
           newdigate::flashloader loader;
           pl5sample = loader.loadSample(RAW_files[plugin[4].preset[plpreset[4]].Pot_Value[0]]);
@@ -61,17 +47,12 @@ void Plugin5_Page1_Dynamic() {
 
 
       case 1:
-        Encoder_to_SVF(4, 0, lastPotRow);
-        /*
-        Encoder_to_Pot_Value(4, 0, lastPotRow);
-        Encoder_to_Pot_Value(4, 1, lastPotRow);
-        Encoder_to_Pot_Value(4, 2, lastPotRow);
-        Encoder_to_Pot_Value_max12(4, 3, lastPotRow);
-        */
+        StateVar_Filter(4, 2, 0, lastPotRow);
         break;
 
       case 2:
-        Encoder_to_4x127(4, 0, lastPotRow);  //ADSR
+        ADSR(4, 2, 0, lastPotRow, 0);
+        ADSR(4, 2, 0, lastPotRow, 1);
         break;
     }
   }
@@ -88,28 +69,6 @@ void Plugin5_Page1_Dynamic() {
       if (gridTouchX == POSITION_LOAD_BUTTON) {
         loadPlugin("plugin5", 21);
       }
-    }
-    //change preset
-    /*if (gridTouchX >= 18 && gridTouchY == 1) {
-      drawNrInRect(18, 1, plpreset[4], ILI9341_PURPLE);
-      if ((abs(map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1) - plpreset[4]) < 2)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-        plpreset[4] = map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1);
-      }
-    }*/
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-    if (gridTouchY >= 11 && gridTouchY <= 13) {
-      lastPotRow = 3;
     }
   }
 }

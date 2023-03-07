@@ -33,22 +33,9 @@
 #define SVF_TYP 42
 
 
-int PotValueA;    //attack
-int PotValueD;    //decay
-float PotValueS;  //sustain
-int PotValueR;    //release
-int PotValueH;    //hold
+
 int oldWave; //wfselect
 
-
-int PotValueSVF_FREQ;   //state variable filter freq
-float PotValueSVF_RES;  //state variable filter reso
-float PotValueSVF_SWP;  //state variable filter sweep
-int PotValueSVF_TYP;    //state variable filter type
-
-int PotValueLDF_FREQ;   //state variable filter freq
-float PotValueLDF_RES;  //state variable filter reso
-float PotValueLDF_SWP;  //state variable filter sweep
 
 int pl2Pot[num_voice];
 int pl4Pot[num_voice];
@@ -56,7 +43,7 @@ int pl4Pot[num_voice];
 
 const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
 
-int oldValue;
+
 
 
 struct plugin_preset_data_t {
@@ -71,7 +58,22 @@ plugin_t* plugin;
 
 
 byte plpreset[MAX_PLUGINS]{ 0 };
+#define pl1NR 0
+#define pl1OSC 0
+#define pl1OSC_MOD0 0
+#define pl1OSC_MOD1 1
+#define pl1OSC_MOD2 2
+#define pl1OSC_MOD3 3
+#define pl1SVF 0
+#define pl1ADSR1 0
+#define pl1ADSR2 0
 
+#define pl3NR 2
+#define pl3OSC 1
+#define pl3OSC_MOD 4
+#define pl3SVF 1
+#define pl3ADSR1 1
+#define pl3ADSR2 1
 bool pl5enter_was_pushed = true;
 
 
