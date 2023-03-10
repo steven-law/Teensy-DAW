@@ -58,30 +58,16 @@ void FX2Bitcrush_dynamic() {
     drawPot(0, 0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
   }
 
-  /*if (abs(Potentiometer[0] - fx2samplerate_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-    if (fx2samplerate_graph != Potentiometer[0]) {
-      drawPot(0, 0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
-      fx2samplerate_graph = Potentiometer[0];
-      fx2samplerate = map(fx2samplerate_graph, 0, 127, 0, 44200);
-      bitcrusher2.sampleRate(fx2samplerate);
-    }
-  }*/
+
 
   //bitcrush
   if (enc_moved[1]) {
     fx2bitcrush = constrain((fx2bitcrush + encoded[1]), 0, 16);
     fx2bitcrush_graph = fx2bitcrush * 8;
     bitcrusher2.bits(fx2bitcrush);
-    drawPot_2(1, 0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
+    drawPot(1, 0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
   }
-  /*if (abs(Potentiometer[1] - fx2bitcrush_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-    if (fx2bitcrush_graph != Potentiometer[1]) {
-      drawPot_2(1, 0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
-      fx2bitcrush_graph = Potentiometer[1];
-      fx2bitcrush = map(fx2bitcrush_graph, 0, 127, 0, 12);
-      bitcrusher2.bits(fx2bitcrush);
-    }
-  }*/
+
 
   TS_Point p = ts.getPoint();
   if (ts.touched() || button[15]) {

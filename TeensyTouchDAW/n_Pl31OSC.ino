@@ -138,24 +138,25 @@ void Plugin3_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        OSC_MOD_Waveform(pl3NR, pl3OSC_MOD, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl3NR, pl3OSC_MOD, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         OSC_ModRate(pl3NR, pl3OSC, 1, lastPotRow, 15);   //pluginNr, pointerarrayPos, column, row, max freq
-        OSC_LVL(pl3NR, pl3OSC, 2, lastPotRow, 127.00);           //pluginNr, pointerarrayPos, column, row
+        OSC_LVL(pl3NR, pl3OSC, 2, lastPotRow, 127.00);   //pluginNr, pointerarrayPos, column, row
         OSC_Waveform(pl3NR, pl3OSC, 3, lastPotRow);      //pluginNr, pointerarrayPos, column, row
         break;
       case 1:
         StateVar_Filter(pl3NR, pl3SVF, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         break;
       case 2:
-        ADSR(pl3NR, pl3ADSR1, 0, lastPotRow, 0);  //pluginNr, pointerarrayPos, column, row
-        ADSR(pl3NR, pl3ADSR2, 0, lastPotRow, 1);  //pluginNr, pointerarrayPos, column, row
+        ADSR(pl3NR, pl3ADSR1, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
+        ADSR(pl3NR, pl3ADSR2, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         break;
+        default:  //next taster push brings us back to page 0
+        lastPotRow = 0;
     }
   }
 
-  TS_Point p = ts.getPoint();
-  if (ts.touched() || button[15]) {
 
+  if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
       //Save button
@@ -175,21 +176,12 @@ void Plugin3_Page_Static() {
   drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
 
   //case 0
-  drawPot(0, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0] * 10, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0], "W~F", trackColor[desired_track]);
-  drawPot(2, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], "LVL", trackColor[desired_track]);
-  drawPot(1, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2], "ModRate", trackColor[desired_track]);
-  drawPot(3, 0, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3] * 10, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3], "W~F", trackColor[desired_track]);
+  draw_OSC_Waveform(pl3NR, pl3OSC_MOD, 0, 0);  //pluginNr, pointerarrayPos, column, row
+  draw_OSC_modulation(pl3NR, pl3OSC, 1, 0);    //pluginNr, pointerarrayPos, column, row
   //case 1
-  drawPot(0, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4], note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]], "Freq", trackColor[desired_track]);
-  drawPot(1, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5], "Reso", trackColor[desired_track]);
-  drawPot(2, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6], plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6], "Swp", trackColor[desired_track]);
-  drawPot(3, 1, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7] * SVF_TYP, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7], "", trackColor[desired_track]);
-  drawChar(CTRL_COL_3, 7, filterType[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]], ILI9341_WHITE);
+  draw_StateVar_Filter(pl3NR, pl3SVF, 0, 1);  //pluginNr, pointerarrayPos, column, row
   //case 2
-  drawPot(0, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
-  drawPot(1, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-  drawPot(2, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL), "Sus", trackColor[desired_track]);
-  drawPot(3, 2, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
+  draw_ADSR(pl3NR, pl3ADSR1, 0, 2);
 }
 
 void Plugin3_Change() {

@@ -86,6 +86,7 @@ void clearArrangment() {
 }
 
 void draw_start_of_loop() {
+  byte start_of_loop_old;
   tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);

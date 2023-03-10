@@ -40,9 +40,11 @@ void Plugin4_Page1_Dynamic() {
           pl4MIX(3, 2, MixerColumn, lastPotRow);
         }
         break;
+        default:  //next taster push brings us back to page 0
+        lastPotRow = 0;
     }
   }
-  TS_Point p = ts.getPoint();
+
   if (ts.touched() || button[15]) {
     if (gridTouchY == 0) {
       //Save button

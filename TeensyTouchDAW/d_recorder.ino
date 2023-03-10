@@ -26,7 +26,11 @@ void recorder_Page1_Dynamic() {
     //level meter
     if (millis() % 100 == 0) {
       audio_rec_peak_graph = peak1.read() * 127;
-      drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
+      if (audio_rec_peak_graph > 110) {
+        drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_RED);
+      } else {
+        drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
+      }
     }
   }
 

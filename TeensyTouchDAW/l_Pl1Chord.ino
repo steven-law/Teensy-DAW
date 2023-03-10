@@ -104,13 +104,13 @@ void Plugin1_Page1_Dynamic() {
         }
         break;
       case 3:
-        OSC_ModRate(pl1NR, pl1OSC, 0, lastPotRow, 15);  //pluginNr, pointerarrayPos, column, row, max freq
-        OSC_LVL(pl1NR, pl1OSC, 1, lastPotRow, 4048.00);          //pluginNr, pointerarrayPos, column, row
-        OSC_Waveform(pl1NR, pl1OSC, 2, lastPotRow);     //pluginNr, pointerarrayPos, column, row
+        OSC_ModRate(pl1NR, pl1OSC, 0, lastPotRow, 15);   //pluginNr, pointerarrayPos, column, row, max freq
+        OSC_LVL(pl1NR, pl1OSC, 1, lastPotRow, 4048.00);  //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl1NR, pl1OSC, 2, lastPotRow);      //pluginNr, pointerarrayPos, column, row
         break;
     }
   }
-  TS_Point p = ts.getPoint();
+
   if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
@@ -123,27 +123,6 @@ void Plugin1_Page1_Dynamic() {
         loadPlugin("plugin1", 17);
       }
     }
-    //change preset
-    if (gridTouchX >= 18 && gridTouchY == 1) {
-      /* drawNrInRect(18, 1, plpreset[pl1NR], ILI9341_PURPLE);
-      if ((abs(map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1) - plpreset[pl1NR]) < 2)) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-        plpreset[pl1NR] = map(Potentiometer[0], 0, 127, 0, MAX_PRESETS - 1);
-      }*/
-    }
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-
-
-
 
     //page selection
     if (gridTouchX >= 18) {
@@ -157,17 +136,6 @@ void Plugin1_Page1_Dynamic() {
         selectPage = PLUGIN1_PAGE2;
         Plugin_View_Static();
       }
-      /*
-      //page3
-      if (gridTouchY == 7 || gridTouchY == 8) {
-        selectPage = PLUGIN1_PAGE3;
-        Plugin_View_Static();
-      }
-      //page4
-      if (gridTouchY == 9 || gridTouchY == 10) {
-        selectPage = PLUGIN1_PAGE4;
-        Plugin_View_Static();
-      }*/
     }
   }
 }
@@ -188,8 +156,8 @@ void Plugin1_Page2_Dynamic() {
         StateVar_Filter(pl1NR, pl1SVF, 0, lastPotRow);
         break;
       case 1:
-        ADSR(pl1NR, pl1ADSR1, 0, lastPotRow, 0);
-        ADSR(pl1NR, pl1ADSR2, 0, lastPotRow, 1);
+        ADSR(pl1NR, pl1ADSR1, 0, lastPotRow);
+        ADSR(pl1NR, pl1ADSR2, 0, lastPotRow);
         break;
     }
   }
@@ -246,25 +214,15 @@ void Plugin1_Page_Static(int Pagenumber) {
   drawNrInRect(18, 1, plpreset[pl1NR], ILI9341_PURPLE);
   if (Pagenumber == 0) {
     for (int voice = 0; voice < 4; voice++) {
-
       drawPot(voice, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], "Offset", trackColor[desired_instrument]);
       drawPot(voice, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 4] / 10, "W~F", trackColor[desired_instrument]);
-      drawPot(voice, 2, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 8], "Vel", trackColor[desired_instrument]);
+      drawPot(voice, 2, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 8], "LVL", trackColor[desired_instrument]);
     }
-    drawPot(1, 3, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1], "LVL", trackColor[desired_track]);
-    drawPot(0, 3, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2], "ModRate", trackColor[desired_track]);
-    drawPot(2, 3, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3] * 10, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3], "W~F", trackColor[desired_track]);
+    draw_OSC_modulation(pl1NR, pl1OSC, 0, 3);  //pluginNr, pointerarrayPos, column, row
   }
   if (Pagenumber == 1) {
-    drawPot(0, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0], note_frequency[plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]], "Freq", trackColor[desired_instrument]);
-    drawPot(1, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1], "Reso", trackColor[desired_instrument]);
-    drawPot(2, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2], "Swp", trackColor[desired_instrument]);
-    drawPot(3, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3] * SVF_TYP, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3], "", trackColor[desired_track]);
-    drawChar(CTRL_COL_3, 4, filterType[plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3]], ILI9341_WHITE);
-    drawPot(0, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4], map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_instrument]);
-    drawPot(1, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5], map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-    drawPot(2, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6], "Sus", trackColor[desired_track]);
-    drawPot(3, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7], map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_instrument]);
+    draw_StateVar_Filter(pl1NR, pl1SVF, 0, 0);
+    draw_ADSR(pl1NR, pl1ADSR1, 0, 1);
   }
 }
 void Plugin1_Change() {

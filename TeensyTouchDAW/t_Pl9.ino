@@ -25,35 +25,21 @@ void Plugin9_Control() {
       if (plugin[8].preset[plpreset[8]].Pot_Value[1] != Potentiometer[1]) {
         plugin[8].preset[plpreset[8]].Pot_Value[1] = (Potentiometer[1]);
         pl9bpinput.frequency((float)(plugin[8].preset[plpreset[8]].Pot_Value[1]) / 16.00);
-        drawPot_2(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1], "Rate", trackColor[desired_track]);
+        drawPot(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1], "Rate", trackColor[desired_track]);
       }
       if (plugin[8].preset[plpreset[8]].Pot_Value[2] != Potentiometer[2]) {
         plugin[8].preset[plpreset[8]].Pot_Value[2] = Potentiometer[2];
         pl9bpfilter.octaveControl((float)(plugin[8].preset[plpreset[8]].Pot_Value[2] / 127.00));
-        drawPot_2(2, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
+        drawPot(2, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
       }
 
       break;
     case 1:
-      if (plugin[8].preset[plpreset[8]].Pot_Value[4] != Potentiometer[0]) {
-        plugin[8].preset[plpreset[8]].Pot_Value[4] = Potentiometer[0];
-        pl9bpfilter.frequency(plugin[8].preset[plpreset[8]].Pot_Value[4] * 16);
-        drawPot(0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
-      }
-      if (plugin[8].preset[plpreset[8]].Pot_Value[5] != Potentiometer[1]) {
-        plugin[8].preset[plpreset[8]].Pot_Value[5] = Potentiometer[1];
-        pl9bpfilter.resonance((float)(plugin[8].preset[plpreset[8]].Pot_Value[5] / 25.40));
-        drawPot_2(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
-      }
+
 
       break;
     case 2:
-      if (plugin[8].preset[plpreset[8]].Pot_Value[8] != Potentiometer[0]) {
-        plugin[8].preset[plpreset[8]].Pot_Value[8] = Potentiometer[0];
 
-        pl9dc1.amplitude((float)((plugin[8].preset[plpreset[8]].Pot_Value[8] / 64.00) + 0.06));
-        drawPot(0, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
-      }
       break;
     case 3:
 
@@ -75,48 +61,19 @@ void Plugin9_Page1_Dynamic() {
       case 0:
         //wah-wah
         //Waveform
-
-        OSC_Waveform(8, 1, 0, lastPotRow);
+        OSC_Waveform(8, 3, 0, 0);
         //Rate
-
-        if (enc_moved[1]) {
-          Potentiometer[1] = constrain((plugin[8].preset[plpreset[8]].Pot_Value[1] + encoded[1]), 0, 127);
-          plugin[8].preset[plpreset[8]].Pot_Value[1] = Potentiometer[1];
-        }
+        OSC_ModRate(8, 3, 1, 0, 15.00);
         //Amount
-
-        if (enc_moved[2]) {
-          Potentiometer[2] = constrain((plugin[8].preset[plpreset[8]].Pot_Value[2] + encoded[2]), 0, 127);
-          plugin[8].preset[plpreset[8]].Pot_Value[2] = Potentiometer[2];
-        }
+        OSC_LVL(8, 3, 2, 0, 127.00);
         break;
 
       case 1:
-        //Freq
-
-        if (enc_moved[0]) {
-          Potentiometer[0] = constrain((plugin[8].preset[plpreset[8]].Pot_Value[4] + encoded[0]), 0, 127);
-          plugin[8].preset[plpreset[8]].Pot_Value[4] = Potentiometer[0];
-        }
-        //Reso
-
-        if (enc_moved[1]) {
-          Potentiometer[1] = constrain((plugin[8].preset[plpreset[8]].Pot_Value[5] + encoded[1]), 0, 127);
-          plugin[8].preset[plpreset[8]].Pot_Value[5] = Potentiometer[1];
-        }
+        StateVar_Frequency(8, 7, 0, 1);
+        StateVar_Resonance(8, 7, 0, 2);
         break;
-      case 2:
-        //Wavefold
-
-        if (enc_moved[0]) {
-          Potentiometer[0] = constrain((plugin[8].preset[plpreset[8]].Pot_Value[8] + encoded[0]), 0, 127);
-          plugin[8].preset[plpreset[8]].Pot_Value[8] = Potentiometer[0];
-        }
-        break;
-
-      case 3:
-        StateVar_Filter(5, 3, 0, lastPotRow);
-        break;
+      default:  //next taster push brings us back to page 0
+        lastPotRow = 0;
     }
   }
 
@@ -141,20 +98,15 @@ void Plugin9_Page_Static() {
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
   drawNrInRect(18, 1, plpreset[8], ILI9341_PURPLE);
-  drawPot(0, 0, plugin[8].preset[plpreset[8]].Pot_Value[0], plugin[8].preset[plpreset[8]].Pot_Value[0] / 10, "WForm", trackColor[desired_track]);
-  drawPot(1, 0, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1] / 16.00, "Rate", trackColor[desired_track]);
-  drawPot(2, 0, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
-
-  drawPot(0, 1, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Pot_Value[4], "Freq", trackColor[desired_track]);
-  drawPot(1, 1, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
-
-  //drawPot(0, CTRL_ROW_2, plugin[8].preset[plpreset[8]].Pot_Value[8], plugin[8].preset[plpreset[8]].Pot_Value[8], "WFold", trackColor[desired_track]);
-
-  //drawPot(0, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[4], plugin[8].preset[plpreset[8]].Filter1_Frequency, "Freq", trackColor[desired_track]);
-  //drawPot(1, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[5], plugin[8].preset[plpreset[8]].Pot_Value[5], "Reso", trackColor[desired_track]);
-  //drawPot(2, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[6], plugin[8].preset[plpreset[8]].Pot_Value[6], "Swp", trackColor[desired_track]);
-  //drawPot(3, CTRL_ROW_3, plugin[8].preset[plpreset[8]].Pot_Value[7]_graph, plugin[8].preset[plpreset[8]].Pot_Value[7], "", trackColor[desired_track]);
-  //drawChar(CTRL_COL_3, 13, filterType[plugin[8].preset[plpreset[8]].Pot_Value[7]], ILI9341_WHITE);
+  //wah-wah
+  //Waveform
+  draw_OSC_Waveform(8, 3, 0, 0);
+  //Rate
+  draw_OSC_ModRate(8, 3, 1, 0, 15.00);
+  //Amount
+  draw_OSC_LVL(8, 3, 2, 0);
+  //Filter
+  draw_StateVar_Freq_Res(8, 7, 0, 1);
 }
 void Plugin9_Change() {
 

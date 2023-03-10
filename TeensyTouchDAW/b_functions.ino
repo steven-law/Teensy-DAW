@@ -32,7 +32,7 @@ void Plugin_View_Static() {
     Plugin6_Page_Static();
   }
   if (selectPage == PLUGIN7_PAGE1) {
-    ////Plugin7_Page_Static(0);
+    Plugin7_Page_Static(0);
   }
   if (selectPage == PLUGIN7_PAGE2) {
     ////Plugin7_Page_Static(1);
@@ -118,13 +118,11 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin1 Page2-view
   if (selectPage == PLUGIN1_PAGE2) {
     Plugin1_Page2_Dynamic();
-    //Plugin1_Control2();
   }
 
   //setting up the Plugin2 Page1-view
   if (selectPage == PLUGIN2_PAGE1) {
     Plugin2_Page1_Dynamic();
-    //Plugin2_Control();
   }
 
 
@@ -132,7 +130,6 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin3 Page1-view
   if (selectPage == PLUGIN3_PAGE1) {
     Plugin3_Page1_Dynamic();
-    //Plugin3_Control();
   }
   /////////////////////////////////////////////////////////////////////////////
 
@@ -140,33 +137,27 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin4 Page1-view
   if (selectPage == PLUGIN4_PAGE1) {
     Plugin4_Page1_Dynamic();
-    //Plugin4_Control();
   }
 
   //setting up the Plugin5 Page1-view
   if (selectPage == PLUGIN5_PAGE1) {
     Plugin5_Page1_Dynamic();
-    //Plugin5_Control();
   }
   //setting up the Plugin6 Page1-view
   if (selectPage == PLUGIN6_PAGE1) {
     Plugin6_Page1_Dynamic();
-    //Plugin6_Control();
   }
   //setting up thePlugin7 Page1-view
   if (selectPage == PLUGIN7_PAGE1) {
-    ////Plugin7_Page1_Dynamic();
-    ////Plugin7_Control1();
+    Plugin7_Page1_Dynamic();
   }
   //setting up thePlugin7 Page2-view
   if (selectPage == PLUGIN7_PAGE2) {
     ////Plugin7_Page2_Dynamic();
-    ////Plugin7_Control2();
   }
   //setting up the Plugin8 Page1-view
   if (selectPage == PLUGIN8_PAGE1) {
     Plugin8_Page1_Dynamic();
-    //Plugin8_Control();
   }
   //setting up the Plugin9 Page1-view
   if (selectPage == PLUGIN9_PAGE1) {
@@ -329,19 +320,19 @@ void PluginNoteOn() {
           }
           if (track[desired_instruments].MIDIchannel == 21) {
             double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+
             playSdPitch1.setPlaybackRate(note_ratio);
-            playSdPitch1.playRaw(pl5sample->sampledata, pl5sample->samplesize, 1);
+            playSdPitch1.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
             pl5envelope1.noteOn();
             pl5envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
-            //Serial.println("crackling2");
           }
           if (track[desired_instruments].MIDIchannel == 22) {
             double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
 
             playSdPitch2.setPlaybackRate(note_ratio);
-            playSdPitch2.playRaw(RAW_files[plugin[5].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
+            playSdPitch2.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
             pl6envelope1.noteOn();
             pl6envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
@@ -466,18 +457,18 @@ void beatComponents() {
       Plugin4_Change();
     }
     if (track[instruments].MIDIchannel == 21) {
-      plpreset[4] = track[instruments].Ttrckprst[phrase];
+      plpreset[pl5NR] = track[instruments].Ttrckprst[phrase];
       Plugin5_Change();
     }
     if (track[instruments].MIDIchannel == 22) {
-      plpreset[5] = track[instruments].Ttrckprst[phrase];
+      plpreset[pl6NR] = track[instruments].Ttrckprst[phrase];
       Plugin6_Change();
     }
     if (track[instruments].MIDIchannel == 23) {
       plpreset[6] = track[instruments].Ttrckprst[phrase];
     }
     if (track[instruments].MIDIchannel == 24) {
-      plpreset[7] = track[instruments].Ttrckprst[phrase];
+      plpreset[pl8NR] = track[instruments].Ttrckprst[phrase];
       Plugin8_Change();
     }
     if (track[instruments].MIDIchannel == 25) {
@@ -631,42 +622,42 @@ void savePlugin(const char* trackname, byte trackNr) {
     if (trackNr == 21) {
       //save plugin 5 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[4]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[5]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[6]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[8]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[9]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[10]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[11]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[0]);
-        myFile.print((char)plugin[4].preset[plpreset[4]].Pot_Value[7]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[4]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[5]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[6]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[8]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[9]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[10]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[11]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[0]);
+        myFile.print((char)plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[7]);
       }
     }
     if (trackNr == 22) {
       //save plugin 6 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[4]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[5]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[6]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[8]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[9]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[10]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[11]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[0]);
-        myFile.print((char)plugin[5].preset[plpreset[5]].Pot_Value[7]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[4]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[5]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[6]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[8]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[9]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[10]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[11]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[0]);
+        myFile.print((char)plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[7]);
       }
     }
     if (trackNr == 24) {
       //save plugin 8 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[4]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[5]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[6]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[8]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[9]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[10]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[11]);
-        myFile.print((char)plugin[7].preset[plpreset[7]].Pot_Value[0]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[5]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[6]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[8]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[9]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[10]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[11]);
+        myFile.print((char)plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[0]);
       }
     }
     if (trackNr == 25) {
@@ -782,42 +773,42 @@ void loadPlugin(const char* trackname, int trackNr) {
       //load plugin 5 variables
       tft.print("reading plugin 5 from plugin5.txt...");
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        plugin[4].preset[maxpreset].Pot_Value[4] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[5] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[6] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[8] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[9] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[10] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[11] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[0] = myFile.read();
-        plugin[4].preset[maxpreset].Pot_Value[7] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[4] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[5] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[6] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[8] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[9] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[10] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[11] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[0] = myFile.read();
+        plugin[pl5NR].preset[maxpreset].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 22) {
       //load plugin 6 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        plugin[5].preset[plpreset[5]].Pot_Value[4] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[5] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[6] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[8] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[9] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[10] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[11] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[0] = myFile.read();
-        plugin[5].preset[plpreset[5]].Pot_Value[7] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[4] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[5] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[6] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[8] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[9] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[10] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[11] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[0] = myFile.read();
+        plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[7] = myFile.read();
       }
     }
     if (trackNr == 24) {
       //load plugin 8 variables
       for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        plugin[7].preset[plpreset[7]].Pot_Value[4] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[5] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[6] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[8] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[9] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[10] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[11] = myFile.read();
-        plugin[7].preset[plpreset[7]].Pot_Value[0] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[5] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[6] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[8] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[9] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[10] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[11] = myFile.read();
+        plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[0] = myFile.read();
       }
     }
     if (trackNr == 25) {
@@ -1156,27 +1147,30 @@ void DrumPluginPlay() {
       drumnotes[0] = false;
       pl7drum1.noteOn();
     }
-
     if (drumnotes[1]) {
       drumnotes[1] = false;
       pl7envelope1.noteOn();
-    } else {
-      pl7envelope1.noteOff();
-    }
 
+      if (track[0].MIDItick >= track[0].stepLength) {
+        pl7envelope1.noteOff();
+      }
+    }
     if (drumnotes[2]) {
       drumnotes[2] = false;
       pl7envelope2.noteOn();
       pl7envelope3.noteOn();
-    } else {
-      pl7envelope2.noteOff();
-      pl7envelope3.noteOff();
-    }
 
+      if (track[0].MIDItick >= track[0].stepLength) {
+        pl7envelope2.noteOff();
+        pl7envelope3.noteOff();
+      }
+    }
     if (drumnotes[3]) {
       drumnotes[3] = false;
       //playMem4.play(AudioSampleHihat);
-    } else {
+
+      if (track[0].MIDItick >= track[0].stepLength) {
+      }
     }
 
     if (drumnotes[4]) {

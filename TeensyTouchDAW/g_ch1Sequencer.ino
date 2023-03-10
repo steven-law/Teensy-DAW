@@ -93,15 +93,7 @@ void drumStepSequencer() {
 
 
   if (ts.touched() || button[15]) {
-
-
-
-
-    unsigned long currentMillis = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-
-
+    if (millis() % interval == 0) {
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
 
         int dot_on_X = (gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X;
@@ -170,91 +162,7 @@ void drawActiveDrumSteps() {
     }
   }
 }
-/*
-void saveTrack1(const char* track) {
-  sprintf(_trackname, "%s.txt\0", track);
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_8);
-  tft.setCursor(0, 0);
-  // delete the file:
-  tft.print("Removing track1.txt...");
-  SD.remove(_trackname);
-  tft.println("Done");
 
-  // open the file.
-  tft.print("Creating and opening track1.txt...");
-  myFile = SD.open(_trackname, FILE_WRITE);
-  tft.println("Done");
-
-  // if the file opened okay, write to it:
-  if (myFile) {
-
-
-
-    //save track1
-    tft.print("Writing track 1 to track1.txt...");
-    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (int snote = 0; snote < 12; snote++) {
-        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
-          int step = channel1Clip[sclip][snote][sstep] + 48;
-          myFile.print((char)step);
-        }
-      }
-    }
-    int channel = track[0].MIDIchannel + 48;
-    myFile.print((char)channel);
-
-    tft.println("Done");
-    // close the file:
-    myFile.close();
-    tft.println("Saving done.");
-    startUpScreen();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track1.txt");
-  }
-  saveMIDItrackDrum();
-}
-
-void loadTrack1(const char* track) {
-  sprintf(_trackname, "%s.txt\0", track);
-  tft.fillScreen(ILI9341_DARKGREY);
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(0, 0);
-  // open the file for reading:
-  myFile = SD.open(_trackname);
-  if (myFile) {
-    tft.println("opening track1.txt:");
-
-    // read from the file until there's nothing else in it:
-
-
-
-    //load track 1
-    tft.print("Reading songarrangment from track1.txt...");
-    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-      for (int snote = 0; snote < 12; snote++) {
-        for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
-          int step;
-          step = myFile.read();
-          channel1Clip[sclip][snote][sstep] = step - 48;
-        }
-      }
-    }
-    int channel;
-    channel = myFile.read();
-    track[0].MIDIchannel = channel - 48;
-    tft.println("Done");
-    startUpScreen();
-    // close the file:
-    myFile.close();
-  } else {
-    // if the file didn't open, print an error:
-    tft.println("error opening track1.txt");
-  }
-}*/
 
 void saveMIDItrackDrum() {
   SmfWriter writer;
@@ -263,7 +171,7 @@ void saveMIDItrackDrum() {
   //Serial.print("Start saving-> ");
   //writer.addSetTempo(tempo);
   //double microsPerTick = writer.get_microseconds_per_tick();
-  deltaStep = 0;
+  int deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
     for (int svoice = 0; svoice < num_voice; svoice++) {
       for (int sstep = 0; sstep < STEP_QUANT; sstep++) {

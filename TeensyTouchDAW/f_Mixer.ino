@@ -115,32 +115,32 @@ void mixerPage1_Static(int mixerpage) {
 
 
 
-  drawPot(0, 3, track[0].gain_graph, track[0].gain_graph, "TrD", trackColor[0]);
+  drawPot(0, 0, track[0].gain_graph, track[0].gain_graph, "TrD", trackColor[0]);
   drawActiveRect(3, 5, 1, 1, track[0].mute_state, "M", ILI9341_RED);
   drawActiveRect(4, 5, 1, 1, track[0].solo_state, "S", ILI9341_WHITE);
-  drawPot(1, 3, track[1].gain_graph, track[1].gain_graph, "Tr2", trackColor[1]);
+  drawPot(1, 0, track[1].gain_graph, track[1].gain_graph, "Tr2", trackColor[1]);
   drawActiveRect(7, 5, 1, 1, track[1].mute_state, "M", ILI9341_RED);
   drawActiveRect(8, 5, 1, 1, track[1].solo_state, "S", ILI9341_WHITE);
-  drawPot(2, 3, track[2].gain_graph, track[2].gain_graph, "Tr3", trackColor[2]);
+  drawPot(2, 0, track[2].gain_graph, track[2].gain_graph, "Tr3", trackColor[2]);
   drawActiveRect(11, 5, 1, 1, track[2].mute_state, "M", ILI9341_RED);
   drawActiveRect(12, 5, 1, 1, track[2].solo_state, "S", ILI9341_WHITE);
-  drawPot(3, 3, track[3].gain_graph, track[3].gain_graph, "Tr4", trackColor[3]);
+  drawPot(3, 0, track[3].gain_graph, track[3].gain_graph, "Tr4", trackColor[3]);
   drawActiveRect(15, 5, 1, 1, track[3].mute_state, "M", ILI9341_RED);
   drawActiveRect(16, 5, 1, 1, track[3].solo_state, "S", ILI9341_WHITE);
 
-  drawPot(0, 9, track[4].gain_graph, track[4].gain_graph, "Tr5", trackColor[4]);
+  drawPot(0, 2, track[4].gain_graph, track[4].gain_graph, "Tr5", trackColor[4]);
   drawActiveRect(3, 11, 1, 1, track[4].mute_state, "M", ILI9341_RED);
   drawActiveRect(4, 11, 1, 1, track[4].solo_state, "S", ILI9341_WHITE);
-  drawPot(1, 9, track[5].gain_graph, track[5].gain_graph, "Tr6", trackColor[5]);
+  drawPot(1, 2, track[5].gain_graph, track[5].gain_graph, "Tr6", trackColor[5]);
   drawActiveRect(7, 11, 1, 1, track[5].mute_state, "M", ILI9341_RED);
   drawActiveRect(8, 11, 1, 1, track[5].solo_state, "S", ILI9341_WHITE);
-  drawPot(2, 9, track[6].gain_graph, track[6].gain_graph, "Tr7", trackColor[6]);
+  drawPot(2, 2, track[6].gain_graph, track[6].gain_graph, "Tr7", trackColor[6]);
   drawActiveRect(11, 11, 1, 1, track[6].mute_state, "M", ILI9341_RED);
   drawActiveRect(12, 11, 1, 1, track[6].solo_state, "S", ILI9341_WHITE);
-  drawPot(3, 9, track[7].gain_graph, track[7].gain_graph, "Tr8", trackColor[7]);
+  drawPot(3, 2, track[7].gain_graph, track[7].gain_graph, "Tr8", trackColor[7]);
   drawActiveRect(15, 11, 1, 1, track[7].mute_state, "M", ILI9341_RED);
   drawActiveRect(16, 11, 1, 1, track[7].solo_state, "S", ILI9341_WHITE);
-  drawPot(18, 12, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
+  drawPot(5, 4, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
 }
 void MixerPage1_Dynamic() {
   switch (lastPotRow) {
@@ -148,11 +148,10 @@ void MixerPage1_Dynamic() {
 
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     
-
         //Row1
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].gain_graph = constrain((track[MixerColumn].gain_graph + encoded[MixerColumn]), 0, 127);
-          drawPot(MixerColumn, 3, track[MixerColumn].gain_graph, track[MixerColumn].gain_graph, trackNames_short[MixerColumn], trackColor[MixerColumn]);
+          drawPot(MixerColumn, 1, track[MixerColumn].gain_graph, track[MixerColumn].gain_graph, trackNames_short[MixerColumn], trackColor[MixerColumn]);
           if (track[MixerColumn].MIDIchannel > 16) {
             track[MixerColumn].gain = track[MixerColumn].gain_graph / 127.00;
             pluginGain(track[MixerColumn].MIDIchannel, track[MixerColumn].gain);
@@ -182,7 +181,7 @@ void MixerPage1_Dynamic() {
         //Row2
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].gain_graph = constrain((track[MixerColumn + 4].gain_graph + encoded[MixerColumn]), 0, 127);
-          drawPot(MixerColumn, 9, track[MixerColumn + 4].gain_graph, track[MixerColumn + 4].gain_graph, trackNames_short[MixerColumn + 4], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumn, 3, track[MixerColumn + 4].gain_graph, track[MixerColumn + 4].gain_graph, trackNames_short[MixerColumn + 4], trackColor[MixerColumn + 4]);
           if (track[MixerColumn + 4].MIDIchannel > 16) {
             track[MixerColumn + 4].gain = track[MixerColumn + 4].gain_graph / 127.00;
             pluginGain(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].gain);
@@ -242,9 +241,7 @@ void MixerPage1_Dynamic() {
     //mute and solo states track 1-4
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds
     if (gridTouchY == 5) {
-      unsigned long currentMillis = msecs;
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
+      if (millis() % interval == 0) {
         for (int mutes = 0; mutes < 4; mutes++) {
           if (gridTouchX == (((mutes + 1) * 4) - 1)) {
             selectMute(mutes);
@@ -262,9 +259,7 @@ void MixerPage1_Dynamic() {
     //mute and solo states Track 5-8
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds
     if (gridTouchY == 11) {
-      unsigned long currentMillis = msecs;
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
+      if (millis() % interval == 0) {
         for (int mutes = 0; mutes < 4; mutes++) {
           if (gridTouchX == (((mutes + 1) * 4) - 1)) {
             selectMute(mutes + 4);

@@ -47,9 +47,9 @@ void NoteFX5_Page1_Dynamic() {
   if (ts.touched() || button[15]) {
 
 
-    unsigned long currentMillis = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
+
+    if (millis() % interval == 0) {
+
 
 
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {

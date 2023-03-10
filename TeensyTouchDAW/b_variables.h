@@ -114,9 +114,9 @@ byte selectPage;
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
-#define MAX_WAV_FILES 11
+#define MAX_WAV_FILES 12
 
-const char* wavKit[12] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
+const char* wavKit[MAX_WAV_FILES] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
 const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
                                          "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
                                          "21.RAW", "22.RAW", "23.RAW", "24.RAW", "25.RAW", "26.RAW", "27.RAW", "28.RAW", "29.RAW", "30.RAW",
@@ -140,12 +140,6 @@ const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5"
 char _trackname[20];
 //const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-
-const int steps = 16;      // number of steps in the sequence
-const int numTracks = 4;   // number of tracks in the sequence
-const int startNote = 36;  // MIDI note number of the first note
-const int channel = 9;     // MIDI channel (zero-indexed)
-
 
 
 
@@ -217,24 +211,21 @@ byte phraser;
 byte end_of_loop = MAX_PHRASES - 1;
 byte start_of_loop = 0;
 byte end_of_loop_old = MAX_PHRASES - 1;
-byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 byte songpages;
-byte stepOld;
-int deltaStep = 0;
 
 
-byte step_Frame_X;
-byte step_Frame_Y;
+
+
 
 //touchscreen variables
 byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
 byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
 byte trackTouchY;
-bool is_held = true;
-unsigned long previousMillis = 0;
-unsigned long previousMillis2 = 0;
-unsigned long previousMillis3 = 0;
+unsigned long previousMillis;
+
+
+
 //DMAMEM uint16_t fb1[320 * 240];
 
 
@@ -261,7 +252,6 @@ bool button[16]{};
 int channelPlayed;
 
 bool showSerialonce = false;
-bool something_was_pressed = false;
 bool otherCtrlButtons = true;
 byte last_button_X = 0;
 byte last_button_Y = 0;
@@ -332,11 +322,11 @@ track_t ctrack[NUM_TRACKS];
 
 //Scales
 bool scaleSelect = LOW;
-const int scalesQuant = 9;  //how many scales do we have
-int scaleSelected = 0;      //variable for scale selecting
+const int MAX_SCALES = 13;  //how many scales do we have
+int scaleSelected = 0;     //variable for scale selecting
 
 
-const int scales[scalesQuant][12]{
+const int scales[MAX_SCALES][12]{
   //bool array for greying out notes that are not in the scale
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },  //Chromatic
   { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1 },  //Major
@@ -346,11 +336,15 @@ const int scales[scalesQuant][12]{
   { 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0 },  //Dorian
   { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0 },  //Mixolydian
   { 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0 },  //Phrygian
-  { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 }   //Lydian
+  { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 },  //Lydian
+  { 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0 },  //Pentatonic Major
+  { 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0 },  //Pentatonic Minor
+  { 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0 },  //Blues Major
+  { 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0 }   //Blues Minor
 };
 
-const char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
-const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
+const char* scaleNames[MAX_SCALES] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian", "Pentatonic Major", "Pentatonic Minor", "Blues Major", "Blues Minor" };  // Scale Names for selecting
+const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd", "PeMaj", "PeMin", "BlMaj", "BlMin" };                                                                          // Scale Names for selecting
 
 
 

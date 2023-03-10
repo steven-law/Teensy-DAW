@@ -110,12 +110,13 @@ void melodicStepSequencer(int desired_instrument) {
   int touched_step = gridTouchX - 2;
   int touched_note = gridTouchY - 1;
 
-  TS_Point p = ts.getPoint();
-  if (ts.touched() || button[15]) {
 
+  if (ts.touched() || button[15]) {
+    readTouchinput();
     //manually assigning steps to the grid;
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds
     unsigned long currentMillis = millis();
+
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
 
@@ -200,7 +201,7 @@ void saveMIDItrack(const char* track, int trackNr) {
   //Serial.print("Start saving-> ");
   //writer.addSetTempo(tempo);
   //double microsPerTick = writer.get_microseconds_per_tick();
-  deltaStep = 0;
+  int deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
     for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
       if (ctrack[trackNr].sequence[sclip].step[sstep] > 0) {
@@ -262,7 +263,7 @@ void saveTrack(const char* trackname, byte trackNr) {
       }
     }
 
-   // int channel = track[trackNr].MIDIchannel + 48;
+    // int channel = track[trackNr].MIDIchannel + 48;
     myFile.print((char)track[trackNr].MIDIchannel);
 
     // close the file:
