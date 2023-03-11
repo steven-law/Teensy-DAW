@@ -92,7 +92,7 @@ void FX3Delay_dynamic() {
         Potentiometer[0] = fx3delayFilterFreq_graph;
         if (enc_moved[0]) {
           fx3delayFilterFreq_graph = constrain((fx3delayFilterFreq_graph + encoded[0]), 0, 127);
-          fx3delayFilterFreq = note_frequency[fx3delayFilterFreq_graph];
+          fx3delayFilterFreq = note_frequency[fx3delayFilterFreq_graph]* tuning;
           dlfilter1.frequency(fx3delayFilterFreq);
           drawPot(0, lastPotRow, fx3delayFilterFreq_graph, fx3delayFilterFreq, "Freq", trackColor[desired_instrument]);
         }

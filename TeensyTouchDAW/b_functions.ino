@@ -301,7 +301,7 @@ void PluginNoteOn() {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
               int veloCity = plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn + 8];
-              OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play]);
+              OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play]* tuning);
               usbMIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
               MIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
             }
@@ -312,26 +312,25 @@ void PluginNoteOn() {
             //Serial.println("crackling");
           }
           if (track[desired_instruments].MIDIchannel == 19) {
-            OSC_MOD[4]->frequency(note_frequency[track[desired_instruments].notePlayed]);
+            OSC_MOD[4]->frequency(note_frequency[track[desired_instruments].notePlayed] * tuning);
             pl3envelope1.noteOn();
             pl3envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 21) {
-            double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
 
-            playSdPitch1.setPlaybackRate(note_ratio);
-            playSdPitch1.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
+            playSdPitch1.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed]);
+            playSdPitch1.playRaw(RAW_files[plugin[pl5NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
             pl5envelope1.noteOn();
             pl5envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 22) {
-            double note_ratio = pow(2.0, ((double)(track[desired_instruments].notePlayed - SAMPLE_ROOT) / 12.0));
+            
 
-            playSdPitch2.setPlaybackRate(note_ratio);
+            playSdPitch2.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed]);
             playSdPitch2.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
             pl6envelope1.noteOn();
             pl6envelope2.noteOn();
@@ -339,14 +338,14 @@ void PluginNoteOn() {
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 24) {
-            pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]);
+            pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]* tuning);
             pl8envelope1.noteOn();
             pl8envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 25) {
-            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed], 1);
+            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed]* tuning, 1);
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }

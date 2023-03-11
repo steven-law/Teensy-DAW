@@ -58,7 +58,7 @@ int tick_16 = -1;
 bool seq_run = false;
 bool seq_rec = false;
 byte tempo = 120;
-
+#define tuning 440
 
 
 //****************************************************************************
@@ -249,17 +249,10 @@ bool enc_button[4];
 
 bool drumnotes[12];
 bool button[16]{};
-int channelPlayed;
 
 bool showSerialonce = false;
 bool otherCtrlButtons = true;
-byte last_button_X = 0;
-byte last_button_Y = 0;
 uint16_t tftRAM[16][16];
-int Button_Pos_X_last = (last_button_X)*STEP_FRAME_W;
-int Button_Pos_Y_last = (last_button_Y)*STEP_FRAME_H;
-int Button_Pos_X_new = (last_button_X - 1) * STEP_FRAME_W;
-int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 
 //Launchpad
 #define LP_GREEN 60

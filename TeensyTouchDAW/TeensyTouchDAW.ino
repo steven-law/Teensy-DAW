@@ -712,7 +712,7 @@ AudioSynthNoiseWhite *WHITE[2]{ &pl7noise1, &pl7noise2 };
 AudioEffectEnvelope *ENVELOPE1[14]{ &envelope1, &envelope2, &pl3envelope1, &pl3envelope2, &pl5envelope1, &pl5envelope2, &pl6envelope1, &pl6envelope2, &pl7envelope1, &pl7envelope2, &pl7envelope3, &pl7envelope4, &pl8envelope1, &pl8envelope2 };  //pl1, pl3, pl5, pl6, pl8                                                                                                                                                                                                       //pl1, pl3, pl5, pl6, pl8
 
 AudioFilterStateVariable *STATEFILTER[7]{ &filter1, &pl3filter1, &pl5filter1, &pl6filter1, &pl7filter1, &pl7filter2, &pl9bpfilter };  //pl1, pl3, pl5, pl6
-AudioFilterLadder *LADDERFILTER[1]{ &pl8filter1 };                                                                      //pl8
+AudioFilterLadder *LADDERFILTER[1]{ &pl8filter1 };                                                                                    //pl8
 
 AudioPlaySdResmp *RAWPLAY[2]{ &playSdPitch1, &playSdPitch2 };
 AudioMixer4 *PL2MIX[3]{ &drummixer1, &drummixer1, &drummixer1 };
@@ -847,7 +847,7 @@ void setup() {
   }
   note_frequency = new float[128];
   for (int r = 0; r < 128; r++) {
-    note_frequency[r] = pow(2.0, ((double)(r - SAMPLE_ROOT) / 12.0)) * 440;
+    note_frequency[r] = pow(2.0, ((double)(r - SAMPLE_ROOT) / 12.0));
   }
   delay(100);
 
@@ -1205,12 +1205,20 @@ void loop() {
   if (msecs % 100 == 0) {
   }
 
+  if (gridTouchY == 1) trackTouchY = 0;
+  if (gridTouchY == 3) trackTouchY = 1;
+  if (gridTouchY == 4) trackTouchY = 2;
+  if (gridTouchY == 6) trackTouchY = 3;
+  if (gridTouchY == 7) trackTouchY = 4;
+  if (gridTouchY == 9) trackTouchY = 5;
+  if (gridTouchY == 10) trackTouchY = 6;
+  if (gridTouchY == 12) trackTouchY = 7;
 
-
-
-
-  if (ts.touched() || button[15]) {
+  if (ts.touched()) {
     readTouchinput();
+  }
+  if (ts.touched() || button[15]) {
+
     if (gridTouchY == 0) {  //Top Line Edits: Tempo, Play, Stop, Record, Scales, Arrangment select
 
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1811,15 +1819,6 @@ void readTouchinput() {
   if (gridTouchY >= 11 && gridTouchY <= 13) {
     lastPotRow = 3;
   }
-
-  if (gridTouchY == 1) trackTouchY = 0;
-  if (gridTouchY == 3) trackTouchY = 1;
-  if (gridTouchY == 4) trackTouchY = 2;
-  if (gridTouchY == 6) trackTouchY = 3;
-  if (gridTouchY == 7) trackTouchY = 4;
-  if (gridTouchY == 9) trackTouchY = 5;
-  if (gridTouchY == 10) trackTouchY = 6;
-  if (gridTouchY == 12) trackTouchY = 7;
 }
 void readEncoders() {
   encoded[0] = 0;
@@ -1884,7 +1883,8 @@ void readEncoders() {
 }
 
 void drawCursor() {
-
+  static byte last_button_X = 0;
+  static byte last_button_Y = 0;
   for (int pixel = 0; pixel < 16; pixel++) {
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 1, tftRAM[0][pixel]);
     tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 15, tftRAM[1][pixel]);

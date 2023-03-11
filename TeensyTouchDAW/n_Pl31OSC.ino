@@ -191,7 +191,7 @@ void Plugin3_Change() {
   pl3waveform1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3]);
 
 
-  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]]);
+  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]]* tuning);
   pl3filter1.resonance(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5] / SVF_RES);
   pl3filter1.octaveControl(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6] / SVF_SWP);
   selectFilterType(19, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);

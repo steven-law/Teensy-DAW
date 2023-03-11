@@ -112,7 +112,7 @@ void melodicStepSequencer(int desired_instrument) {
 
 
   if (ts.touched() || button[15]) {
-    readTouchinput();
+    
     //manually assigning steps to the grid;
     //for better behaviour here we wait for "interval, unless it would switch within micrseconds
     unsigned long currentMillis = millis();

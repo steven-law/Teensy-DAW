@@ -76,7 +76,7 @@ void Plugin6_Page_Static() {
 }
 void Plugin6_Change() {
   plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[0];
-  pl6filter1.frequency(note_frequency[plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[4]]);
+  pl6filter1.frequency(note_frequency[plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[4]]* tuning);
   pl6filter1.resonance(plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[5] / SVF_RES);
   pl6filter1.octaveControl(plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[6] / SVF_SWP);
   selectFilterType(21, plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[7]);

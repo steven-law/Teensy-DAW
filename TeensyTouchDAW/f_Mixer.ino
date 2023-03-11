@@ -151,7 +151,7 @@ void MixerPage1_Dynamic() {
         //Row1
         if (enc_moved[MixerColumn]) {
           track[MixerColumn].gain_graph = constrain((track[MixerColumn].gain_graph + encoded[MixerColumn]), 0, 127);
-          drawPot(MixerColumn, 1, track[MixerColumn].gain_graph, track[MixerColumn].gain_graph, trackNames_short[MixerColumn], trackColor[MixerColumn]);
+          drawPot(MixerColumn, 0, track[MixerColumn].gain_graph, track[MixerColumn].gain_graph, trackNames_short[MixerColumn], trackColor[MixerColumn]);
           if (track[MixerColumn].MIDIchannel > 16) {
             track[MixerColumn].gain = track[MixerColumn].gain_graph / 127.00;
             pluginGain(track[MixerColumn].MIDIchannel, track[MixerColumn].gain);
@@ -181,7 +181,7 @@ void MixerPage1_Dynamic() {
         //Row2
         if (enc_moved[MixerColumn]) {
           track[MixerColumn + 4].gain_graph = constrain((track[MixerColumn + 4].gain_graph + encoded[MixerColumn]), 0, 127);
-          drawPot(MixerColumn, 3, track[MixerColumn + 4].gain_graph, track[MixerColumn + 4].gain_graph, trackNames_short[MixerColumn + 4], trackColor[MixerColumn + 4]);
+          drawPot(MixerColumn, 2, track[MixerColumn + 4].gain_graph, track[MixerColumn + 4].gain_graph, trackNames_short[MixerColumn + 4], trackColor[MixerColumn + 4]);
           if (track[MixerColumn + 4].MIDIchannel > 16) {
             track[MixerColumn + 4].gain = track[MixerColumn + 4].gain_graph / 127.00;
             pluginGain(track[MixerColumn + 4].MIDIchannel, track[MixerColumn + 4].gain);
@@ -208,7 +208,7 @@ void MixerPage1_Dynamic() {
         MasterVol_graph = constrain((MasterVol_graph + encoded[3]), 0, 127);
         MasterVol = MasterVol_graph / 127.00;
         sgtl5000_1.volume(MasterVol);
-        drawPot(18, 12, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
+        drawPot(4, 3, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
       }
       /* if (abs(Potentiometer[3] - MasterVol_graph) < POTPICKUP) {
         if (MasterVol_graph != Potentiometer[3]) {

@@ -72,7 +72,7 @@ void Plugin8_Page_Static() {
 }
 void Plugin8_Change() {
   pl8waveform1.begin(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[0]);
-  pl8filter1.frequency(note_frequency[plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4]]);
+  pl8filter1.frequency(note_frequency[plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4]]* tuning);
   pl8filter1.resonance(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[5] / SVF_RES);
   pl8filter1.octaveControl(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[6] / SVF_SWP);
 

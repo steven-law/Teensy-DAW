@@ -157,7 +157,7 @@ void OSC_MOD_LVL(int pluginNr, int des_node, int COL, int ROW) {
       OSC_MOD[des_node]->amplitude((float)(Potentiometer[COL] / 127.00));
       drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
       Serial.print("OSC__MOD_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[1] / 127.00));
+      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / 127.00));
     }
   }
 }
@@ -346,8 +346,8 @@ void StateVar_Frequency(int pluginNr, int des_node, int COL, int ROW) {
   if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
     if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
       plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      STATEFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]]);
-      drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]], "Freq", trackColor[desired_track]);
+      STATEFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]]* tuning);
+      drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]]* tuning, "Freq", trackColor[desired_track]);
     }
   }
 }
@@ -385,7 +385,7 @@ void StateVar_Type(int pluginNr, int des_node, int COL, int ROW) {
 }
 void draw_StateVar_Filter(int pluginNr, int des_node, int COL, int ROW) {
   int xPos = ((COL + 1) * 4) - 1;
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127], "Freq");
+  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127]* tuning, "Freq");
   draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
   draw_A(pluginNr, des_node, COL + 2, ROW, MAX_ENC_RANGE, "Swp");
   draw_A_mult(pluginNr, SVF_TYP, COL + 3, ROW, 2, "");
@@ -393,7 +393,7 @@ void draw_StateVar_Filter(int pluginNr, int des_node, int COL, int ROW) {
 }
 void draw_StateVar_Freq_Res(int pluginNr, int des_node, int COL, int ROW) {
   int xPos = ((COL + 1) * 4) - 1;
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127], "Freq");
+  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127]* tuning, "Freq");
   draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
 }
 
@@ -407,8 +407,8 @@ void Ladder_Frequency(int pluginNr, int des_node, int COL, int ROW) {
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
   if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
     plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-    LADDERFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]]);
-    drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]], "Freq", trackColor[desired_track]);
+    LADDERFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]]* tuning);
+    drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]]* tuning, "Freq", trackColor[desired_track]);
   }
 }
 void Ladder_Resonance(int pluginNr, int des_node, int COL, int ROW) {
@@ -428,7 +428,7 @@ void Ladder_Sweep(int pluginNr, int des_node, int COL, int ROW) {
   }
 }
 void draw_Ladder_Filter(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127], "Freq");
+  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127]* tuning, "Freq");
   draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
   draw_A(pluginNr, des_node, COL + 2, ROW, SUSTAIN_LVL, "Swp");
 }

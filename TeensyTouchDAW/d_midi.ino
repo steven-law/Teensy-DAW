@@ -703,7 +703,6 @@ void myNoteOn(int channel, byte note, byte velocity) {
     else {
       for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes[octNotes]) {
-          channelPlayed = desired_instrument + 1;
           channel = desired_instrument + 1;
           LP_octave_bool_keys[octNotes] = true;
           track[desired_instrument].notePressed = true;
