@@ -174,527 +174,538 @@ MIDIDevice *usb_midi_devices[MAX_USB_DEVICES] = { &midi01, &midi02, &midi03, &mi
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveformDc pl10dc1;                 //xy=55,2119.199860572815
-AudioSynthNoiseWhite pl10noise1;              //xy=69.19999694824219,2059.199981689453
-AudioSynthWaveform pl10waveform1;             //xy=77.5,1980.2001037597656
-AudioSynthWaveform pl10waveform2;             //xy=77.5,2019.2001037597656
-AudioSynthWaveformDc pl5dc1;                  //xy=83.19999694824219,1242
-AudioSynthNoiseWhite pl7noise1;               //xy=82.19999694824219,1526
-AudioPlayMemory playMem9;                     //xy=84.19999694824219,1026
-AudioSynthWaveformDc pl6dc1;                  //xy=85.19999694824219,1346
-AudioPlayMemory playMem10;                    //xy=89.19999694824219,1057
-AudioSynthWaveform pl1waveform1;              //xy=95.19999694824219,83
-AudioPlayMemory playMem7;                     //xy=94.19999694824219,956
-AudioPlayMemory playMem8;                     //xy=94.19999694824219,993
-AudioPlayMemory playMem5;                     //xy=104.19999694824219,880
-AudioPlayMemory playMem6;                     //xy=105.19999694824219,918
-AudioPlaySdWav playSdWav12;                   //xy=109.19999694824219,691
-AudioPlayMemory playMem1;                     //xy=109.19999694824219,740
-AudioPlaySdWav playSdWav7;                    //xy=111.19999694824219,510
-AudioPlayMemory playMem2;                     //xy=110.19999694824219,776
-AudioPlaySdWav playSdWav9;                    //xy=111.19999694824219,582
-AudioPlaySdWav playSdWav3;                    //xy=112.19999694824219,355
-AudioPlaySdWav playSdWav10;                   //xy=111.19999694824219,616
-AudioPlaySdWav playSdWav4;                    //xy=112.19999694824219,391
-AudioPlaySdWav playSdWav11;                   //xy=111.19999694824219,655
-AudioPlaySdWav playSdWav8;                    //xy=112.19999694824219,547
-AudioPlayMemory playMem11;                    //xy=111.19999694824219,1096
-AudioSynthWaveformSine pl7waveformMod3;       //xy=109.19999694824219,1610
-AudioPlaySdWav playSdWav2;                    //xy=115.19999694824219,318
-AudioPlaySdWav playSdWav5;                    //xy=115.19999694824219,431
-AudioPlaySdWav playSdWav6;                    //xy=115.19999694824219,471
-AudioPlaySdWav playSdWav1;                    //xy=118.19999694824219,279
-AudioPlayMemory playMem12;                    //xy=116.19999694824219,1134
-AudioPlayMemory playMem3;                     //xy=119.19999694824219,810
-AudioPlayMemory playMem4;                     //xy=126.19999694824219,846
-AudioSynthNoiseWhite pl7noise2;               //xy=172.1999969482422,1667
-AudioSynthNoisePink pl7pink1;                 //xy=172.1999969482422,1707
-AudioSynthWaveformDc pl8dc1;                  //xy=183.1999969482422,1883
-AudioEffectEnvelope pl10envelope2;            //xy=184.20000076293945,2125.1998615264893
-AudioEffectEnvelope pl5envelope2;             //xy=231.1999969482422,1241
-AudioPlaySdResmp playSdPitch2;                //xy=231.1999969482422,1294
-AudioEffectEnvelope pl6envelope2;             //xy=233.1999969482422,1345
-AudioPlaySdResmp playSdPitch1;                //xy=235.1999969482422,1195
-AudioSynthSimpleDrum pl7drum1;                //xy=238.1999969482422,1447
-AudioMixer4 pl10mixer1;                       //xy=241.20000076293945,2052.199981689453
-AudioSynthWaveformModulated pl7waveformMod1;  //xy=245.1999969482422,1528
-AudioSynthWaveformModulated pl1waveformMod1;  //xy=265.1999969482422,20
-AudioSynthWaveformModulated pl1waveformMod2;  //xy=265.1999969482422,61
-AudioSynthWaveformModulated pl1waveformMod4;  //xy=265.1999969482422,143
-AudioSynthWaveformModulated pl1waveformMod3;  //xy=266.1999969482422,103
-AudioEffectEnvelope pl7envelope2;             //xy=289.1999969482422,1608
-AudioSynthWaveform pl3waveform1;              //xy=313.1999969482422,571
-AudioSynthWaveformDc pl3dc1;                  //xy=314.1999969482422,660
-AudioSynthKarplusStrong pl9string1;           //xy=310.19998931884766,1943.0000286102295
-AudioMixer4 pl7mixer4;                        //xy=311.1999969482422,1695
-AudioMixer4 drummixer1;                       //xy=319.1999969482422,303
-AudioSynthWaveform pl8waveform1;              //xy=313.1999969482422,1832
-AudioSynthWaveform pl9bpinput;                //xy=313.19998931884766,1988.0000295639038
-AudioMixer4 drummixer2;                       //xy=321.1999969482422,392
-AudioMixer4 drummixer3;                       //xy=330.1999969482422,484
-AudioMixer4 pl4drummixer1;                    //xy=331.1999969482422,757
-AudioMixer4 pl4drummixer2;                    //xy=333.1999969482422,846
-AudioEffectEnvelope pl8envelope2;             //xy=338.1999969482422,1882
-AudioMixer4 pl4drummixer3;                    //xy=342.1999969482422,938
-AudioFilterStateVariable pl10filter1;         //xy=376.1999702453613,2067.199981689453
-AudioFilterStateVariable pl5filter1;          //xy=395.1999969482422,1207
-AudioFilterStateVariable pl6filter1;          //xy=397.1999969482422,1311
-AudioFilterStateVariable pl7filter1;          //xy=408.1999969482422,1447
-AudioFilterStateVariable pl7filter2;          //xy=409.1999969482422,1537
-AudioMixer4 mixer1;                           //xy=435.1999969482422,55
-AudioSynthWaveformDc pl1dc1;                  //xy=439.1999969482422,158
-AudioSynthWaveformModulated pl3waveformMod1;  //xy=457.1999969482422,532
-AudioEffectEnvelope pl3envelope2;             //xy=457.1999969482422,657
-AudioFilterBiquad pl7biquad1;                 //xy=453.1999969482422,1687
-AudioSynthWaveformModulated pl7waveformMod2;  //xy=465.1999969482422,1611
-AudioMixer4 drummixer4;                       //xy=504.1999969482422,413
-AudioFilterLadder pl8filter1;                 //xy=504.1999969482422,1845
-AudioMixer4 pl10mixer2;                       //xy=509.20003509521484,2051.199493408203
-AudioFilterStateVariable pl3filter1;          //xy=519.1999969482422,599
-AudioEffectEnvelope envelope1;                //xy=522.1999969482422,115
-AudioFilterStateVariable pl9bpfilter;         //xy=518.2000350952148,1947.0000305175781
-AudioMixer4 pl6mixer1;                        //xy=532.1999969482422,1323
-AudioMixer4 pl5mixer1;                        //xy=547.1999969482422,1108
-AudioFilterStateVariable filter1;             //xy=555.1999969482422,60
-AudioMixer4 pl4drummixer4;                    //xy=559.1999969482422,766
-AudioEffectEnvelope pl7envelope1;             //xy=562.1999969482422,1522
-AudioEffectEnvelope pl7envelope4;             //xy=641.1999969482422,1685
-AudioEffectEnvelope pl7envelope3;             //xy=647.1999969482422,1622
-AudioEffectEnvelope pl5envelope1;             //xy=651.1999969482422,1197
-AudioAmplifier pl2amp2;                       //xy=663.1999969482422,421
-AudioMixer4 pl3mixer1;                        //xy=664.1999969482422,559
-AudioEffectEnvelope pl6envelope1;             //xy=664.1999969482422,1298
-AudioEffectEnvelope pl10envelope1;            //xy=661.2000350952148,2050.1998596191406
-AudioEffectEnvelope pl8envelope1;             //xy=669.1999969482422,1854
-AudioAmplifier pl14amp2;                      //xy=672.1999969482422,2700
-AudioAmplifier pl12amp2;                      //xy=677.1999969482422,2337
-AudioAmplifier pl16amp2;                      //xy=676.1999969482422,2923
-AudioAmplifier pl11amp2;                      //xy=679.1999969482422,2218
-AudioMixer4 pl1mixer2;                        //xy=690.1999969482422,62
-AudioAmplifier pl9amp2;                       //xy=690.2000389099121,1944.0000286102295
-AudioAmplifier pl13amp2;                      //xy=689.1999969482422,2552
-AudioAmplifier pl10amp2;                      //xy=695.1999969482422,2135
-AudioAmplifier pl15amp2;                      //xy=700.1999969482422,2767
-AudioAmplifier pl4amp2;                       //xy=711.1999969482422,742
-AudioEffectEnvelope pl3envelope1;             //xy=741.1999969482422,611
-AudioAmplifier pl8amp2;                       //xy=758.1999969482422,1804
-AudioAmplifier pl7amp2;                       //xy=778.1999969482422,1532
-AudioMixer4 pl7mixer2;                        //xy=795.1999969482422,1728
-AudioAmplifier pl2amp;                        //xy=801.1999969482422,423
-AudioAmplifier pl6amp2;                       //xy=803.1999969482422,1265
-AudioEffectEnvelope envelope2;                //xy=808.1999969482422,120
-AudioAmplifier pl3amp2;                       //xy=808.1999969482422,562
-AudioMixer4 pl7mixer1;                        //xy=810.1999969482422,1626
-AudioAmplifier pl5amp2;                       //xy=814.1999969482422,1134
-AudioAmplifier pl4amp;                        //xy=825.1999969482422,754
-AudioAmplifier pl11amp;                       //xy=826.1999969482422,2220
-AudioAmplifier pl10amp;                       //xy=828.1999969482422,2126
-AudioAmplifier pl16amp;                       //xy=830.1999969482422,2927
-AudioAmplifier pl12amp;                       //xy=834.1999969482422,2334
-AudioAmplifier pl15amp;                       //xy=845.1999969482422,2768
-AudioAmplifier pl13amp;                       //xy=846.1999969482422,2548
-AudioAmplifier pl14amp;                       //xy=847.1999969482422,2688
-AudioAmplifier pl8amp;                        //xy=858.1999969482422,1842
-AudioAmplifier pl9amp;                        //xy=858.1999969482422,1963
-AudioAmplifier pl1amp2;                       //xy=876.1999969482422,74
-AudioAmplifier pl7amp;                        //xy=878.1999969482422,1556
-AudioAmplifier pl3amp;                        //xy=900.1999969482422,606
-AudioAmplifier pl5amp;                        //xy=899.1999969482422,1196
-AudioAmplifier pl6amp;                        //xy=902.1999969482422,1298
-AudioMixer4 pl7mixer3;                        //xy=947.1999969482422,1679
-AudioAmplifier pl2FX2;                        //xy=954.1999969482422,425
-AudioAmplifier pl2FX3;                        //xy=954.1999969482422,447
-AudioAmplifier pl2dry;                        //xy=957.1999969482422,388
-AudioAmplifier pl2FX1;                        //xy=958.1999969482422,406
-AudioAmplifier pl4FX2;                        //xy=968.1999969482422,757
-AudioAmplifier pl4FX3;                        //xy=968.1999969482422,777
-AudioAmplifier pl4dry;                        //xy=969.1999969482422,715
-AudioAmplifier pl4FX1;                        //xy=969.1999969482422,736
-AudioAmplifier pl1amp;                        //xy=993.1999969482422,155
-AudioAmplifier pl14FX3;                       //xy=983.1999969482422,2709
-AudioAmplifier pl14FX2;                       //xy=985.1999969482422,2687
-AudioAmplifier pl14dry;                       //xy=988.1999969482422,2650
-AudioAmplifier pl14FX1;                       //xy=988.1999969482422,2665
-AudioAmplifier pl8dry;                        //xy=992.1999969482422,1810
-AudioAmplifier pl8FX1;                        //xy=992.1999969482422,1832
-AudioAmplifier pl10dry;                       //xy=991.1999969482422,2098
-AudioAmplifier pl8FX2;                        //xy=993.1999969482422,1853
-AudioAmplifier pl8FX3;                        //xy=993.1999969482422,1876
-AudioAmplifier pl16FX3;                       //xy=990.1999969482422,2956
-AudioAmplifier pl10FX1;                       //xy=994.1999969482422,2117
-AudioAmplifier pl10FX2;                       //xy=994.1999969482422,2134
-AudioAmplifier pl10FX3;                       //xy=995.1999969482422,2153
-AudioAmplifier pl16FX2;                       //xy=992.1999969482422,2934
-AudioAmplifier pl13FX3;                       //xy=994.1999969482422,2548
-AudioAmplifier pl13FX2;                       //xy=996.1999969482422,2526
-AudioAmplifier pl16dry;                       //xy=995.1999969482422,2897
-AudioAmplifier pl16FX1;                       //xy=995.1999969482422,2912
-AudioAmplifier pl9dry;                        //xy=999.1999969482422,1952
-AudioAmplifier pl9FX1;                        //xy=1000.1999969482422,1970
-AudioAmplifier pl9FX2;                        //xy=1000.1999969482422,1987
-AudioAmplifier pl13dry;                       //xy=998.1999969482422,2488
-AudioAmplifier pl11dry;                       //xy=1000.1999969482422,2195
-AudioAmplifier pl13FX1;                       //xy=999.1999969482422,2504
-AudioAmplifier pl11FX2;                       //xy=1002.1999969482422,2229
-AudioAmplifier pl11FX3;                       //xy=1002.1999969482422,2247
-AudioAmplifier pl9FX3;                        //xy=1003.1999969482422,2007
-AudioAmplifier pl12dry;                       //xy=1002.1999969482422,2291
-AudioAmplifier pl15FX3;                       //xy=1002.1999969482422,2807
-AudioAmplifier pl11FX1;                       //xy=1005.1999969482422,2211
-AudioAmplifier pl15FX2;                       //xy=1004.1999969482422,2785
-AudioAmplifier pl7dry;                        //xy=1010.1999969482422,1544
-AudioAmplifier pl7FX2;                        //xy=1011.1999969482422,1584
-AudioAmplifier pl7FX3;                        //xy=1011.1999969482422,1607
-AudioAmplifier pl15dry;                       //xy=1007.1999969482422,2748
-AudioAmplifier pl15FX1;                       //xy=1007.1999969482422,2763
-AudioAmplifier pl7FX1;                        //xy=1012.1999969482422,1564
-AudioAmplifier pl12FX1;                       //xy=1011.1999969482422,2322
-AudioAmplifier pl12FX2;                       //xy=1013.1999969482422,2339
-AudioAmplifier pl3dry;                        //xy=1021.1999969482422,583
-AudioAmplifier pl3FX1;                        //xy=1021.1999969482422,606
-AudioAmplifier pl3FX2;                        //xy=1021.1999969482422,634
-AudioAmplifier pl12FX3;                       //xy=1015.1999969482422,2363
-AudioAmplifier pl3FX3;                        //xy=1023.1999969482422,650
-AudioAmplifier pl6FX1;                        //xy=1035.1999969482422,1311
-AudioAmplifier pl6dry;                        //xy=1036.1999969482422,1291
-AudioAmplifier pl6FX2;                        //xy=1036.1999969482422,1335
-AudioAmplifier pl5FX3;                        //xy=1038.1999969482422,1242
-AudioAmplifier pl6FX3;                        //xy=1038.1999969482422,1359
-AudioAmplifier pl5FX1;                        //xy=1039.1999969482422,1200
-AudioAmplifier pl5dry;                        //xy=1040.1999969482422,1179
-AudioAmplifier pl5FX2;                        //xy=1040.1999969482422,1223
-AudioAmplifier pl1FX3;                        //xy=1076.1999969482422,324
-AudioAmplifier pl1dry;                        //xy=1086.1999969482422,201
-AudioAmplifier pl1FX1;                        //xy=1088.1999969482422,239
-AudioAmplifier pl1FX2;                        //xy=1093.1999969482422,282
-AudioMixer4 mixer6;                           //xy=1198.1999969482422,1254
-AudioMixer4 FX2mixer1;                        //xy=1210.1999969482422,676
-AudioMixer4 mixer5;                           //xy=1212.1999969482422,512
-AudioMixer4 FX3mixer2;                        //xy=1209.1999969482422,1511
-AudioMixer4 FX1mixer1;                        //xy=1213.1999969482422,589
-AudioMixer4 FX2mixer2;                        //xy=1210.1999969482422,1424
-AudioMixer4 FX1mixer2;                        //xy=1211.1999969482422,1339
-AudioMixer4 FX3mixer1;                        //xy=1215.1999969482422,763
-AudioMixer4 FX2mixer4;                        //xy=1246.1999969482422,2141
-AudioMixer4 FX1mixer6;                        //xy=1252.1999969482422,2613
-AudioMixer4 drymixer3;                        //xy=1253.1999969482422,2527
-AudioMixer4 FX3mixer6;                        //xy=1253.1999969482422,2767
-AudioMixer4 FX2mixer6;                        //xy=1254.1999969482422,2688
-AudioMixer4 FX3mixer4;                        //xy=1261.1999969482422,2213
-AudioMixer4 FX1mixer4;                        //xy=1269.1999969482422,2057
-AudioMixer4 mixer10;                          //xy=1272.1999969482422,1972
-AudioMixer4 drymixer2;                        //xy=1598.1999969482422,679
-AudioMixer4 FX2mixer3;                        //xy=1602.1999969482422,859
-AudioMixer4 FX3mixer3;                        //xy=1604.1999969482422,948
-AudioMixer4 FX1mixer3;                        //xy=1608.1999969482422,776
-AudioMixer4 FX3mixer5;                        //xy=1855.1999969482422,957
-AudioMixer4 drymixer1;                        //xy=1869.1999969482422,680
-AudioMixer4 FX1mixer5;                        //xy=1873.1999969482422,786
-AudioMixer4 FX2mixer5;                        //xy=1876.1999969482422,869
-AudioEffectReverb reverb1;                    //xy=2055.199996948242,748
-AudioEffectBitcrusher bitcrusher2;            //xy=2069.199996948242,816
-AudioFilterStateVariable dlfilter1;           //xy=2092.199996948242,985
-AudioMixer4 dlmixer1;                         //xy=2094.199996948242,930
-AudioEffectDelay dldelay1;                    //xy=2096.199996948242,1096
-AudioInputI2S i2s2;                           //xy=2262.199996948242,895
-AudioMixer4 mixer9;                           //xy=2292.199996948242,700
-AudioAmplifier amp1;                          //xy=2412.199996948242,812
-AudioMixer4 mixer11;                          //xy=2482.199996948242,672
-AudioRecordQueue queue1;                      //xy=2543.199996948242,848
-AudioAnalyzePeak peak1;                       //xy=2545.199996948242,895
-AudioOutputI2S i2s1;                          //xy=2651.199996948242,674
-AudioConnection patchCord1(pl10dc1, pl10envelope2);
-AudioConnection patchCord2(pl10noise1, 0, pl10mixer1, 2);
-AudioConnection patchCord3(pl10waveform1, 0, pl10mixer1, 0);
-AudioConnection patchCord4(pl10waveform2, 0, pl10mixer1, 1);
-AudioConnection patchCord5(pl5dc1, pl5envelope2);
-AudioConnection patchCord6(pl7noise1, 0, pl7waveformMod1, 0);
-AudioConnection patchCord7(playMem9, 0, pl4drummixer3, 0);
-AudioConnection patchCord8(pl6dc1, pl6envelope2);
-AudioConnection patchCord9(playMem10, 0, pl4drummixer3, 1);
-AudioConnection patchCord10(pl1waveform1, 0, pl1waveformMod1, 0);
-AudioConnection patchCord11(pl1waveform1, 0, pl1waveformMod2, 0);
-AudioConnection patchCord12(pl1waveform1, 0, pl1waveformMod3, 0);
-AudioConnection patchCord13(pl1waveform1, 0, pl1waveformMod4, 0);
-AudioConnection patchCord14(playMem7, 0, pl4drummixer2, 2);
-AudioConnection patchCord15(playMem8, 0, pl4drummixer2, 3);
-AudioConnection patchCord16(playMem5, 0, pl4drummixer2, 0);
-AudioConnection patchCord17(playMem6, 0, pl4drummixer2, 1);
-AudioConnection patchCord18(playSdWav12, 0, drummixer3, 3);
-AudioConnection patchCord19(playMem1, 0, pl4drummixer1, 0);
-AudioConnection patchCord20(playSdWav7, 0, drummixer2, 2);
-AudioConnection patchCord21(playMem2, 0, pl4drummixer1, 1);
-AudioConnection patchCord22(playSdWav9, 0, drummixer3, 0);
-AudioConnection patchCord23(playSdWav3, 0, drummixer1, 2);
-AudioConnection patchCord24(playSdWav10, 0, drummixer3, 1);
-AudioConnection patchCord25(playSdWav4, 0, drummixer1, 3);
-AudioConnection patchCord26(playSdWav11, 0, drummixer3, 2);
-AudioConnection patchCord27(playSdWav8, 0, drummixer2, 3);
-AudioConnection patchCord28(playMem11, 0, pl4drummixer3, 2);
-AudioConnection patchCord29(pl7waveformMod3, pl7envelope2);
-AudioConnection patchCord30(playSdWav2, 0, drummixer1, 1);
-AudioConnection patchCord31(playSdWav5, 0, drummixer2, 0);
-AudioConnection patchCord32(playSdWav6, 0, drummixer2, 1);
-AudioConnection patchCord33(playSdWav1, 0, drummixer1, 0);
-AudioConnection patchCord34(playMem12, 0, pl4drummixer3, 3);
-AudioConnection patchCord35(playMem3, 0, pl4drummixer1, 2);
-AudioConnection patchCord36(playMem4, 0, pl4drummixer1, 3);
-AudioConnection patchCord37(pl7noise2, 0, pl7mixer4, 0);
-AudioConnection patchCord38(pl7pink1, 0, pl7mixer4, 1);
-AudioConnection patchCord39(pl8dc1, pl8envelope2);
-AudioConnection patchCord40(pl10envelope2, 0, pl10filter1, 1);
-AudioConnection patchCord41(pl5envelope2, 0, pl5filter1, 1);
-AudioConnection patchCord42(playSdPitch2, 0, pl6filter1, 0);
-AudioConnection patchCord43(pl6envelope2, 0, pl6filter1, 1);
-AudioConnection patchCord44(playSdPitch1, 0, pl5filter1, 0);
-AudioConnection patchCord45(pl7drum1, 0, pl7filter1, 0);
-AudioConnection patchCord46(pl10mixer1, 0, pl10filter1, 0);
-AudioConnection patchCord47(pl7waveformMod1, 0, pl7filter2, 0);
-AudioConnection patchCord48(pl1waveformMod1, 0, mixer1, 0);
-AudioConnection patchCord49(pl1waveformMod2, 0, mixer1, 1);
-AudioConnection patchCord50(pl1waveformMod4, 0, mixer1, 3);
-AudioConnection patchCord51(pl1waveformMod3, 0, mixer1, 2);
-AudioConnection patchCord52(pl7envelope2, 0, pl7waveformMod2, 0);
-AudioConnection patchCord53(pl3waveform1, 0, pl3waveformMod1, 0);
-AudioConnection patchCord54(pl3dc1, pl3envelope2);
-AudioConnection patchCord55(pl9string1, 0, pl9bpfilter, 0);
-AudioConnection patchCord56(pl7mixer4, pl7biquad1);
-AudioConnection patchCord57(drummixer1, 0, drummixer4, 0);
-AudioConnection patchCord58(pl8waveform1, 0, pl8filter1, 0);
-AudioConnection patchCord59(pl9bpinput, 0, pl9bpfilter, 1);
-AudioConnection patchCord60(drummixer2, 0, drummixer4, 1);
-AudioConnection patchCord61(drummixer3, 0, drummixer4, 2);
-AudioConnection patchCord62(pl4drummixer1, 0, pl4drummixer4, 0);
-AudioConnection patchCord63(pl4drummixer2, 0, pl4drummixer4, 1);
-AudioConnection patchCord64(pl8envelope2, 0, pl8filter1, 1);
-AudioConnection patchCord65(pl4drummixer3, 0, pl4drummixer4, 2);
-AudioConnection patchCord66(pl10filter1, 0, pl10mixer2, 0);
-AudioConnection patchCord67(pl10filter1, 1, pl10mixer2, 1);
-AudioConnection patchCord68(pl10filter1, 2, pl10mixer2, 2);
-AudioConnection patchCord69(pl5filter1, 0, pl5mixer1, 0);
-AudioConnection patchCord70(pl5filter1, 1, pl5mixer1, 1);
-AudioConnection patchCord71(pl5filter1, 2, pl5mixer1, 2);
-AudioConnection patchCord72(pl6filter1, 0, pl6mixer1, 0);
-AudioConnection patchCord73(pl6filter1, 1, pl6mixer1, 1);
-AudioConnection patchCord74(pl6filter1, 2, pl6mixer1, 2);
-AudioConnection patchCord75(pl7filter1, 0, pl7mixer1, 0);
-AudioConnection patchCord76(pl7filter2, 0, pl7envelope1, 0);
-AudioConnection patchCord77(mixer1, 0, filter1, 0);
-AudioConnection patchCord78(pl1dc1, envelope1);
-AudioConnection patchCord79(pl3waveformMod1, 0, pl3filter1, 0);
-AudioConnection patchCord80(pl3envelope2, 0, pl3filter1, 1);
-AudioConnection patchCord81(pl7biquad1, pl7envelope4);
-AudioConnection patchCord82(pl7waveformMod2, pl7envelope3);
-AudioConnection patchCord83(drummixer4, pl2amp2);
-AudioConnection patchCord84(pl8filter1, pl8envelope1);
-AudioConnection patchCord85(pl10mixer2, pl10envelope1);
-AudioConnection patchCord86(pl3filter1, 0, pl3mixer1, 0);
-AudioConnection patchCord87(pl3filter1, 1, pl3mixer1, 1);
-AudioConnection patchCord88(pl3filter1, 2, pl3mixer1, 2);
-AudioConnection patchCord89(envelope1, 0, filter1, 1);
-AudioConnection patchCord90(pl9bpfilter, 0, pl9amp2, 0);
-AudioConnection patchCord91(pl6mixer1, pl6envelope1);
-AudioConnection patchCord92(pl5mixer1, pl5envelope1);
-AudioConnection patchCord93(filter1, 0, pl1mixer2, 0);
-AudioConnection patchCord94(filter1, 1, pl1mixer2, 1);
-AudioConnection patchCord95(filter1, 2, pl1mixer2, 2);
-AudioConnection patchCord96(pl4drummixer4, pl4amp2);
-AudioConnection patchCord97(pl7envelope1, 0, pl7mixer1, 1);
-AudioConnection patchCord98(pl7envelope4, 0, pl7mixer1, 3);
-AudioConnection patchCord99(pl7envelope3, 0, pl7mixer1, 2);
-AudioConnection patchCord100(pl5envelope1, pl5amp2);
-AudioConnection patchCord101(pl2amp2, pl2amp);
-AudioConnection patchCord102(pl3mixer1, pl3envelope1);
-AudioConnection patchCord103(pl6envelope1, pl6amp2);
-AudioConnection patchCord104(pl10envelope1, pl10amp2);
-AudioConnection patchCord105(pl8envelope1, pl8amp2);
-AudioConnection patchCord106(pl14amp2, pl14amp);
-AudioConnection patchCord107(pl12amp2, pl12amp);
-AudioConnection patchCord108(pl16amp2, pl16amp);
-AudioConnection patchCord109(pl11amp2, pl11amp);
-AudioConnection patchCord110(pl1mixer2, envelope2);
-AudioConnection patchCord111(pl9amp2, pl9amp);
-AudioConnection patchCord112(pl13amp2, pl13amp);
-AudioConnection patchCord113(pl10amp2, pl10amp);
-AudioConnection patchCord114(pl15amp2, pl15amp);
-AudioConnection patchCord115(pl4amp2, pl4amp);
-AudioConnection patchCord116(pl3envelope1, pl3amp2);
-AudioConnection patchCord117(pl8amp2, pl8amp);
-AudioConnection patchCord118(pl7amp2, pl7amp);
-AudioConnection patchCord119(pl7mixer2, 0, pl7mixer3, 1);
-AudioConnection patchCord120(pl2amp, pl2FX3);
-AudioConnection patchCord121(pl2amp, pl2dry);
-AudioConnection patchCord122(pl2amp, pl2FX1);
-AudioConnection patchCord123(pl2amp, pl2FX2);
-AudioConnection patchCord124(pl6amp2, pl6amp);
-AudioConnection patchCord125(envelope2, pl1amp2);
-AudioConnection patchCord126(pl3amp2, pl3amp);
-AudioConnection patchCord127(pl7mixer1, 0, pl7mixer3, 0);
-AudioConnection patchCord128(pl5amp2, pl5amp);
-AudioConnection patchCord129(pl4amp, pl4dry);
-AudioConnection patchCord130(pl4amp, pl4FX1);
-AudioConnection patchCord131(pl4amp, pl4FX2);
-AudioConnection patchCord132(pl4amp, pl4FX3);
-AudioConnection patchCord133(pl11amp, pl11dry);
-AudioConnection patchCord134(pl11amp, pl11FX1);
-AudioConnection patchCord135(pl11amp, pl11FX2);
-AudioConnection patchCord136(pl11amp, pl11FX3);
-AudioConnection patchCord137(pl10amp, pl10dry);
-AudioConnection patchCord138(pl10amp, pl10FX1);
-AudioConnection patchCord139(pl10amp, pl10FX2);
-AudioConnection patchCord140(pl10amp, pl10FX3);
-AudioConnection patchCord141(pl16amp, pl16dry);
-AudioConnection patchCord142(pl16amp, pl16FX1);
-AudioConnection patchCord143(pl16amp, pl16FX2);
-AudioConnection patchCord144(pl16amp, pl16FX3);
-AudioConnection patchCord145(pl12amp, pl12dry);
-AudioConnection patchCord146(pl12amp, pl12FX1);
-AudioConnection patchCord147(pl12amp, pl12FX2);
-AudioConnection patchCord148(pl12amp, pl12FX3);
-AudioConnection patchCord149(pl15amp, pl15dry);
-AudioConnection patchCord150(pl15amp, pl15FX1);
-AudioConnection patchCord151(pl15amp, pl15FX2);
-AudioConnection patchCord152(pl15amp, pl15FX3);
-AudioConnection patchCord153(pl13amp, pl13FX3);
-AudioConnection patchCord154(pl13amp, pl13FX2);
-AudioConnection patchCord155(pl13amp, pl13FX1);
-AudioConnection patchCord156(pl13amp, pl13dry);
-AudioConnection patchCord157(pl14amp, pl14dry);
-AudioConnection patchCord158(pl14amp, pl14FX1);
-AudioConnection patchCord159(pl14amp, pl14FX2);
-AudioConnection patchCord160(pl14amp, pl14FX3);
-AudioConnection patchCord161(pl8amp, pl8dry);
-AudioConnection patchCord162(pl8amp, pl8FX1);
-AudioConnection patchCord163(pl8amp, pl8FX2);
-AudioConnection patchCord164(pl8amp, pl8FX3);
-AudioConnection patchCord165(pl9amp, pl9dry);
-AudioConnection patchCord166(pl9amp, pl9FX1);
-AudioConnection patchCord167(pl9amp, pl9FX2);
-AudioConnection patchCord168(pl9amp, pl9FX3);
-AudioConnection patchCord169(pl1amp2, pl1amp);
-AudioConnection patchCord170(pl7amp, pl7dry);
-AudioConnection patchCord171(pl7amp, pl7FX1);
-AudioConnection patchCord172(pl7amp, pl7FX2);
-AudioConnection patchCord173(pl7amp, pl7FX3);
-AudioConnection patchCord174(pl3amp, pl3dry);
-AudioConnection patchCord175(pl3amp, pl3FX1);
-AudioConnection patchCord176(pl3amp, pl3FX2);
-AudioConnection patchCord177(pl3amp, pl3FX3);
-AudioConnection patchCord178(pl5amp, pl5dry);
-AudioConnection patchCord179(pl5amp, pl5FX1);
-AudioConnection patchCord180(pl5amp, pl5FX2);
-AudioConnection patchCord181(pl5amp, pl5FX3);
-AudioConnection patchCord182(pl6amp, pl6dry);
-AudioConnection patchCord183(pl6amp, pl6FX1);
-AudioConnection patchCord184(pl6amp, pl6FX2);
-AudioConnection patchCord185(pl6amp, pl6FX3);
-AudioConnection patchCord186(pl7mixer3, pl7amp2);
-AudioConnection patchCord187(pl2FX2, 0, FX2mixer1, 1);
-AudioConnection patchCord188(pl2FX3, 0, FX3mixer1, 1);
-AudioConnection patchCord189(pl2dry, 0, mixer5, 1);
-AudioConnection patchCord190(pl2FX1, 0, FX1mixer1, 1);
-AudioConnection patchCord191(pl4FX2, 0, FX2mixer1, 3);
-AudioConnection patchCord192(pl4FX3, 0, FX3mixer1, 3);
-AudioConnection patchCord193(pl4dry, 0, mixer5, 3);
-AudioConnection patchCord194(pl4FX1, 0, FX1mixer1, 3);
-AudioConnection patchCord195(pl1amp, pl1dry);
-AudioConnection patchCord196(pl1amp, pl1FX1);
-AudioConnection patchCord197(pl1amp, pl1FX2);
-AudioConnection patchCord198(pl1amp, pl1FX3);
-AudioConnection patchCord199(pl14FX3, 0, FX3mixer6, 1);
-AudioConnection patchCord200(pl14FX2, 0, FX2mixer6, 1);
-AudioConnection patchCord201(pl14dry, 0, drymixer3, 1);
-AudioConnection patchCord202(pl14FX1, 0, FX1mixer6, 1);
-AudioConnection patchCord203(pl8dry, 0, mixer6, 3);
-AudioConnection patchCord204(pl8FX1, 0, FX1mixer2, 3);
-AudioConnection patchCord205(pl10dry, 0, mixer10, 1);
-AudioConnection patchCord206(pl8FX2, 0, FX2mixer2, 3);
-AudioConnection patchCord207(pl8FX3, 0, FX3mixer2, 3);
-AudioConnection patchCord208(pl16FX3, 0, FX3mixer6, 3);
-AudioConnection patchCord209(pl10FX1, 0, FX1mixer4, 1);
-AudioConnection patchCord210(pl10FX2, 0, FX2mixer4, 1);
-AudioConnection patchCord211(pl10FX3, 0, FX3mixer4, 1);
-AudioConnection patchCord212(pl16FX2, 0, FX2mixer6, 3);
-AudioConnection patchCord213(pl13FX3, 0, FX3mixer6, 0);
-AudioConnection patchCord214(pl13FX2, 0, FX2mixer6, 0);
-AudioConnection patchCord215(pl16dry, 0, drymixer3, 3);
-AudioConnection patchCord216(pl16FX1, 0, FX1mixer6, 3);
-AudioConnection patchCord217(pl9dry, 0, mixer10, 0);
-AudioConnection patchCord218(pl9FX1, 0, FX1mixer4, 0);
-AudioConnection patchCord219(pl9FX2, 0, FX2mixer4, 0);
-AudioConnection patchCord220(pl13dry, 0, drymixer3, 0);
-AudioConnection patchCord221(pl11dry, 0, mixer10, 2);
-AudioConnection patchCord222(pl13FX1, 0, FX1mixer6, 0);
-AudioConnection patchCord223(pl11FX2, 0, FX2mixer4, 2);
-AudioConnection patchCord224(pl11FX3, 0, FX3mixer4, 2);
-AudioConnection patchCord225(pl9FX3, 0, FX3mixer4, 0);
-AudioConnection patchCord226(pl12dry, 0, mixer10, 3);
-AudioConnection patchCord227(pl15FX3, 0, FX3mixer6, 2);
-AudioConnection patchCord228(pl11FX1, 0, FX1mixer4, 2);
-AudioConnection patchCord229(pl15FX2, 0, FX2mixer6, 2);
-AudioConnection patchCord230(pl7dry, 0, mixer6, 2);
-AudioConnection patchCord231(pl7FX2, 0, FX2mixer2, 2);
-AudioConnection patchCord232(pl7FX3, 0, FX3mixer2, 2);
-AudioConnection patchCord233(pl15dry, 0, drymixer3, 2);
-AudioConnection patchCord234(pl15FX1, 0, FX1mixer6, 2);
-AudioConnection patchCord235(pl7FX1, 0, FX1mixer2, 2);
-AudioConnection patchCord236(pl12FX1, 0, FX1mixer4, 3);
-AudioConnection patchCord237(pl12FX2, 0, FX2mixer4, 3);
-AudioConnection patchCord238(pl3dry, 0, mixer5, 2);
-AudioConnection patchCord239(pl3FX1, 0, FX1mixer1, 2);
-AudioConnection patchCord240(pl3FX2, 0, FX2mixer1, 2);
-AudioConnection patchCord241(pl12FX3, 0, FX3mixer4, 3);
-AudioConnection patchCord242(pl3FX3, 0, FX3mixer1, 2);
-AudioConnection patchCord243(pl6FX1, 0, FX1mixer2, 1);
-AudioConnection patchCord244(pl6dry, 0, mixer6, 1);
-AudioConnection patchCord245(pl6FX2, 0, FX2mixer2, 1);
-AudioConnection patchCord246(pl5FX3, 0, FX3mixer2, 0);
-AudioConnection patchCord247(pl6FX3, 0, FX3mixer2, 1);
-AudioConnection patchCord248(pl5FX1, 0, FX1mixer2, 0);
-AudioConnection patchCord249(pl5dry, 0, mixer6, 0);
-AudioConnection patchCord250(pl5FX2, 0, FX2mixer2, 0);
-AudioConnection patchCord251(pl1FX3, 0, FX3mixer1, 0);
-AudioConnection patchCord252(pl1dry, 0, mixer5, 0);
-AudioConnection patchCord253(pl1FX1, 0, FX1mixer1, 0);
-AudioConnection patchCord254(pl1FX2, 0, FX2mixer1, 0);
-AudioConnection patchCord255(mixer6, 0, drymixer2, 1);
-AudioConnection patchCord256(FX2mixer1, 0, FX2mixer3, 0);
-AudioConnection patchCord257(mixer5, 0, drymixer2, 0);
-AudioConnection patchCord258(FX3mixer2, 0, FX3mixer3, 1);
-AudioConnection patchCord259(FX1mixer1, 0, FX1mixer3, 0);
-AudioConnection patchCord260(FX2mixer2, 0, FX2mixer3, 1);
-AudioConnection patchCord261(FX1mixer2, 0, FX1mixer3, 1);
-AudioConnection patchCord262(FX3mixer1, 0, FX3mixer3, 0);
-AudioConnection patchCord263(FX2mixer4, 0, FX2mixer3, 2);
-AudioConnection patchCord264(FX1mixer6, 0, FX1mixer3, 3);
-AudioConnection patchCord265(drymixer3, 0, drymixer2, 3);
-AudioConnection patchCord266(FX3mixer6, 0, FX3mixer3, 3);
-AudioConnection patchCord267(FX2mixer6, 0, FX2mixer3, 3);
-AudioConnection patchCord268(FX3mixer4, 0, FX3mixer3, 2);
-AudioConnection patchCord269(FX1mixer4, 0, FX1mixer3, 2);
-AudioConnection patchCord270(mixer10, 0, drymixer2, 2);
-AudioConnection patchCord271(drymixer2, 0, drymixer1, 0);
-AudioConnection patchCord272(FX2mixer3, 0, FX2mixer5, 0);
-AudioConnection patchCord273(FX3mixer3, 0, FX3mixer5, 0);
-AudioConnection patchCord274(FX1mixer3, 0, FX1mixer5, 0);
-AudioConnection patchCord275(FX3mixer5, 0, dlmixer1, 0);
-AudioConnection patchCord276(drymixer1, 0, mixer9, 0);
-AudioConnection patchCord277(FX1mixer5, reverb1);
-AudioConnection patchCord278(FX2mixer5, bitcrusher2);
-AudioConnection patchCord279(reverb1, 0, mixer9, 1);
-AudioConnection patchCord280(bitcrusher2, 0, mixer9, 2);
-AudioConnection patchCord281(dlfilter1, 2, dlmixer1, 1);
-AudioConnection patchCord282(dlmixer1, dldelay1);
-AudioConnection patchCord283(dlmixer1, 0, mixer9, 3);
-AudioConnection patchCord284(dldelay1, 0, dlfilter1, 0);
-AudioConnection patchCord285(i2s2, 0, amp1, 0);
-AudioConnection patchCord286(mixer9, 0, mixer11, 0);
-AudioConnection patchCord287(amp1, 0, mixer11, 1);
-AudioConnection patchCord288(amp1, queue1);
-AudioConnection patchCord289(amp1, peak1);
-AudioConnection patchCord290(mixer11, 0, i2s1, 0);
-AudioConnection patchCord291(mixer11, 0, i2s1, 1);
-AudioControlSGTL5000 sgtl5000_1;  //xy=2667.199996948242,791
+AudioSynthWaveformDc     pl10dc2;            //xy=65.99999237060547,1984.2001028060913
+AudioSynthWaveformDc     pl10dc3;            //xy=69.19999694824219,2107.199996948242
+AudioSynthWaveform       pl10waveform1;      //xy=77.5,1896.2001028060913
+AudioMixer4              pl10mixer4; //xy=137.20000457763672,2046.2001037597656
+AudioMixer4              pl10mixer3;         //xy=208.19998168945312,1965.2001037597656
+AudioSynthWaveformDc     pl10dc1; //xy=282.99997329711914,2138.1999654769897
+AudioSynthNoiseWhite     pl10noise1;         //xy=297.1999702453613,2078.200086593628
+AudioSynthWaveformDc     pl5dc1;         //xy=311.1999702453613,1261.0001049041748
+AudioSynthNoiseWhite     pl7noise1;      //xy=310.1999702453613,1545.0001049041748
+AudioPlayMemory          playMem9;       //xy=312.1999702453613,1045.0001049041748
+AudioSynthWaveformDc     pl6dc1;         //xy=313.1999702453613,1365.0001049041748
+AudioPlayMemory          playMem10;      //xy=317.1999702453613,1076.0001049041748
+AudioSynthWaveform       pl1waveform1;   //xy=323.1999702453613,102.0001049041748
+AudioPlayMemory          playMem7;       //xy=322.1999702453613,975.0001049041748
+AudioPlayMemory          playMem8;       //xy=322.1999702453613,1012.0001049041748
+AudioPlayMemory          playMem5;       //xy=332.1999702453613,899.0001049041748
+AudioPlayMemory          playMem6;       //xy=333.1999702453613,937.0001049041748
+AudioPlaySdWav           playSdWav12;    //xy=337.1999702453613,710.0001049041748
+AudioPlayMemory          playMem1;       //xy=337.1999702453613,759.0001049041748
+AudioPlaySdWav           playSdWav7;     //xy=339.1999702453613,529.0001049041748
+AudioPlayMemory          playMem2;       //xy=338.1999702453613,795.0001049041748
+AudioPlaySdWav           playSdWav9;     //xy=339.1999702453613,601.0001049041748
+AudioPlaySdWav           playSdWav3;     //xy=340.1999702453613,374.0001049041748
+AudioPlaySdWav           playSdWav10;    //xy=339.1999702453613,635.0001049041748
+AudioPlaySdWav           playSdWav4;     //xy=340.1999702453613,410.0001049041748
+AudioPlaySdWav           playSdWav11;    //xy=339.1999702453613,674.0001049041748
+AudioPlaySdWav           playSdWav8;     //xy=340.1999702453613,566.0001049041748
+AudioPlayMemory          playMem11;      //xy=339.1999702453613,1115.0001049041748
+AudioSynthWaveformSine   pl7waveformMod3; //xy=337.1999702453613,1629.0001049041748
+AudioPlaySdWav           playSdWav2;     //xy=343.1999702453613,337.0001049041748
+AudioPlaySdWav           playSdWav5;     //xy=343.1999702453613,450.0001049041748
+AudioPlaySdWav           playSdWav6;     //xy=343.1999702453613,490.0001049041748
+AudioPlaySdWav           playSdWav1;     //xy=346.1999702453613,298.0001049041748
+AudioPlayMemory          playMem12;      //xy=344.1999702453613,1153.0001049041748
+AudioPlayMemory          playMem3;       //xy=347.1999702453613,829.0001049041748
+AudioSynthWaveformPWM    pl10pwm1;           //xy=346.19997787475586,1996.200207710266
+AudioPlayMemory          playMem4;       //xy=354.1999702453613,865.0001049041748
+AudioSynthWaveformPWM    pl10pwm2; //xy=356.1999740600586,2036.2002081871033
+AudioSynthNoiseWhite     pl7noise2;      //xy=400.1999702453613,1686.0001049041748
+AudioSynthNoisePink      pl7pink1;       //xy=400.1999702453613,1726.0001049041748
+AudioSynthWaveformDc     pl8dc1;         //xy=411.1999702453613,1902.0001049041748
+AudioEffectEnvelope      pl10envelope2; //xy=412.1999740600586,2144.199966430664
+AudioEffectEnvelope      pl5envelope2;   //xy=459.1999702453613,1260.0001049041748
+AudioPlaySdResmp         playSdPitch2;   //xy=459.1999702453613,1313.0001049041748
+AudioEffectEnvelope      pl6envelope2;   //xy=461.1999702453613,1364.0001049041748
+AudioPlaySdResmp         playSdPitch1;   //xy=463.1999702453613,1214.0001049041748
+AudioSynthSimpleDrum     pl7drum1;       //xy=466.1999702453613,1466.0001049041748
+AudioMixer4              pl10mixer1;         //xy=469.1999740600586,2071.200086593628
+AudioSynthWaveformModulated pl7waveformMod1; //xy=473.1999702453613,1547.0001049041748
+AudioSynthWaveformModulated pl1waveformMod1; //xy=493.1999702453613,39.000104904174805
+AudioSynthWaveformModulated pl1waveformMod2; //xy=493.1999702453613,80.0001049041748
+AudioSynthWaveformModulated pl1waveformMod4; //xy=493.1999702453613,162.0001049041748
+AudioSynthWaveformModulated pl1waveformMod3; //xy=494.1999702453613,122.0001049041748
+AudioEffectEnvelope      pl7envelope2;   //xy=517.1999702453613,1627.0001049041748
+AudioSynthWaveform       pl3waveform1;   //xy=541.1999702453613,590.0001049041748
+AudioSynthWaveformDc     pl3dc1;         //xy=542.1999702453613,679.0001049041748
+AudioSynthKarplusStrong  pl9string1;     //xy=538.1999626159668,1962.0001335144043
+AudioMixer4              pl7mixer4;      //xy=539.1999702453613,1714.0001049041748
+AudioMixer4              drummixer1;     //xy=547.1999702453613,322.0001049041748
+AudioSynthWaveform       pl8waveform1;   //xy=541.1999702453613,1851.0001049041748
+AudioSynthWaveform       pl9bpinput;     //xy=541.1999626159668,2007.0001344680786
+AudioMixer4              drummixer2;     //xy=549.1999702453613,411.0001049041748
+AudioMixer4              drummixer3;     //xy=558.1999702453613,503.0001049041748
+AudioMixer4              pl4drummixer1;  //xy=559.1999702453613,776.0001049041748
+AudioMixer4              pl4drummixer2;  //xy=561.1999702453613,865.0001049041748
+AudioEffectEnvelope      pl8envelope2;   //xy=566.1999702453613,1901.0001049041748
+AudioMixer4              pl4drummixer3;  //xy=570.1999702453613,957.0001049041748
+AudioFilterStateVariable pl10filter1; //xy=604.1999435424805,2086.200086593628
+AudioFilterStateVariable pl5filter1;     //xy=623.1999702453613,1226.0001049041748
+AudioFilterStateVariable pl6filter1;     //xy=625.1999702453613,1330.0001049041748
+AudioFilterStateVariable pl7filter1;     //xy=636.1999702453613,1466.0001049041748
+AudioFilterStateVariable pl7filter2;     //xy=637.1999702453613,1556.0001049041748
+AudioMixer4              mixer1;         //xy=663.1999702453613,74.0001049041748
+AudioSynthWaveformDc     pl1dc1;         //xy=667.1999702453613,177.0001049041748
+AudioSynthWaveformModulated pl3waveformMod1; //xy=685.1999702453613,551.0001049041748
+AudioEffectEnvelope      pl3envelope2;   //xy=685.1999702453613,676.0001049041748
+AudioFilterBiquad        pl7biquad1;     //xy=681.1999702453613,1706.0001049041748
+AudioSynthWaveformModulated pl7waveformMod2; //xy=693.1999702453613,1630.0001049041748
+AudioMixer4              drummixer4;     //xy=732.1999702453613,432.0001049041748
+AudioFilterLadder        pl8filter1;     //xy=732.1999702453613,1864.0001049041748
+AudioMixer4              pl10mixer2; //xy=737.200008392334,2070.199598312378
+AudioFilterStateVariable pl3filter1;     //xy=747.1999702453613,618.0001049041748
+AudioEffectEnvelope      envelope1;      //xy=750.1999702453613,134.0001049041748
+AudioFilterStateVariable pl9bpfilter;    //xy=746.200008392334,1966.000135421753
+AudioMixer4              pl6mixer1;      //xy=760.1999702453613,1342.0001049041748
+AudioMixer4              pl5mixer1;      //xy=775.1999702453613,1127.0001049041748
+AudioFilterStateVariable filter1;        //xy=783.1999702453613,79.0001049041748
+AudioMixer4              pl4drummixer4;  //xy=787.1999702453613,785.0001049041748
+AudioEffectEnvelope      pl7envelope1;   //xy=790.1999702453613,1541.0001049041748
+AudioEffectEnvelope      pl7envelope4;   //xy=869.1999702453613,1704.0001049041748
+AudioEffectEnvelope      pl7envelope3;   //xy=875.1999702453613,1641.0001049041748
+AudioEffectEnvelope      pl5envelope1;   //xy=879.1999702453613,1216.0001049041748
+AudioAmplifier           pl2amp2;        //xy=891.1999702453613,440.0001049041748
+AudioMixer4              pl3mixer1;      //xy=892.1999702453613,578.0001049041748
+AudioEffectEnvelope      pl6envelope1;   //xy=892.1999702453613,1317.0001049041748
+AudioEffectEnvelope      pl10envelope1; //xy=889.200008392334,2069.1999645233154
+AudioEffectEnvelope      pl8envelope1;   //xy=897.1999702453613,1873.0001049041748
+AudioAmplifier           pl14amp2;       //xy=900.1999702453613,2719.000104904175
+AudioAmplifier           pl12amp2;       //xy=905.1999702453613,2356.000104904175
+AudioAmplifier           pl16amp2;       //xy=904.1999702453613,2942.000104904175
+AudioAmplifier           pl11amp2;       //xy=907.1999702453613,2237.000104904175
+AudioMixer4              pl1mixer2;      //xy=918.1999702453613,81.0001049041748
+AudioAmplifier           pl9amp2;        //xy=918.2000122070312,1963.0001335144043
+AudioAmplifier           pl13amp2;       //xy=917.1999702453613,2571.000104904175
+AudioAmplifier           pl10amp2;       //xy=923.1999702453613,2154.000104904175
+AudioAmplifier           pl15amp2;       //xy=928.1999702453613,2786.000104904175
+AudioAmplifier           pl4amp2;        //xy=939.1999702453613,761.0001049041748
+AudioEffectEnvelope      pl3envelope1;   //xy=969.1999702453613,630.0001049041748
+AudioAmplifier           pl8amp2;        //xy=986.1999702453613,1823.0001049041748
+AudioAmplifier           pl7amp2;        //xy=1006.1999702453613,1551.0001049041748
+AudioMixer4              pl7mixer2;      //xy=1023.1999702453613,1747.0001049041748
+AudioAmplifier           pl2amp;         //xy=1029.1999702453613,442.0001049041748
+AudioAmplifier           pl6amp2;        //xy=1031.1999702453613,1284.0001049041748
+AudioEffectEnvelope      envelope2;      //xy=1036.1999702453613,139.0001049041748
+AudioAmplifier           pl3amp2;        //xy=1036.1999702453613,581.0001049041748
+AudioMixer4              pl7mixer1;      //xy=1038.1999702453613,1645.0001049041748
+AudioAmplifier           pl5amp2;        //xy=1042.1999702453613,1153.0001049041748
+AudioAmplifier           pl4amp;         //xy=1053.1999702453613,773.0001049041748
+AudioAmplifier           pl11amp;        //xy=1054.1999702453613,2239.000104904175
+AudioAmplifier           pl10amp;        //xy=1056.1999702453613,2145.000104904175
+AudioAmplifier           pl16amp;        //xy=1058.1999702453613,2946.000104904175
+AudioAmplifier           pl12amp;        //xy=1062.1999702453613,2353.000104904175
+AudioAmplifier           pl15amp;        //xy=1073.1999702453613,2787.000104904175
+AudioAmplifier           pl13amp;        //xy=1074.1999702453613,2567.000104904175
+AudioAmplifier           pl14amp;        //xy=1075.1999702453613,2707.000104904175
+AudioAmplifier           pl8amp;         //xy=1086.1999702453613,1861.0001049041748
+AudioAmplifier           pl9amp;         //xy=1086.1999702453613,1982.0001049041748
+AudioAmplifier           pl1amp2;        //xy=1104.1999702453613,93.0001049041748
+AudioAmplifier           pl7amp;         //xy=1106.1999702453613,1575.0001049041748
+AudioAmplifier           pl3amp;         //xy=1128.1999702453613,625.0001049041748
+AudioAmplifier           pl5amp;         //xy=1127.1999702453613,1215.0001049041748
+AudioAmplifier           pl6amp;         //xy=1130.1999702453613,1317.0001049041748
+AudioMixer4              pl7mixer3;      //xy=1175.1999702453613,1698.0001049041748
+AudioAmplifier           pl2FX2;         //xy=1182.1999702453613,444.0001049041748
+AudioAmplifier           pl2FX3;         //xy=1182.1999702453613,466.0001049041748
+AudioAmplifier           pl2dry;         //xy=1185.1999702453613,407.0001049041748
+AudioAmplifier           pl2FX1;         //xy=1186.1999702453613,425.0001049041748
+AudioAmplifier           pl4FX2;         //xy=1196.1999702453613,776.0001049041748
+AudioAmplifier           pl4FX3;         //xy=1196.1999702453613,796.0001049041748
+AudioAmplifier           pl4dry;         //xy=1197.1999702453613,734.0001049041748
+AudioAmplifier           pl4FX1;         //xy=1197.1999702453613,755.0001049041748
+AudioAmplifier           pl1amp;         //xy=1221.1999702453613,174.0001049041748
+AudioAmplifier           pl14FX3;        //xy=1211.1999702453613,2728.000104904175
+AudioAmplifier           pl14FX2;        //xy=1213.1999702453613,2706.000104904175
+AudioAmplifier           pl14dry;        //xy=1216.1999702453613,2669.000104904175
+AudioAmplifier           pl14FX1;        //xy=1216.1999702453613,2684.000104904175
+AudioAmplifier           pl8dry;         //xy=1220.1999702453613,1829.0001049041748
+AudioAmplifier           pl8FX1;         //xy=1220.1999702453613,1851.0001049041748
+AudioAmplifier           pl10dry;        //xy=1219.1999702453613,2117.000104904175
+AudioAmplifier           pl8FX2;         //xy=1221.1999702453613,1872.0001049041748
+AudioAmplifier           pl8FX3;         //xy=1221.1999702453613,1895.0001049041748
+AudioAmplifier           pl16FX3;        //xy=1218.1999702453613,2975.000104904175
+AudioAmplifier           pl10FX1;        //xy=1222.1999702453613,2136.000104904175
+AudioAmplifier           pl10FX2;        //xy=1222.1999702453613,2153.000104904175
+AudioAmplifier           pl10FX3;        //xy=1223.1999702453613,2172.000104904175
+AudioAmplifier           pl16FX2;        //xy=1220.1999702453613,2953.000104904175
+AudioAmplifier           pl13FX3;        //xy=1222.1999702453613,2567.000104904175
+AudioAmplifier           pl13FX2;        //xy=1224.1999702453613,2545.000104904175
+AudioAmplifier           pl16dry;        //xy=1223.1999702453613,2916.000104904175
+AudioAmplifier           pl16FX1;        //xy=1223.1999702453613,2931.000104904175
+AudioAmplifier           pl9dry;         //xy=1227.1999702453613,1971.0001049041748
+AudioAmplifier           pl9FX1;         //xy=1228.1999702453613,1989.0001049041748
+AudioAmplifier           pl9FX2;         //xy=1228.1999702453613,2006.0001049041748
+AudioAmplifier           pl13dry;        //xy=1226.1999702453613,2507.000104904175
+AudioAmplifier           pl11dry;        //xy=1228.1999702453613,2214.000104904175
+AudioAmplifier           pl13FX1;        //xy=1227.1999702453613,2523.000104904175
+AudioAmplifier           pl11FX2;        //xy=1230.1999702453613,2248.000104904175
+AudioAmplifier           pl11FX3;        //xy=1230.1999702453613,2266.000104904175
+AudioAmplifier           pl9FX3;         //xy=1231.1999702453613,2026.0001049041748
+AudioAmplifier           pl12dry;        //xy=1230.1999702453613,2310.000104904175
+AudioAmplifier           pl15FX3;        //xy=1230.1999702453613,2826.000104904175
+AudioAmplifier           pl11FX1;        //xy=1233.1999702453613,2230.000104904175
+AudioAmplifier           pl15FX2;        //xy=1232.1999702453613,2804.000104904175
+AudioAmplifier           pl7dry;         //xy=1238.1999702453613,1563.0001049041748
+AudioAmplifier           pl7FX2;         //xy=1239.1999702453613,1603.0001049041748
+AudioAmplifier           pl7FX3;         //xy=1239.1999702453613,1626.0001049041748
+AudioAmplifier           pl15dry;        //xy=1235.1999702453613,2767.000104904175
+AudioAmplifier           pl15FX1;        //xy=1235.1999702453613,2782.000104904175
+AudioAmplifier           pl7FX1;         //xy=1240.1999702453613,1583.0001049041748
+AudioAmplifier           pl12FX1;        //xy=1239.1999702453613,2341.000104904175
+AudioAmplifier           pl12FX2;        //xy=1241.1999702453613,2358.000104904175
+AudioAmplifier           pl3dry;         //xy=1249.1999702453613,602.0001049041748
+AudioAmplifier           pl3FX1;         //xy=1249.1999702453613,625.0001049041748
+AudioAmplifier           pl3FX2;         //xy=1249.1999702453613,653.0001049041748
+AudioAmplifier           pl12FX3;        //xy=1243.1999702453613,2382.000104904175
+AudioAmplifier           pl3FX3;         //xy=1251.1999702453613,669.0001049041748
+AudioAmplifier           pl6FX1;         //xy=1263.1999702453613,1330.0001049041748
+AudioAmplifier           pl6dry;         //xy=1264.1999702453613,1310.0001049041748
+AudioAmplifier           pl6FX2;         //xy=1264.1999702453613,1354.0001049041748
+AudioAmplifier           pl5FX3;         //xy=1266.1999702453613,1261.0001049041748
+AudioAmplifier           pl6FX3;         //xy=1266.1999702453613,1378.0001049041748
+AudioAmplifier           pl5FX1;         //xy=1267.1999702453613,1219.0001049041748
+AudioAmplifier           pl5dry;         //xy=1268.1999702453613,1198.0001049041748
+AudioAmplifier           pl5FX2;         //xy=1268.1999702453613,1242.0001049041748
+AudioAmplifier           pl1FX3;         //xy=1304.1999702453613,343.0001049041748
+AudioAmplifier           pl1dry;         //xy=1314.1999702453613,220.0001049041748
+AudioAmplifier           pl1FX1;         //xy=1316.1999702453613,258.0001049041748
+AudioAmplifier           pl1FX2;         //xy=1321.1999702453613,301.0001049041748
+AudioMixer4              mixer6;         //xy=1426.1999702453613,1273.0001049041748
+AudioMixer4              FX2mixer1;      //xy=1438.1999702453613,695.0001049041748
+AudioMixer4              mixer5;         //xy=1440.1999702453613,531.0001049041748
+AudioMixer4              FX3mixer2;      //xy=1437.1999702453613,1530.0001049041748
+AudioMixer4              FX1mixer1;      //xy=1441.1999702453613,608.0001049041748
+AudioMixer4              FX2mixer2;      //xy=1438.1999702453613,1443.0001049041748
+AudioMixer4              FX1mixer2;      //xy=1439.1999702453613,1358.0001049041748
+AudioMixer4              FX3mixer1;      //xy=1443.1999702453613,782.0001049041748
+AudioMixer4              FX2mixer4;      //xy=1474.1999702453613,2160.000104904175
+AudioMixer4              FX1mixer6;      //xy=1480.1999702453613,2632.000104904175
+AudioMixer4              drymixer3;      //xy=1481.1999702453613,2546.000104904175
+AudioMixer4              FX3mixer6;      //xy=1481.1999702453613,2786.000104904175
+AudioMixer4              FX2mixer6;      //xy=1482.1999702453613,2707.000104904175
+AudioMixer4              FX3mixer4;      //xy=1489.1999702453613,2232.000104904175
+AudioMixer4              FX1mixer4;      //xy=1497.1999702453613,2076.000104904175
+AudioMixer4              mixer10;        //xy=1500.1999702453613,1991.0001049041748
+AudioMixer4              drymixer2;      //xy=1826.1999702453613,698.0001049041748
+AudioMixer4              FX2mixer3;      //xy=1830.1999702453613,878.0001049041748
+AudioMixer4              FX3mixer3;      //xy=1832.1999702453613,967.0001049041748
+AudioMixer4              FX1mixer3;      //xy=1836.1999702453613,795.0001049041748
+AudioMixer4              FX3mixer5;      //xy=2083.1999702453613,976.0001049041748
+AudioMixer4              drymixer1;      //xy=2097.1999702453613,699.0001049041748
+AudioMixer4              FX1mixer5;      //xy=2101.1999702453613,805.0001049041748
+AudioMixer4              FX2mixer5;      //xy=2104.1999702453613,888.0001049041748
+AudioEffectReverb        reverb1;        //xy=2283.1999702453613,767.0001049041748
+AudioEffectBitcrusher    bitcrusher2;    //xy=2297.1999702453613,835.0001049041748
+AudioFilterStateVariable dlfilter1;      //xy=2320.1999702453613,1004.0001049041748
+AudioMixer4              dlmixer1;       //xy=2322.1999702453613,949.0001049041748
+AudioEffectDelay         dldelay1;       //xy=2324.1999702453613,1115.0001049041748
+AudioInputI2S            i2s2;           //xy=2490.1999702453613,914.0001049041748
+AudioMixer4              mixer9;         //xy=2520.1999702453613,719.0001049041748
+AudioAmplifier           amp1;           //xy=2640.1999702453613,831.0001049041748
+AudioMixer4              mixer11;        //xy=2710.1999702453613,691.0001049041748
+AudioRecordQueue         queue1;         //xy=2771.1999702453613,867.0001049041748
+AudioAnalyzePeak         peak1;          //xy=2773.1999702453613,914.0001049041748
+AudioOutputI2S           i2s1;           //xy=2879.1999702453613,693.0001049041748
+AudioConnection          patchCord1(pl10dc2, 0, pl10mixer3, 1);
+AudioConnection          patchCord2(pl10dc3, 0, pl10mixer4, 1);
+AudioConnection          patchCord3(pl10waveform1, 0, pl10mixer3, 0);
+AudioConnection          patchCord4(pl10waveform1, 0, pl10mixer4, 0);
+AudioConnection          patchCord5(pl10mixer4, pl10pwm2);
+AudioConnection          patchCord6(pl10mixer3, pl10pwm1);
+AudioConnection          patchCord7(pl10dc1, pl10envelope2);
+AudioConnection          patchCord8(pl10noise1, 0, pl10mixer1, 2);
+AudioConnection          patchCord9(pl5dc1, pl5envelope2);
+AudioConnection          patchCord10(pl7noise1, 0, pl7waveformMod1, 0);
+AudioConnection          patchCord11(playMem9, 0, pl4drummixer3, 0);
+AudioConnection          patchCord12(pl6dc1, pl6envelope2);
+AudioConnection          patchCord13(playMem10, 0, pl4drummixer3, 1);
+AudioConnection          patchCord14(pl1waveform1, 0, pl1waveformMod1, 0);
+AudioConnection          patchCord15(pl1waveform1, 0, pl1waveformMod2, 0);
+AudioConnection          patchCord16(pl1waveform1, 0, pl1waveformMod3, 0);
+AudioConnection          patchCord17(pl1waveform1, 0, pl1waveformMod4, 0);
+AudioConnection          patchCord18(playMem7, 0, pl4drummixer2, 2);
+AudioConnection          patchCord19(playMem8, 0, pl4drummixer2, 3);
+AudioConnection          patchCord20(playMem5, 0, pl4drummixer2, 0);
+AudioConnection          patchCord21(playMem6, 0, pl4drummixer2, 1);
+AudioConnection          patchCord22(playSdWav12, 0, drummixer3, 3);
+AudioConnection          patchCord23(playMem1, 0, pl4drummixer1, 0);
+AudioConnection          patchCord24(playSdWav7, 0, drummixer2, 2);
+AudioConnection          patchCord25(playMem2, 0, pl4drummixer1, 1);
+AudioConnection          patchCord26(playSdWav9, 0, drummixer3, 0);
+AudioConnection          patchCord27(playSdWav3, 0, drummixer1, 2);
+AudioConnection          patchCord28(playSdWav10, 0, drummixer3, 1);
+AudioConnection          patchCord29(playSdWav4, 0, drummixer1, 3);
+AudioConnection          patchCord30(playSdWav11, 0, drummixer3, 2);
+AudioConnection          patchCord31(playSdWav8, 0, drummixer2, 3);
+AudioConnection          patchCord32(playMem11, 0, pl4drummixer3, 2);
+AudioConnection          patchCord33(pl7waveformMod3, pl7envelope2);
+AudioConnection          patchCord34(playSdWav2, 0, drummixer1, 1);
+AudioConnection          patchCord35(playSdWav5, 0, drummixer2, 0);
+AudioConnection          patchCord36(playSdWav6, 0, drummixer2, 1);
+AudioConnection          patchCord37(playSdWav1, 0, drummixer1, 0);
+AudioConnection          patchCord38(playMem12, 0, pl4drummixer3, 3);
+AudioConnection          patchCord39(playMem3, 0, pl4drummixer1, 2);
+AudioConnection          patchCord40(pl10pwm1, 0, pl10mixer1, 0);
+AudioConnection          patchCord41(playMem4, 0, pl4drummixer1, 3);
+AudioConnection          patchCord42(pl10pwm2, 0, pl10mixer1, 1);
+AudioConnection          patchCord43(pl7noise2, 0, pl7mixer4, 0);
+AudioConnection          patchCord44(pl7pink1, 0, pl7mixer4, 1);
+AudioConnection          patchCord45(pl8dc1, pl8envelope2);
+AudioConnection          patchCord46(pl10envelope2, 0, pl10filter1, 1);
+AudioConnection          patchCord47(pl5envelope2, 0, pl5filter1, 1);
+AudioConnection          patchCord48(playSdPitch2, 0, pl6filter1, 0);
+AudioConnection          patchCord49(pl6envelope2, 0, pl6filter1, 1);
+AudioConnection          patchCord50(playSdPitch1, 0, pl5filter1, 0);
+AudioConnection          patchCord51(pl7drum1, 0, pl7filter1, 0);
+AudioConnection          patchCord52(pl10mixer1, 0, pl10filter1, 0);
+AudioConnection          patchCord53(pl7waveformMod1, 0, pl7filter2, 0);
+AudioConnection          patchCord54(pl1waveformMod1, 0, mixer1, 0);
+AudioConnection          patchCord55(pl1waveformMod2, 0, mixer1, 1);
+AudioConnection          patchCord56(pl1waveformMod4, 0, mixer1, 3);
+AudioConnection          patchCord57(pl1waveformMod3, 0, mixer1, 2);
+AudioConnection          patchCord58(pl7envelope2, 0, pl7waveformMod2, 0);
+AudioConnection          patchCord59(pl3waveform1, 0, pl3waveformMod1, 0);
+AudioConnection          patchCord60(pl3dc1, pl3envelope2);
+AudioConnection          patchCord61(pl9string1, 0, pl9bpfilter, 0);
+AudioConnection          patchCord62(pl7mixer4, pl7biquad1);
+AudioConnection          patchCord63(drummixer1, 0, drummixer4, 0);
+AudioConnection          patchCord64(pl8waveform1, 0, pl8filter1, 0);
+AudioConnection          patchCord65(pl9bpinput, 0, pl9bpfilter, 1);
+AudioConnection          patchCord66(drummixer2, 0, drummixer4, 1);
+AudioConnection          patchCord67(drummixer3, 0, drummixer4, 2);
+AudioConnection          patchCord68(pl4drummixer1, 0, pl4drummixer4, 0);
+AudioConnection          patchCord69(pl4drummixer2, 0, pl4drummixer4, 1);
+AudioConnection          patchCord70(pl8envelope2, 0, pl8filter1, 1);
+AudioConnection          patchCord71(pl4drummixer3, 0, pl4drummixer4, 2);
+AudioConnection          patchCord72(pl10filter1, 0, pl10mixer2, 0);
+AudioConnection          patchCord73(pl10filter1, 1, pl10mixer2, 1);
+AudioConnection          patchCord74(pl10filter1, 2, pl10mixer2, 2);
+AudioConnection          patchCord75(pl5filter1, 0, pl5mixer1, 0);
+AudioConnection          patchCord76(pl5filter1, 1, pl5mixer1, 1);
+AudioConnection          patchCord77(pl5filter1, 2, pl5mixer1, 2);
+AudioConnection          patchCord78(pl6filter1, 0, pl6mixer1, 0);
+AudioConnection          patchCord79(pl6filter1, 1, pl6mixer1, 1);
+AudioConnection          patchCord80(pl6filter1, 2, pl6mixer1, 2);
+AudioConnection          patchCord81(pl7filter1, 0, pl7mixer1, 0);
+AudioConnection          patchCord82(pl7filter2, 0, pl7envelope1, 0);
+AudioConnection          patchCord83(mixer1, 0, filter1, 0);
+AudioConnection          patchCord84(pl1dc1, envelope1);
+AudioConnection          patchCord85(pl3waveformMod1, 0, pl3filter1, 0);
+AudioConnection          patchCord86(pl3envelope2, 0, pl3filter1, 1);
+AudioConnection          patchCord87(pl7biquad1, pl7envelope4);
+AudioConnection          patchCord88(pl7waveformMod2, pl7envelope3);
+AudioConnection          patchCord89(drummixer4, pl2amp2);
+AudioConnection          patchCord90(pl8filter1, pl8envelope1);
+AudioConnection          patchCord91(pl10mixer2, pl10envelope1);
+AudioConnection          patchCord92(pl3filter1, 0, pl3mixer1, 0);
+AudioConnection          patchCord93(pl3filter1, 1, pl3mixer1, 1);
+AudioConnection          patchCord94(pl3filter1, 2, pl3mixer1, 2);
+AudioConnection          patchCord95(envelope1, 0, filter1, 1);
+AudioConnection          patchCord96(pl9bpfilter, 0, pl9amp2, 0);
+AudioConnection          patchCord97(pl6mixer1, pl6envelope1);
+AudioConnection          patchCord98(pl5mixer1, pl5envelope1);
+AudioConnection          patchCord99(filter1, 0, pl1mixer2, 0);
+AudioConnection          patchCord100(filter1, 1, pl1mixer2, 1);
+AudioConnection          patchCord101(filter1, 2, pl1mixer2, 2);
+AudioConnection          patchCord102(pl4drummixer4, pl4amp2);
+AudioConnection          patchCord103(pl7envelope1, 0, pl7mixer1, 1);
+AudioConnection          patchCord104(pl7envelope4, 0, pl7mixer1, 3);
+AudioConnection          patchCord105(pl7envelope3, 0, pl7mixer1, 2);
+AudioConnection          patchCord106(pl5envelope1, pl5amp2);
+AudioConnection          patchCord107(pl2amp2, pl2amp);
+AudioConnection          patchCord108(pl3mixer1, pl3envelope1);
+AudioConnection          patchCord109(pl6envelope1, pl6amp2);
+AudioConnection          patchCord110(pl10envelope1, pl10amp2);
+AudioConnection          patchCord111(pl8envelope1, pl8amp2);
+AudioConnection          patchCord112(pl14amp2, pl14amp);
+AudioConnection          patchCord113(pl12amp2, pl12amp);
+AudioConnection          patchCord114(pl16amp2, pl16amp);
+AudioConnection          patchCord115(pl11amp2, pl11amp);
+AudioConnection          patchCord116(pl1mixer2, envelope2);
+AudioConnection          patchCord117(pl9amp2, pl9amp);
+AudioConnection          patchCord118(pl13amp2, pl13amp);
+AudioConnection          patchCord119(pl10amp2, pl10amp);
+AudioConnection          patchCord120(pl15amp2, pl15amp);
+AudioConnection          patchCord121(pl4amp2, pl4amp);
+AudioConnection          patchCord122(pl3envelope1, pl3amp2);
+AudioConnection          patchCord123(pl8amp2, pl8amp);
+AudioConnection          patchCord124(pl7amp2, pl7amp);
+AudioConnection          patchCord125(pl7mixer2, 0, pl7mixer3, 1);
+AudioConnection          patchCord126(pl2amp, pl2FX3);
+AudioConnection          patchCord127(pl2amp, pl2dry);
+AudioConnection          patchCord128(pl2amp, pl2FX1);
+AudioConnection          patchCord129(pl2amp, pl2FX2);
+AudioConnection          patchCord130(pl6amp2, pl6amp);
+AudioConnection          patchCord131(envelope2, pl1amp2);
+AudioConnection          patchCord132(pl3amp2, pl3amp);
+AudioConnection          patchCord133(pl7mixer1, 0, pl7mixer3, 0);
+AudioConnection          patchCord134(pl5amp2, pl5amp);
+AudioConnection          patchCord135(pl4amp, pl4dry);
+AudioConnection          patchCord136(pl4amp, pl4FX1);
+AudioConnection          patchCord137(pl4amp, pl4FX2);
+AudioConnection          patchCord138(pl4amp, pl4FX3);
+AudioConnection          patchCord139(pl11amp, pl11dry);
+AudioConnection          patchCord140(pl11amp, pl11FX1);
+AudioConnection          patchCord141(pl11amp, pl11FX2);
+AudioConnection          patchCord142(pl11amp, pl11FX3);
+AudioConnection          patchCord143(pl10amp, pl10dry);
+AudioConnection          patchCord144(pl10amp, pl10FX1);
+AudioConnection          patchCord145(pl10amp, pl10FX2);
+AudioConnection          patchCord146(pl10amp, pl10FX3);
+AudioConnection          patchCord147(pl16amp, pl16dry);
+AudioConnection          patchCord148(pl16amp, pl16FX1);
+AudioConnection          patchCord149(pl16amp, pl16FX2);
+AudioConnection          patchCord150(pl16amp, pl16FX3);
+AudioConnection          patchCord151(pl12amp, pl12dry);
+AudioConnection          patchCord152(pl12amp, pl12FX1);
+AudioConnection          patchCord153(pl12amp, pl12FX2);
+AudioConnection          patchCord154(pl12amp, pl12FX3);
+AudioConnection          patchCord155(pl15amp, pl15dry);
+AudioConnection          patchCord156(pl15amp, pl15FX1);
+AudioConnection          patchCord157(pl15amp, pl15FX2);
+AudioConnection          patchCord158(pl15amp, pl15FX3);
+AudioConnection          patchCord159(pl13amp, pl13FX3);
+AudioConnection          patchCord160(pl13amp, pl13FX2);
+AudioConnection          patchCord161(pl13amp, pl13FX1);
+AudioConnection          patchCord162(pl13amp, pl13dry);
+AudioConnection          patchCord163(pl14amp, pl14dry);
+AudioConnection          patchCord164(pl14amp, pl14FX1);
+AudioConnection          patchCord165(pl14amp, pl14FX2);
+AudioConnection          patchCord166(pl14amp, pl14FX3);
+AudioConnection          patchCord167(pl8amp, pl8dry);
+AudioConnection          patchCord168(pl8amp, pl8FX1);
+AudioConnection          patchCord169(pl8amp, pl8FX2);
+AudioConnection          patchCord170(pl8amp, pl8FX3);
+AudioConnection          patchCord171(pl9amp, pl9dry);
+AudioConnection          patchCord172(pl9amp, pl9FX1);
+AudioConnection          patchCord173(pl9amp, pl9FX2);
+AudioConnection          patchCord174(pl9amp, pl9FX3);
+AudioConnection          patchCord175(pl1amp2, pl1amp);
+AudioConnection          patchCord176(pl7amp, pl7dry);
+AudioConnection          patchCord177(pl7amp, pl7FX1);
+AudioConnection          patchCord178(pl7amp, pl7FX2);
+AudioConnection          patchCord179(pl7amp, pl7FX3);
+AudioConnection          patchCord180(pl3amp, pl3dry);
+AudioConnection          patchCord181(pl3amp, pl3FX1);
+AudioConnection          patchCord182(pl3amp, pl3FX2);
+AudioConnection          patchCord183(pl3amp, pl3FX3);
+AudioConnection          patchCord184(pl5amp, pl5dry);
+AudioConnection          patchCord185(pl5amp, pl5FX1);
+AudioConnection          patchCord186(pl5amp, pl5FX2);
+AudioConnection          patchCord187(pl5amp, pl5FX3);
+AudioConnection          patchCord188(pl6amp, pl6dry);
+AudioConnection          patchCord189(pl6amp, pl6FX1);
+AudioConnection          patchCord190(pl6amp, pl6FX2);
+AudioConnection          patchCord191(pl6amp, pl6FX3);
+AudioConnection          patchCord192(pl7mixer3, pl7amp2);
+AudioConnection          patchCord193(pl2FX2, 0, FX2mixer1, 1);
+AudioConnection          patchCord194(pl2FX3, 0, FX3mixer1, 1);
+AudioConnection          patchCord195(pl2dry, 0, mixer5, 1);
+AudioConnection          patchCord196(pl2FX1, 0, FX1mixer1, 1);
+AudioConnection          patchCord197(pl4FX2, 0, FX2mixer1, 3);
+AudioConnection          patchCord198(pl4FX3, 0, FX3mixer1, 3);
+AudioConnection          patchCord199(pl4dry, 0, mixer5, 3);
+AudioConnection          patchCord200(pl4FX1, 0, FX1mixer1, 3);
+AudioConnection          patchCord201(pl1amp, pl1dry);
+AudioConnection          patchCord202(pl1amp, pl1FX1);
+AudioConnection          patchCord203(pl1amp, pl1FX2);
+AudioConnection          patchCord204(pl1amp, pl1FX3);
+AudioConnection          patchCord205(pl14FX3, 0, FX3mixer6, 1);
+AudioConnection          patchCord206(pl14FX2, 0, FX2mixer6, 1);
+AudioConnection          patchCord207(pl14dry, 0, drymixer3, 1);
+AudioConnection          patchCord208(pl14FX1, 0, FX1mixer6, 1);
+AudioConnection          patchCord209(pl8dry, 0, mixer6, 3);
+AudioConnection          patchCord210(pl8FX1, 0, FX1mixer2, 3);
+AudioConnection          patchCord211(pl10dry, 0, mixer10, 1);
+AudioConnection          patchCord212(pl8FX2, 0, FX2mixer2, 3);
+AudioConnection          patchCord213(pl8FX3, 0, FX3mixer2, 3);
+AudioConnection          patchCord214(pl16FX3, 0, FX3mixer6, 3);
+AudioConnection          patchCord215(pl10FX1, 0, FX1mixer4, 1);
+AudioConnection          patchCord216(pl10FX2, 0, FX2mixer4, 1);
+AudioConnection          patchCord217(pl10FX3, 0, FX3mixer4, 1);
+AudioConnection          patchCord218(pl16FX2, 0, FX2mixer6, 3);
+AudioConnection          patchCord219(pl13FX3, 0, FX3mixer6, 0);
+AudioConnection          patchCord220(pl13FX2, 0, FX2mixer6, 0);
+AudioConnection          patchCord221(pl16dry, 0, drymixer3, 3);
+AudioConnection          patchCord222(pl16FX1, 0, FX1mixer6, 3);
+AudioConnection          patchCord223(pl9dry, 0, mixer10, 0);
+AudioConnection          patchCord224(pl9FX1, 0, FX1mixer4, 0);
+AudioConnection          patchCord225(pl9FX2, 0, FX2mixer4, 0);
+AudioConnection          patchCord226(pl13dry, 0, drymixer3, 0);
+AudioConnection          patchCord227(pl11dry, 0, mixer10, 2);
+AudioConnection          patchCord228(pl13FX1, 0, FX1mixer6, 0);
+AudioConnection          patchCord229(pl11FX2, 0, FX2mixer4, 2);
+AudioConnection          patchCord230(pl11FX3, 0, FX3mixer4, 2);
+AudioConnection          patchCord231(pl9FX3, 0, FX3mixer4, 0);
+AudioConnection          patchCord232(pl12dry, 0, mixer10, 3);
+AudioConnection          patchCord233(pl15FX3, 0, FX3mixer6, 2);
+AudioConnection          patchCord234(pl11FX1, 0, FX1mixer4, 2);
+AudioConnection          patchCord235(pl15FX2, 0, FX2mixer6, 2);
+AudioConnection          patchCord236(pl7dry, 0, mixer6, 2);
+AudioConnection          patchCord237(pl7FX2, 0, FX2mixer2, 2);
+AudioConnection          patchCord238(pl7FX3, 0, FX3mixer2, 2);
+AudioConnection          patchCord239(pl15dry, 0, drymixer3, 2);
+AudioConnection          patchCord240(pl15FX1, 0, FX1mixer6, 2);
+AudioConnection          patchCord241(pl7FX1, 0, FX1mixer2, 2);
+AudioConnection          patchCord242(pl12FX1, 0, FX1mixer4, 3);
+AudioConnection          patchCord243(pl12FX2, 0, FX2mixer4, 3);
+AudioConnection          patchCord244(pl3dry, 0, mixer5, 2);
+AudioConnection          patchCord245(pl3FX1, 0, FX1mixer1, 2);
+AudioConnection          patchCord246(pl3FX2, 0, FX2mixer1, 2);
+AudioConnection          patchCord247(pl12FX3, 0, FX3mixer4, 3);
+AudioConnection          patchCord248(pl3FX3, 0, FX3mixer1, 2);
+AudioConnection          patchCord249(pl6FX1, 0, FX1mixer2, 1);
+AudioConnection          patchCord250(pl6dry, 0, mixer6, 1);
+AudioConnection          patchCord251(pl6FX2, 0, FX2mixer2, 1);
+AudioConnection          patchCord252(pl5FX3, 0, FX3mixer2, 0);
+AudioConnection          patchCord253(pl6FX3, 0, FX3mixer2, 1);
+AudioConnection          patchCord254(pl5FX1, 0, FX1mixer2, 0);
+AudioConnection          patchCord255(pl5dry, 0, mixer6, 0);
+AudioConnection          patchCord256(pl5FX2, 0, FX2mixer2, 0);
+AudioConnection          patchCord257(pl1FX3, 0, FX3mixer1, 0);
+AudioConnection          patchCord258(pl1dry, 0, mixer5, 0);
+AudioConnection          patchCord259(pl1FX1, 0, FX1mixer1, 0);
+AudioConnection          patchCord260(pl1FX2, 0, FX2mixer1, 0);
+AudioConnection          patchCord261(mixer6, 0, drymixer2, 1);
+AudioConnection          patchCord262(FX2mixer1, 0, FX2mixer3, 0);
+AudioConnection          patchCord263(mixer5, 0, drymixer2, 0);
+AudioConnection          patchCord264(FX3mixer2, 0, FX3mixer3, 1);
+AudioConnection          patchCord265(FX1mixer1, 0, FX1mixer3, 0);
+AudioConnection          patchCord266(FX2mixer2, 0, FX2mixer3, 1);
+AudioConnection          patchCord267(FX1mixer2, 0, FX1mixer3, 1);
+AudioConnection          patchCord268(FX3mixer1, 0, FX3mixer3, 0);
+AudioConnection          patchCord269(FX2mixer4, 0, FX2mixer3, 2);
+AudioConnection          patchCord270(FX1mixer6, 0, FX1mixer3, 3);
+AudioConnection          patchCord271(drymixer3, 0, drymixer2, 3);
+AudioConnection          patchCord272(FX3mixer6, 0, FX3mixer3, 3);
+AudioConnection          patchCord273(FX2mixer6, 0, FX2mixer3, 3);
+AudioConnection          patchCord274(FX3mixer4, 0, FX3mixer3, 2);
+AudioConnection          patchCord275(FX1mixer4, 0, FX1mixer3, 2);
+AudioConnection          patchCord276(mixer10, 0, drymixer2, 2);
+AudioConnection          patchCord277(drymixer2, 0, drymixer1, 0);
+AudioConnection          patchCord278(FX2mixer3, 0, FX2mixer5, 0);
+AudioConnection          patchCord279(FX3mixer3, 0, FX3mixer5, 0);
+AudioConnection          patchCord280(FX1mixer3, 0, FX1mixer5, 0);
+AudioConnection          patchCord281(FX3mixer5, 0, dlmixer1, 0);
+AudioConnection          patchCord282(drymixer1, 0, mixer9, 0);
+AudioConnection          patchCord283(FX1mixer5, reverb1);
+AudioConnection          patchCord284(FX2mixer5, bitcrusher2);
+AudioConnection          patchCord285(reverb1, 0, mixer9, 1);
+AudioConnection          patchCord286(bitcrusher2, 0, mixer9, 2);
+AudioConnection          patchCord287(dlfilter1, 2, dlmixer1, 1);
+AudioConnection          patchCord288(dlmixer1, dldelay1);
+AudioConnection          patchCord289(dlmixer1, 0, mixer9, 3);
+AudioConnection          patchCord290(dldelay1, 0, dlfilter1, 0);
+AudioConnection          patchCord291(i2s2, 0, amp1, 0);
+AudioConnection          patchCord292(mixer9, 0, mixer11, 0);
+AudioConnection          patchCord293(amp1, 0, mixer11, 1);
+AudioConnection          patchCord294(amp1, queue1);
+AudioConnection          patchCord295(amp1, peak1);
+AudioConnection          patchCord296(mixer11, 0, i2s1, 0);
+AudioConnection          patchCord297(mixer11, 0, i2s1, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=2895.1999702453613,810.0001049041748
 // GUItool: end automatically generated code
 
 
@@ -718,17 +729,25 @@ AudioAmplifier *FX3Volume[MAX_PLUGINS]{ &pl1FX3, &pl2FX3, &pl3FX3, &pl4FX3, &pl5
                                         &pl9FX3, &pl10FX3, &pl11FX3, &pl12FX3, &pl13FX3, &pl14FX3, &pl15FX3, &pl16FX3 };
 
 AudioSynthWaveform *OSC[6]{
-  &pl1waveform1,                  //0
-  &pl3waveform1,                  //1
-  &pl8waveform1,                  //2
-  &pl9bpinput,                    //3
-  &pl10waveform1, &pl10waveform2  //4,5
+  &pl1waveform1,   //0
+  &pl3waveform1,   //1
+  &pl8waveform1,   //2
+  &pl9bpinput,     //3
+  &pl10waveform1,  //4
 };
 
 AudioSynthWaveformModulated *OSC_MOD[7]{
   &pl1waveformMod1, &pl1waveformMod2, &pl1waveformMod3, &pl1waveformMod4,  //0,1,2,3
   &pl3waveformMod1,                                                        //4
   &pl7waveformMod1, &pl7waveformMod2                                       //5,6
+};
+
+AudioSynthWaveformPWM *PWM[2]{
+  &pl10pwm1, &pl10pwm2  //0,1
+};
+
+AudioSynthWaveformDc *DC[2]{
+  &pl10dc2, &pl10dc3  //0,1
 };
 
 AudioSynthSimpleDrum *DRUM[1]{
@@ -739,6 +758,7 @@ AudioSynthNoiseWhite *WHITE[3]{
   &pl7noise1, &pl7noise2,  //0,1
   &pl10noise1              //2
 };
+
 AudioEffectEnvelope *ENVELOPE1[16]{
   &envelope1, &envelope2,         //0,1
   &pl3envelope1, &pl3envelope2,   //2,3

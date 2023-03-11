@@ -1,17 +1,20 @@
 void Plugin_10_Settings() {
 
-  pl10waveform1.begin(WAVEFORM_PULSE);
+  pl10waveform1.begin(WAVEFORM_SINE);
   pl10waveform1.amplitude(1);
-  pl10waveform1.frequency(note_frequency[36] * tuning);
-  pl10waveform1.pulseWidth(0.15);
-  pl10waveform2.begin(WAVEFORM_PULSE);
-  pl10waveform2.amplitude(1);
-  pl10waveform2.frequency(note_frequency[36] * tuning);
-  pl10waveform2.pulseWidth(0.15);
+  pl10waveform1.frequency(note_frequency[3] * tuning);
+
+  pl10pwm1.amplitude(1);
+  pl10pwm1.amplitude(1);
 
   pl10mixer1.gain(0, 1);
   pl10mixer1.gain(1, 1);
   pl10mixer1.gain(2, 1);
+
+  pl10mixer3.gain(0, 1);
+  pl10mixer3.gain(1, 1);
+  pl10mixer4.gain(0, 1);
+  pl10mixer4.gain(1, 1);
 
   pl10dc1.amplitude(1);
   pl10envelope1.delay(0);
@@ -28,13 +31,15 @@ void Plugin10_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
-  draw_OSC_PWM(pl10NR, pl10OSC_0, 0, 0);
-  draw_OSC_PWM(pl10NR, pl10OSC_1, 1, 0);
+  draw_DC_LVL(pl10NR, pl10DC, 0, 0);
+  draw_DC_LVL(pl10NR, pl10DC, 1, 0);
   //draw_OSC_Detune(pl10NR, pl10OSC_1, 2, 0);
+  draw_OSC_ModRate(pl10NR, pl10OSC_1, 3, 0, 20.00);
 
-  draw_OSC_LVL(pl10NR, pl10OSC_0, 0, 1);
-  draw_OSC_LVL(pl10NR, pl10OSC_1, 1, 1);
+  draw_PWM_LVL(pl10NR, pl10OSC_0, 0, 1);
+  draw_PWM_LVL(pl10NR, pl10OSC_1, 1, 1);
   draw_WHITE_LVL(pl10NR, pl10WHITE, 2, 1);
+  draw_OSC_LVL(pl10NR, pl10OSC_0, 3, 1);
 
   draw_StateVar_Filter(pl10NR, pl10SVF, 0, 2);
 
@@ -55,15 +60,16 @@ void Plugin10_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        OSC_PWM(pl10NR, pl10OSC_0, 0, 0);
-        OSC_PWM(pl10NR, pl10OSC_1, 1, 0);
+        DC_LVL(pl10NR, pl10DC, 0, 0, 127.00);
+        DC_LVL(pl10NR, pl10DC1, 1, 0, 127.00);
         OSC_Detune(pl10NR, pl10OSC_1, 2, 0);
-
+        OSC_ModRate(pl10NR, pl10OSC_M, 3, 0, 20.00);
         break;
       case 1:
-        OSC_LVL(pl10NR, pl10OSC_0, 0, 1, 127.00);
-        OSC_LVL(pl10NR, pl10OSC_1, 1, 1, 127.00);
+        PWM_LVL(pl10NR, pl10OSC_0, 0, 1, 127.00);
+        PWM_LVL(pl10NR, pl10OSC_1, 1, 1, 127.00);
         WHITE_LVL(pl10NR, pl10WHITE, 2, 1);
+        OSC_LVL(pl10NR, pl10OSC_M, 3, 1, 127.00);
         break;
       case 2:
         StateVar_Filter(pl10NR, pl10SVF, 0, 2);
@@ -79,11 +85,11 @@ void Plugin10_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin("plugin2", 18);
+        savePlugin("plugin10", 26);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin("plugin2", 18);
+        loadPlugin("plugin10", 26);
       }
     }
   }

@@ -110,8 +110,11 @@ byte plpreset[MAX_PLUGINS]{ 0 };
 #define pl9NR 8
 
 #define pl10NR 9
-#define pl10OSC_0 4
-#define pl10OSC_1 5
+#define pl10DC 0
+#define pl10DC1 1
+#define pl10OSC_M 4
+#define pl10OSC_0 0
+#define pl10OSC_1 1
 #define pl10WHITE 2
 #define pl10SVF 7
 #define pl10ADSR1 14

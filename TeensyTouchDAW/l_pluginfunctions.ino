@@ -191,6 +191,40 @@ void draw_OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW) {
   draw_A_mult(pluginNr, 10, COL, ROW, 11, "W~F");
 }
 
+//NODE: AudioSynthWaveformPWM
+void PWM_LVL(int pluginNr, int des_node, int COL, int ROW, double max) {
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
+    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
+      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
+      PWM[des_node]->amplitude((float)(Potentiometer[COL] / max));
+      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
+      Serial.print("PWM_LVL:");
+      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / max));
+    }
+  }
+}
+void draw_PWM_LVL(int pluginNr, int des_node, int COL, int ROW) {
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
+}
+
+//NODE: AudioSynthWaveformDc
+void DC_LVL(int pluginNr, int des_node, int COL, int ROW, double max) {
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
+    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
+      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
+      DC[des_node]->amplitude((float)(Potentiometer[COL] / max));
+      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
+      Serial.print("DC_LVL:");
+      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / max));
+    }
+  }
+}
+void draw_DC_LVL(int pluginNr, int des_node, int COL, int ROW) {
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
+}
+
 //NODE: AudioSynthSimpleDrum
 void OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, double MAX) {
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);

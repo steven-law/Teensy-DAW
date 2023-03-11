@@ -349,8 +349,8 @@ void PluginNoteOn() {
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 26) {
-            pl10waveform1.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning));
-            pl10waveform2.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning) * (pl10detune));
+            pl10pwm1.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning));
+            pl10pwm2.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning) * (pl10detune));
             pl10envelope1.noteOn();
             pl10envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
