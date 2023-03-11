@@ -6,27 +6,27 @@
 void Plugin_1_Settings() {
   pl1waveform1.begin(WAVEFORM_SAWTOOTH);
   pl1waveform1.amplitude(1);
-  pl1waveform1.frequency(note_frequency[36]* tuning);
+  pl1waveform1.frequency(note_frequency[36] * tuning);
   pl1waveform1.pulseWidth(0.15);
 
   pl1waveformMod1.begin(WAVEFORM_SAWTOOTH);
   pl1waveformMod1.amplitude(1);
-  pl1waveformMod1.frequency(note_frequency[36]* tuning);
+  pl1waveformMod1.frequency(note_frequency[36] * tuning);
   //pl1waveformMod1.pulseWidth(0.15);
 
   pl1waveformMod2.begin(WAVEFORM_SAWTOOTH);
   pl1waveformMod2.amplitude(1);
-  pl1waveformMod2.frequency(note_frequency[36]* tuning);
+  pl1waveformMod2.frequency(note_frequency[36] * tuning);
   //pl1waveformMod2.pulseWidth(0.15);
 
   pl1waveformMod3.begin(WAVEFORM_SAWTOOTH);
   pl1waveformMod3.amplitude(1);
-  pl1waveformMod3.frequency(note_frequency[36]* tuning);
+  pl1waveformMod3.frequency(note_frequency[36] * tuning);
   //pl1waveformMod3.pulseWidth(0.15);
 
   pl1waveformMod4.begin(WAVEFORM_SAWTOOTH);
   pl1waveformMod4.amplitude(1);
-  pl1waveformMod4.frequency(note_frequency[36]* tuning);
+  pl1waveformMod4.frequency(note_frequency[36] * tuning);
   //pl1waveformMod4.pulseWidth(0.15);
 
   mixer1.gain(0, 1);
@@ -93,9 +93,10 @@ void Plugin1_Page1_Dynamic() {
         break;
       case 1:
         //1 Row 2 Waveform
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          OSC_MOD_Waveform(pl1NR, MixerColumn, MixerColumn, lastPotRow);  //pluginNr, pointerarrayPos, column, row
-        }
+        OSC_MOD_Waveform(pl1NR, 0, 0, 1);  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 1, 1, 1);  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 2, 2, 1);  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 3, 3, 1);  //pluginNr, pointerarrayPos, column, row
         break;
       case 2:
         //1 Row 2 note Velocity
@@ -156,8 +157,8 @@ void Plugin1_Page2_Dynamic() {
         StateVar_Filter(pl1NR, pl1SVF, 0, lastPotRow);
         break;
       case 1:
-        ADSR(pl1NR, pl1ADSR1, 0, lastPotRow);
-        ADSR(pl1NR, pl1ADSR2, 0, lastPotRow);
+        ADSR(pl1NR, pl1ADSR1, 0, 1);
+        ADSR(pl1NR, pl1ADSR2, 0, 1);
         break;
     }
   }
@@ -232,7 +233,7 @@ void Plugin1_Change() {
     mixer1.gain(0, (float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn + 8] / 127.00));
   }
 
-  filter1.frequency(note_frequency[plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]]* tuning);
+  filter1.frequency(note_frequency[plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]] * tuning);
   filter1.resonance((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1] / SVF_RES));
   filter1.octaveControl((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2] / SVF_SWP));
   selectFilterType(17, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3]);

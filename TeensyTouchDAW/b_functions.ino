@@ -42,7 +42,7 @@ void Plugin_View_Static() {
     Plugin8_Page_Static();
   }
   if (selectPage == PLUGIN9_PAGE1) {
-    //Plugin9_Page_Static();
+    Plugin9_Page_Static();
   }
   if (selectPage == PLUGIN10_PAGE1) {
     Plugin10_Page_Static();
@@ -162,7 +162,6 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin9 Page1-view
   if (selectPage == PLUGIN9_PAGE1) {
     Plugin9_Page1_Dynamic();
-    //Plugin9_Control();
   }
   //setting up the Plugin10 Page1-view
   if (selectPage == PLUGIN10_PAGE1) {
@@ -301,7 +300,7 @@ void PluginNoteOn() {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
               int veloCity = plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn + 8];
-              OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play]* tuning);
+              OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play] * tuning);
               usbMIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
               MIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
             }
@@ -328,7 +327,7 @@ void PluginNoteOn() {
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 22) {
-            
+
 
             playSdPitch2.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed]);
             playSdPitch2.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
@@ -338,14 +337,22 @@ void PluginNoteOn() {
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 24) {
-            pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed]* tuning);
+            pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed] * tuning);
             pl8envelope1.noteOn();
             pl8envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }
           if (track[desired_instruments].MIDIchannel == 25) {
-            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed]* tuning, 1);
+            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed] * tuning, 1);
+            track[desired_instruments].playNoteOnce = false;
+            track[desired_instruments].envActive = true;
+          }
+          if (track[desired_instruments].MIDIchannel == 26) {
+            pl10waveform1.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning));
+            pl10waveform2.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning) * (pl10detune));
+            pl10envelope1.noteOn();
+            pl10envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
             track[desired_instruments].envActive = true;
           }
@@ -407,6 +414,11 @@ void PluginNoteOff() {
         if (track[desired_instruments].MIDIchannel == 25) {
           track[desired_instruments].envActive = false;
           pl9string1.noteOff(0);
+        }
+        if (track[desired_instruments].MIDIchannel == 26) {
+          track[desired_instruments].envActive = false;
+          pl10envelope1.noteOff();
+          pl10envelope2.noteOff();
         }
       }
     }
@@ -525,11 +537,11 @@ void selectFilterType(int pluginchannel, byte mixerchannel) {
     pl6mixer1.gain(2, 0);
     pl6mixer1.gain(mixerchannel, 1);
   }
-  if (pluginchannel == 25) {
-    pl9mixer1.gain(0, 0);
-    pl9mixer1.gain(1, 0);
-    pl9mixer1.gain(2, 0);
-    pl9mixer1.gain(mixerchannel, 1);
+  if (pluginchannel == 26) {
+    pl10mixer2.gain(0, 0);
+    pl10mixer2.gain(1, 0);
+    pl10mixer2.gain(2, 0);
+    pl10mixer2.gain(mixerchannel, 1);
   }
 }
 void savePlugin(const char* trackname, byte trackNr) {

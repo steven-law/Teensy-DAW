@@ -104,11 +104,13 @@ void Plugin_3_Settings() {
 
   pl3waveform1.amplitude(1);
   pl3waveform1.pulseWidth(0.15);
-  pl3envelope1.delay(0);
-  pl3envelope1.hold(0);
+
+
   pl3waveformMod1.amplitude(1);
   pl3waveformMod1.frequencyModulation(1);
 
+  pl3envelope1.delay(0);
+  pl3envelope1.hold(0);
   pl3envelope2.delay(0);
   pl3envelope2.hold(0);
 
@@ -150,8 +152,7 @@ void Plugin3_Page1_Dynamic() {
         ADSR(pl3NR, pl3ADSR1, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         ADSR(pl3NR, pl3ADSR2, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
         break;
-        default:  //next taster push brings us back to page 0
-        lastPotRow = 0;
+
     }
   }
 
@@ -191,7 +192,7 @@ void Plugin3_Change() {
   pl3waveform1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3]);
 
 
-  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]]* tuning);
+  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]] * tuning);
   pl3filter1.resonance(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5] / SVF_RES);
   pl3filter1.octaveControl(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6] / SVF_SWP);
   selectFilterType(19, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);

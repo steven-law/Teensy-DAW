@@ -41,7 +41,7 @@ int pl2Pot[num_voice];
 int pl4Pot[num_voice];
 
 
-const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "10", "11", "12", "13", "14", "15", "16" };
+const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "11", "12", "13", "14", "15", "16" };
 
 
 
@@ -106,8 +106,17 @@ byte plpreset[MAX_PLUGINS]{ 0 };
 #define pl8LADDER 0
 #define pl8ADSR1 12
 #define pl8ADSR2 13
-//bool pl5enter_was_pushed = true;
 
+#define pl9NR 8
+
+#define pl10NR 9
+#define pl10OSC_0 4
+#define pl10OSC_1 5
+#define pl10WHITE 2
+#define pl10SVF 7
+#define pl10ADSR1 14
+#define pl10ADSR2 15
+float pl10detune;
 
 
 

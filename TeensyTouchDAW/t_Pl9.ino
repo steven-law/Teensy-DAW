@@ -6,13 +6,7 @@ void Plugin_9_Settings() {
   pl9bpfilter.frequency(130);
   pl9bpfilter.resonance(3);
   pl9bpfilter.octaveControl(4);
-  pl9filter2.frequency(130);
-  pl9filter2.resonance(3);
-  pl9filter2.octaveControl(4);
-  pl9mixer1.gain(0, 1);
-  pl9mixer1.gain(1, 0);
-  pl9mixer1.gain(2, 0);
-  pl9dc1.amplitude(0.06);
+
 
   pl9amp.gain(1);
   pl9amp2.gain(1);
@@ -94,6 +88,7 @@ void Plugin9_Page1_Dynamic() {
 void Plugin9_Page_Static() {
   clearWorkSpace();
   Plugin9_Change();
+  drawNrInRect(18, 1, plpreset[pl9NR], ILI9341_PURPLE);
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -117,5 +112,5 @@ void Plugin9_Change() {
   pl9bpfilter.frequency(plugin[8].preset[plpreset[8]].Pot_Value[4] * 16);
   pl9bpfilter.resonance((float)(plugin[8].preset[plpreset[8]].Pot_Value[5] / 25.40));
 
-  pl9dc1.amplitude((float)((plugin[8].preset[plpreset[8]].Pot_Value[8] / 64.00) + 0.06));
+
 }
