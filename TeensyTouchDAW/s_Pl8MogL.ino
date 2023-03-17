@@ -9,7 +9,7 @@ void Plugin_8_Settings() {
 
   pl8envelope2.delay(0);
   pl8envelope2.hold(0);
-
+  filter1.octaveControl(6);
   pl8dc1.amplitude(1);
   pl8amp.gain(1);
   pl8amp2.gain(1);
@@ -28,16 +28,18 @@ void Plugin8_Page1_Dynamic() {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        OSC_Waveform(pl8NR, pl8OSC, 0, 0);
-        OSC_PWM(pl8NR, pl8OSC, 1, 0);
+        OSC_Waveform(pl8NR, pl8OSC, 0, 0, 0, 13, "W~F");  //MIN: unused MAX: Waveforms |range: 0-13
+        OSC_PWM(pl8NR, pl8OSC, 1, 0, 0, 127.00, "PW");    //MIN: unused MAX: unused
         break;
       case 1:
-        Ladder_Filter(pl8NR, pl8LADDER, 0, 1);
+        LDF_frequency(pl8NR, pl8LADDER, 0, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+        LDF_resonance(pl8NR, pl8LADDER, 1, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+        LDF_octaveControl(pl8NR, pl8LADDER, 2, 1, ZERO, SVF_MAX_OCT, "Swp");  //MIN: unused M
         break;
 
       case 2:
-        ADSR(pl8NR, pl8ADSR1, 0, 2);
-        ADSR(pl8NR, pl8ADSR2, 0, 2);
+        ENV_ADSR(pl8NR, pl8ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
+        ENV_ADSR(pl8NR, pl8ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
         break;
     }
   }
@@ -62,26 +64,25 @@ void Plugin8_Page_Static() {
   clearWorkSpace();
   Plugin8_Change();
   drawNrInRect(18, 1, plpreset[pl8NR], ILI9341_PURPLE);
-  //case 0
-  draw_OSC_Waveform(pl8NR, pl8OSC, 0, 0);  //pluginNr, pointerarrayPos, column, row
-  draw_OSC_PWM(pl8NR, pl8OSC, 1, 0);       //pluginNr, pointerarrayPos, column, row
-    //case 1
-  draw_Ladder_Filter(pl8NR, pl8LADDER, 0, 1);  //pluginNr, pointerarrayPos, column, row
-  //case 2
-  draw_ADSR(pl8NR, pl8ADSR1, 0, 2);  //pluginNr, pointerarrayPos, column, row
+  drawNrInRect(18, 1, plpreset[pl8NR], ILI9341_PURPLE);
+  draw_OSC_Waveform(pl8NR, pl8OSC, 0, 0, 0, 13, "W~F");  //MIN: unused MAX: Waveforms |range: 0-13
+  draw_OSC_PWM(pl8NR, pl8OSC, 1, 0, 0, 1.00, "PW");      //MIN: unused MAX: unused
+
+  draw_LDF_frequency(pl8NR, pl8LADDER, 0, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+  draw_LDF_resonance(pl8NR, pl8LADDER, 1, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  draw_LDF_octaveControl(pl8NR, pl8LADDER, 2, 1, ZERO, SVF_MAX_OCT, "Swp");  //MIN: unused MAX: amplitud
+
+  draw_ENV_ADSR(pl8NR, pl8ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
+  draw_ENV_ADSR(pl8NR, pl8ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
 }
 void Plugin8_Change() {
-  pl8waveform1.begin(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[0]);
-  pl8filter1.frequency(note_frequency[plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4]]* tuning);
-  pl8filter1.resonance(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[5] / SVF_RES);
-  pl8filter1.octaveControl(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[6] / SVF_SWP);
+  change_OSC_Waveform(pl8NR, pl8OSC, 0, 0, 0, 13, "W~F");  //MIN: unused MAX: Waveforms |range: 0-13
+  change_OSC_PWM(pl8NR, pl8OSC, 1, 0, 0, 1.00, "PW");      //MIN: unused MAX: unused
 
-  pl8envelope1.attack(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl8envelope2.attack(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl8envelope1.decay(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl8envelope2.decay(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl8envelope1.sustain(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
-  pl8envelope2.sustain(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[10], 0, 127, 0, SUSTAIN_LVL));
-  pl8envelope1.release(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
-  pl8envelope2.release(map(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
+  change_LDF_frequency(pl8NR, pl8LADDER, 0, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+  change_LDF_resonance(pl8NR, pl8LADDER, 1, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  change_LDF_octaveControl(pl8NR, pl8LADDER, 2, 1, ZERO, SVF_MAX_OCT, "Swp");  //MIN: unused MAX: amplitude
+
+  change_ENV_ADSR(pl8NR, pl8ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
+  change_ENV_ADSR(pl8NR, pl8ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");
 }

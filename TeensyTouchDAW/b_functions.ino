@@ -350,7 +350,7 @@ void PluginNoteOn() {
           }
           if (track[desired_instruments].MIDIchannel == 26) {
             pl10pwm1.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning));
-            pl10pwm2.frequency((note_frequency[track[desired_instruments].notePlayed] * tuning) * (pl10detune));
+            pl10pwm2.frequency((note_frequency[track[desired_instruments].notePlayed] + detune_mapped) * tuning);
             pl10envelope1.noteOn();
             pl10envelope2.noteOn();
             track[desired_instruments].playNoteOnce = false;
@@ -512,37 +512,11 @@ void beatComponents() {
 //if you have a filter with multiple outputs like the AudioFilterStateVariable
 //this function will switch between the different inputs of the afterwards installed mixer
 //add your filtermixer here
-void selectFilterType(int pluginchannel, byte mixerchannel) {
-  if (pluginchannel == 17) {
-    pl1mixer2.gain(0, 0);
-    pl1mixer2.gain(1, 0);
-    pl1mixer2.gain(2, 0);
-    pl1mixer2.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 19) {
-    pl3mixer1.gain(0, 0);
-    pl3mixer1.gain(1, 0);
-    pl3mixer1.gain(2, 0);
-    pl3mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 21) {
-    pl5mixer1.gain(0, 0);
-    pl5mixer1.gain(1, 0);
-    pl5mixer1.gain(2, 0);
-    pl5mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 22) {
-    pl6mixer1.gain(0, 0);
-    pl6mixer1.gain(1, 0);
-    pl6mixer1.gain(2, 0);
-    pl6mixer1.gain(mixerchannel, 1);
-  }
-  if (pluginchannel == 26) {
-    pl10mixer2.gain(0, 0);
-    pl10mixer2.gain(1, 0);
-    pl10mixer2.gain(2, 0);
-    pl10mixer2.gain(mixerchannel, 1);
-  }
+void selectFilterType(int des_node, byte mixerchannel) {
+  FILTERMIXER[des_node]->gain(0, 0);
+  FILTERMIXER[des_node]->gain(1, 0);
+  FILTERMIXER[des_node]->gain(2, 0);
+  FILTERMIXER[des_node]->gain(mixerchannel, 1);
 }
 void savePlugin(const char* trackname, byte trackNr) {
   sprintf(_trackname, "%s.txt\0", trackname);

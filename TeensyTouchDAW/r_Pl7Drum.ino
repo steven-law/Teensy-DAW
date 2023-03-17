@@ -190,24 +190,29 @@ void Plugin7_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        OSC_DRUM(pl7NR, pl7DRUM, 0, 0);
+        OSC_DRUM_frequency(pl7NR, pl7DRUM, 0, 0, 20, 600, "1Freq");   //MIN: frequency MAX: frequency |range: 0-???
+        OSC_DRUM_length(pl7NR, pl7DRUM, 1, 0, 20, 600, "1Decay");     //MIN: length MAX: length |range: 0-reasonable
+        OSC_DRUM_pitchMod(pl7NR, pl7DRUM, 2, 0, 0, 1.00, "swp");      //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        OSC_DRUM_secondMix(pl7NR, pl7DRUM, 3, 0, 0, 1.00, "2ndMix");  //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+
         break;
       case 1:
-        StateVar_Frequency(pl7NR, pl7SVF1, 0, 1);
-        StateVar_Resonance(pl7NR, pl7SVF1, 1, 1);
+        SVF_frequency(pl7NR, pl7SVF1, 0, 1, 0, 127, "1Freq");            //MIN: unused MAX: unused
+        SVF_resonance(pl7NR, pl7SVF1, 1, 1, 0, MAX_RESONANCE, "1Reso");  //MIN: unused MAX: unused
         break;
       case 2:
-        //noise white LVL
-        WHITE_LVL(pl7NR, pl7WHITE1, 0, 2);
+        WHITE_amplitude(pl7NR, pl7WHITE1, 0, 2, 0, 1.00, "2White");  //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
         //noisemod modwaveform
-        OSC_MOD_Waveform(pl7NR, pl7OSC1, 1, 2);
+        OSC_MOD_Waveform(pl7NR, pl7OSC1, 1, 2, 0, 8, "2W~F");  //MIN: unused MAX: waveforms |range: 0-8?
         //noisemod frequency
-        OSC_MOD_ModRate(pl7NR, pl7OSC1, 2, 2, 4000);
+        OSC_MOD_frequency(pl7NR, pl7OSC1, 2, 2, 300, 4000, "2Freq");  //MIN: frequency MAX: frequency |range: 0-22000
         break;
       case 3:
         //Filter Frequency
-        StateVar_Freq_Res(pl7NR, pl7SVF2, 0, 3);
-        AR(pl7NR, pl7ADSR1, 2, 3);
+        SVF_frequency(pl7NR, pl7SVF2, 0, 1, 0, 127, "2Freq");            //MIN: unused MAX: unused
+        SVF_resonance(pl7NR, pl7SVF2, 1, 1, 0, MAX_RESONANCE, "2Reso");  //MIN: unused MAX: unused
+        ENV_A(pl7NR, pl7ADSR1, 2, 3, 0, 127, "Atck");                    //MIN: time MAX: time |range: 0-reasonable
+        ENV_R(pl7NR, pl7ADSR1, 3, 3, 0, 127, "Dec");                     //MIN: time MAX: time |range: 0-reasonable
         break;
     }
   }
@@ -497,17 +502,26 @@ void Plugin7_Page_Static(int Pagenumber) {
   draw_sub_page_buttons(2);
   drawNrInRect(18, 1, plpreset[6], ILI9341_PURPLE);
   if (Pagenumber == 0) {
-    //case 0
-    draw_OSC_DRUM(pl7NR, pl7DRUM, 0, 0);
-    //case 1
-    draw_StateVar_Freq_Res(pl7NR, pl7SVF1, 0, 1);
-    //case 2
-    draw_WHITE_LVL(pl7NR, pl7WHITE1, 0, 2);
-    draw_OSC_MOD_Waveform(pl7NR, pl7OSC1, 1, 2);
-    draw_OSC_ModRate(pl7NR, pl7OSC1, 2, 2, 4000);
-    //case 3
-    draw_StateVar_Freq_Res(pl7NR, pl7SVF2, 0, 3);
-    draw_AR(pl7NR, pl7ADSR1, 2, 3);
+    draw_OSC_DRUM_frequency(pl7NR, pl7DRUM, 0, 0, 20, 600, "1Freq");   //MIN: frequency MAX: frequency |range: 0-???
+    draw_OSC_DRUM_length(pl7NR, pl7DRUM, 1, 0, 20, 600, "1Decay");     //MIN: length MAX: length |range: 0-reasonable
+    draw_OSC_DRUM_pitchMod(pl7NR, pl7DRUM, 2, 0, 0, 1.00, "swp");      //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+    draw_OSC_DRUM_secondMix(pl7NR, pl7DRUM, 3, 0, 0, 1.00, "2ndMix");  //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+
+    draw_SVF_frequency(pl7NR, pl7SVF1, 0, 1, 0, 127, "1Freq");            //MIN: unused MAX: unused
+    draw_SVF_resonance(pl7NR, pl7SVF1, 1, 1, 0, MAX_RESONANCE, "1Reso");  //MIN: unused MAX: unused
+
+    //noise white LVL
+    draw_WHITE_amplitude(pl7NR, pl7WHITE1, 0, 2, 0, 1.00, "2White");  //MIN: unused MAX: pitchMod |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+    //noisemod modwaveform
+    draw_OSC_MOD_Waveform(pl7NR, pl7OSC1, 1, 2, 0, 8, "2W~F");  //MIN: unused MAX: waveforms |range: 0-8?
+    //noisemod frequency
+    draw_OSC_MOD_frequency(pl7NR, pl7OSC1, 2, 2, 300, 4000, "2Freq");  //MIN: frequency MAX: frequency |range: 0-22000
+
+    //Filter Frequency
+    draw_SVF_frequency(pl7NR, pl7SVF2, 0, 1, 0, 127, "2Freq");            //MIN: unused MAX: unused
+    draw_SVF_resonance(pl7NR, pl7SVF2, 1, 1, 0, MAX_RESONANCE, "2Reso");  //MIN: unused MAX: unused
+    draw_ENV_A(pl7NR, pl7ADSR1, 2, 3, 0, 127, "Atck");                    //MIN: time MAX: time |range: 0-reasonable
+    draw_ENV_R(pl7NR, pl7ADSR1, 3, 3, 0, 127, "Dec");                     //MIN: time MAX: time |range: 0-reasonable
   }
   if (Pagenumber == 1) {
   }

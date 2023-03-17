@@ -10,20 +10,37 @@ void Encoder_to_Pot_Value2(int plug, int COL, int ROW, int MAX) {
     Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value2[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
   }
 }
-
-void draw_A(int pluginNr, int des_node, int COL, int ROW, int max_value, const char* function) {
-  drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, 0, max_value), function, trackColor[desired_instrument]);
+int store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: frequency |range: 0-22000
+  int pot_index = COL + (ROW * 4);
+  int actual_pot_value = Potentiometer[COL];
+  if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] != actual_pot_value && abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] - actual_pot_value) < POTPICKUP) {
+    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] = actual_pot_value;
+    unlock_changeNode = true;
+  }
 }
-void draw_A_mult(int pluginNr, int mult, int COL, int ROW, int max_value, const char* function) {
-  drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] * mult, map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, 0, max_value), function, trackColor[desired_instrument]);
-}
 
-
-void Encoder_to_4x127(int plug, int COL, int ROW) {
-  Encoder_to_Pot_Value(plug, COL, ROW, MAX_ENC_RANGE);
-  Encoder_to_Pot_Value(plug, COL + 1, ROW, MAX_ENC_RANGE);
-  Encoder_to_Pot_Value(plug, COL + 2, ROW, MAX_ENC_RANGE);
-  Encoder_to_Pot_Value(plug, COL + 3, ROW, MAX_ENC_RANGE);
+void draw_A(int pluginNr, int des_node, int COL, int ROW, float max_value, const char* function) {
+  int pot_index = COL + (ROW * 4);
+  int actual_pot_value = Potentiometer[COL];
+  if (unlock_drawNode == true) {
+    if (COL == 0) {
+      drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
+    }
+    if (COL == 1) {
+      drawPot_2(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
+    }
+    if (COL == 2) {
+      drawPot_3(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
+    }
+    if (COL == 3) {
+      drawPot_4(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
+    }
+    Serial.print(function);
+    Serial.print(": ");
+    Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index]);
+    unlock_drawNode = false;
+  }
+  //  }
 }
 void Encoder2_to_4x127(int plug, int COL, int ROW) {
   Encoder_to_Pot_Value2(plug, COL, ROW, MAX_ENC_RANGE);
@@ -31,359 +48,473 @@ void Encoder2_to_4x127(int plug, int COL, int ROW) {
   Encoder_to_Pot_Value2(plug, COL + 2, ROW, MAX_ENC_RANGE);
   Encoder_to_Pot_Value2(plug, COL + 3, ROW, MAX_ENC_RANGE);
 }
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //NODE: AudioSynthWaveform
-void OSC_Waveform(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, 11);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC[des_node]->begin(Potentiometer[COL]);
-      drawPot(COL, ROW, Potentiometer[COL] * 11, Potentiometer[COL], "W~F", trackColor[desired_track]);
-    }
+void OSC_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 13
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 13
+  if (unlock_changeNode == true) {
+    OSC[des_node]->begin(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)]);
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_Detune(int pluginNr, int des_node, int COL, int ROW) {
+void draw_OSC_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 12
+  draw_A(pluginNr, 10, COL, ROW, MAX, text);
+}
+
+void OSC_Detune(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 127
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      pl10detune = (float)((note_frequency[Potentiometer[COL]-5] * 0.44));
-      Serial.print("OSC_Detune:");
-      Serial.print(note_frequency[69]);
-      Serial.println(pl10detune);
-      
-      if (Potentiometer[COL] <= 63) {
-       // pl10detune = (float)((note_frequency[63 - Potentiometer[COL]] * 4.4));
-        drawPot(COL, ROW, Potentiometer[COL], 63 - Potentiometer[COL], "Detune", trackColor[desired_track]);
-        Serial.print("OSC_Detune:");
-        Serial.println(pl10detune);
-      }
-      if (Potentiometer[COL] >= 64) {
-       // pl10detune = (float)(note_frequency[Potentiometer[COL]-64] * 4.4);
-        drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL]-64, "Detune", trackColor[desired_track]);
-        Serial.print("OSC_Detune:");
-        Serial.println(pl10detune);
-      }
-      
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_Detune(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_Detune(int pluginNr, int des_node, int COL, int ROW, float MIN, int MAX, const char* text) {  //MIN: 0 MAX: 127
+  if (unlock_changeNode == true) {
+    int potValue = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)];
+    detune_mapped = (float)((note_frequency[potValue] * 0.01));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_ModRate(int pluginNr, int des_node, int COL, int ROW, float MAX) {
+void draw_OSC_Detune(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 127
+  int pot_Index = COL + (ROW * 4);
+  if (note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_Index]] <= 63) {
+    // detune_mapped = (float)((note_frequency[63 - Potentiometer[COL]] * 4.4));
+    drawPot(COL, ROW, note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_Index]], 63 - note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_Index]], text, trackColor[desired_track]);
+    Serial.print("OSC_Detune:");
+    Serial.println(detune_mapped);
+  } else {
+    // detune_mapped = (float)(note_frequency[Potentiometer[COL]-64] * 4.4);
+    drawPot(COL, ROW, note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_Index]], note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_Index]] - 64, text, trackColor[desired_track]);
+    Serial.print("OSC_Detune:");
+    Serial.println(detune_mapped);
+  }
+}
+
+void OSC_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: frequency MAX: frequency |range: 0-22000
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC[des_node]->frequency((float)(map(Potentiometer[COL], 0, 127, 0, MAX)));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "ModRate", trackColor[desired_track]);
-      Serial.print("OSC_ModRate:");
-      Serial.println((float)(map(Potentiometer[COL], 0, 127, 0, MAX)));
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: frequency |range: 0-22000
+  if (unlock_changeNode == true) {
+    OSC[des_node]->frequency((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, 127, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_Offset(int pluginNr, int des_node, int COL, int ROW) {
+void draw_OSC_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: frequency |range: 0-22000
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void OSC_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: -1.00 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC[des_node]->offset((float)(map(Potentiometer[COL], 0, 127, -1, 1)));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Offset", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: -1.00 MAX: 1.00
+  if (unlock_changeNode == true) {
+    OSC[des_node]->offset((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_PWM(int pluginNr, int des_node, int COL, int ROW) {
+void draw_OSC_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: -1.00 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_PWM(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC[des_node]->pulseWidth((float)(Potentiometer[COL] / 127.00));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "PWM", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_PWM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_PWM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_PWM(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    OSC[des_node]->pulseWidth((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_LVL(int pluginNr, int des_node, int COL, int ROW, double max) {
+void draw_OSC_PWM(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+
+
+void OSC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC[des_node]->amplitude((float)(Potentiometer[COL] / max));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
-      Serial.print("OSC_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / max));
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    OSC[des_node]->amplitude((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void draw_OSC_Waveform(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A_mult(pluginNr, 10, COL, ROW, 11, "W~F");
+void draw_OSC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
 }
-void draw_OSC_modulation(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "ModRate");
-  draw_A(pluginNr, des_node, COL + 1, ROW, MAX_ENC_RANGE, "LVL");
-  draw_A_mult(pluginNr, 10, COL + 2, ROW, 11, "W~F");
-}
-void draw_OSC_ModRate(int pluginNr, int des_node, int COL, int ROW, int range) {
-  draw_A(pluginNr, des_node, COL, ROW, range, "ModRate");
-}
-void draw_OSC_PWM(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "PWM");
-}
-void draw_OSC_LVL(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
-}
+
+
+
+
 
 //NODE: AudioSynthWaveformMod
-void OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, 11);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC_MOD[des_node]->begin(Potentiometer[COL]);
-      drawPot(COL, ROW, Potentiometer[COL] * 11, Potentiometer[COL], "W~F", trackColor[desired_track]);
-    }
+void OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: Waveforms |range: 0-13
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_MOD_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_MOD_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    OSC_MOD[des_node]->begin(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)]);
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void OSC_MOD_ModRate(int pluginNr, int des_node, int COL, int ROW, double MAX) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC_MOD[des_node]->frequency(map(Potentiometer[COL], 0, 127, 0, MAX));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "ModRate", trackColor[desired_track]);
-    }
-  }
-}
-void OSC_MOD_Offset(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC_MOD[des_node]->offset((float)(map(Potentiometer[COL], 0, 127, -1, 1)));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Offset", trackColor[desired_track]);
-    }
-  }
-}
-void OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC_MOD[des_node]->frequencyModulation((float)(map(Potentiometer[COL], 0, MAX_ENC_RANGE, -1.00, 1.00)));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "FM", trackColor[desired_track]);
-      Serial.print("OSC_MOD_FM:");
-      Serial.println((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, -1.00, 1.00)));
-    }
-  }
-}
-void OSC_MOD_LVL(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      OSC_MOD[des_node]->amplitude((float)(Potentiometer[COL] / 127.00));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
-      Serial.print("OSC__MOD_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / 127.00));
-    }
-  }
-}
-void draw_OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A_mult(pluginNr, 10, COL, ROW, 11, "W~F");
+void draw_OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: Waveforms |range:0-13
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
 }
 
-//NODE: AudioSynthWaveformPWM
-void PWM_LVL(int pluginNr, int des_node, int COL, int ROW, double max) {
+void OSC_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: frequency MAX: frequency |range: 0-22000
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      PWM[des_node]->amplitude((float)(Potentiometer[COL] / max));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
-      Serial.print("PWM_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / max));
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_MOD_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_MOD_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    OSC_MOD[des_node]->frequency((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, 127, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void draw_PWM_LVL(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
+void draw_OSC_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: frequency |range: 0-22000
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_MOD_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_MOD_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_MOD_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_MOD_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    OSC_MOD[des_node]->offset((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_MOD_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_MOD_FM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_MOD_FM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    OSC_MOD[des_node]->frequencyModulation(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_MOD_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_MOD_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    OSC_MOD[des_node]->amplitude((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+
+
+
+//NODE: AudioSynthWaveformPWM
+void PWM_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  ///MIN: 0 MAX: 1.00
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_PWM_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_PWM_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_PWM_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    PWM[des_node]->amplitude((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_PWM_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+
+
+//NODE: AudioSynthSimpleDrum
+void OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_DRUM_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_DRUM_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    DRUM[des_node]->frequency(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_DRUM_length(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_DRUM_length(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    DRUM[des_node]->length(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+void OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_DRUM_secondMix(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_DRUM_secondMix(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    DRUM[des_node]->secondMix((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+
+void OSC_DRUM_pitchMod(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_OSC_DRUM_pitchMod(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_OSC_DRUM_pitchMod(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_OSC_DRUM_pitchMod(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    DRUM[des_node]->pitchMod((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_OSC_DRUM_pitchMod(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
 }
 
 //NODE: AudioSynthWaveformDc
-void DC_LVL(int pluginNr, int des_node, int COL, int ROW, double max) {
+void DC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      DC[des_node]->amplitude((float)(Potentiometer[COL] / max));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
-      Serial.print("DC_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / max));
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_DC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_DC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_DC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    DC[des_node]->amplitude((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / (MAX_ENC_RANGE / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void draw_DC_LVL(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
-}
+void draw_DC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
 
-//NODE: AudioSynthSimpleDrum
-void OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, double MAX) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      DRUM[des_node]->frequency(map(Potentiometer[COL], 0, 127, 0, MAX));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Freq", trackColor[desired_track]);
-    }
-  }
-}
-void OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, double MAX) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      DRUM[des_node]->length(map(Potentiometer[COL], 0, 127, 0, MAX));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Dec", trackColor[desired_track]);
-    }
-  }
-}
-void OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      DRUM[des_node]->secondMix((float)(Potentiometer[COL] / 127.00));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Sec", trackColor[desired_track]);
-      Serial.print("OSC_DRUM_secondMix:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[1] / 127.00));
-    }
-  }
-}
-void OSC_DRUM_PitchMod(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      DRUM[des_node]->pitchMod((float)(Potentiometer[COL] / 127.00));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Swp", trackColor[desired_track]);
-      Serial.print("OSC_DRUM_PitchMod:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[1] / 127.00));
-    }
-  }
-}
-void OSC_DRUM(int pluginNr, int des_node, int COL, int ROW) {
-  OSC_DRUM_frequency(pluginNr, des_node, COL, ROW, 800);
-  OSC_DRUM_length(pluginNr, des_node, COL + 1, ROW, 600);
-  OSC_DRUM_PitchMod(pluginNr, des_node, COL + 2, ROW);
-  OSC_DRUM_secondMix(pluginNr, des_node, COL + 3, ROW);
-}
-void draw_OSC_DRUM(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, 800, "Freq");
-  draw_A(pluginNr, des_node, COL + 1, ROW, 600, "Dec");
-  draw_A(pluginNr, des_node, COL + 2, ROW, MAX_ENC_RANGE, "Swp");
-  draw_A(pluginNr, des_node, COL + 3, ROW, MAX_ENC_RANGE, "Sec");
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
 }
 
 //NODE: AudioSynthNoiseWhite
-void WHITE_LVL(int pluginNr, int des_node, int COL, int ROW) {
+void WHITE_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      WHITE[des_node]->amplitude((float)(Potentiometer[COL] / 127.00));
-      drawPot(COL, ROW, Potentiometer[COL], Potentiometer[COL], "LVL", trackColor[desired_track]);
-      Serial.print("WHITE_LVL:");
-      Serial.println((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[1] / 127.00));
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_WHITE_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_WHITE_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_WHITE_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    WHITE[des_node]->amplitude((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] /  MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void draw_WHITE_LVL(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "LVL");
+void draw_WHITE_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
 }
 
+
 //NODE: AudioEffectEnvelope
-void envelopeA(int pluginNr, int des_node, int COL, int ROW) {
+void ENV_A(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      ENVELOPE1[des_node]->attack(map(Potentiometer[COL], 0, 127, 0, ATTACK_TIME));
-      drawPot(COL, ROW, Potentiometer[COL], map(Potentiometer[COL], 0, 127, 0, ATTACK_TIME), "Atck", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_ENV_A(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_ENV_A(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_ENV_A(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    ENVELOPE1[des_node]->attack(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void envelopeD(int pluginNr, int des_node, int COL, int ROW) {
+void draw_ENV_A(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void ENV_D(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      ENVELOPE1[des_node]->decay(map(Potentiometer[COL], 0, 127, 0, DECAY_TIME));
-      drawPot_2(COL, ROW, Potentiometer[COL], map(Potentiometer[COL], 0, 127, 0, DECAY_TIME), "Dec", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_ENV_D(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_ENV_D(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_ENV_D(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    ENVELOPE1[des_node]->decay(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void envelopeS(int pluginNr, int des_node, int COL, int ROW) {
+void draw_ENV_D(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void ENV_S(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      ENVELOPE1[des_node]->sustain((float)(Potentiometer[COL] / SUSTAIN_LVL));
-      drawPot_3(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Sus", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_ENV_S(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_ENV_S(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_ENV_S(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (unlock_changeNode == true) {
+    ENVELOPE1[des_node]->sustain((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void envelopeR(int pluginNr, int des_node, int COL, int ROW) {
+void draw_ENV_S(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+
+
+void ENV_R(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      ENVELOPE1[des_node]->release(map(Potentiometer[COL], 0, 127, 0, RELEASE_TIME));
-      drawPot_4(COL, ROW, Potentiometer[COL], map(Potentiometer[COL], 0, 127, 0, RELEASE_TIME), "Rel", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_ENV_R(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_ENV_R(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_ENV_R(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    ENVELOPE1[des_node]->release(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void envelopeH(int pluginNr, int des_node, int COL, int ROW) {
+void draw_ENV_R(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void ENV_H(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      ENVELOPE1[des_node]->hold(map(Potentiometer[COL], 0, 127, 0, RELEASE_TIME));
-      drawPot_3(COL, ROW, Potentiometer[COL], map(Potentiometer[COL], 0, 127, 0, RELEASE_TIME), "Hld", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_ENV_H(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_ENV_H(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_ENV_H(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    ENVELOPE1[des_node]->hold(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void ADSR(int pluginNr, int des_node, int COL, int ROW) {
-  envelopeA(pluginNr, des_node, COL, ROW);
-  envelopeD(pluginNr, des_node, COL + 1, ROW);
-  envelopeS(pluginNr, des_node, COL + 2, ROW);
-  envelopeR(pluginNr, des_node, COL + 3, ROW);
+void draw_ENV_H(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
 }
-void AR(int pluginNr, int des_node, int COL, int ROW) {
-  envelopeA(pluginNr, des_node, COL, ROW);
-  envelopeR(pluginNr, des_node, COL + 1, ROW);
+
+
+void ENV_ADSR(int pluginNr, int des_node, int COL, int ROW, int AttDec, int Rel, const char* text) {  //MIN: Attack/Decaytime MAX: Releasetime
+  ENV_A(pluginNr, des_node, COL, ROW, 0, AttDec, "Atck");
+  ENV_D(pluginNr, des_node, COL + 1, ROW, 0, AttDec, "Dec");
+  ENV_S(pluginNr, des_node, COL + 2, ROW, 0, GAIN_MULT_1, "Sus");
+  ENV_R(pluginNr, des_node, COL + 3, ROW, 0, Rel, "Rel");
 }
-void AD(int pluginNr, int des_node, int COL, int ROW) {
-  envelopeA(pluginNr, des_node, COL, ROW);
-  envelopeD(pluginNr, des_node, COL + 1, ROW);
+void draw_ENV_ADSR(int pluginNr, int des_node, int COL, int ROW, int AttDec, int Rel, const char* text) {
+  draw_ENV_A(pluginNr, des_node, COL, ROW, 0, AttDec, "Atck");
+  draw_ENV_D(pluginNr, des_node, COL + 1, ROW, 0, AttDec, "Dec");
+  draw_ENV_S(pluginNr, des_node, COL + 2, ROW, 0, GAIN_MULT_1, "Sus");
+  draw_ENV_R(pluginNr, des_node, COL + 3, ROW, 0, Rel, "Rel");
 }
-void AHR(int pluginNr, int des_node, int COL, int ROW) {
-  envelopeA(pluginNr, des_node, COL, ROW);
-  envelopeH(pluginNr, des_node, COL + 1, ROW);
-  envelopeR(pluginNr, des_node, COL + 2, ROW);
-}
-void draw_ADSR(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, ATTACK_TIME, "Atck");
-  draw_A(pluginNr, des_node, COL + 1, ROW, DECAY_TIME, "Dec");
-  draw_A(pluginNr, des_node, COL + 2, ROW, MAX_ENC_RANGE, "Sus");
-  draw_A(pluginNr, des_node, COL + 3, ROW, RELEASE_TIME, "Rel");
-}
-void draw_AHR(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, ATTACK_TIME, "Atck");
-  draw_A(pluginNr, des_node, COL + 1, ROW, DECAY_TIME, "Hld");
-  draw_A(pluginNr, des_node, COL + 2, ROW, RELEASE_TIME, "Rel");
-}
-void draw_AR(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, ATTACK_TIME, "Atck");
-  draw_A(pluginNr, des_node, COL + 1, ROW, RELEASE_TIME, "Rel");
+void change_ENV_ADSR(int pluginNr, int des_node, int COL, int ROW, int AttDec, int Rel, const char* text) {
+  change_ENV_A(pluginNr, des_node, COL, ROW, 0, AttDec, "Atck");
+  change_ENV_D(pluginNr, des_node, COL + 1, ROW, 0, AttDec, "Dec");
+  change_ENV_S(pluginNr, des_node, COL + 2, ROW, 0, GAIN_MULT_1, "Sus");
+  change_ENV_R(pluginNr, des_node, COL + 3, ROW, 0, Rel, "Rel");
 }
 
 
@@ -391,109 +522,146 @@ void draw_AR(int pluginNr, int des_node, int COL, int ROW) {
 
 
 //NODE: AudioFilterStateVariable
-void StateVar_Filter(int pluginNr, int des_node, int COL, int ROW) {
-  StateVar_Frequency(pluginNr, des_node, COL, ROW);
-  StateVar_Resonance(pluginNr, des_node, COL + 1, ROW);
-  StateVar_Sweep(pluginNr, des_node, COL + 2, ROW);
-  StateVar_Type(pluginNr, des_node, COL + 3, ROW);
-}
-void StateVar_Freq_Res(int pluginNr, int des_node, int COL, int ROW) {
-  StateVar_Frequency(pluginNr, des_node, COL, ROW);
-  StateVar_Resonance(pluginNr, des_node, COL + 1, ROW);
-}
-void StateVar_Frequency(int pluginNr, int des_node, int COL, int ROW) {
+void SVF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      STATEFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]] * tuning);
-      drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]] * tuning, "Freq", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_SVF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_SVF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_SVF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    STATEFILTER[des_node]->frequency(note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)]] * tuning);
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void StateVar_Resonance(int pluginNr, int des_node, int COL, int ROW) {
+void draw_SVF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, note_frequency[MAX] * tuning, text);
+}
+
+
+void SVF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      STATEFILTER[des_node]->resonance((float)(Potentiometer[COL] / SVF_RES));
-      drawPot_2(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Reso", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_SVF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_SVF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_SVF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    STATEFILTER[des_node]->resonance((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / (MAX_ENC_RANGE / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void StateVar_Sweep(int pluginNr, int des_node, int COL, int ROW) {
+void draw_SVF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void SVF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      STATEFILTER[des_node]->octaveControl((float)(Potentiometer[COL] / SVF_SWP));
-      drawPot_3(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Swp", trackColor[desired_track]);
-    }
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_SVF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_SVF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_SVF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    STATEFILTER[des_node]->octaveControl(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void StateVar_Type(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, 2);
+void draw_SVF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: Waveforms |range: 0-13
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_SVF_Type(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_SVF_Type(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    selectFilterType(des_node, (map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: unused
   int xPos = ((COL + 1) * 4) - 1;
-  if (abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] - Potentiometer[COL]) < POTPICKUP) {
-    if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-      plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-      selectFilterType(track[desired_instrument].MIDIchannel, Potentiometer[COL]);
-      drawPot_4(COL, ROW, Potentiometer[COL] * SVF_TYP, Potentiometer[COL], "", trackColor[desired_track]);
-      drawChar(xPos, ((ROW + 1) * 3) + 1, filterType[Potentiometer[COL]], ILI9341_WHITE);
-    }
+  if (unlock_drawNode == true) {
+    int selected_filtertype =(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    drawChar(xPos, ((ROW + 1) * 3) + 1, filterType[selected_filtertype], ILI9341_WHITE);
   }
+  draw_A(pluginNr, des_node, COL, ROW, MAX, "");
 }
-void draw_StateVar_Filter(int pluginNr, int des_node, int COL, int ROW) {
-  int xPos = ((COL + 4) * 4) - 1;
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127] * tuning, "Freq");
-  draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
-  draw_A(pluginNr, des_node, COL + 2, ROW, MAX_ENC_RANGE, "Swp");
-  draw_A_mult(pluginNr, SVF_TYP, COL + 3, ROW, 2, "");
-  drawChar(xPos, ((ROW + 1) * 3) + 1, filterType[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)]], ILI9341_WHITE);
-}
-void draw_StateVar_Freq_Res(int pluginNr, int des_node, int COL, int ROW) {
-  int xPos = ((COL + 1) * 4) - 1;
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127] * tuning, "Freq");
-  draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
-}
+
 
 //NODE: AudioFilterLadder
-void Ladder_Filter(int pluginNr, int des_node, int COL, int ROW) {
-  Ladder_Frequency(pluginNr, des_node, COL, ROW);
-  Ladder_Resonance(pluginNr, des_node, COL + 1, ROW);
-  Ladder_Sweep(pluginNr, des_node, COL + 2, ROW);
-}
-void Ladder_Frequency(int pluginNr, int des_node, int COL, int ROW) {
+void LDF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
   Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-    LADDERFILTER[des_node]->frequency(note_frequency[Potentiometer[COL]] * tuning);
-    drawPot(COL, ROW, Potentiometer[COL], note_frequency[Potentiometer[COL]] * tuning, "Freq", trackColor[desired_track]);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_LDF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_LDF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_LDF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    LADDERFILTER[des_node]->frequency(note_frequency[plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)]] * tuning);
+    unlock_changeNode = false;
+    unlock_drawNode = true;
   }
 }
-void Ladder_Resonance(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-    LADDERFILTER[des_node]->resonance((float)(Potentiometer[COL] / SVF_RES));
-    drawPot_2(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Reso", trackColor[desired_track]);
-  }
-}
-void Ladder_Sweep(int pluginNr, int des_node, int COL, int ROW) {
-  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-  if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] != Potentiometer[COL]) {
-    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
-    LADDERFILTER[des_node]->octaveControl((float)(Potentiometer[COL] / SVF_SWP));
-    drawPot_3(COL, ROW, Potentiometer[COL], Potentiometer[COL], "Swp", trackColor[desired_track]);
-  }
-}
-void draw_Ladder_Filter(int pluginNr, int des_node, int COL, int ROW) {
-  draw_A(pluginNr, des_node, COL, ROW, note_frequency[127] * tuning, "Freq");
-  draw_A(pluginNr, des_node, COL + 1, ROW, ATTACK_TIME, "Reso");
-  draw_A(pluginNr, des_node, COL + 2, ROW, SUSTAIN_LVL, "Swp");
+void draw_LDF_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, int MAX, const char* text) {  //MIN: 0 MAX: 127
+
+  draw_A(pluginNr, des_node, COL, ROW, note_frequency[MAX] * tuning, text);
 }
 
-void draw_Raw_File(int pluginNr, int des_node, int COL, int ROW) {
+
+void LDF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_LDF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_LDF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_LDF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    LADDERFILTER[des_node]->resonance((float)(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / (MAX_ENC_RANGE / MAX)));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_LDF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+void LDF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
+  Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+  store_Pot_Value(pluginNr, COL, ROW);
+  change_LDF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  draw_LDF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+}
+void change_LDF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+  if (unlock_changeNode == true) {
+    LADDERFILTER[des_node]->octaveControl(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+    unlock_changeNode = false;
+    unlock_drawNode = true;
+  }
+}
+void draw_LDF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: time |range: 0-reasonable
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+
+
+void draw_Raw_File(int pluginNr, int des_node, int COL, int ROW) {  //MIN: unused MAX: unused
   draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, "RAW");
 }
 void pl2MIX(int pluginNr, int des_node, int COL, int ROW) {

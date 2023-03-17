@@ -44,7 +44,6 @@ void Plugin2_Page1_Dynamic() {
           pl2MIX(1, 2, MixerColumn, lastPotRow);
         }
         break;
-
     }
   }
 

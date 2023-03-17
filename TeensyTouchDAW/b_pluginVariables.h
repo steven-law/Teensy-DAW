@@ -24,19 +24,42 @@
 #define PLUGIN7_PAGE3 64
 
 #define MAX_ENC_RANGE 127
-#define ATTACK_TIME 700
+#define ATTACK_TIME 127
 #define DECAY_TIME 700
 #define SUSTAIN_LVL 127.00
 #define RELEASE_TIME 1600
 #define SVF_RES 25.40
 #define SVF_SWP 18.14
 #define SVF_TYP 42
+#define MAX_RESONANCE 5
 
+#define ZERO 0.00
 
+#define GAIN_DIV_32 4095
+#define GAIN_DIV_16 2047
+#define GAIN_DIV_8 1023
+#define GAIN_DIV_4 511
+#define GAIN_DIV_2 255
+#define GAIN_MULT_1 127.00
+#define GAIN_MULT_2 64.00
+#define GAIN_MULT_4 32.00
+#define GAIN_MULT_8 16.00
 
+bool unlock_changeNode = false;
+bool unlock_drawNode = false;
 int oldWave; //wfselect
+#define pl1NR 0
+#define pl3NR 2
+#define pl5NR 4
+#define pl6NR 5
+#define pl7NR 6
+#define pl8NR 7
+#define pl9NR 8
+#define pl10NR 9
 
 
+#define pl5RAW 0
+#define pl6RAW 1
 int pl2Pot[num_voice];
 int pl4Pot[num_voice];
 
@@ -58,68 +81,8 @@ plugin_t* plugin;
 
 
 byte plpreset[MAX_PLUGINS]{ 0 };
-#define pl1NR 0
-#define pl1OSC 0
-#define pl1OSC_MOD0 0
-#define pl1OSC_MOD1 1
-#define pl1OSC_MOD2 2
-#define pl1OSC_MOD3 3
-#define pl1SVF 0
-#define pl1ADSR1 0
-#define pl1ADSR2 1
 
-#define pl3NR 2
-#define pl3OSC 1
-#define pl3OSC_MOD 4
-#define pl3SVF 1
-#define pl3ADSR1 2
-#define pl3ADSR2 3
-
-#define pl5NR 4
-#define pl5RAW 0
-#define pl5SVF 2
-#define pl5ADSR1 4
-#define pl5ADSR2 5
-
-#define pl6NR 5
-#define pl6RAW 1
-#define pl6SVF 3
-#define pl6ADSR1 6
-#define pl6ADSR2 7
-
-#define pl7NR 6
-#define pl7DRUM 0
-#define pl7OSC1 5
-#define pl7OSC2 6
-#define pl7WHITE1 0
-#define pl7WHITE2 1
-#define pl7SVF1 4
-#define pl7SVF2 5
-#define pl7ADSR1 8
-#define pl7ADSR2 9
-#define pl7ADSR3 10
-#define pl7ADSR4 11
-
-
-#define pl8NR 7
-#define pl8OSC 2
-#define pl8LADDER 0
-#define pl8ADSR1 12
-#define pl8ADSR2 13
-
-#define pl9NR 8
-
-#define pl10NR 9
-#define pl10DC 0
-#define pl10DC1 1
-#define pl10OSC_M 4
-#define pl10OSC_0 0
-#define pl10OSC_1 1
-#define pl10WHITE 2
-#define pl10SVF 7
-#define pl10ADSR1 14
-#define pl10ADSR2 15
-float pl10detune;
+float detune_mapped;
 
 
 

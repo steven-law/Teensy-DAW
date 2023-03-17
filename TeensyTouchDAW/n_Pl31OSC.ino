@@ -114,6 +114,7 @@ void Plugin_3_Settings() {
   pl3envelope2.delay(0);
   pl3envelope2.hold(0);
 
+  pl3filter1.octaveControl(6);
 
   pl3mixer1.gain(0, 1);
   pl3mixer1.gain(1, 0);
@@ -133,26 +134,28 @@ void Plugin3_Page1_Dynamic() {
       lastPotRow = 10;
       plpreset[pl3NR] = constrain((plpreset[pl3NR] + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
-      Plugin3_Page_Static();
+      Plugin_View_Static();
     }
   }
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
         //Waveform
-        OSC_Waveform(pl3NR, pl3OSC_MOD, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
-        OSC_ModRate(pl3NR, pl3OSC, 1, lastPotRow, 15);   //pluginNr, pointerarrayPos, column, row, max freq
-        OSC_LVL(pl3NR, pl3OSC, 2, lastPotRow, 127.00);   //pluginNr, pointerarrayPos, column, row
-        OSC_Waveform(pl3NR, pl3OSC, 3, lastPotRow);      //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl3NR, pl3OSC_MOD, 0, 0, ZERO, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+        OSC_frequency(pl3NR, pl3OSC, 1, 0, ZERO, 15.00, "LFO");          //pluginNr, pointerarrayPos, column, row, max freq
+        OSC_amplitude(pl3NR, pl3OSC, 2, 0, ZERO, GAIN_DIV_4, "LVL");     //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl3NR, pl3OSC, 3, 0, ZERO, OSC_MAX_WF, "W~F");      //pluginNr, pointerarrayPos, column, row
         break;
       case 1:
-        StateVar_Filter(pl3NR, pl3SVF, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
+        SVF_frequency(pl3NR, pl3SVF, 0, 1, ZERO, 127, "Freq");                //MIN: unused MAX: unused
+        SVF_resonance(pl3NR, pl3SVF, 1, 1, ZERO, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+        SVF_octaveControl(pl3NR, pl3SVF, 2, 1, ZERO, SVF_MAX_OCT, "Swp");     //MIN: unused MAX: amplitud
+        SVF_Type(pl3NR, pl3TYPE, 3, 1, 0, 2, "");                              //MIN: unused MAX: unused
         break;
       case 2:
-        ADSR(pl3NR, pl3ADSR1, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
-        ADSR(pl3NR, pl3ADSR2, 0, lastPotRow);  //pluginNr, pointerarrayPos, column, row
+        ENV_ADSR(pl3NR, pl3ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
+        ENV_ADSR(pl3NR, pl3ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
         break;
-
     }
   }
 
@@ -176,33 +179,33 @@ void Plugin3_Page_Static() {
   Plugin3_Change();
   drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
 
-  //case 0
-  draw_OSC_Waveform(pl3NR, pl3OSC_MOD, 0, 0);  //pluginNr, pointerarrayPos, column, row
-  draw_OSC_modulation(pl3NR, pl3OSC, 1, 0);    //pluginNr, pointerarrayPos, column, row
-  //case 1
-  draw_StateVar_Filter(pl3NR, pl3SVF, 0, 1);  //pluginNr, pointerarrayPos, column, row
-  //case 2
-  draw_ADSR(pl3NR, pl3ADSR1, 0, 2);
+  //Waveform
+  draw_OSC_MOD_Waveform(pl3NR, pl3OSC_MOD, 0, 0, ZERO, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+  draw_OSC_frequency(pl3NR, pl3OSC, 1, 0, ZERO, 15.00, "LFO");          //pluginNr, pointerarrayPos, column, row, max freq
+  draw_OSC_amplitude(pl3NR, pl3OSC, 2, 0, ZERO, GAIN_DIV_4, "LVL");     //pluginNr, pointerarrayPos, column, row
+  draw_OSC_Waveform(pl3NR, pl3OSC, 3, 0, ZERO, OSC_MAX_WF, "W~F");      //pluginNr, pointerarrayPos, column, row
+
+  draw_SVF_frequency(pl3NR, pl3SVF, 0, 1, ZERO, 127, "Freq");                //MIN: unused MAX: unused
+  draw_SVF_resonance(pl3NR, pl3SVF, 1, 1, ZERO, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+  draw_SVF_octaveControl(pl3NR, pl3SVF, 2, 1, ZERO, SVF_MAX_OCT, "Swp");     //MIN: unused MAX: amplitud
+  draw_SVF_Type(pl3NR, pl3SVF, 3, 1, 0, 2, "");
+
+  draw_ENV_ADSR(pl3NR, pl3ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
+  draw_ENV_ADSR(pl3NR, pl3ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
 }
 
 void Plugin3_Change() {
-  pl3waveformMod1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0]);
-  pl3waveform1.amplitude((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[2] / 127.00));
-  pl3waveform1.frequency((float)(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[1], 0, MAX_ENC_RANGE, 0, 15)));
-  pl3waveform1.begin(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[3]);
+  //Waveform
+  change_OSC_MOD_Waveform(pl3NR, pl3OSC_MOD, 0, 0, ZERO, OSC_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+  change_OSC_frequency(pl3NR, pl3OSC, 1, 0, ZERO, 15.00, "LFO");          //pluginNr, pointerarrayPos, column, row, max freq
+  change_OSC_amplitude(pl3NR, pl3OSC, 2, 0, ZERO, GAIN_DIV_4, "LVL");     //pluginNr, pointerarrayPos, column, row
+  change_OSC_Waveform(pl3NR, pl3OSC, 3, 0, ZERO, OSC_MOD_MAX_WF, "W~F");      //pluginNr, pointerarrayPos, column, row
 
+  change_SVF_frequency(pl3NR, pl3SVF, 0, 1, ZERO, 127, "Freq");                //MIN: unused MAX: unused
+  change_SVF_resonance(pl3NR, pl3SVF, 1, 1, ZERO, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+  change_SVF_octaveControl(pl3NR, pl3SVF, 2, 1, ZERO, SVF_MAX_OCT, "Swp");     //MIN: unused MAX: amplitud
+  change_SVF_Type(pl3NR, pl3SVF, 3, 1, 0, 2, "");
 
-  pl3filter1.frequency(note_frequency[plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]] * tuning);
-  pl3filter1.resonance(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5] / SVF_RES);
-  pl3filter1.octaveControl(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6] / SVF_SWP);
-  selectFilterType(19, plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);
-
-  pl3envelope1.attack(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl3envelope2.attack(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8], 0, 127, 0, ATTACK_TIME));
-  pl3envelope1.decay(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl3envelope2.decay(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9], 0, 127, 0, DECAY_TIME));
-  pl3envelope1.sustain((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10] / SUSTAIN_LVL));
-  pl3envelope2.sustain((float)(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10] / SUSTAIN_LVL));
-  pl3envelope1.release(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
-  pl3envelope2.release(map(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11], 0, 127, 0, RELEASE_TIME));
+  change_ENV_ADSR(pl3NR, pl3ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
+  change_ENV_ADSR(pl3NR, pl3ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
 }

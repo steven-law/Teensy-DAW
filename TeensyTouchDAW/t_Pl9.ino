@@ -11,35 +11,7 @@ void Plugin_9_Settings() {
   pl9amp.gain(1);
   pl9amp2.gain(1);
 }
-void Plugin9_Control() {
-  switch (lastPotRow) {
-    case 0:
 
-
-      if (plugin[8].preset[plpreset[8]].Pot_Value[1] != Potentiometer[1]) {
-        plugin[8].preset[plpreset[8]].Pot_Value[1] = (Potentiometer[1]);
-        pl9bpinput.frequency((float)(plugin[8].preset[plpreset[8]].Pot_Value[1]) / 16.00);
-        drawPot(1, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[1], plugin[8].preset[plpreset[8]].Pot_Value[1], "Rate", trackColor[desired_track]);
-      }
-      if (plugin[8].preset[plpreset[8]].Pot_Value[2] != Potentiometer[2]) {
-        plugin[8].preset[plpreset[8]].Pot_Value[2] = Potentiometer[2];
-        pl9bpfilter.octaveControl((float)(plugin[8].preset[plpreset[8]].Pot_Value[2] / 127.00));
-        drawPot(2, lastPotRow, plugin[8].preset[plpreset[8]].Pot_Value[2], plugin[8].preset[plpreset[8]].Pot_Value[2], "Depth", trackColor[desired_track]);
-      }
-
-      break;
-    case 1:
-
-
-      break;
-    case 2:
-
-      break;
-    case 3:
-
-      break;
-  }
-}
 void Plugin9_Page1_Dynamic() {
   //change preset
   if (button[14]) {
@@ -47,7 +19,7 @@ void Plugin9_Page1_Dynamic() {
       lastPotRow = 10;
       plpreset[8] = constrain((plpreset[8] + encoded[0]), 0, MAX_PRESETS - 1);
       drawNrInRect(18, 1, plpreset[8], ILI9341_PURPLE);
-      //Plugin9_Page_Static();
+      Plugin9_Page_Static();
     }
   }
   if (!button[14]) {
@@ -55,19 +27,19 @@ void Plugin9_Page1_Dynamic() {
       case 0:
         //wah-wah
         //Waveform
-        OSC_Waveform(8, 3, 0, 0);
+        OSC_Waveform(pl9NR, 3, 0, 0, 0, 12, "W~F");  //MIN: unused MAX: Waveforms |range: 0-13
         //Rate
-        OSC_ModRate(8, 3, 1, 0, 15.00);
+        OSC_frequency(pl9NR, 3, 1, 0, 0, 15.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
         //Amount
-        OSC_LVL(8, 3, 2, 0, 127.00);
+        OSC_amplitude(pl9NR, 3, 2, 0, 0, 127.00, "Amnt");  //MIN: unused MAX: amplitude
         break;
 
       case 1:
-        StateVar_Frequency(8, 7, 0, 1);
-        StateVar_Resonance(8, 7, 0, 2);
+        SVF_frequency(pl9NR, pl9SVF, 0, 1, 0, 127, "Freq");               //MIN: unused MAX: unused
+        SVF_resonance(pl9NR, pl9SVF, 1, 1, 0, MAX_RESONANCE, "Reso");     //MIN: unused MAX: unused
+        SVF_octaveControl(pl9NR, pl9SVF, 2, 1, 0, MAX_RESONANCE, "Swp");  //MIN: unused MAX: unused
+        SVF_Type(pl9NR, pl9TYPE, 3, 1, 0, 2, "");           //MIN: unused MAX: unused
         break;
-      default:  //next taster push brings us back to page 0
-        lastPotRow = 0;
     }
   }
 
@@ -89,28 +61,23 @@ void Plugin9_Page_Static() {
   clearWorkSpace();
   Plugin9_Change();
   drawNrInRect(18, 1, plpreset[pl9NR], ILI9341_PURPLE);
-  //place here the (copied!) shown controls for your plugin
-  //if needed draw selecting pages buttons
-  //draw_sub_page_buttons(n); //max 4
-  drawNrInRect(18, 1, plpreset[8], ILI9341_PURPLE);
-  //wah-wah
   //Waveform
-  draw_OSC_Waveform(8, 3, 0, 0);
-  //Rate
-  draw_OSC_ModRate(8, 3, 1, 0, 15.00);
-  //Amount
-  draw_OSC_LVL(8, 3, 2, 0);
-  //Filter
-  draw_StateVar_Freq_Res(8, 7, 0, 1);
+  draw_OSC_Waveform(pl9NR, 3, 0, 0, 0, 12, "W~F");      //MIN: unused MAX: Waveforms |range: 0-13
+  draw_OSC_frequency(pl9NR, 3, 1, 0, 0, 15.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
+  draw_OSC_amplitude(pl9NR, 3, 2, 0, 0, 1.00, "Amnt");  //MIN: unused MAX: amplitude
+
+  draw_SVF_frequency(pl9NR, 7, 0, 2, 0, 127, "Freq");  //MIN: unused MAX: unused
+  draw_SVF_resonance(pl9NR, 7, 1, 2, 0, 5.00, "Reso");  //MIN: unused MAX: unused
+  draw_SVF_Type(pl9NR, pl9TYPE, 3, 1, 0, 2, "");
 }
 void Plugin9_Change() {
 
-  pl9bpinput.begin(plugin[8].preset[plpreset[8]].Pot_Value[0] / 10);
-  pl9bpinput.frequency((float)(plugin[8].preset[plpreset[8]].Pot_Value[1]) / 16.00);
-  pl9bpfilter.octaveControl((float)(plugin[8].preset[plpreset[8]].Pot_Value[2] / 127.00));
+  //Waveform
+  change_OSC_Waveform(pl9NR, 3, 0, 0, 0, 12, "W~F");      //MIN: unused MAX: Waveforms |range: 0-13
+  change_OSC_frequency(pl9NR, 3, 1, 0, 0, 15.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
+  change_OSC_amplitude(pl9NR, 3, 2, 0, 0, 1.00, "Amnt");  //MIN: unused MAX: amplitude
 
-  pl9bpfilter.frequency(plugin[8].preset[plpreset[8]].Pot_Value[4] * 16);
-  pl9bpfilter.resonance((float)(plugin[8].preset[plpreset[8]].Pot_Value[5] / 25.40));
-
-
+  change_SVF_frequency(pl9NR, 7, 0, 1, 0, 127, "Freq");  //MIN: unused MAX: unused
+  change_SVF_resonance(pl9NR, 7, 0, 1, 0, 5.00, "Reso");  //MIN: unused MAX: unused
+  change_SVF_Type(pl9NR, pl9TYPE, 3, 1, 0, 2, "");           //MIN: unused MAX: unused
 }

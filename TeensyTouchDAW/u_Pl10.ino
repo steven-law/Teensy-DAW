@@ -10,7 +10,7 @@ void Plugin_10_Settings() {
   pl10mixer1.gain(0, 1);
   pl10mixer1.gain(1, 1);
   pl10mixer1.gain(2, 1);
-
+  pl10filter1.octaveControl(6);
   pl10mixer3.gain(0, 1);
   pl10mixer3.gain(1, 1);
   pl10mixer4.gain(0, 1);
@@ -31,20 +31,23 @@ void Plugin10_Page_Static() {
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
-  draw_DC_LVL(pl10NR, pl10DC, 0, 0);
-  draw_DC_LVL(pl10NR, pl10DC, 1, 0);
-  //draw_OSC_Detune(pl10NR, pl10OSC_1, 2, 0);
-  draw_OSC_ModRate(pl10NR, pl10OSC_1, 3, 0, 20.00);
+  draw_DC_amplitude(pl10NR, pl10DC2, 0, 0, 0.00, 1.00, "PW1");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_DC_amplitude(pl10NR, pl10DC3, 1, 0, 0.00, 1.00, "PW2");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_OSC_Detune(pl10NR, pl10OSC_M, 2, 0, 0, 1.00, "dTune");    //MIN: unused MAX: unused
+  draw_OSC_frequency(pl10NR, pl10OSC_M, 3, 0, 0, 20.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
 
-  draw_PWM_LVL(pl10NR, pl10OSC_0, 0, 1);
-  draw_PWM_LVL(pl10NR, pl10OSC_1, 1, 1);
-  draw_WHITE_LVL(pl10NR, pl10WHITE, 2, 1);
-  draw_OSC_LVL(pl10NR, pl10OSC_0, 3, 1);
+  draw_PWM_amplitude(pl10NR, pl10PWM1, 0, 1, 0, 1.00, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_PWM_amplitude(pl10NR, pl10PWM2, 1, 1, 0, 1.00, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_WHITE_amplitude(pl10NR, pl10WHITE, 2, 1, 0, 1.00, "White");  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_OSC_amplitude(pl10NR, pl10OSC_M, 3, 1, 0, GAIN_MULT_1, "Amnt");     //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
 
-  draw_StateVar_Filter(pl10NR, pl10SVF, 0, 2);
+  draw_SVF_frequency(pl10NR, pl10SVF, 0, 2, 0, 127, "Freq");  //MIN: unused MAX: unused
+  draw_SVF_resonance(pl10NR, pl10SVF, 1, 2, 0, MAX_RESONANCE, "Reso");         //MIN: unused MAX: unused
+  draw_DC_amplitude(pl10NR, pl10DC1, 2, 2, 0, 1.00, "Swp");           //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  draw_SVF_Type(pl10NR, pl10TYPE, 3, 2, 0, 2, "");                     //MIN: unused MAX: unused
 
-  draw_ADSR(pl10NR, pl10ADSR1, 0, 3);
-  draw_ADSR(pl10NR, pl10ADSR2, 0, 3);
+  draw_ENV_ADSR(pl10NR, pl10ADSR1, 0, 3, 127, RELEASE_TIME, "");
+  draw_ENV_ADSR(pl10NR, pl10ADSR2, 0, 3, 127, RELEASE_TIME, "");
 }
 void Plugin10_Page1_Dynamic() {
 
@@ -60,23 +63,26 @@ void Plugin10_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        DC_LVL(pl10NR, pl10DC, 0, 0, 127.00);
-        DC_LVL(pl10NR, pl10DC1, 1, 0, 127.00);
-        OSC_Detune(pl10NR, pl10OSC_1, 2, 0);
-        OSC_ModRate(pl10NR, pl10OSC_M, 3, 0, 20.00);
+        DC_amplitude(pl10NR, pl10DC2, 0, 0, 0.00, 1.00, "PW1");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        DC_amplitude(pl10NR, pl10DC3, 1, 0, 0.00, 1.00, "PW2");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        OSC_Detune(pl10NR, pl10OSC_M, 2, 0, 0, 1.00, "dTune");    //MIN: unused MAX: unused
+        OSC_frequency(pl10NR, pl10OSC_M, 3, 0, 0, 20.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
         break;
       case 1:
-        PWM_LVL(pl10NR, pl10OSC_0, 0, 1, 127.00);
-        PWM_LVL(pl10NR, pl10OSC_1, 1, 1, 127.00);
-        WHITE_LVL(pl10NR, pl10WHITE, 2, 1);
-        OSC_LVL(pl10NR, pl10OSC_M, 3, 1, 127.00);
+        PWM_amplitude(pl10NR, pl10PWM1, 0, 1, 0, GAIN_MULT_1, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        PWM_amplitude(pl10NR, pl10PWM2, 1, 1, 0, GAIN_MULT_1, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        WHITE_amplitude(pl10NR, pl10WHITE, 2, 1, 0, GAIN_MULT_1, "White");  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        OSC_amplitude(pl10NR, pl10OSC_M, 3, 1, 0, GAIN_MULT_1, "Amnt");     //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
         break;
       case 2:
-        StateVar_Filter(pl10NR, pl10SVF, 0, 2);
+        SVF_frequency(pl10NR, pl10SVF, 0, 2, 0, 127, "Freq");  //MIN: unused MAX: unused
+        SVF_resonance(pl10NR, pl10SVF, 1, 2, 0, 5.00, "Reso");         //MIN: unused MAX: unused
+        DC_amplitude(pl10NR, pl10DC1, 2, 2, 0, 1.00, "Swp");           //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+        SVF_Type(pl10NR, pl10TYPE, 3, 2, 0, 2, "");                     //MIN: unused MAX: unused
         break;
       case 3:
-        ADSR(pl10NR, pl10ADSR1, 0, 3);
-        ADSR(pl10NR, pl10ADSR2, 0, 3);
+        ENV_ADSR(pl10NR, pl10ADSR1, 0, 3, 127, RELEASE_TIME, "");
+        ENV_ADSR(pl10NR, pl10ADSR2, 0, 3, 127, RELEASE_TIME, "");
         break;
     }
   }
@@ -94,6 +100,27 @@ void Plugin10_Page1_Dynamic() {
     }
   }
 }
+void Plugin10_Change() {
+  change_DC_amplitude(pl10NR, pl10DC2, 0, 0, 0.00, 1.00, "PW1");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_DC_amplitude(pl10NR, pl10DC3, 1, 0, 0.00, 1.00, "PW2");   //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_OSC_Detune(pl10NR, pl10OSC_M, 2, 0, 0, 1.00, "dTune");    //MIN: unused MAX: unused
+  change_OSC_frequency(pl10NR, pl10OSC_M, 3, 0, 0, 20.00, "LFO");  //MIN: frequency MAX: frequency |range: 0-22000
+
+  change_PWM_amplitude(pl10NR, pl10PWM1, 0, 1, 0, 1.00, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_PWM_amplitude(pl10NR, pl10PWM2, 1, 1, 0, 1.00, "LVL");      //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_WHITE_amplitude(pl10NR, pl10WHITE, 2, 1, 0, 1.00, "White");  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_OSC_amplitude(pl10NR, pl10OSC_M, 3, 1, 0, GAIN_MULT_1, "Amnt");     //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+
+  change_SVF_frequency(pl10NR, pl10SVF, 0, 2, 0, 127, "Freq");  //MIN: unused MAX: unused
+  change_SVF_resonance(pl10NR, pl10SVF, 1, 2, 0, 5.00, "Reso");         //MIN: unused MAX: unused
+  change_DC_amplitude(pl10NR, pl10DC1, 2, 2, 0, 1.00, "Swp");           //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  change_SVF_Type(pl10NR, pl1TYPE, 3, 2, 0, 2, "");                     //MIN: unused MAX: unused
+
+  change_ENV_ADSR(pl10NR, pl10ADSR1, 0, 3, 127, RELEASE_TIME, "");
+  change_ENV_ADSR(pl10NR, pl10ADSR2, 0, 3, 127, RELEASE_TIME, "");
+}
+
+
 
 void Plugin_11_Settings() {
   //place here the Audio settings for your plugin

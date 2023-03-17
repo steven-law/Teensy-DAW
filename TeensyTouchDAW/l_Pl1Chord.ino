@@ -34,7 +34,7 @@ void Plugin_1_Settings() {
   mixer1.gain(2, 1);
   mixer1.gain(3, 1);
 
-
+  filter1.octaveControl(6);
 
   pl1mixer2.gain(0, 1);
   pl1mixer2.gain(1, 0);
@@ -93,21 +93,24 @@ void Plugin1_Page1_Dynamic() {
         break;
       case 1:
         //1 Row 2 Waveform
-        OSC_MOD_Waveform(pl1NR, 0, 0, 1);  //pluginNr, pointerarrayPos, column, row
-        OSC_MOD_Waveform(pl1NR, 1, 1, 1);  //pluginNr, pointerarrayPos, column, row
-        OSC_MOD_Waveform(pl1NR, 2, 2, 1);  //pluginNr, pointerarrayPos, column, row
-        OSC_MOD_Waveform(pl1NR, 3, 3, 1);  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 0, 0, 1, 0, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 1, 1, 1, 0, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 2, 2, 1, 0, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_Waveform(pl1NR, 3, 3, 1, 0, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
         break;
       case 2:
         //1 Row 2 note Velocity
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          OSC_MOD_LVL(pl1NR, MixerColumn, MixerColumn, lastPotRow);  //pluginNr, pointerarrayPos, column, row
-        }
+
+        OSC_MOD_amplitude(pl1NR, 0, 0, 2, 0, GAIN_MULT_1, "Vol");  //pluginNr, pointerarrayPos, column, row
+        OSC_MOD_amplitude(pl1NR, 1, 1, 2, 0, GAIN_MULT_1, "Vol");
+        OSC_MOD_amplitude(pl1NR, 2, 2, 2, 0, GAIN_MULT_1, "Vol");
+        OSC_MOD_amplitude(pl1NR, 3, 3, 2, 0, GAIN_MULT_1, "Vol");
+
         break;
       case 3:
-        OSC_ModRate(pl1NR, pl1OSC, 0, lastPotRow, 15);   //pluginNr, pointerarrayPos, column, row, max freq
-        OSC_LVL(pl1NR, pl1OSC, 1, lastPotRow, 4048.00);  //pluginNr, pointerarrayPos, column, row
-        OSC_Waveform(pl1NR, pl1OSC, 2, lastPotRow);      //pluginNr, pointerarrayPos, column, row
+        OSC_frequency(pl1NR, pl1OSC, 0, 3, 0, 15.00, "LFO");         //pluginNr, pointerarrayPos, column, row, max freq
+        OSC_amplitude(pl1NR, pl1OSC, 1, 3, 0, GAIN_DIV_32, "Amnt");  //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl1NR, pl1OSC, 2, 3, 0, 8, "W~F");              //pluginNr, pointerarrayPos, column, row
         break;
     }
   }
@@ -154,18 +157,20 @@ void Plugin1_Page2_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        StateVar_Filter(pl1NR, pl1SVF, 0, lastPotRow);
+        SVF_frequency(pl1NR, pl1SVF, 0, 0, 0, 127, "Freq");            //MIN: unused MAX: unused
+        SVF_resonance(pl1NR, pl1SVF, 1, 0, 0, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+        DC_amplitude(pl1NR, pl1DC1, 2, 0, 0, 1.00, "Swp");             //MIN: unused MAX: amplitude
+        SVF_Type(pl1NR, pl1SVF, 3, 0, 0, 2, "");                       //MIN: unused MAX: unused
         break;
       case 1:
-        ADSR(pl1NR, pl1ADSR1, 0, 1);
-        ADSR(pl1NR, pl1ADSR2, 0, 1);
+        ENV_ADSR(pl1NR, pl1ADSR1, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
+        ENV_ADSR(pl1NR, pl1ADSR2, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
         break;
     }
   }
 
-  TS_Point p = ts.getPoint();
-  if (ts.touched() || button[15]) {
 
+  if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
       //Save button
@@ -177,9 +182,6 @@ void Plugin1_Page2_Dynamic() {
         loadPlugin("plugin1", 17);
       }
     }
-
-
-
 
     //page selection
     if (gridTouchX >= 18) {
@@ -216,14 +218,21 @@ void Plugin1_Page_Static(int Pagenumber) {
   if (Pagenumber == 0) {
     for (int voice = 0; voice < 4; voice++) {
       drawPot(voice, 0, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], "Offset", trackColor[desired_instrument]);
-      drawPot(voice, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 4] / 10, "W~F", trackColor[desired_instrument]);
-      drawPot(voice, 2, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 8], "LVL", trackColor[desired_instrument]);
+      drawPot(voice, 1, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 4], "W~F", trackColor[desired_instrument]);
+      drawPot(voice, 2, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice], plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[voice + 8], "Vol", trackColor[desired_instrument]);
     }
-    draw_OSC_modulation(pl1NR, pl1OSC, 0, 3);  //pluginNr, pointerarrayPos, column, row
+    draw_OSC_frequency(pl1NR, pl1OSC, 0, 3, 0, 15.00, "LFO");     //pluginNr, pointerarrayPos, column, row, max freq
+    draw_OSC_amplitude(pl1NR, pl1OSC, 1, 3, 0, 4048.00, "Amnt");  //pluginNr, pointerarrayPos, column, row
+    draw_OSC_Waveform(pl1NR, pl1OSC, 2, 3, 0, 8, "W~F");          //pluginNr, pointerarrayPos, column, row
   }
   if (Pagenumber == 1) {
-    draw_StateVar_Filter(pl1NR, pl1SVF, 0, 0);
-    draw_ADSR(pl1NR, pl1ADSR1, 0, 1);
+    draw_SVF_frequency(pl1NR, pl1SVF, 0, 0, 0, 127, "Freq");            //MIN: unused MAX: unused
+    draw_SVF_resonance(pl1NR, pl1SVF, 1, 0, 0, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+    draw_DC_amplitude(pl1NR, pl1DC1, 2, 0, 0, 1.00, "Swp");             //MIN: unused MAX: amplitude
+    draw_SVF_Type(pl1NR, pl1SVF, 3, 0, 0, 2, "");                       //MIN: unused MAX: unused
+
+    draw_ENV_ADSR(pl1NR, pl1ADSR1, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
+    draw_ENV_ADSR(pl1NR, pl1ADSR2, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
   }
 }
 void Plugin1_Change() {
@@ -233,16 +242,11 @@ void Plugin1_Change() {
     mixer1.gain(0, (float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn + 8] / 127.00));
   }
 
-  filter1.frequency(note_frequency[plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]] * tuning);
-  filter1.resonance((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1] / SVF_RES));
-  filter1.octaveControl((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2] / SVF_SWP));
-  selectFilterType(17, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3]);
-  envelope1.attack(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
-  envelope2.attack(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4], 0, 127, 0, ATTACK_TIME));
-  envelope1.decay(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5], 0, 127, 0, DECAY_TIME));
-  envelope2.decay(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5], 0, 127, 0, DECAY_TIME));
-  envelope1.sustain((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6] / SUSTAIN_LVL));
-  envelope2.sustain((float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6] / SUSTAIN_LVL));
-  envelope1.release(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7], 0, 127, 0, RELEASE_TIME));
-  envelope2.release(map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7], 0, 127, 0, RELEASE_TIME));
+  change_SVF_frequency(pl1NR, pl1SVF, 0, 0, 0, 127, "Freq");            //MIN: unused MAX: unused
+  change_SVF_resonance(pl1NR, pl1SVF, 1, 0, 0, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
+  change_DC_amplitude(pl1NR, pl1DC1, 2, 0, 0, 1.00, "Swp");             //MIN: unused MAX: amplitude
+  change_SVF_Type(pl1NR, pl1SVF, 3, 0, 0, 2, "");                       //MIN: unused MAX: unused
+
+  change_ENV_ADSR(pl1NR, pl1ADSR1, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
+  change_ENV_ADSR(pl1NR, pl1ADSR2, 0, 1, ATTACK_TIME, RELEASE_TIME, "");
 }

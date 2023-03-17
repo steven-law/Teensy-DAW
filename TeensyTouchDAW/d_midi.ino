@@ -73,7 +73,7 @@ void sendClock() {
       for (int i = 0; i < NUM_TRACKS; i++) {
         track[i].MIDItick++;
 
-        if (MIDItick % track[i].MIDItick_reset == 0) {
+        if (track[i].MIDItick % track[i].MIDItick_reset == 0) {
           track[i].tick_true = true;
           track[i].MIDItick_16++;
           track[i].MIDItick = 0;
