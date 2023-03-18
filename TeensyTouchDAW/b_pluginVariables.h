@@ -1,73 +1,14 @@
-#define PLUGIN1_PAGE1 40
-#define PLUGIN2_PAGE1 41
-#define PLUGIN3_PAGE1 42
-#define PLUGIN4_PAGE1 43
-#define PLUGIN5_PAGE1 44
-#define PLUGIN6_PAGE1 45
-#define PLUGIN7_PAGE1 46
-#define PLUGIN8_PAGE1 47
-#define PLUGIN9_PAGE1 48
-#define PLUGIN10_PAGE1 49
-#define PLUGIN11_PAGE1 50
-#define PLUGIN12_PAGE1 51
-#define PLUGIN13_PAGE1 52
-#define PLUGIN14_PAGE1 53
-#define PLUGIN15_PAGE1 54
-#define PLUGIN16_PAGE1 55
-
-
-
-#define PLUGIN1_PAGE2 60
-#define PLUGIN1_PAGE3 61
-#define PLUGIN1_PAGE4 62
-#define PLUGIN7_PAGE2 63
-#define PLUGIN7_PAGE3 64
-
-#define MAX_ENC_RANGE 127
-#define ATTACK_TIME 127
-#define DECAY_TIME 700
-#define SUSTAIN_LVL 127.00
-#define RELEASE_TIME 1600
-#define SVF_RES 25.40
-#define SVF_SWP 18.14
-#define SVF_TYP 42
-#define MAX_RESONANCE 5
-
-#define ZERO 0.00
-
-#define GAIN_DIV_32 4095
-#define GAIN_DIV_16 2047
-#define GAIN_DIV_8 1023
-#define GAIN_DIV_4 511
-#define GAIN_DIV_2 255
-#define GAIN_MULT_1 127.00
-#define GAIN_MULT_2 64.00
-#define GAIN_MULT_4 32.00
-#define GAIN_MULT_8 16.00
+//please use this Audio GUI from Newdigate
+//https://newdigate.github.io/teensy-eurorack-audio-gui/
 
 bool unlock_changeNode = false;
 bool unlock_drawNode = false;
 int oldWave; //wfselect
-#define pl1NR 0
-#define pl3NR 2
-#define pl5NR 4
-#define pl6NR 5
-#define pl7NR 6
-#define pl8NR 7
-#define pl9NR 8
-#define pl10NR 9
-
 
 #define pl5RAW 0
 #define pl6RAW 1
 int pl2Pot[num_voice];
 int pl4Pot[num_voice];
-
-
-const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "11", "12", "13", "14", "15", "16" };
-
-
-
 
 struct plugin_preset_data_t {
   byte Pot_Value[16]{ 0 };
@@ -79,13 +20,12 @@ struct plugin_t {
 };
 plugin_t* plugin;
 
-
 byte plpreset[MAX_PLUGINS]{ 0 };
 
 float detune_mapped;
 
 
-
+//SeqMode variables
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define MAX_SEQMODES 6
 #define NFX1_PAGE1 129

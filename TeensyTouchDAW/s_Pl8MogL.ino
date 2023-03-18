@@ -15,15 +15,8 @@ void Plugin_8_Settings() {
   pl8amp2.gain(1);
 }
 void Plugin8_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      plpreset[pl8NR] = constrain((plpreset[pl8NR] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[pl8NR], ILI9341_PURPLE);
-      Plugin8_Page_Static();
-    }
-  }
+  change_preset(pl8NR);
+
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:

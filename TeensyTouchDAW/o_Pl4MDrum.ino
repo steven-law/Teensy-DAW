@@ -13,16 +13,8 @@ void Plugin_4_Settings() {
   pl4amp2.gain(1);
 }
 void Plugin4_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-      plpreset[3] = constrain((plpreset[3] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[3], ILI9341_PURPLE);
-      Plugin4_Page_Static();
-    }
-  }
+  change_preset(3);
+  
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:

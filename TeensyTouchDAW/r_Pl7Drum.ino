@@ -178,15 +178,7 @@ void Plugin7_Control2() {
 
 */
 void Plugin7_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      plpreset[6] = constrain((plpreset[6] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[6], ILI9341_PURPLE);
-      Plugin7_Page_Static(0);
-    }
-  }
+  change_preset(pl7NR);
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:

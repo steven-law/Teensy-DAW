@@ -55,33 +55,9 @@ void Plugin_1_Settings() {
   pl1amp.gain(1);
   pl1amp2.gain(1);
 }
-void Plugin1_Control() {
-
-
-  switch (lastPotRow) {
-    case 0:
-      //1 Row 1 note Offset
-      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        if (plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn] != Potentiometer[MixerColumn]) {
-          plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn] = Potentiometer[MixerColumn];
-          drawPot(MixerColumn, lastPotRow, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn], map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn], 0, 127, -18, 18), "Offset", trackColor[desired_instrument]);
-        }
-      }
-      break;
-  }
-}
 
 void Plugin1_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-      plpreset[pl1NR] = constrain((plpreset[pl1NR] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[pl1NR], ILI9341_PURPLE);
-      Plugin1_Page_Static(0);
-    }
-  }
+  change_preset(pl1NR);
 
   if (!button[14]) {
     switch (lastPotRow) {
@@ -89,7 +65,12 @@ void Plugin1_Page1_Dynamic() {
         //1 Row 1 note Offset
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           Encoder2_to_4x127(0, MixerColumn, lastPotRow);
+          if (plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn] != Potentiometer[MixerColumn]) {
+            plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn] = Potentiometer[MixerColumn];
+            drawPot(MixerColumn, lastPotRow, plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn], map(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn], 0, 127, -18, 18), "Offset", trackColor[desired_instrument]);
+          }
         }
+
         break;
       case 1:
         //1 Row 2 Waveform
@@ -108,9 +89,9 @@ void Plugin1_Page1_Dynamic() {
 
         break;
       case 3:
-        OSC_frequency(pl1NR, pl1OSC, 0, 3, 0, 15.00, "LFO");         //pluginNr, pointerarrayPos, column, row, max freq
-        OSC_amplitude(pl1NR, pl1OSC, 1, 3, 0, GAIN_DIV_32, "Amnt");  //pluginNr, pointerarrayPos, column, row
-        OSC_Waveform(pl1NR, pl1OSC, 2, 3, 0, 8, "W~F");              //pluginNr, pointerarrayPos, column, row
+        OSC_frequency(pl1NR, pl1OSC, 0, 3, 0, 15.00, "LFO");          //pluginNr, pointerarrayPos, column, row, max freq
+        OSC_amplitude(pl1NR, pl1OSC, 1, 3, 0, GAIN_DIV_32, "Amnt");   //pluginNr, pointerarrayPos, column, row
+        OSC_Waveform(pl1NR, pl1OSC, 2, 3, 0, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
         break;
     }
   }

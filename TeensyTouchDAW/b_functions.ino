@@ -113,7 +113,7 @@ void Plugin_View_Dynamic() {
   //setting up the Plugin1 Page1-view
   if (selectPage == PLUGIN1_PAGE1) {
     Plugin1_Page1_Dynamic();
-    Plugin1_Control();
+
   }
   //setting up the Plugin1 Page2-view
   if (selectPage == PLUGIN1_PAGE2) {
@@ -209,7 +209,7 @@ void Plugin_View_Dynamic() {
   //setting up the NoteFX4-view
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page1_Dynamic();
-    NoteFX4_Control();
+   // NoteFX4_Control();
   }
   //setting up the NoteFX5-view
   if (selectPage == NFX5_PAGE1) {
@@ -1019,7 +1019,18 @@ void loadNoteFX(const char* trackname, int trackNr) {
     tft.println(_trackname);
   }
 }
-
+void change_preset(int plNR) {
+  //change preset
+  if (button[14]) {                                                                   //press shift
+    if (enc_moved[0]) {                                                               // and move the first encoder
+      lastPotRow = 10;                                                                //set lastPotRow to "undefined", probably not neccessary anymore since the potvalue only gets changed when we are close to the last pos
+      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);                                  //clear the lastpotrow indicator, also probably not neccessary anymore
+      plpreset[plNR] = constrain((plpreset[plNR] + encoded[0]), 0, MAX_PRESETS - 1);  // with every movement of the encoder we change the preset by -+1
+      drawNrInRect(18, 1, plpreset[plNR], ILI9341_PURPLE);                            //show the new presetnr
+      Plugin_View_Static();                                                           //show the actual potpositions
+    }
+  }
+}
 void DrumPluginPlay() {
 
   //play drumplugin when midichannel = 18

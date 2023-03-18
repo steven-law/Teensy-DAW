@@ -128,15 +128,8 @@ void Plugin_3_Settings() {
 
 
 void Plugin3_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      plpreset[pl3NR] = constrain((plpreset[pl3NR] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[pl3NR], ILI9341_PURPLE);
-      Plugin_View_Static();
-    }
-  }
+  change_preset(pl3NR);
+
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:

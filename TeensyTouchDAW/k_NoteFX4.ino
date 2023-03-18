@@ -1,7 +1,5 @@
 void NoteFX4_Settings() {
 }
-void NoteFX4_Control() {
-}
 void NoteFX4_Page1_Dynamic() {
   //change preset
   if (button[14]) {

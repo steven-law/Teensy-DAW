@@ -16,15 +16,7 @@ void Plugin_5_Settings() {
   pl5amp2.gain(1);
 }
 void Plugin5_Page1_Dynamic() {
-  //change preset
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      plpreset[pl5NR] = constrain((plpreset[pl5NR] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[pl5NR], ILI9341_PURPLE);
-      Plugin5_Page_Static();
-    }
-  }
+  change_preset(pl5NR);
 
   if (!button[14]) {
     switch (lastPotRow) {

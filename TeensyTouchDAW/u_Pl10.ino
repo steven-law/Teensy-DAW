@@ -28,6 +28,7 @@ void Plugin_10_Settings() {
 void Plugin10_Page_Static() {
   clearWorkSpace();
   drawNrInRect(18, 1, plpreset[pl10NR], ILI9341_PURPLE);
+  Plugin10_Change();
   //place here the (copied!) shown controls for your plugin
   //if needed draw selecting pages buttons
   //draw_sub_page_buttons(n); //max 4
@@ -50,16 +51,8 @@ void Plugin10_Page_Static() {
   draw_ENV_ADSR(pl10NR, pl10ADSR2, 0, 3, 127, RELEASE_TIME, "");
 }
 void Plugin10_Page1_Dynamic() {
+  change_preset(pl10NR);
 
-  if (button[14]) {
-    if (enc_moved[0]) {
-      lastPotRow = 10;
-      tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
-      plpreset[1] = constrain((plpreset[1] + encoded[0]), 0, MAX_PRESETS - 1);
-      drawNrInRect(18, 1, plpreset[1], ILI9341_PURPLE);
-      Plugin10_Page_Static();
-    }
-  }
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
