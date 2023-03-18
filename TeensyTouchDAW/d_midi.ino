@@ -639,6 +639,12 @@ void stopSeq() {
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
 }
 
+
+
+
+
+
+
 void myClock() {
   MIDItick++;
   usbMIDI.sendRealTime(usbMIDI.Clock);
