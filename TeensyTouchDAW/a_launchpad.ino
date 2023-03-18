@@ -72,9 +72,8 @@ void LP_drawStepsequencer() {
 
 void LP_drumstep() {
 
-  unsigned long currentMillis2 = millis();  
-  if (currentMillis2 - previousMillis2 >= interval) {
-    previousMillis2 = currentMillis2;
+
+   if (millis() % interval == 0) {
     //Serial.println("LP_drumstep");
     for (int notes = 0; notes < 12; notes++) {
       for (int steps = 0; steps < 16; steps++) {
@@ -83,7 +82,7 @@ void LP_drumstep() {
         int dot_on_Y = (notes)*STEP_FRAME_H + DOT_OFFSET_Y;
 
 
-        if (!LP_octave_bool[notes]) {  //if (function_to_find_out_if_button_is_held()) {
+        if (!LP_octave_bool[notes]) {  //if (function_to_find_out_if_button_is held()) {
           if (!LP_drawOnce[notes]) {
             // control is held now, but it wasnt before -- clear screen
             LP_drawStepsequencer();
@@ -122,7 +121,7 @@ void LP_drumstep() {
 }
 
 void LP_melodicstep() {
-  if (msecs % 200 == 0) {
+ if (millis() % interval == 0) {
     if (LP_grid_bool[24]) {
       track[desired_instrument].shown_octaves--;
       clearStepsGrid();
@@ -137,10 +136,8 @@ void LP_melodicstep() {
     }
   }
 
-  unsigned long currentMillis2 = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
-  if (currentMillis2 - previousMillis2 >= interval) {
-    previousMillis2 = currentMillis2;
 
+  if (millis() % interval == 0) {
     for (int notes = 0; notes < 12; notes++) {
       for (int steps = 0; steps < 16; steps++) {
 
@@ -151,7 +148,7 @@ void LP_melodicstep() {
         int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
         int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
 
-        if (!LP_octave_bool_keys[notes]) {  
+        if (!LP_octave_bool_keys[notes]) {
           if (!LP_drawOnce[notes]) {
             LP_drawStepsequencer();
           }

@@ -58,7 +58,7 @@ int tick_16 = -1;
 bool seq_run = false;
 bool seq_rec = false;
 byte tempo = 120;
-
+#define tuning 440
 
 
 //****************************************************************************
@@ -114,9 +114,9 @@ byte selectPage;
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
-#define MAX_WAV_FILES 11
+#define MAX_WAV_FILES 12
 
-const char* wavKit[12] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
+const char* wavKit[MAX_WAV_FILES] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
 const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
                                          "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
                                          "21.RAW", "22.RAW", "23.RAW", "24.RAW", "25.RAW", "26.RAW", "27.RAW", "28.RAW", "29.RAW", "30.RAW",
@@ -137,14 +137,9 @@ const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7",
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 const char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
-const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
+char _trackname[20];
+//const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
-
-const int steps = 16;      // number of steps in the sequence
-const int numTracks = 4;   // number of tracks in the sequence
-const int startNote = 36;  // MIDI note number of the first note
-const int channel = 9;     // MIDI channel (zero-indexed)
-
 
 
 
@@ -216,23 +211,21 @@ byte phraser;
 byte end_of_loop = MAX_PHRASES - 1;
 byte start_of_loop = 0;
 byte end_of_loop_old = MAX_PHRASES - 1;
-byte start_of_loop_old = 0;
 byte arrangmentSelect = 0;
 byte songpages;
-byte stepOld;
-int deltaStep = 0;
 
-byte step_Frame_X;
-byte step_Frame_Y;
+
+
+
 
 //touchscreen variables
 byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
 byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
 byte trackTouchY;
-bool is_held = true;
-unsigned long previousMillis = 0;
-unsigned long previousMillis2 = 0;
-unsigned long previousMillis3 = 0;
+unsigned long previousMillis;
+
+
+
 //DMAMEM uint16_t fb1[320 * 240];
 
 
@@ -256,18 +249,10 @@ bool enc_button[4];
 
 bool drumnotes[12];
 bool button[16]{};
-int channelPlayed;
 
 bool showSerialonce = false;
-bool something_was_pressed = false;
 bool otherCtrlButtons = true;
-byte last_button_X = 0;
-byte last_button_Y = 0;
 uint16_t tftRAM[16][16];
-int Button_Pos_X_last = (last_button_X)*STEP_FRAME_W;
-int Button_Pos_Y_last = (last_button_Y)*STEP_FRAME_H;
-int Button_Pos_X_new = (last_button_X - 1) * STEP_FRAME_W;
-int Button_Pos_Y_new = (last_button_Y)*STEP_FRAME_H;
 
 //Launchpad
 #define LP_GREEN 60
@@ -312,6 +297,12 @@ int dvalue_oldcc;
 int dname_oldcc;
 
 
+
+
+
+
+
+
 struct sequence_t {
   int step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
 };
@@ -324,11 +315,11 @@ track_t ctrack[NUM_TRACKS];
 
 //Scales
 bool scaleSelect = LOW;
-const int scalesQuant = 9;  //how many scales do we have
-int scaleSelected = 0;      //variable for scale selecting
+const int MAX_SCALES = 13;  //how many scales do we have
+int scaleSelected = 0;     //variable for scale selecting
 
 
-const int scales[scalesQuant][12]{
+const int scales[MAX_SCALES][12]{
   //bool array for greying out notes that are not in the scale
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },  //Chromatic
   { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1 },  //Major
@@ -338,11 +329,15 @@ const int scales[scalesQuant][12]{
   { 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0 },  //Dorian
   { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0 },  //Mixolydian
   { 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0 },  //Phrygian
-  { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 }   //Lydian
+  { 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1 },  //Lydian
+  { 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0 },  //Pentatonic Major
+  { 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0 },  //Pentatonic Minor
+  { 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0 },  //Blues Major
+  { 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0 }   //Blues Minor
 };
 
-const char* scaleNames[scalesQuant] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian" };  // Scale Names for selecting
-const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd" };                                        // Scale Names for selecting
+const char* scaleNames[MAX_SCALES] = { "Chromatic", "Major", "Natural Minor", "Harmonic Minor", "Melodic Minor", "Dorian", "Mixolydian", "Phrygian", "Lydian", "Pentatonic Major", "Pentatonic Minor", "Blues Major", "Blues Minor" };  // Scale Names for selecting
+const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", "MelMi", "Dor", "Mixol", "Phryg", "Lyd", "PeMaj", "PeMin", "BlMaj", "BlMin" };                                                                          // Scale Names for selecting
 
 
 
@@ -353,7 +348,6 @@ const char* scaleNamesShort[scalesQuant] = { "Chrom", "Major", "NatMi", "HarMi",
 byte desired_track;
 byte desired_instrument;
 //track 2-8 variables
-
 struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
@@ -376,25 +370,32 @@ struct tracks {
   byte midicc_number_row_3[4];
   byte midicc_value_row_4[4];
   byte midicc_number_row_4[4];
+
   byte clip[MAX_CLIPS][NUM_STEPS];
+
   byte arrangment1[256];
-  byte lastclip = 0;
   int NoteOffset[256];
-  int lastNoteOffset = 0;
   int NoteOffset_graph[256];
-  int presetNr[256];
-  int lastpresetNr = 0;
+  int Ttrckprst[256];
   int volume[256];
+  //copy clipinfo to next clip (in songmode when rec is active)
+  byte lastclip = 0;
+  int lastNoteOffset = 0;
+  int lastpresetNr = 0;
   int lastvolume = 100;
+
   int notePlayed = 0;
-  int notePlayedLast = 0;
   bool notePressed;
   bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
+
   int MIDItick = 0;
   int MIDItick_16 = 0;
   int MIDItick_reset = 6;
+  bool tick_true = false;
+  int stepLength = 5;
+
   byte Volume_graph = 50;
   float Volume = 1;
 
@@ -413,7 +414,7 @@ struct tracks {
   int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
-tracks track[NUM_TRACKS];
+tracks* track;
 
 
 

@@ -45,7 +45,7 @@ void FX1reverb_static() {
 
 
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
+  drawPot(0, 0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
 }
 
 void FX1reverb_dynamic() {
@@ -55,11 +55,11 @@ void FX1reverb_dynamic() {
     fx1reverbtime_graph = constrain((fx1reverbtime_graph + encoded[0]), 0, 127);
     fx1reverbtime = fx1reverbtime_graph / 10;
     reverb1.reverbTime(fx1reverbtime);
-    drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
+    drawPot(0, 0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
   }
   /*if (abs(Potentiometer[0] - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
     if (fx1reverbtime_graph != Potentiometer[0]) {
-      drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
+      drawPot(0, 0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
       fx1reverbtime_graph = Potentiometer[0];
       fx1reverbtime = fx1reverbtime_graph / 10;
       reverb1.reverbTime(fx1reverbtime);

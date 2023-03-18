@@ -44,14 +44,60 @@ void sendClock() {
 
     if (msecsclock > _clock) {
       MIDItick++;
+      if (track[0].seqMode == 5) {
+
+        for (int b = 0; b < 12; b++) {
+
+          if (MIDItick % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
+            if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
+              repeatED[b]++;
+              if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
+                if (dsend_noteOff[b]) {
+                  dsend_noteOff[b] = false;
+                  if (track[0].MIDIchannel < 17) {
+                    usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    for (int usbs = 0; usbs < 10; usbs++) {
+                      if (!launchpad) {
+                        usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
       for (int i = 0; i < NUM_TRACKS; i++) {
-        if (MIDItick % track[i].MIDItick_reset == 0) {
+        track[i].MIDItick++;
+
+        if (track[i].MIDItick % track[i].MIDItick_reset == 0) {
+          track[i].tick_true = true;
           track[i].MIDItick_16++;
+          track[i].MIDItick = 0;
+          //Noteoff for drumtrack
+          for (int b = 0; b < num_voice; b++) {
+            if (dsend_noteOff[b]) {
+              dsend_noteOff[b] = false;
+              if (track[0].MIDIchannel < 17) {
+                usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                for (int usbs = 0; usbs < 10; usbs++) {
+                  if (!launchpad) {
+                    usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  }
+                }
+              }
+            }
+          }
           if (track[i].MIDItick_16 == NUM_STEPS) {
             track[i].MIDItick_16 = 0;
           }
         }
       }
+
       //Serial.println(track[0].MIDItick_16);
       usbMIDI.sendRealTime(usbMIDI.Clock);
       MIDI.sendRealTime(0xF8);
@@ -61,6 +107,10 @@ void sendClock() {
 
       if (MIDItick % 6 == 0) {
         tick_16++;
+        for (int b = 0; b < 12; b++) {
+          repeatED[b] = 0;
+        }
+
         //digitalWrite(22, HIGH);
 
 
@@ -141,20 +191,8 @@ void step() {
 
       if (track[0].seqMode == 0) {
         for (int i = 0; i < 12; i++) {
-          //if the last step was high, stop the notes
-          if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16 - 1]) {
 
-            if (track[0].MIDIchannel < 17) {
-              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              for (int usbs = 0; usbs < 10; usbs++) {
-                if (!launchpad) {
-                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                }
-              }
-            }
-            dsend_noteOff[i] = false;
-          }
+
           //if the actual step is high, play the notes
           if (channel1Clip[track[0].clip_songMode][i][track[0].MIDItick_16]) {
             if (!dsend_noteOff[i]) {
@@ -176,36 +214,22 @@ void step() {
       }
       if (track[0].seqMode == 1) {
         if (track[0].clip_songMode < 8) {
-          for (int i = 0; i < 12; i++) {
+          for (int i = 0; i < num_voice; i++) {
 
-            if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[i]][track[0].MIDItick_16 - 1]) {
-              if (track[0].MIDIchannel < 17) {
-                usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                for (int usbs = 0; usbs < 10; usbs++) {
-                  if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                  }
-                }
-              }
-              dsend_noteOff[i] = false;
-            }
+
             if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[i]][track[0].MIDItick_16]) {
-              //if (bitRead(NFX1[NFX1presetNr].Pot_Value[i], clock_count)) {
-              clock_count++;
-              drumnotes[i] = true;
-              dsend_noteOff[i] = true;
-              if (track[0].MIDIchannel < 17) {
-                usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-                MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
-                for (int usbs = 0; usbs < 10; usbs++) {
-                  if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+              if (!dsend_noteOff[i]) {
+                drumnotes[i] = true;
+                dsend_noteOff[i] = true;
+                if (track[0].MIDIchannel < 17) {
+                  usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  for (int usbs = 0; usbs < 10; usbs++) {
+                    if (!launchpad) {
+                      usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    }
                   }
                 }
-              }
-              if (clock_count == 8) {
-                clock_count = 0;
               }
             }
           }
@@ -220,20 +244,7 @@ void step() {
           if (NFX4[NFX4presetNr].reset[i] >= NFX4[NFX4presetNr].Pot_Value[i]) {
             NFX4[NFX4presetNr].reset[i] = 0;
           }
-          if (channel1Clip[track[0].clip_songMode][i][NFX4[NFX4presetNr].reset[i] - 1]) {
-            //drumnotes[i] = false;
-            // DrumPluginPlay();
-            if (track[0].MIDIchannel < 17) {
-              usbMIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              MIDI.sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-              for (int usbs = 0; usbs < 10; usbs++) {
-                if (!launchpad) {
-                  usb_midi_devices[usbs]->sendNoteOff(drumnote[i], VELOCITYOFF, track[0].MIDIchannel);
-                }
-              }
-            }
-            dsend_noteOff[i] = false;
-          }
+
           //if the actual step is high, play the notes
           if (channel1Clip[track[0].clip_songMode][i][NFX4[NFX4presetNr].reset[i]]) {
             if (!dsend_noteOff[i]) {
@@ -255,10 +266,31 @@ void step() {
       }
       if (track[0].seqMode == 5) {
         if (track[0].clip_songMode < 8) {
+          for (int i = 0; i < 12; i++) {
+
+
+            //if the actual step is high, play the notes
+            if (channel1Clip[NFX5presetNr][i][track[0].MIDItick_16]) {
+              if (!dsend_noteOff[i]) {
+                drumnotes[i] = true;
+                dsend_noteOff[i] = true;
+                if (track[0].MIDIchannel < 17) {
+                  usbMIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  MIDI.sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  for (int usbs = 0; usbs < 10; usbs++) {
+                    if (!launchpad) {
+                      usb_midi_devices[usbs]->sendNoteOn(drumnote[i], track[0].MIDI_velocity, track[0].MIDIchannel);
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
   }
+
 
 
   //send midinoteOn/Off´s for melodic track #2 -8
@@ -266,100 +298,100 @@ void step() {
     if (!track[track_number].solo_mutes_state) {
       if (!track[track_number].mute_state) {
 
+
         if (track[track_number].seqMode == 0) {
-          track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] + track[track_number].NoteOffset[phrase];
-          if (track[track_number].MIDItick_16 <= 0) {
-            track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[NUM_STEPS - 1] + track[track_number].NoteOffset[phrase];
-          } else {
-            track[track_number].notePlayedLast = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] + track[track_number].NoteOffset[phrase];
-          }
-
-          //if the last step wass high, stop the notes
-          if ((ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] || ctrack[track_number].sequence[track[track_number].clip_songMode].step[NUM_STEPS - 1]) > VALUE_NOTEOFF) {
-            track[track_number].notePressed = false;
-
-            //PluginNoteOff();
-          }
           //if the actual step is high, play the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
             track[track_number].playNoteOnce = true;
             track[track_number].notePressed = true;
-            //PluginNoteOn();
+            track[track_number].notePlayed = ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] + track[track_number].NoteOffset[phrase];
+
+            //NoteOff
+            if (track[track_number].MIDItick >= track[track_number].stepLength) {
+              track[track_number].notePressed = false;
+            }
           }
         }
         if (track[track_number].seqMode == 2) {
+
+          cc23 = NFX2[NFX2presetNr].Pot_Value[2];
+          cc24 = NFX2[NFX2presetNr].Pot_Value[3];
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
-            maxVal = 0;
-            if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
-              for (int i = 0; i < 12; i++) {
-                if (analogReadArray[i] > maxVal) {
-                  maxVal = analogReadArray[i];
-                  maxValIndex = i;
-                  cc23 = NFX2[NFX2presetNr].Pot_Value[2];
-                  cc24 = NFX2[NFX2presetNr].Pot_Value[3];
-                  octave = random(cc23, cc24);
-                  track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
-                  ;
-                  track[track_number].notePlayedLast = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
-                  ;
-                  track[track_number].playNoteOnce = true;
-                  track[track_number].notePressed = true;
+            if (track[track_number].tick_true) {
+              track[track_number].tick_true = false;
+              maxVal = 0;
+              if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value) {
+                for (int i = 0; i < 12; i++) {
+                  if (analogReadArray[i] > maxVal) {
+                    maxVal = analogReadArray[i];
+                    maxValIndex = i;
+                    octave = random(cc23, cc24);
+                  }
                 }
               }
 
-
-              if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
-                analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
-                track[track_number].notePressed = false;
-                //PluginNoteOff();
-              }
-            }
-            if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
-              for (int i = 11; i > 0; i--) {
-                if (analogReadArray[i] > maxVal) {
-                  maxVal = analogReadArray[i];
-                  maxValIndex = i;
-                  cc23 = NFX2[NFX2presetNr].Pot_Value[2];
-                  cc24 = NFX2[NFX2presetNr].Pot_Value[3];
-                  octave = random(cc24, cc23);
-                  track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
-                  ;
-                  track[track_number].notePlayedLast = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
-                  ;
-                  track[track_number].playNoteOnce = true;
-                  track[track_number].notePressed = true;
+              if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value) {
+                for (int i = 11; i >= 0; i--) {
+                  if (analogReadArray[i] > maxVal) {
+                    maxVal = analogReadArray[i];
+                    maxValIndex = i;
+                    octave = random(cc24, cc23);
+                  }
                 }
               }
+              track[track_number].playNoteOnce = true;
+              track[track_number].notePressed = true;
+              track[track_number].notePlayed = (maxValIndex) + (octave * 12) + track[track_number].NoteOffset[phrase];
+              Serial.print(track[track_number].notePlayed);
+              Serial.print("--");
+
+              analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
+              Serial.println(maxValIndex);
+            }
+
+            //NoteOff
+            if (track[track_number].MIDItick >= track[track_number].stepLength) {
+              track[track_number].notePressed = false;
+              Serial.println(track[track_number].notePlayed);
             }
           }
-          if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
-            analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
-            track[track_number].notePressed = false;
-            //PluginNoteOff();
-          }
-
           if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
             for (int i = 0; i < 12; i++) {
-              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
+              analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value;
             }
           }
         }
         if (track[track_number].seqMode == 3) {
+
+
           //if the actual step is high, play the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16] > VALUE_NOTEOFF) {
-            NFX3[NFX3presetNr].Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
-            track[track_number].notePlayed = random(0, 11) + (NFX3[NFX3presetNr].Oct1 * 12);
-            track[track_number].notePlayedLast = track[track_number].notePlayed;
-            track[track_number].playNoteOnce = true;
-            track[track_number].notePressed = true;
-          }
-          //PluginNoteOn();
 
+            if (track[track_number].tick_true) {
+              track[track_number].tick_true = false;
+              Serial.println("Hello");
+              NFX3[NFX3presetNr].Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
+              track[track_number].notePlayed = random(0, 11) + (NFX3[NFX3presetNr].Oct1 * 12);
+              track[track_number].playNoteOnce = true;
+              track[track_number].notePressed = true;
+              Serial.print(track[track_number].notePlayed);
+              Serial.print("--");
+            }
+            //NoteOff
+            if (track[track_number].MIDItick >= track[track_number].stepLength) {
+              track[track_number].notePressed = false;
+              Serial.println(track[track_number].notePlayed);
+            }
+          }
+
+          // }
+          /*
           //if the last step wass high, stop the notes
           if (ctrack[track_number].sequence[track[track_number].clip_songMode].step[track[track_number].MIDItick_16 - 1] > VALUE_NOTEOFF) {
             track[track_number].notePressed = false;
             //PluginNoteOff();
           }
+          */
         }
       }
     }
@@ -372,16 +404,16 @@ void midiCC_view_Static(int mixerpage, byte desired_instrument) {
 
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
-    drawPotCC(MixerColumnPos, CTRL_ROW_0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
+    drawPotCC(MixerColumn, 0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
     drawNrInRect(MixerColumnPos, CTRL_ROW_0 + 1, track[desired_instrument].midicc_number_row_1[MixerColumn], trackColor[desired_instrument]);
 
-    drawPotCC(MixerColumnPos, CTRL_ROW_1, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
+    drawPotCC(MixerColumn, 1, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
     drawNrInRect(MixerColumnPos, CTRL_ROW_1 + 1, track[desired_instrument].midicc_number_row_2[MixerColumn], trackColor[desired_instrument]);
 
-    drawPotCC(MixerColumnPos, CTRL_ROW_2, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
+    drawPotCC(MixerColumn, 2, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
     drawNrInRect(MixerColumnPos, CTRL_ROW_2 + 1, track[desired_instrument].midicc_number_row_3[MixerColumn], trackColor[desired_instrument]);
 
-    drawPotCC(MixerColumnPos, CTRL_ROW_3, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
+    drawPotCC(MixerColumn, 3, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
     drawNrInRect(MixerColumnPos, CTRL_ROW_3 + 1, track[desired_instrument].midicc_number_row_4[MixerColumn], trackColor[desired_instrument]);
   }
 }
@@ -395,7 +427,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
         if (!button[14]) {
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_1[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_1[MixerColumn] + encoded[MixerColumn]), 0, 127);
-            drawPotCC(MixerColumnPos, CTRL_ROW_0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
+            drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
             usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].MIDIchannel);
             MIDI.sendControlChange(track[desired_instrument].midicc_number_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].MIDIchannel);
           }
@@ -403,7 +435,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
           /*if (abs(Potentiometer[MixerColumn] - track[desired_instrument].midicc_value_row_1[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             if (track[desired_instrument].midicc_value_row_1[MixerColumn] != Potentiometer[MixerColumn]) {
               track[desired_instrument].midicc_value_row_1[MixerColumn] = Potentiometer[MixerColumn];
-              drawPotCC(MixerColumnPos, CTRL_ROW_0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
+              drawPotCC(MixerColumn, 0, track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], trackColor[desired_instrument]);
               usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_1[MixerColumn], track[desired_instrument].midicc_value_row_1[MixerColumn], track[desired_instrument].MIDIchannel);
             }
           }*/
@@ -432,14 +464,14 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_2[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_2[MixerColumn] + encoded[MixerColumn]), 0, 127);
-            drawPotCC(MixerColumnPos, CTRL_ROW_1, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
+            drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
             usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].MIDIchannel);
           }
 
           /* if (abs(Potentiometer[MixerColumn] - track[desired_instrument].midicc_value_row_2[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             if (track[desired_instrument].midicc_value_row_2[MixerColumn] != Potentiometer[MixerColumn]) {
               track[desired_instrument].midicc_value_row_2[MixerColumn] = Potentiometer[MixerColumn];
-              drawPotCC(MixerColumnPos, CTRL_ROW_1, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
+              drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], trackColor[desired_instrument]);
               usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_2[MixerColumn], track[desired_instrument].midicc_value_row_2[MixerColumn], track[desired_instrument].MIDIchannel);
             }
           }*/
@@ -467,7 +499,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_3[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_3[MixerColumn] + encoded[MixerColumn]), 0, 127);
-            drawPotCC(MixerColumnPos, CTRL_ROW_2, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
+            drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
             usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].MIDIchannel);
           }
 
@@ -475,7 +507,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
           /* if (abs(Potentiometer[MixerColumn] - track[desired_instrument].midicc_value_row_3[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             if (track[desired_instrument].midicc_value_row_3[MixerColumn] != Potentiometer[MixerColumn]) {
               track[desired_instrument].midicc_value_row_3[MixerColumn] = Potentiometer[MixerColumn];
-              drawPotCC(MixerColumnPos, CTRL_ROW_2, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
+              drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], trackColor[desired_instrument]);
               usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_3[MixerColumn], track[desired_instrument].midicc_value_row_3[MixerColumn], track[desired_instrument].MIDIchannel);
             }
           }*/
@@ -504,7 +536,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
           if (enc_moved[MixerColumn]) {
             track[desired_instrument].midicc_value_row_4[MixerColumn] = constrain((track[desired_instrument].midicc_value_row_4[MixerColumn] + encoded[MixerColumn]), 0, 127);
-            drawPotCC(MixerColumnPos, CTRL_ROW_3, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
+            drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
             usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].MIDIchannel);
           }
 
@@ -512,7 +544,7 @@ void midiCCpage1_Dynamic(int desired_instrument) {
           /* if (abs(Potentiometer[MixerColumn] - track[desired_instrument].midicc_value_row_4[MixerColumn]) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
             if (track[desired_instrument].midicc_value_row_4[MixerColumn] != Potentiometer[MixerColumn]) {
               track[desired_instrument].midicc_value_row_4[MixerColumn] = Potentiometer[MixerColumn];
-              drawPotCC(MixerColumnPos, CTRL_ROW_3, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
+              drawPotCC(MixerColumn, lastPotRow, track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], trackColor[desired_instrument]);
               usbMIDI.sendControlChange(track[desired_instrument].midicc_number_row_4[MixerColumn], track[desired_instrument].midicc_value_row_4[MixerColumn], track[desired_instrument].MIDIchannel);
             }
           }*/
@@ -554,6 +586,62 @@ void midiCCpage1_Dynamic(int desired_instrument) {
     }
   }
 }
+
+void startSeq() {
+  phrase = start_of_loop;
+  seq_run = true;
+  msecs = 0;
+  for (int i = 1; i <= 7; i++) {
+    track[i].clip_songMode = track[i].arrangment1[start_of_loop];
+  }
+}
+void stopSeq() {
+  seq_run = false;
+  tick_16 = -1;
+  phrase = start_of_loop - 1;
+  pixelphrase = -1;
+  phrase = 0;
+  msecs = 0;
+  for (int track_number = 0; track_number < NUM_TRACKS; track_number++) {
+    track[track_number].MIDItick_16 = -1;
+    track[track_number].MIDItick = -1;
+  }
+  for (int track_number = 1; track_number <= 7; track_number++) {
+    track[track_number].MIDItick_16 = -1;
+    if (track[track_number].MIDIchannel < 17) {
+      usbMIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+      MIDI.sendNoteOff(ctrack[track_number].sequence[track[track_number].clip_songMode].step[tick_16] + track[track_number].NoteOffset[phrase], VELOCITYOFF, track[track_number].MIDIchannel);
+    }
+    if (track[track_number].MIDIchannel == 17) {
+      envelope1.noteOff();
+      envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 19) {
+      pl3envelope1.noteOff();
+      pl3envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 21) {
+      pl5envelope1.noteOff();
+      pl5envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 22) {
+      pl6envelope1.noteOff();
+      pl6envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 24) {
+      pl8envelope1.noteOff();
+      pl8envelope2.noteOff();
+    }
+    if (track[track_number].MIDIchannel == 25) {
+      pl9string1.noteOff(VELOCITYOFF);
+    }
+  }
+  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+}
+
+
+
+
 
 
 
@@ -621,13 +709,12 @@ void myNoteOn(int channel, byte note, byte velocity) {
     else {
       for (int octNotes = 0; octNotes < 12; octNotes++) {
         if (note == LP_octave_notes[octNotes]) {
-          channelPlayed = desired_instrument + 1;
           channel = desired_instrument + 1;
           LP_octave_bool_keys[octNotes] = true;
           track[desired_instrument].notePressed = true;
           track[desired_instrument].playNoteOnce = true;
           track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
-          track[desired_instrument].notePlayedLast = track[desired_instrument].notePlayed;
+          track[desired_instrument].notePlayed = track[desired_instrument].notePlayed;
         }
       }
     }
@@ -689,7 +776,7 @@ void myNoteOn(int channel, byte note, byte velocity) {
       track[channel - 1].notePressed = true;
       track[channel - 1].playNoteOnce = true;
       track[channel - 1].notePlayed = note;
-      track[channel - 1].notePlayedLast = note;
+      track[channel - 1].notePlayed = note;
     }
     if (seq_rec) {
       ctrack[channel - 1].sequence[track[channel - 1].clip_selector].step[tick_16] = note;
@@ -724,7 +811,7 @@ void myNoteOff(int channel, byte note, byte velocity) {
           LP_octave_bool_keys[octNotes] = false;
           track[desired_instrument].notePressed = false;
           track[desired_instrument].notePlayed = octNotes + (track[desired_instrument].shown_octaves * 12);
-          track[desired_instrument].notePlayedLast = track[desired_instrument].notePlayed;
+          track[desired_instrument].notePlayed = track[desired_instrument].notePlayed;
         }
       }
     }
@@ -781,7 +868,7 @@ void myNoteOff(int channel, byte note, byte velocity) {
       LP_octave_bool_keys[0] = false;
       track[channel - 1].notePressed = false;
       track[channel - 1].notePlayed = note;
-      track[channel - 1].notePlayedLast = note;
+      track[channel - 1].notePlayed = note;
     }
   }
 }
@@ -980,7 +1067,7 @@ void myControlChange(int channel, byte control, byte value) {
         }
         if (track[desired_instrument].seqMode == 5) {
           selectPage = NFX5_PAGE1;
-          //NoteFX5_Page_Static();
+          NoteFX5_Page_Static();
         }
       }
     }

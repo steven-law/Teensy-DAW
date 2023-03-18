@@ -79,13 +79,14 @@ void clearArrangment() {
     for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
       track[ctrack].arrangment1[cphrase] = 8;
       track[ctrack].NoteOffset[cphrase] = 0;
-      track[ctrack].presetNr[cphrase] = 0;
+      track[ctrack].Ttrckprst[cphrase] = 0;
       track[ctrack].volume[cphrase] = 99;
     }
   }
 }
 
 void draw_start_of_loop() {
+  byte start_of_loop_old;
   tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
@@ -174,7 +175,7 @@ void songModePage(int songpageNumber) {
     if (seq_rec) {
       track[trackTouchY].arrangment1[touched_phrase] = track[trackTouchY].lastclip;
       track[trackTouchY].NoteOffset[touched_phrase] = track[trackTouchY].lastNoteOffset;
-      track[trackTouchY].presetNr[touched_phrase] = track[trackTouchY].lastpresetNr;
+      track[trackTouchY].Ttrckprst[touched_phrase] = track[trackTouchY].lastpresetNr;
       track[trackTouchY].volume[touched_phrase] = track[trackTouchY].lastvolume;
     }
 
@@ -190,8 +191,8 @@ void songModePage(int songpageNumber) {
     }
     //presetnr
     if (enc_moved[2]) {
-      track[trackTouchY].presetNr[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
-      track[trackTouchY].lastpresetNr = track[trackTouchY].presetNr[touched_phrase];
+      track[trackTouchY].Ttrckprst[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
+      track[trackTouchY].lastpresetNr = track[trackTouchY].Ttrckprst[touched_phrase];
     }
     //volume
     if (enc_moved[3]) {
@@ -202,7 +203,7 @@ void songModePage(int songpageNumber) {
     if (msecs % 100 == 0) {
       drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
       drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawNrInRect(18, 10, track[trackTouchY].presetNr[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
     }
@@ -244,11 +245,11 @@ void songModePage(int songpageNumber) {
         track[trackTouchY].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
       }
       // }
-      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].presetNr[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].presetNr[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
-        track[trackTouchY].presetNr[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
+      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].Ttrckprst[touched_phrase]) < POTPICKUP) {
+      if (track[trackTouchY].Ttrckprst[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
+        track[trackTouchY].Ttrckprst[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
         drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 10, track[trackTouchY].presetNr[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+        drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       }
       // }
       //if (abs(Potentiometer[3] - track[trackTouchY].volume[touched_phrase]) < POTPICKUP) {
@@ -328,7 +329,7 @@ void savebutton() {
       for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         myFile.print((char)track[ctrack].arrangment1[cphrase]);
         myFile.print((char)track[ctrack].NoteOffset_graph[cphrase]);
-        myFile.print((char)track[ctrack].presetNr[cphrase]);
+        myFile.print((char)track[ctrack].Ttrckprst[cphrase]);
         myFile.print((char)track[ctrack].volume[cphrase]);
       }
     }
@@ -341,13 +342,15 @@ void savebutton() {
 
     tft.print("Writing track 1 to project.txt...");
     //save plugin 1 variables
-    saveTrack1();
+    saveTrack(trackNames_long[0], 0);
+    saveMIDItrackDrum();
     tft.println("Done");
 
     tft.print("Writing track 2-8 to project.txt...");
     //save plugin 2-8 variables
     for (int tracks = 1; tracks < 8; tracks++) {
-      saveTrack(trackNames_long[tracks], trackNames_txt[tracks], tracks);
+      saveTrack(trackNames_long[tracks], tracks);
+      saveMIDItrack(trackNames_long[tracks], tracks);
     }
     //save Mixersettings
     saveMixer();
@@ -355,52 +358,67 @@ void savebutton() {
 
     tft.print("Writing plugin 1 to project.txt...");
     //save plugin 1 variables
-    savePlugin1();
+    savePlugin("plugin1", 17);
     tft.println("Done");
 
     tft.print("Writing plugin 2 to project.txt...");
-    //save plugin 3 variables
-    savePlugin2();
+    //save plugin 2 variables
+    savePlugin("plugin2", 18);
     tft.println("Done");
 
     tft.print("Writing plugin 3 to project.txt...");
     //save plugin 3 variables
-    savePlugin3();
+    savePlugin("plugin3", 19);
     tft.println("Done");
 
     tft.print("Writing plugin 4 to project.txt...");
-    //save plugin 3 variables
-    savePlugin4();
+    //save plugin 4 variables
+    savePlugin("plugin4", 20);
     tft.println("Done");
 
     tft.print("Writing plugin 5 to project.txt...");
     //save plugin 5 variables
-    savePlugin5();
+    savePlugin("plugin5", 21);
     tft.println("Done");
 
     tft.print("Writing plugin 6 to project.txt...");
     //save plugin 6 variables
-    savePlugin6();
+    savePlugin("plugin6", 22);
     tft.println("Done");
 
     tft.print("Writing plugin 8 to project.txt...");
     //save plugin 8 variables
-    savePlugin8();
+    savePlugin("plugin8", 24);
     tft.println("Done");
 
     tft.print("Writing plugin 9 to project.txt...");
     //save plugin 9 variables
-    savePlugin9();
+    savePlugin("plugin9", 25);
     tft.println("Done");
 
     tft.print("Writing FX 1 to project.txt...");
     //save FX1 variables
-    saveFX1();
+    saveNoteFX("NoteFX1", 0);
     tft.println("Done");
 
     tft.print("Writing FX 2 to project.txt...");
     //save FX2 variables
-    saveFX2();
+    saveNoteFX("NoteFX2", 1);
+    tft.println("Done");
+
+    tft.print("Writing FX 3 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX3", 2);
+    tft.println("Done");
+
+    tft.print("Writing FX 4 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX4", 3);
+    tft.println("Done");
+
+    tft.print("Writing FX 5 to project.txt...");
+    //save FX2 variables
+    saveNoteFX("NoteFX5", 4);
     tft.println("Done");
 
 
@@ -429,7 +447,7 @@ void loadbutton() {
       for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
         track[ctrack].arrangment1[cphrase] = myFile.read();
         track[ctrack].NoteOffset_graph[cphrase] = myFile.read();
-        track[ctrack].presetNr[cphrase] = myFile.read();
+        track[ctrack].Ttrckprst[cphrase] = myFile.read();
         track[ctrack].volume[cphrase] = myFile.read();
       }
     }
@@ -447,12 +465,12 @@ void loadbutton() {
 
     //load track 1
     tft.print("Reading track1 from project.txt...");
-    loadTrack1();
+    loadTrack(trackNames_long[0], 0);
     tft.println("Done");
     //load track 2-8
     tft.print("Reading track2-8 from project.txt...");
     for (int tracks = 1; tracks < 8; tracks++) {
-      loadTrack(trackNames_txt[tracks], tracks);
+      loadTrack(trackNames_long[tracks], tracks);
     }
     //load mixer settings
     loadMixer();
@@ -461,54 +479,70 @@ void loadbutton() {
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from project.txt...");
-    loadPlugin1();
+    loadPlugin("plugin1", 17);
     tft.println("Done");
 
     //load plugin 2 variables
     tft.print("reading plugin 2 from project.txt...");
-    loadPlugin2();
+    loadPlugin("plugin2", 18);
     tft.println("Done");
 
     //load plugin 3 variables
     tft.print("reading plugin 3 from project.txt...");
-    loadPlugin3();
+    loadPlugin("plugin3", 19);
     tft.println("Done");
 
     //load plugin 4 variables
     tft.print("reading plugin 4 from project.txt...");
-    loadPlugin4();
+    loadPlugin("plugin4", 20);
     tft.println("Done");
 
     //load plugin 5 variables
     tft.print("reading plugin 5 from project.txt...");
-    loadPlugin5();
+    loadPlugin("plugin5", 21);
     tft.println("Done");
 
     //load plugin 6 variables
     tft.print("reading plugin 6 from project.txt...");
-    loadPlugin6();
+    loadPlugin("plugin6", 22);
     tft.println("Done");
 
     //load plugin 8 variables
     tft.print("reading plugin 8 from project.txt...");
-    loadPlugin8();
+    loadPlugin("plugin8", 24);
     tft.println("Done");
 
     //load plugin 9 variables
     tft.print("reading plugin 9 from project.txt...");
-    loadPlugin9();
+    loadPlugin("plugin9", 25);
     tft.println("Done");
 
 
     //load FX 1 variables
-    tft.print("reading FX 1 from project.txt...");
-    loadFX1();
+    tft.print("reading NoteFX 1 from project.txt...");
+    loadNoteFX("NoteFX1", 0);
     tft.println("Done");
 
     //load FX 2 variables
-    tft.print("reading FX 2 from project.txt...");
-    loadFX2();
+    tft.print("reading NoteFX 2 from project.txt...");
+    loadNoteFX("NoteFX2", 1);
     tft.println("Done");
+
+    //load FX 3 variables
+    tft.print("reading NoteFX 3 from project.txt...");
+    loadNoteFX("NoteFX3", 2);
+    tft.println("Done");
+
+    //load FX 4 variables
+    tft.print("reading NoteFX 4 from project.txt...");
+    loadNoteFX("NoteFX4", 3);
+    tft.println("Done");
+
+    //load FX 5 variables
+    tft.print("reading NoteFX 5 from project.txt...");
+    loadNoteFX("NoteFX5", 4);
+    tft.println("Done");
+
     startUpScreen();
   } else {
     // if the file didn't open, print an error:
