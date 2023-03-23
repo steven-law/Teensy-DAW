@@ -6,61 +6,30 @@
 
 
 
-void drawbarPosition() {
-  //draw phrasenumber
-  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_9);
-  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-  tft.print(phrase + 1);
-  //drawbarPosition
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
-    tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
-    tft.drawFastHLine((pixelphrase - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
-  }
-  if (phrase % 16 == 0) {
-    pixelphrase = 0;
-    tft.fillRect(STEP_FRAME_W * 15, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 4, 4, ILI9341_DARKGREY);
-    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 1, 4, ILI9341_GREEN);
-  }
-}
 
-void drawstepPosition(int current) {
-  //draw the songpointer positions
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
-      tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
-      tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
-    }
-    if (current == 0) {
-      tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
-    }
-  }
-}
 
-void sendClock() {
-  if (seq_run) {
+void process_clock() {
 
-    if (msecsclock > _clock) {
-      MIDItick++;
-      if (track[0].seqMode == 5) {
 
-        for (int b = 0; b < 12; b++) {
+  if (master_clock.process_MIDItick()) {
+    seq_MIDItick++;
+    nfx6_MIDItick++;
+    if (track[0].seqMode == 5) {
 
-          if (MIDItick % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
-            if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
-              repeatED[b]++;
-              if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
-                if (dsend_noteOff[b]) {
-                  dsend_noteOff[b] = false;
-                  if (track[0].MIDIchannel < 17) {
-                    usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                    MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                    for (int usbs = 0; usbs < 10; usbs++) {
-                      if (!launchpad) {
-                        usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                      }
+      for (int b = 0; b < 12; b++) {
+
+        if (master_clock.get_MIDItick() % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
+          if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
+            repeatED[b]++;
+            if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
+              if (dsend_noteOff[b]) {
+                dsend_noteOff[b] = false;
+                if (track[0].MIDIchannel < 17) {
+                  usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+                  for (int usbs = 0; usbs < 10; usbs++) {
+                    if (!launchpad) {
+                      usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
                     }
                   }
                 }
@@ -69,115 +38,102 @@ void sendClock() {
           }
         }
       }
+    }
 
-      for (int i = 0; i < NUM_TRACKS; i++) {
-        track[i].MIDItick++;
+    for (int i = 0; i < NUM_TRACKS; i++) {
+      track[i].MIDItick++;
 
-        if (track[i].MIDItick % track[i].MIDItick_reset == 0) {
-          track[i].tick_true = true;
-          track[i].MIDItick_16++;
-          track[i].MIDItick = 0;
-          //Noteoff for drumtrack
-          for (int b = 0; b < num_voice; b++) {
-            if (dsend_noteOff[b]) {
-              dsend_noteOff[b] = false;
-              if (track[0].MIDIchannel < 17) {
-                usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                for (int usbs = 0; usbs < 10; usbs++) {
-                  if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  }
+      if (track[i].MIDItick % track[i].MIDItick_reset == 0) {
+        track[i].tick_true = true;
+        track[i].MIDItick_16++;
+        track[i].MIDItick = 0;
+        //Noteoff for drumtrack
+        for (int b = 0; b < num_voice; b++) {
+          if (dsend_noteOff[b]) {
+            dsend_noteOff[b] = false;
+            if (track[0].MIDIchannel < 17) {
+              usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+              MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+              for (int usbs = 0; usbs < 10; usbs++) {
+                if (!launchpad) {
+                  usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
                 }
               }
             }
           }
-          if (track[i].MIDItick_16 == NUM_STEPS) {
-            track[i].MIDItick_16 = 0;
-          }
+        }
+        if (track[i].MIDItick_16 == NUM_STEPS) {
+          track[i].MIDItick_16 = 0;
         }
       }
-
-      //Serial.println(track[0].MIDItick_16);
-      usbMIDI.sendRealTime(usbMIDI.Clock);
-      MIDI.sendRealTime(0xF8);
-      // MIDI.sendClock();
-      msecsclock = 0;
-      //digitalWrite(22, LOW);
-
-      if (MIDItick % 6 == 0) {
-        tick_16++;
-        for (int b = 0; b < 12; b++) {
-          repeatED[b] = 0;
+      if (track[i].seqMode == 6) {
+        //if the actual step is high, play the notes
+        if (track[i].notevalue_onTick[nfx6_MIDItick] > VALUE_NOTEOFF) {
+          track[i].playNoteOnce = true;
+          track[i].notePressed = true;
+          track[i].notePlayed = track[i].notevalue_onTick[nfx6_MIDItick] + track[i].NoteOffset[phrase];
         }
-
-        //digitalWrite(22, HIGH);
-
-
-        if (debugTime) {
-          SerialPrintSeq();
-        }
-        drawstepPosition(tick_16);
-        //draw phrasenumber
-        tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-        tft.setTextColor(ILI9341_WHITE);
-        tft.setFont(Arial_9);
-        tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-        tft.print(phrase + 1);
-      }
-
-      if (tick_16 == 15) {
-        tick_16 = -1;
-        phrase++;
-        drawbarPosition();
-        pixelphrase++;
-        showSerialonce = true;
-      }
-      if (tick_16 == -1) {
-        beatComponents();
-        if (debugTime) {
-          if (showSerialonce) {
-            SerialPrintPlugins();
-          }
+        if (track[i].notevalue_onTick[nfx6_MIDItick] == VALUE_NOTEOFF) {
+          track[i].notePressed = false;
         }
       }
-      //differnt things happening while the clock is running
-      if (phrase == MAX_PHRASES - 1) {
-        seq_run = false;
-        //seq.stop();
-        //seq.panic();
-        phrase = -1;
-        pixelphrase = -1;
-        phrase = 0;
-        msecs = 0;
-        tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
-      }
-      if (phrase == end_of_loop - 1) {
-        phrase = start_of_loop;
-        pixelphrase = 0;
+    }
 
-        //tick_16 = -1;
-        msecs = 0;
-        tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+    if (seq_MIDItick % 6 == 0) {
+      tick_16++;
+      for (int b = 0; b < 12; b++) {
+        repeatED[b] = 0;
       }
+
+
+
+      if (debugTime) {
+        SerialPrintSeq();
+      }
+      drawstepPosition(tick_16);
+      //draw phrasenumber
+      tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+      tft.setTextColor(ILI9341_WHITE);
+      tft.setFont(Arial_9);
+      tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
+      tft.print(phrase + 1);
+    }
+
+    if (tick_16 == 15) {
+      tick_16 = -1;
+      phrase++;
+      pixelphrase++;
+      drawbarPosition();
+      nfx6_MIDItick = 0;
+      showSerialonce = true;
+    }
+    if (tick_16 == -1) {
+      beatComponents();
+      if (debugTime) {
+        if (showSerialonce) {
+          SerialPrintPlugins();
+        }
+      }
+    }
+    //differnt things happening while the clock is running
+    if (phrase == MAX_PHRASES - 1) {
+      master_clock.set_playing(false);
+      phrase = -1;
+      pixelphrase = -1;
+      phrase = 0;
+      nfx6_MIDItick = 0;
+      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+    }
+    if (phrase == end_of_loop - 1) {
+      phrase = start_of_loop;
+      pixelphrase = 0;
+      nfx6_MIDItick = 0;
+      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
     }
   }
 }
 
-void setTempo(int tempo) {
-  // midi clock messages should be sent 24 times
-  // for every quarter note
-  _clock = 60000000L / tempo / 24;
 
-  tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
-  tft.setFont(Arial_10);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  //if (msecs % 100 == 0) {
-  tft.fillRect(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 1, STEP_FRAME_W * 2 - 4, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.print(tempo);
-  // }
-}
 
 
 // called when the step position changes. both the current
@@ -421,7 +377,6 @@ void midiCC_view_Static(int mixerpage, byte desired_instrument) {
 void midiCCpage1_Dynamic(int desired_instrument) {
   switch (lastPotRow) {
     case 0:
-      //if (msecs % 20 == 0) {
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
@@ -529,7 +484,6 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
       break;
     case 3:
-      // if (msecs % 20 == 0) {
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
         int MixerColumnPos = ((MixerColumn + 1) * 4) - 1;
         if (!button[14]) {
@@ -589,19 +543,20 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
 void startSeq() {
   phrase = start_of_loop;
-  seq_run = true;
-  msecs = 0;
+  master_clock.set_playing(true);
+
   for (int i = 1; i <= 7; i++) {
     track[i].clip_songMode = track[i].arrangment1[start_of_loop];
   }
 }
 void stopSeq() {
-  seq_run = false;
+  master_clock.set_playing(false);
   tick_16 = -1;
   phrase = start_of_loop - 1;
   pixelphrase = -1;
   phrase = 0;
-  msecs = 0;
+  nfx6_MIDItick = 0;
+  seq_MIDItick = -1;
   for (int track_number = 0; track_number < NUM_TRACKS; track_number++) {
     track[track_number].MIDItick_16 = -1;
     track[track_number].MIDItick = -1;
@@ -646,10 +601,10 @@ void stopSeq() {
 
 
 void myClock() {
-  MIDItick++;
+  //master_clock.get_MIDItick()++;
   usbMIDI.sendRealTime(usbMIDI.Clock);
-  msecs = 0;
-  if (MIDItick % 6 == 0) {
+
+  if (master_clock.get_MIDItick() % 6 == 0) {
     tick_16++;
 
     drawstepPosition(tick_16);
@@ -660,20 +615,20 @@ void myClock() {
 }
 
 void myStart() {
-  seq_run = true;
-  msecs = 0;
+  master_clock.set_playing(true);
+
   for (int i = 1; i <= 7; i++) {
     track[i].clip_songMode = track[i].arrangment1[0];
   }
   Serial.println("Start");
 }
 void myStop() {
-  seq_run = false;
+  master_clock.set_playing(false);
   tick_16 = -1;
   phrase = -1;
   pixelphrase = -1;
   phrase = 0;
-  msecs = 0;
+
   tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
 
   Serial.println("Stop");
@@ -685,9 +640,7 @@ void myNoteOn(int channel, byte note, byte velocity) {
 
     for (int songpages = 0; songpages < 16; songpages++) {
       if (selectPage == SONGMODE_PAGE_1 + songpages) {
-        if (msecs % 100 == 0) {
-          LP_songmode(note);
-        }
+        LP_songmode(note);
       }
     }
     for (int gridNotes = 0; gridNotes < 64; gridNotes++) {
@@ -1068,6 +1021,10 @@ void myControlChange(int channel, byte control, byte value) {
         if (track[desired_instrument].seqMode == 5) {
           selectPage = NFX5_PAGE1;
           NoteFX5_Page_Static();
+        }
+        if (track[desired_instrument].seqMode == 6) {
+          selectPage = NFX6_PAGE1;
+          NoteFX6_Page_Static();
         }
       }
     }

@@ -1,12 +1,9 @@
 //please use this Audio GUI from Newdigate
 //https://newdigate.github.io/teensy-eurorack-audio-gui/
 
-bool unlock_changeNode = false;
-bool unlock_drawNode = false;
+
 int oldWave; //wfselect
 
-#define pl5RAW 0
-#define pl6RAW 1
 int pl2Pot[num_voice];
 int pl4Pot[num_voice];
 
@@ -25,15 +22,30 @@ byte plpreset[MAX_PLUGINS]{ 0 };
 float detune_mapped;
 
 
+#define MAX_EFFECTS 3
+struct effect_preset_data_t {
+  byte Pot_Value[16]{ 0 };
+  byte Pot_Value2[16]{ 0 };
+};
+
+struct effect_t {
+  effect_preset_data_t preset[1];
+};
+effect_t* effect;
+
+byte fxpreset[MAX_EFFECTS]{ 0 };
+
+
 //SeqMode variables
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_SEQMODES 6
+#define MAX_SEQMODES 7
 #define NFX1_PAGE1 129
 #define NFX2_PAGE1 132
 #define NFX3_PAGE1 135
 #define NFX4_PAGE1 138
 #define NFX5_PAGE1 140
-const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ratch" };
+#define NFX6_PAGE1 142
+const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ratch", "VSL" };
 
 //seqmode "grid"
 struct Grids {
@@ -201,3 +213,5 @@ Ratch* NFX5;
 byte NFX5presetNr = 0;
 byte repeatED[12]{ 5 };
 
+byte NFX6presetNr = 0;
+int nfx6_MIDItick = 0;

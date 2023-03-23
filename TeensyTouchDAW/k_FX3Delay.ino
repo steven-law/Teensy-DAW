@@ -65,7 +65,7 @@ void FX3Delay_dynamic() {
         Potentiometer[0] = fx3delayTime_graph;
         if (enc_moved[0]) {
           fx3delayTime_graph = constrain((fx3delayTime_graph + encoded[0]), 0, 127);
-          fx3delayTime = map(fx3delayTime_graph, 0, 127, 0, 2000);
+          fx3delayTime = map(fx3delayTime_graph, 0, 127, 0, 1000);
           dldelay1.delay(0, fx3delayTime);
           drawPot(0, lastPotRow, fx3delayTime_graph, fx3delayTime, "DTime", trackColor[desired_instrument]);
         }

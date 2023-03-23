@@ -82,6 +82,9 @@ void Plugin_View_Static() {
   if (selectPage == NFX5_PAGE1) {
     NoteFX5_Page_Static();
   }
+   if (selectPage == NFX6_PAGE1) {
+    NoteFX6_Page_Static();
+  }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
 // just add your plugin-page dynamic and Pluginx_Control function here
@@ -209,14 +212,15 @@ void Plugin_View_Dynamic() {
   //setting up the NoteFX4-view
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page1_Dynamic();
-   // NoteFX4_Control();
   }
   //setting up the NoteFX5-view
   if (selectPage == NFX5_PAGE1) {
     NoteFX5_Page1_Dynamic();
-    //NoteFX5_Control();
   }
-
+ //setting up the NoteFX6-view
+  if (selectPage == NFX6_PAGE1) {
+    NoteFX6_Page1_Dynamic();
+  }
 
 
   //setting up the StepSequencer-view for drumtrack #1
@@ -1185,226 +1189,9 @@ void DrumPluginPlay() {
 
 
 
-//these are some function you might want to use like the drawpot or any of the draw-rect functions
-
-//draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended
-void draw_sub_page_buttons(int maxpages) {
-  for (int pages = 0; pages < maxpages; pages++) {
-    tft.drawRect(STEP_FRAME_W * 18 + 1, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H, STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 2, ILI9341_WHITE);
-    tft.setFont(Arial_12);
-    tft.setTextColor(ILI9341_WHITE);
-    tft.setCursor(STEP_FRAME_W * 18 + 12, ((pages + 1)) * STEP_FRAME_H * 2 + STEP_FRAME_H + 12);
-    tft.print(pages + 1);
-  }
-}
-//draw a rectangle, if the state is high the rect gets filled
-void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, char* name, int color) {
-  if (state) {
-    tft.fillRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, color);
-    tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, color);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 3);
-    tft.print(name);
-  }
-  if (!state) {
-    tft.fillRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, ILI9341_DARKGREY);
-    tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * xsize, STEP_FRAME_W * ysize, color);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 3);
-    tft.print(name);
-  }
-}
-
-void drawPot(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int xPos = ((XPos + 1) * 4) - 1;
-  int yPos = (YPos + 1) * 3;
-  circlePos = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
-  circlePos_old = circlePos;
-  dvalue_old = dvalue;
-}
-void drawPotDrum(int XPos, byte YPos, byte fvalue, int dvalue, byte dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
-  circlePos_old = circlePos;
-  dvalue_old = dvalue;
-}
-void drawPot(int XPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_char);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_char);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
-  circlePos_old = circlePos;
-  dvalue_old_char = dvalue_char;
-}
-void drawPot_2(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos_2 = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_2);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old_2) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old_2) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_2) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_2) + 2.25), 4, color);
-  circlePos_old_2 = circlePos_2;
-  dvalue_old_2 = dvalue;
-}
-void drawPot_3(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos_3 = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_3);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old_3) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old_3) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_3) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_3) + 2.25), 4, color);
-  circlePos_old_3 = circlePos_3;
-  dvalue_old_3 = dvalue;
-}
-void drawPot_4(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos_4 = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_4);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old_4) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old_4) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_4) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_4) + 2.25), 4, color);
-  circlePos_old_4 = circlePos_4;
-  dvalue_old_4 = dvalue;
-}
-void drawPotCC(int XPos, byte YPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePoscc = fvaluecc / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_oldcc);
-
-
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvaluecc);
-
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_oldcc) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_oldcc) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePoscc) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePoscc) + 2.25), 4, color);
-  circlePos_oldcc = circlePoscc;
-  dvalue_oldcc = dvaluecc;
-}
-
-//draws a number into a rect of 2x1grids
-void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
-  tft.setFont(Arial_8);
-  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue_old);
-  tft.setTextColor(color);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue);
-  dvalue_old = dvalue;
-}
-void drawNrInRect2(int xPos, byte yPos, byte dvalue, int color) {
-  tft.setFont(Arial_8);
-  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue_old2);
-  tft.setTextColor(color);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue);
-  dvalue_old2 = dvalue;
-}
-//draws a number into a rect of 2x1grids
-void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
-  tft.setFont(Arial_8);
-  //tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
-  tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.setTextColor(color);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue_char);
-  dvalue_old_char = dvalue_char;
-}
 
 
 
 
 
-void clearWorkSpace() {                                                                                  //clear the whole grid from Display
-  tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 20, STEP_FRAME_H * 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.fillRect(STEP_FRAME_W, STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H * 12, ILI9341_DARKGREY);
-}
+

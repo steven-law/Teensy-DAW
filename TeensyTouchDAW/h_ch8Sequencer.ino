@@ -1,7 +1,7 @@
 void gridStepSequencer(int desired_instrument) {  //static Display rendering
 
   clearWorkSpace();
-  drawStepSequencerStatic(desired_instrument);
+  drawStepSequencerStatic(16);
   drawActiveSteps();
   draw_Notenames();
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
@@ -16,18 +16,7 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   //LP_drawOctave(5);
   midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
   midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
-  //draw Octavebuttons
-  int leftmost = STEP_FRAME_W * OCTAVE_CHANGE_LEFTMOST;
-  int rightmost = STEP_FRAME_W * OCTAVE_CHANGE_RIGHTMOST;
-  int UP_topmost = STEP_FRAME_H * OCTAVE_CHANGE_UP_TOPMOST;
-  int UP_bottommost = STEP_FRAME_H * OCTAVE_CHANGE_UP_BOTTOMMOST;
-  int DOWN_topmost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_TOPMOST;
-  int DOWN_bottommost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_BOTTOMMOST;
-  tft.fillRect(leftmost + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 3, ILI9341_DARKGREY);
-  tft.fillTriangle(leftmost + 1, UP_bottommost, rightmost, UP_bottommost, leftmost + STEP_FRAME_W, UP_topmost, ILI9341_LIGHTGREY);         //octave arrow up
-  tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W, DOWN_bottommost, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
-
-  //draw the octave number
+  drawOctaveTriangle();
   drawOctaveNumber();
 }
 
@@ -82,13 +71,7 @@ void melodicStepSequencer(int desired_instrument) {
       track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
       clearStepsGrid();
       drawActiveSteps();
-      //draw the octave number
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
-      tft.setFont(Arial_16);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print(track[desired_instrument].shown_octaves);
+      drawOctaveNumber();
     }
     //seqMode
     if (enc_moved[1]) {
@@ -111,16 +94,12 @@ void melodicStepSequencer(int desired_instrument) {
   int touched_note = gridTouchY - 1;
 
 
+  static bool touched;
+  if (!ts.touched() && !button[15]) {
+    touched = false;
+  }
   if (ts.touched() || button[15]) {
-    
-    //manually assigning steps to the grid;
-    //for better behaviour here we wait for "interval, unless it would switch within micrseconds
-    unsigned long currentMillis = millis();
-
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-
-
+    if (!touched) {
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
         track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
         int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
@@ -128,11 +107,13 @@ void melodicStepSequencer(int desired_instrument) {
         int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
 
         if (notevalue_on_step == VALUE_NOTEOFF) {
+          touched = true;
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
           clearStepsGridY(touched_step);
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));  //draw the active steps circles
 
         } else if (notevalue_on_step > VALUE_NOTEOFF) {
+          touched = true;
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
         }
@@ -143,10 +124,12 @@ void melodicStepSequencer(int desired_instrument) {
       if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
         if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
           track[desired_instrument].shown_octaves--;
+          touched = true;
           clearStepsGrid();
         }
         if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
           track[desired_instrument].shown_octaves++;
+          touched = true;
           clearStepsGrid();
         }
         //draw the octave number
@@ -176,20 +159,7 @@ void melodicStepSequencer(int desired_instrument) {
   }
 }
 
-void drawActiveSteps() {
-  int tone_start = track[desired_instrument].shown_octaves * 12;
-  //draw active steps
-  for (int steps = 0; steps < STEP_QUANT; steps++) {
-    int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-    }
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] == VALUE_NOTEOFF) {
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);
-    }
-  }
-}
+
 #define STEP_LENGTH 6
 #define NOTE_OFF 0  // presuming you are still using 0 for 'no note'
 
@@ -199,8 +169,7 @@ void saveMIDItrack(const char* track, int trackNr) {
   writer.setFilename(track);
   writer.writeHeader();
   //Serial.print("Start saving-> ");
-  //writer.addSetTempo(tempo);
-  //double microsPerTick = writer.get_microseconds_per_tick();
+
   int deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
     for (int sstep = 0; sstep < STEP_QUANT; sstep++) {

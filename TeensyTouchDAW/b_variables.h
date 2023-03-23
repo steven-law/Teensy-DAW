@@ -51,13 +51,7 @@ static const int VALUE_NOTEOFF = 0;
 #define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
-unsigned long _next_clock = 0;
-unsigned long _clock = 0;
-unsigned long MIDItick = 0;
-int tick_16 = -1;
-bool seq_run = false;
-bool seq_rec = false;
-byte tempo = 120;
+
 #define tuning 440
 
 
@@ -167,18 +161,6 @@ File frec;
 
 
 //FX variables
-//FX1
-//reverb variables
-float fx1reverbtime = 0;
-byte fx1reverbtime_graph = 0;
-
-//FX2
-//bitcrusher variables
-int fx2bitcrush = 16;
-byte fx2bitcrush_graph = 127;
-
-int fx2samplerate = 44100;
-byte fx2samplerate_graph = 127;
 
 //FX3
 //delay variables
@@ -222,8 +204,7 @@ byte songpages;
 byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
 byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
 byte trackTouchY;
-unsigned long previousMillis;
-
+int pixelTouchX;
 
 
 //DMAMEM uint16_t fb1[320 * 240];
@@ -316,7 +297,7 @@ track_t ctrack[NUM_TRACKS];
 //Scales
 bool scaleSelect = LOW;
 const int MAX_SCALES = 13;  //how many scales do we have
-int scaleSelected = 0;     //variable for scale selecting
+int scaleSelected = 0;      //variable for scale selecting
 
 
 const int scales[MAX_SCALES][12]{
@@ -341,7 +322,11 @@ const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", 
 
 
 
+uint32_t seq_MIDItick;
+int tick_16;
 
+int seq_tempo = 120;
+bool seq_rec = false;
 
 
 //Track Variables
@@ -395,6 +380,8 @@ struct tracks {
   int MIDItick_reset = 6;
   bool tick_true = false;
   int stepLength = 5;
+  byte notevalue_onTick[96]{ 0 };
+
 
   byte Volume_graph = 50;
   float Volume = 1;
