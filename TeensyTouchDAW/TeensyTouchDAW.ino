@@ -1,4 +1,4 @@
-bool debugTime = true;
+bool debugTime = false;
 extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
@@ -272,7 +272,7 @@ Clock master_clock;
 
 
 void setup() {
-  Serial.begin(9600);  // set MIDI baud
+  Serial.begin(15200);  // set MIDI baud
   //initialize the TFT- and Touchscreen
   tft.begin();
   tft.setRotation(3);
@@ -1085,6 +1085,10 @@ void readMainButtons() {
           if (track[desired_instrument].seqMode == 6) {
             selectPage = NFX6_PAGE1;
             NoteFX6_Page_Static();
+          }
+          if (track[desired_instrument].seqMode == 7) {
+            selectPage = NFX7_PAGE1;
+            NoteFX7_Page_Static();
           }
         }
       }

@@ -278,18 +278,24 @@ int dvalue_oldcc;
 int dname_oldcc;
 
 
+#define MAX_VOICES 4
 
 
 
-
-
+int poly = 0;
+int voice = -1;
+int lastNote[MAX_VOICES];
+struct steps_t {
+  byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+  byte voiceCount = 0;
+};
 
 struct sequence_t {
-  int step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
+  byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
+  steps_t steps[NUM_STEPS];
 };
 
 struct track_t {
-  byte midi_channel;               // stores the MIDI channel that this track should output on; 10 is drums
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
 track_t ctrack[NUM_TRACKS];
@@ -369,8 +375,8 @@ struct tracks {
   int lastpresetNr = 0;
   int lastvolume = 100;
 
-  int notePlayed = 0;
-  bool notePressed;
+  int notePlayed[MAX_VOICES] = { 0 };
+  bool notePressed = 0;
   bool envActive;
   bool playNoteOnce;
   byte MIDI_velocity = 99;
@@ -381,6 +387,7 @@ struct tracks {
   bool tick_true = false;
   int stepLength = 5;
   byte notevalue_onTick[96]{ 0 };
+  int tones[MAX_VOICES];
 
 
   byte Volume_graph = 50;

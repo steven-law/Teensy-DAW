@@ -10,14 +10,16 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   drawMIDIchannel();
   draw_Clipselector();
   draw_SeqMode();
-  midi01.sendControlChange(0, 0, 1);
-  LP_drawStepsequencer();
-  LP_drawOctave(3);
-  //LP_drawOctave(5);
-  midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
-  midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
   drawOctaveTriangle();
   drawOctaveNumber();
+  if (launchpad) {
+    midi01.sendControlChange(0, 0, 1);
+    LP_drawStepsequencer();
+    LP_drawOctave(3);
+    //LP_drawOctave(5);
+    midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
+    midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
+  }
 }
 
 void melodicStepSequencer(int desired_instrument) {

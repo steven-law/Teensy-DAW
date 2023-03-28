@@ -513,6 +513,37 @@ void drawActiveSteps() {  //draw steps for the melodic tracks 2-8
     }
   }
 }
+void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
+  clearStepsGrid();
+  int tone_start = track[desired_instrument].shown_octaves * 12;
+  //draw active steps
+  for (int steps = 0; steps < STEP_QUANT; steps++) {
+    for (int polys = 0; polys < MAX_VOICES; polys++) {
+      int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
+      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[steps].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+
+      if (ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[steps].voice[polys] > VALUE_NOTEOFF) {
+        tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+      }
+    }
+  }
+  Serial.println("polysteps drawn");
+}
+void drawActivePolyStepsY(int X_Axis) {
+  clearStepsGridY(X_Axis);
+  int tone_start = track[desired_track].shown_octaves * 12;
+  int dot_on_X = (X_Axis * STEP_FRAME_W) + DOT_OFFSET_X;
+  //draw active steps
+  for (int polys = 0; polys < MAX_VOICES; polys++) {
+    
+    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[X_Axis].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[X_Axis].voice[polys] > VALUE_NOTEOFF) {
+      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+    }
+  }
+
+  Serial.println("polysteps drawn");
+}
 void drawActivePixels() {  //draw steps for the melodic tracks 2-8
   int tone_start = track[desired_instrument].shown_octaves * 12;
   //draw active steps
@@ -546,7 +577,13 @@ void clearStepsGridY(int X_Axis) {  // clear all Steps in the same column
     tft.fillCircle((X_Axis)*STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
   }
 }
+void clearPolyGridY(int X_Axis) {  // clear all Steps in the same column
 
+  for (int T = 0; T < 12; T++) {
+
+    tft.fillCircle((X_Axis)*STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
+  }
+}
 void clearPixelGrid() {  // clear all Steppixels from Display
   for (int T = 0; T < 12; T++) {
     for (int S = 0; S < 96; S++) {

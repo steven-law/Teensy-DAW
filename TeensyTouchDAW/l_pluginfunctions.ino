@@ -1,6 +1,6 @@
 
 void Encoder_to_Pot_Value(int plug, int COL, int ROW, int MAX) {
-  Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value[COL + (ROW * 4)] + encoded[COL] ), 0, MAX);
+  Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
 }
 
 void Encoder_to_Pot_Value2(int plug, int COL, int ROW, int MAX) {

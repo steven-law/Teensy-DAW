@@ -9,10 +9,11 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
 
-
-  midi01.sendControlChange(0, 0, 1);
-  LP_drawStepsequencer();
-  LP_drawOctave(3);
+  if (launchpad) {
+    midi01.sendControlChange(0, 0, 1);
+    LP_drawStepsequencer();
+    LP_drawOctave(3);
+  }
 }
 
 void drumStepSequencer() {
