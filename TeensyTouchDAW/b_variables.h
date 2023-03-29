@@ -154,6 +154,7 @@ float audio_rec_volume = 0;
 byte audio_rec_selected_file;
 byte audio_rec_selected_file_graph = 50;
 byte audio_rec_peak_graph;
+byte AudioYdot= 255;
 // The file where data is recorded
 File frec;
 

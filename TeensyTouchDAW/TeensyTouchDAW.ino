@@ -142,6 +142,9 @@ int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 129431
 File myFile;                                                                         //initiate SDCard Reader
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
 //ILI9341_t3n tft = ILI9341_t3n(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
+//DMAMEM uint16_t fb1[320 * 240];
+
+
 XPT2046_Touchscreen ts(CS_PIN);  //initiate Touchscreen
 USBHost myusb;
 USBHub hub1(myusb);
@@ -531,6 +534,7 @@ long oldEnc[4] = { -999, -999, -999, -999 };
 
 
 void loop() {
+
   //Serial.println("==== start of loop ====");
   usbMIDI.read();
   myusb.Task();
@@ -681,6 +685,8 @@ void loop() {
     }
     //tft.updateScreen();
   }
+  // tft.updateScreenAsync();
+ // tft.waitUpdateAsyncComplete();
 }
 void readMainButtons() {
 
