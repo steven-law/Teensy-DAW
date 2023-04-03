@@ -48,6 +48,7 @@ static const int VALUE_NOTEOFF = 0;
 #define num_voice 12
 
 #define NUM_STEPS 16
+#define MAX_TICKS 96
 #define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
@@ -66,7 +67,7 @@ static const int VALUE_NOTEOFF = 0;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-
+#define MAX_VOICES 4
 
 byte selectPage;
 #define DRUMTRACK 0
@@ -154,7 +155,7 @@ float audio_rec_volume = 0;
 byte audio_rec_selected_file;
 byte audio_rec_selected_file_graph = 50;
 byte audio_rec_peak_graph;
-byte AudioYdot= 255;
+byte AudioYdot = 255;
 // The file where data is recorded
 File frec;
 
@@ -254,46 +255,28 @@ bool LP_octave_bool_keys[12];
 bool LP_step_bool[16];
 bool LP_drawOnce[16];
 
-//drawPot Variables
-float circlePos;
-float circlePos_old;
-int dvalue_old;
-int dvalue_old2;
-char* dvalue_old_char;
-//drawPot Variables
-float circlePos_2;
-float circlePos_old_2;
-int dvalue_old_2;
-//drawPot Variables
-float circlePos_3;
-float circlePos_old_3;
-int dvalue_old_3;
-//drawPot Variables
-float circlePos_4;
-float circlePos_old_4;
-int dvalue_old_4;
-//drawPotcc Variables
-float circlePoscc;
-float circlePos_oldcc;
-int dvalue_oldcc;
-int dname_oldcc;
 
 
-#define MAX_VOICES 4
 
 
 
 int poly = 0;
 int voice = -1;
-int lastNote[MAX_VOICES];
+
 struct steps_t {
   byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
   byte voiceCount = 0;
+};
+struct tick_t {
+  byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+ // byte voiceCount = 0;
 };
 
 struct sequence_t {
   byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
   steps_t steps[NUM_STEPS];
+  tick_t tick[MAX_TICKS];
+  byte voiceCount = 0;
 };
 
 struct track_t {
@@ -377,9 +360,9 @@ struct tracks {
   int lastvolume = 100;
 
   int notePlayed[MAX_VOICES] = { 0 };
-  bool notePressed = 0;
-  bool envActive;
-  bool playNoteOnce;
+  bool notePressed[MAX_VOICES] = { 0 };
+  bool envActive[MAX_VOICES] = { false };
+  bool playNoteOnce[MAX_VOICES] = { false };
   byte MIDI_velocity = 99;
 
   int MIDItick = 0;
@@ -387,9 +370,7 @@ struct tracks {
   int MIDItick_reset = 6;
   bool tick_true = false;
   int stepLength = 5;
-  byte notevalue_onTick[96]{ 0 };
   int tones[MAX_VOICES];
-
 
   byte Volume_graph = 50;
   float Volume = 1;

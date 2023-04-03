@@ -15,7 +15,7 @@ void SerialPrintSeq() {
   for (int desired_tracks = 1; desired_tracks < 8; desired_tracks++) {
     Serial.print(track[desired_tracks].notePlayed[0]);
     Serial.print("-");
-    Serial.print(track[desired_tracks].envActive);
+    Serial.print(track[desired_tracks].envActive[0]);
     Serial.print("-   ");
   }
   debug_free_ram();

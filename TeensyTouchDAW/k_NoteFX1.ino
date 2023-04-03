@@ -678,7 +678,6 @@ void NoteFX5_Page1_Dynamic() {
 }
 void NoteFX5_Page_Static() {
   clearWorkSpace();
-  NoteFX5_Change();
   drawStepSequencerStatic(16);
   draw_Ratchrate();
   drawActiveRatchetSteps();
@@ -711,7 +710,6 @@ void draw_Ratchrate() {
     tft.print(NFX5[NFX5presetNr].repeats[n]);
   }
 }
-void NoteFX5_Change() {}
 
 
 void NoteFX6_Page_Static() {
@@ -723,7 +721,12 @@ void NoteFX6_Page_Static() {
   clearPixelGrid();
   drawActivePixels();
   draw_SeqMode();
-
+  for (int polys = 1; polys < MAX_VOICES; polys++) {
+    for (int steps = 0; steps < MAX_TICKS; steps++) {
+      ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[steps].voice[polys] = VALUE_NOTEOFF;
+      //ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount = -1;
+    }
+  }
 
   midi01.sendControlChange(0, 0, 1);
 }
@@ -780,13 +783,12 @@ void NoteFX6_Page1_Dynamic() {
         int pixel_on_X = pixelTouchX + 2;
         int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
         track[desired_instrument].tone = ch1tone + track[desired_instrument].shown_octaves * 12;
-        int notevalue_On_Tick = track[desired_instrument].notevalue_onTick[desired_tick];
+        int notevalue_On_Tick = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[0];
 
         if (notevalue_On_Tick == VALUE_NOTEOFF) {
           touched = true;
 
-          track[desired_instrument].notevalue_onTick[desired_tick] = track[desired_instrument].tone;
-          Serial.println(desired_tick);
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[0] = track[desired_instrument].tone;
           for (int w = -4; w < 5; w++) {
             tft.drawPixel(pixel_on_X, dot_on_Y + w, trackColor[desired_instrument]);      //draw the active steps
             tft.drawPixel(pixel_on_X + 1, dot_on_Y + w, trackColor[desired_instrument]);  //draw the active steps
@@ -794,7 +796,7 @@ void NoteFX6_Page1_Dynamic() {
         } else if (notevalue_On_Tick > VALUE_NOTEOFF) {
           touched = true;
 
-          track[desired_instrument].notevalue_onTick[desired_tick] = VALUE_NOTEOFF;
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[0] = VALUE_NOTEOFF;
           clearPixelGridY(pixel_on_X);
           clearPixelGridY(pixel_on_X + 1);
           for (int w = -4; w < 5; w++) {
@@ -802,6 +804,10 @@ void NoteFX6_Page1_Dynamic() {
             tft.drawPixel(pixel_on_X + 1, dot_on_Y + w, ILI9341_DARKGREY);  //draw the in-active steps
           }
         }
+        Serial.printf("Entered: VoiceCount = %d, Tick = %d, Note%d\n",
+                      ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount,
+                      desired_tick,
+                      ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[0]);
       }
     }
 
@@ -853,7 +859,7 @@ void NoteFX7_Page1_Dynamic() {
       }
     }
   }
-*/
+  */
   if (!button[14]) {
     //gridTouchX
     if (enc_moved[0]) {
@@ -926,16 +932,16 @@ void NoteFX7_Page1_Dynamic() {
       track[desired_instrument].tones[voiceCount_on_step] = touched_note + track[desired_instrument].shown_octaves * 12;
       int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[voiceCount_on_step];
 
-      if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {                                                      //if within the seq area
-         ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voiceCount++;
+      if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {  //if within the seq area
+        ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voiceCount++;
         // If no voice is available, steal the oldest note
         if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voiceCount == MAX_VOICES) {
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voiceCount = 0;
           for (int polys = 0; polys < MAX_VOICES; polys++) {
-          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[polys] = VALUE_NOTEOFF;
+            ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[polys] = VALUE_NOTEOFF;
           }
         }
-                                                                                                                                                                                            //+1 voicecount
+        //+1 voicecount
         if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[voiceCount_on_step] == VALUE_NOTEOFF) {                                   //if the selected step is not assigned
           ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[voiceCount_on_step] = track[desired_instrument].tones[voiceCount_on_step];  //selected notevalue is set to the memory
           Serial.print(ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voiceCount);
@@ -951,7 +957,7 @@ void NoteFX7_Page1_Dynamic() {
         }*/
 
         Serial.println(ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].steps[touched_step].voice[voiceCount_on_step]);
-        
+
         //clearStepsGridY(touched_step);
         drawActivePolyStepsY(touched_step);
       }
@@ -989,6 +995,189 @@ void NoteFX7_Page1_Dynamic() {
         track[desired_instrument].clip_selector = (gridTouchX / 2) - 1;
         clearStepsGrid();
         drawActivePolySteps();
+        drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+      }
+    }
+  }
+}
+
+void NoteFX8_Page_Static() {  //static Display rendering
+
+  clearWorkSpace();
+  draw_Notenames();
+  drawOctaveTriangle();
+  drawOctaveNumber();
+  drawStepSequencerStatic(12);
+  clearPixelGrid();
+  drawActivePolyPixel();
+  draw_SeqMode();
+  drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+  drawNrInRect(18, 8, ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount, trackColor[desired_instrument]);
+
+  /*
+  if (launchpad) {
+    midi01.sendControlChange(0, 0, 1);
+    LP_drawStepsequencer();
+    LP_drawOctave(3);
+    //LP_drawOctave(5);
+    midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
+    midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
+  }*/
+}
+
+void NoteFX8_Page1_Dynamic() {
+
+  int touched_step = gridTouchX - 2;
+  int touched_note = gridTouchY - 1;
+  /*
+    if (launchpad) {
+    for (int LPclips = 0; LPclips < 8; LPclips++) {
+      if (LP_grid_bool[LPclips]) {
+        LP_drawclipRow();
+      }
+    }
+    for (int notes = 0; notes < 12; notes++) {
+      for (int steps = 0; steps < 16; steps++) {
+        if (LP_octave_bool[notes] || LP_grid_bool[24] || LP_grid_bool[31] || LP_step_bool[steps])
+          LP_melodicstep();
+      }
+    }
+    }
+    */
+  if (!button[14]) {
+    //gridTouchX
+    if (enc_moved[0]) {
+      pixelTouchX = constrain((pixelTouchX + (encoded[0] * 2)), 0, 320);
+      drawCursorPixel();
+      showCoordinates();
+      gridTouchX = (pixelTouchX + 7) / 16;
+    }
+    //gridTouchY
+    if (enc_moved[1]) {
+      gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
+      drawCursorPixel();
+      showCoordinates();
+    }
+
+
+    //midichannel
+    if (enc_moved[2]) {
+      ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount = constrain((ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount + encoded[2]), 0, (MAX_VOICES - 1));
+      drawNrInRect(18, 8, ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount, trackColor[desired_instrument]);
+    }
+
+    //clip
+    if (enc_moved[3]) {
+      track[desired_instrument].clip_selector = constrain((track[desired_instrument].clip_selector + encoded[3]), 0, MAX_CLIPS - 1);
+      drawActivePolyPixel();
+      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+    }
+  }
+
+  //octaves
+  if (button[14]) {
+    if (enc_moved[0]) {
+      track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
+      drawActivePolyPixel();
+      drawOctaveNumber();
+    }
+    //seqMode
+    if (enc_moved[1]) {
+      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES - 1);
+      drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+    }
+    //step diviion
+    if (enc_moved[2]) {
+      track[desired_instrument].MIDItick_reset = constrain((track[desired_instrument].MIDItick_reset + encoded[2]), 0, 97);
+      drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
+    }
+    //step length
+    if (enc_moved[3]) {
+      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, (track[desired_instrument].MIDItick_reset - 1));
+      drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
+    }
+  }
+
+
+
+
+  static bool touched;
+  if (!ts.touched() && !button[15]) {
+    touched = false;
+  }
+  if (enc_moved[0]) {
+    touched = false;
+  }
+  if (ts.touched() || button[15]) {
+
+    //clear clip
+    if (gridTouchX >= 18 && gridTouchY == 9) {
+      for (int tickrs = 0; tickrs < MAX_TICKS; tickrs++) {
+        for (int polys = 0; polys < MAX_VOICES; polys++) {
+          ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[tickrs].voice[polys] = VALUE_NOTEOFF;
+        }
+        ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount = 0;
+      }
+      drawActivePolyPixel();
+    }
+
+    if (pixelTouchX >= 30 && pixelTouchX <= 220 && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
+      if (!touched) {
+        //some variables
+        int desired_tick = ((pixelTouchX + 2) - (2 * STEP_FRAME_W)) / 2;
+        int note = touched_note + track[desired_instrument].shown_octaves * 12;
+
+        //assign notes to voices
+        for (int polys = 0; polys < MAX_VOICES; polys++) {
+          if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount == polys) {
+            if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[polys] == VALUE_NOTEOFF) {
+              touched = true;
+              ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[polys] = note;
+            } else if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[polys] > VALUE_NOTEOFF) {
+              touched = true;
+              ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[desired_tick].voice[polys] = VALUE_NOTEOFF;
+            }
+          }
+        }
+        drawActivePolyPixelY(desired_tick);
+      }
+
+      touched = true;
+      //octave selection
+      if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
+        if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
+          track[desired_instrument].shown_octaves--;
+        }
+        if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
+          track[desired_instrument].shown_octaves++;
+        }
+        clearPixelGrid();
+        //draw the octave number
+        drawOctaveNumber();
+        drawActivePolyPixel();
+      }
+
+
+      //load and save
+      if (gridTouchY == 0) {
+        //Save button
+        if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
+          touched = true;
+          saveTrack(trackNames_long[desired_instrument], desired_instrument);
+          saveMIDItrack(trackNames_long[desired_instrument], desired_instrument);
+        }
+        //Load button
+        if (gridTouchX == POSITION_LOAD_BUTTON) {
+          touched = true;
+          loadTrack(trackNames_long[desired_instrument], desired_instrument);
+        }
+      }
+      //clipselecting
+      if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
+        touched = true;
+        track[desired_instrument].clip_selector = (gridTouchX / 2) - 1;
+        clearPixelGrid();
+        drawActivePolyPixel();
         drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
       }
     }

@@ -565,7 +565,7 @@ void loop() {
   //placeholder for debugging
   if (msecs % 500 == 0) {
   }
- 
+
   if (gridTouchY == 1) trackTouchY = 0;
   if (gridTouchY == 3) trackTouchY = 1;
   if (gridTouchY == 4) trackTouchY = 2;
@@ -686,7 +686,7 @@ void loop() {
     //tft.updateScreen();
   }
   // tft.updateScreenAsync();
- // tft.waitUpdateAsyncComplete();
+  // tft.waitUpdateAsyncComplete();
 }
 void readMainButtons() {
 
@@ -697,26 +697,44 @@ void readMainButtons() {
       //cursor
       //curser left
       if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
-        gridTouchX = constrain(gridTouchX - 1, 0, 19);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          pixelTouchX = constrain((pixelTouchX - 2), 0, 320);
+          drawCursorPixel();
+        } else {
+          gridTouchX = constrain(gridTouchX - 1, 0, 19);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor right
       if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
-        gridTouchX = constrain(gridTouchX + 1, 0, 19);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          pixelTouchX = constrain((pixelTouchX + 2), 0, 320);
+          drawCursorPixel();
+        } else {
+          gridTouchX = constrain(gridTouchX + 1, 0, 19);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor up
       if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
-        gridTouchY = constrain(gridTouchY - 1, 0, 14);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          drawCursorPixel();
+        } else {
+          gridTouchY = constrain(gridTouchY - 1, 0, 14);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor down
       if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
-        gridTouchY = constrain(gridTouchY + 1, 0, 14);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          drawCursorPixel();
+        } else {
+          gridTouchY = constrain(gridTouchY + 1, 0, 14);
+          drawCursor();
+        }
         showCoordinates();
       }
       //last-pot-row
@@ -1095,6 +1113,10 @@ void readMainButtons() {
           if (track[desired_instrument].seqMode == 7) {
             selectPage = NFX7_PAGE1;
             NoteFX7_Page_Static();
+          }
+          if (track[desired_instrument].seqMode == 8) {
+            selectPage = NFX8_PAGE1;
+            NoteFX8_Page_Static();
           }
         }
       }
