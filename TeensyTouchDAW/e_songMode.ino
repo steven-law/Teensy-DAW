@@ -219,7 +219,7 @@ void savebutton() {
     //save plugin 2-8 variables
     for (int tracks = 1; tracks < 8; tracks++) {
       saveTrack(trackNames_long[tracks], tracks);
-      saveMIDItrack(trackNames_long[tracks], tracks);
+     // saveMIDItrack(trackNames_long[tracks], tracks);
     }
     //save Mixersettings
     saveMixer();

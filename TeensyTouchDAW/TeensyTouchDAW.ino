@@ -365,6 +365,9 @@ void setup() {
   // Allocate dsend_noteOff array during runtime
   dsend_noteOff = new bool[num_voice];
   //tft.updateScreen();
+
+  //allocate tracks2-8 "array"
+  ctrack = calloc(NUM_TRACKS, sizeof(track_t));
   //allocate tracks
   track = new tracks[NUM_TRACKS];
   //ctrack = new track_t[NUM_TRACKS];
@@ -1086,7 +1089,7 @@ void readMainButtons() {
           FX3Delay_static();
         }
         if (key.bit.KEY == 55) {
-          if (track[desired_instrument].seqMode == 1) {
+          if (track[desired_instrument].seqMode == 6) {
             selectPage = NFX1_PAGE1;
             NoteFX1_Page_Static();
           }
@@ -1106,15 +1109,8 @@ void readMainButtons() {
             selectPage = NFX5_PAGE1;
             NoteFX5_Page_Static();
           }
-          if (track[desired_instrument].seqMode == 6) {
-            selectPage = NFX6_PAGE1;
-            NoteFX6_Page_Static();
-          }
-          if (track[desired_instrument].seqMode == 7) {
-            selectPage = NFX7_PAGE1;
-            NoteFX7_Page_Static();
-          }
-          if (track[desired_instrument].seqMode == 8) {
+          
+          if (track[desired_instrument].seqMode == 1) {
             selectPage = NFX8_PAGE1;
             NoteFX8_Page_Static();
           }

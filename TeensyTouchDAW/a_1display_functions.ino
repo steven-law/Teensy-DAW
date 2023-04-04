@@ -501,40 +501,6 @@ void drawActiveDrumSteps() {
   }
 }
 
-void drawActiveSteps() {  //draw steps for the melodic tracks 2-8
-  int tone_start = track[desired_instrument].shown_octaves * 12;
-  //draw active steps
-  for (int steps = 0; steps < STEP_QUANT; steps++) {
-    int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] > VALUE_NOTEOFF) {
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-    }
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].step[steps] == VALUE_NOTEOFF) {
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);
-    }
-  }
-}
-void drawActivePixels() {  //draw steps for the melodic tracks 2-8
-  int tone_start = track[desired_instrument].shown_octaves * 12;
-  //draw active steps
-  for (int steps = 0; steps < MAX_TICKS; steps++) {
-    int dot_on_X = (steps * 2) + (2 * STEP_FRAME_W);
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[0] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[0] > VALUE_NOTEOFF) {
-      for (int w = -4; w < 5; w++) {
-        tft.drawPixel(dot_on_X, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-        tft.drawPixel(dot_on_X + 1, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-      }
-    }
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[0] == VALUE_NOTEOFF) {
-      for (int w = -4; w < 5; w++) {
-        tft.drawPixel(dot_on_X, dot_on_Y + w, ILI9341_DARKGREY);
-        tft.drawPixel(dot_on_X + 1, dot_on_Y + w, ILI9341_DARKGREY);
-      }
-    }
-  }
-}
 
 void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
   clearStepsGrid();
@@ -543,9 +509,9 @@ void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
   for (int steps = 0; steps < STEP_QUANT; steps++) {
     for (int polys = 0; polys < MAX_VOICES; polys++) {
       int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[steps].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps*6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
 
-      if (ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[steps].voice[polys] > VALUE_NOTEOFF) {
+      if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps*6].voice[polys] > VALUE_NOTEOFF) {
         tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
       }
     }
@@ -585,8 +551,8 @@ void drawActivePolyStepsY(int X_Axis) {
   //draw active steps
   for (int polys = 0; polys < MAX_VOICES; polys++) {
 
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[X_Axis].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].steps[X_Axis].voice[polys] > VALUE_NOTEOFF) {
+    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis*6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis*6].voice[polys] > VALUE_NOTEOFF) {
       tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
     }
   }

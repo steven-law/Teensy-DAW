@@ -38,7 +38,7 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 
 //SeqMode variables
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_SEQMODES 9
+#define MAX_SEQMODES 7
 #define NFX1_PAGE1 129
 #define NFX2_PAGE1 132
 #define NFX3_PAGE1 135
@@ -47,7 +47,7 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 #define NFX6_PAGE1 142
 #define NFX7_PAGE1 144
 #define NFX8_PAGE1 146
-const char* seqModes[MAX_SEQMODES]{ "Step", "Grid", "Drop", "Rand", "PolyR", "Ratch", "VSL", "PolyP", "PolVS" };
+const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "Ratch",  "Grid" };
 
 //seqmode "grid"
 struct Grids {

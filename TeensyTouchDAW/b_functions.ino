@@ -82,12 +82,6 @@ void Plugin_View_Static() {
   if (selectPage == NFX5_PAGE1) {
     NoteFX5_Page_Static();
   }
-  if (selectPage == NFX6_PAGE1) {
-    NoteFX6_Page_Static();
-  }
-  if (selectPage == NFX7_PAGE1) {
-    NoteFX7_Page_Static();
-  }
   if (selectPage == NFX8_PAGE1) {
     NoteFX8_Page_Static();
   }
@@ -222,14 +216,6 @@ void Plugin_View_Dynamic() {
   if (selectPage == NFX5_PAGE1) {
     NoteFX5_Page1_Dynamic();
   }
-  //setting up the NoteFX6-view
-  if (selectPage == NFX6_PAGE1) {
-    NoteFX6_Page1_Dynamic();
-  }
-  //setting up the NoteFX7-view
-  if (selectPage == NFX7_PAGE1) {
-    NoteFX7_Page1_Dynamic();
-  }
   if (selectPage == NFX8_PAGE1) {
     NoteFX8_Page1_Dynamic();
   }
@@ -298,11 +284,12 @@ void PluginNoteOn() {
     //send midi noteOn´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
-        if (track[desired_instruments].notePressed[polys]) {
-          if (track[desired_instruments].playNoteOnce[polys]) {
-            if (!track[desired_instruments].envActive[polys]) {
-              if (ctrack[desired_instruments].sequence[track[desired_instruments].clip_songMode].tick[nfx6_MIDItick].voice[polys] > VALUE_NOTEOFF) {
-           
+        if (ctrack[desired_instruments].sequence[track[desired_instruments].clip_songMode].tick[nfx6_MIDItick].voice[polys] > VALUE_NOTEOFF) {
+          if (track[desired_instruments].notePressed[polys]) {
+            if (track[desired_instruments].playNoteOnce[polys]) {
+              if (!track[desired_instruments].envActive[polys]) {
+
+
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
                 Serial.printf("Note: %d, on at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
@@ -321,10 +308,11 @@ void PluginNoteOn() {
       }
       //Serial.println("");
     }
+    //send plugin noteOn´s to MONOPHONIC plugins
     if (track[desired_instruments].notePressed[0]) {
       if (track[desired_instruments].playNoteOnce[0]) {
         if (!track[desired_instruments].envActive[0]) {
-          //send plugin noteOn´s to plugins
+          
           if (track[desired_instruments].MIDIchannel == 17) {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed[0] + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
@@ -397,11 +385,10 @@ void PluginNoteOff() {
     //send midi noteOff´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
-        if (!track[desired_instruments].notePressed[polys]) {
-          if (track[desired_instruments].envActive[polys]) {
+        if (track[desired_instruments].envActive[polys]) {
+          if (!track[desired_instruments].notePressed[polys]) {
             track[desired_instruments].envActive[polys] = false;
             Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
-
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             for (int usbs = 0; usbs < 10; usbs++) {

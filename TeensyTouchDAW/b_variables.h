@@ -258,23 +258,11 @@ bool LP_drawOnce[16];
 
 
 
-
-
-int poly = 0;
-int voice = -1;
-
-struct steps_t {
-  byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
-  byte voiceCount = 0;
-};
 struct tick_t {
   byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
- // byte voiceCount = 0;
 };
 
 struct sequence_t {
-  byte step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
-  steps_t steps[NUM_STEPS];
   tick_t tick[MAX_TICKS];
   byte voiceCount = 0;
 };
@@ -282,7 +270,10 @@ struct sequence_t {
 struct track_t {
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
-track_t ctrack[NUM_TRACKS];
+//track_t ctrack[NUM_TRACKS];
+track_t *ctrack = nullptr;
+
+
 
 //Scales
 bool scaleSelect = LOW;
@@ -327,7 +318,7 @@ struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
   byte clip_songMode = 1;  //clipselection from the arrangement
-  int tone = 0;
+  //int tone = 0;
   byte shown_octaves = 5;  //
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
@@ -360,7 +351,7 @@ struct tracks {
   int lastvolume = 100;
 
   int notePlayed[MAX_VOICES] = { 0 };
-  bool notePressed[MAX_VOICES] = { 0 };
+  bool notePressed[MAX_VOICES] = { false };
   bool envActive[MAX_VOICES] = { false };
   bool playNoteOnce[MAX_VOICES] = { false };
   byte MIDI_velocity = 99;
@@ -370,7 +361,6 @@ struct tracks {
   int MIDItick_reset = 6;
   bool tick_true = false;
   int stepLength = 5;
-  int tones[MAX_VOICES];
 
   byte Volume_graph = 50;
   float Volume = 1;
