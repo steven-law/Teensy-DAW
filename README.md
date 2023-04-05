@@ -2,8 +2,8 @@
 Please join this Discord channel for best feature updates, informations and other chats.  
 The most updated files are still here, tho.  
 https://discord.gg/N78atDz9bC
-
-
+please Note:
+At the moment the latest updates are in the "Steven-Law" branch
 
 Teensy-DAW
  clipbased Touch DAW for Teensy

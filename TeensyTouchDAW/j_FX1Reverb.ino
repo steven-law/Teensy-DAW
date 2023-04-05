@@ -45,27 +45,14 @@ void FX1reverb_static() {
 
 
 
-  drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
+  draw_reverb_reverbTime(fx1NR, FX1REVERB, 0, 0, 0, 2000, "RTime");
 }
 
 void FX1reverb_dynamic() {
 
   //reverb time
-  if (enc_moved[0]) {
-    fx1reverbtime_graph = constrain((fx1reverbtime_graph + encoded[0]), 0, 127);
-    fx1reverbtime = fx1reverbtime_graph / 10;
-    reverb1.reverbTime(fx1reverbtime);
-    drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
-  }
-  /*if (abs(Potentiometer[0] - fx1reverbtime_graph) < POTPICKUP) {  // Potiwert muss in die Naehe des letzten Wertes kommen
-    if (fx1reverbtime_graph != Potentiometer[0]) {
-      drawPot(CTRL_COL_0, CTRL_ROW_0, fx1reverbtime_graph, fx1reverbtime_graph, "Reverb", ILI9341_YELLOW);
-      fx1reverbtime_graph = Potentiometer[0];
-      fx1reverbtime = fx1reverbtime_graph / 10;
-      reverb1.reverbTime(fx1reverbtime);
-    }
-  }*/
 
+  reverb_reverbTime(fx1NR, FX1REVERB, 0, 0, 0, 2000, "RTime");
 
 
   TS_Point p = ts.getPoint();
@@ -144,7 +131,7 @@ void saveFX1() {
     tft.print("Writing plugin 1 to FX1.txt...");
     //save plugin 1 variables
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      myFile.print((char)fx1reverbtime_graph);
+      //myFile.print((char)fx1reverbtime_graph);
     }
     tft.println("Done");
     // close the file:
@@ -169,7 +156,7 @@ void loadFX1() {
     //load plugin 1 variables
     tft.print("reading plugin 1 from FX1.txt...");
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      fx1reverbtime_graph = myFile.read();
+      //fx1reverbtime_graph = myFile.read();
     }
     tft.println("Done");
 

@@ -9,7 +9,7 @@ void LP_drawclipRow() {
           drawActiveDrumSteps();
         }
         if (selectPage > 0 && selectPage < 8) {
-          drawActiveSteps();
+          drawActivePolySteps();
         }
         drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
       }
@@ -72,9 +72,8 @@ void LP_drawStepsequencer() {
 
 void LP_drumstep() {
 
-  unsigned long currentMillis2 = millis();  
-  if (currentMillis2 - previousMillis2 >= interval) {
-    previousMillis2 = currentMillis2;
+
+  if (millis() % interval == 0) {
     //Serial.println("LP_drumstep");
     for (int notes = 0; notes < 12; notes++) {
       for (int steps = 0; steps < 16; steps++) {
@@ -83,7 +82,7 @@ void LP_drumstep() {
         int dot_on_Y = (notes)*STEP_FRAME_H + DOT_OFFSET_Y;
 
 
-        if (!LP_octave_bool[notes]) {  //if (function_to_find_out_if_button_is_held()) {
+        if (!LP_octave_bool[notes]) {  //if (function_to_find_out_if_button_is held()) {
           if (!LP_drawOnce[notes]) {
             // control is held now, but it wasnt before -- clear screen
             LP_drawStepsequencer();
@@ -122,36 +121,34 @@ void LP_drumstep() {
 }
 
 void LP_melodicstep() {
-  if (msecs % 200 == 0) {
+  if (millis() % interval == 0) {
     if (LP_grid_bool[24]) {
       track[desired_instrument].shown_octaves--;
       clearStepsGrid();
       drawOctaveNumber();
-      drawActiveSteps();
+      drawActivePolySteps();
     }
     if (LP_grid_bool[31]) {
       track[desired_instrument].shown_octaves++;
       clearStepsGrid();
       drawOctaveNumber();
-      drawActiveSteps();
+      drawActivePolySteps();
     }
   }
 
-  unsigned long currentMillis2 = millis();  //worse input haptic, better bpm drop when longpress (-2bpm)
-  if (currentMillis2 - previousMillis2 >= interval) {
-    previousMillis2 = currentMillis2;
 
+  if (millis() % interval == 0) {
     for (int notes = 0; notes < 12; notes++) {
       for (int steps = 0; steps < 16; steps++) {
 
         int touched_step = LP_step_bool[steps] * steps;
         byte touched_note = LP_octave_bool_keys[notes] * notes;
-        track[desired_instrument].tone = touched_note + track[desired_instrument].shown_octaves * 12;
+        int note = touched_note + track[desired_instrument].shown_octaves * 12;
         int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
         int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
-        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step];
+        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step * 6].voice[0];
 
-        if (!LP_octave_bool_keys[notes]) {  
+        if (!LP_octave_bool_keys[notes]) {
           if (!LP_drawOnce[notes]) {
             LP_drawStepsequencer();
           }
@@ -159,7 +156,7 @@ void LP_melodicstep() {
         }
 
         else if (LP_octave_bool_keys[notes]) {
-          if (track[desired_instrument].tone == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[steps]) {
+          if (note == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[steps * 6].voice[0]) {
             //Serial.println("hello");
             midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
           }
@@ -168,15 +165,20 @@ void LP_melodicstep() {
           if (LP_step_bool[steps]) {
 
             if (notevalue_on_step == VALUE_NOTEOFF) {
-              ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = track[desired_instrument].tone;
+              for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
+                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step + touched_ticks].voice[0] = note;
+              }
               clearStepsGridY(touched_step);
-              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));  //draw the active steps circles
+              // tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));  //draw the active steps circles
               midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
             } else if (notevalue_on_step > VALUE_NOTEOFF) {
-              ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].step[touched_step] = VALUE_NOTEOFF;
-              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
+              for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
+                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step + touched_ticks].voice[0] = VALUE_NOTEOFF;
+                //  tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
+              }
               midi01.sendNoteOn(LP_step_notes[steps], LP_GREEN_DIM, 1);
             }
+            drawActivePolyStepsY(touched_step);
           }
         }
       }
