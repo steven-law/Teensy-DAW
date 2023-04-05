@@ -554,7 +554,7 @@ void loop() {
   detect_and_assign_midi_devices();
   kpd.tick();
   process_clock();
-  step();
+
 
   readMainButtons();
   readEncoders();

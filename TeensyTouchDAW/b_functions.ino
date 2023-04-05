@@ -389,6 +389,7 @@ void PluginNoteOff() {
           if (!track[desired_instruments].notePressed[polys]) {
             track[desired_instruments].envActive[polys] = false;
             Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
+             Serial.println("");
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             for (int usbs = 0; usbs < 10; usbs++) {
@@ -399,7 +400,7 @@ void PluginNoteOff() {
           }
         }
       }
-      //Serial.println("");
+     
     }
 
     if (!track[desired_instruments].notePressed[0]) {

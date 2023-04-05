@@ -15,7 +15,6 @@ void drumStepSequencer_Static() {  //static Display rendering
     LP_drawOctave(3);
   }
 }
-
 void drumStepSequencer() {
   if (launchpad) {
     for (int LPclips = 0; LPclips < 8; LPclips++) {
@@ -145,11 +144,6 @@ void drumStepSequencer() {
     }
   }
 }
-
-
-
-
-
 void saveMIDItrackDrum() {
   SmfWriter writer;
   writer.setFilename("track1");

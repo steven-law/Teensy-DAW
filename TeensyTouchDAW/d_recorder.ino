@@ -39,6 +39,7 @@ void recorder_Page1_Dynamic() {
         drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
       }
     }
+    //oscilloscope
     if (lastPotRow == 2) {
       if (millis() % 1 == 0) {
         AudioYdot++;

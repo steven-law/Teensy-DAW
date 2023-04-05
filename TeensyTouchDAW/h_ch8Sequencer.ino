@@ -123,7 +123,7 @@ void melodicStepSequencer(int desired_instrument) {
         int note = touched_note + track[desired_instrument].shown_octaves * 12;
         int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
         int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
-        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step * 6].voice[0];
+        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_tick].voice[0];
 
         for (int polys = 0; polys < MAX_VOICES; polys++) {
           if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount == polys) {
