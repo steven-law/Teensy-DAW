@@ -56,8 +56,9 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include "flashloader.h"
 #include "b_variables.h"
 #include "b_pluginVariables.h"
-#include "b_plugin Audiopath.h"
-#include "b_plugin Audiopointers.h"
+#include "b_plugin_Audiopath.h"
+#include "b_plugin_Audiopointers.h"
+
 #include "Adafruit_Keypad.h"
 #include <ResponsiveAnalogRead.h>
 #include <USBHost_t36.h>
@@ -141,6 +142,9 @@ int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 129431
 File myFile;                                                                         //initiate SDCard Reader
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
 //ILI9341_t3n tft = ILI9341_t3n(TFT_CS, TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_MISO);  //initiate TFT-Srceen
+//DMAMEM uint16_t fb1[320 * 240];
+
+
 XPT2046_Touchscreen ts(CS_PIN);  //initiate Touchscreen
 USBHost myusb;
 USBHub hub1(myusb);
@@ -167,18 +171,111 @@ MIDIDevice *launchpad = nullptr;
 MIDIDevice *usb_midi_devices[MAX_USB_DEVICES] = { &midi01, &midi02, &midi03, &midi04, &midi05, &midi06, &midi07, &midi08, &midi09, &midi10 };
 //please use this Audio GUI from Newdigate
 //https://newdigate.github.io/teensy-eurorack-audio-gui/
+elapsedMillis msecs;
+elapsedMicros msecsclock;
+
+
+class Clock {
+public:
+  uint32_t _next_clock = 0;
+  uint32_t _clock = 160;
+  uint32_t MIDItick = -1;
+  uint32_t step_tick = -1;
+  uint32_t bar_tick = -1;
+  bool seq_run = false;
+  bool seq_rec = false;
+  bool playing = false;
+  byte master_tempo = 120;
+  int syncPin = -1;
+  uint32_t previousMillis_clock = 0;
+
+  //setup function, so we can put in an analog sync Output (Optional)
+  void setup(int new_syncPin) {
+    syncPin = new_syncPin;
+    if (syncPin >= 0) {
+      digitalWrite(syncPin, LOW);  //
+      pinMode(syncPin, OUTPUT);
+    }
+  }
+
+  bool is_playing() {
+    return playing;
+  }
+  void set_playing(bool p = false) {  //if we want to start the clock use, "clock.is_playing(true);"
+    this->playing = p;
+  }
+  void set_tempo(int tempo) {  //set the tempo with "clock.setTempo(tempo);"
+    master_tempo = tempo;
+    // midi clock messages should be sent 24 times
+    // for every quarter note
+    _clock = 60000000L / tempo / 24;
+  }
+  int get_tempo() {
+    return master_tempo;
+  }
+  void send_MIDIclock() {
+    //spit out a MIDItick
+    usbMIDI.sendRealTime(usbMIDI.Clock);  //send a midiclock to usb host
+    MIDI.sendRealTime(0xF8);              //send a midiclock to serial midi
+  }
+  void send_sync_clock() {
+
+    //spit out a MIDItick
+    if (syncPin >= 0) {
+      digitalWrite(syncPin, HIGH);
+      uint32_t currentMillis = millis();
+      if (currentMillis - previousMillis_clock >= 10) {
+        previousMillis_clock = currentMillis;
+        digitalWrite(syncPin, LOW);
+      }
+    }
+  }
+  bool process_MIDItick() {
+
+    if (playing) {
+      //if the clock is running
+      if (msecsclock >= _clock) {  //compare clockvalues
+        MIDItick++;                //spit out a MIDItick
+        send_MIDIclock();
+        msecsclock = 0;
+
+        return true;
+      }
+    }
+    return false;
+  }
+  uint32_t get_MIDItick() {  //returns the actual MIDItick count
+    return MIDItick;
+  }
+
+
+
+  uint32_t get_step_tick() {  //returns the actual STEPtick count
+    return MIDItick % 6;
+  }
+  bool is_tick_on_step() {
+    return MIDItick % 6 == 0;
+  }
+
+
+  uint32_t get_bar_tick() {  //returns the actual BARtick count
+    return MIDItick % 96;
+  }
+  bool is_tick_on_bar() {
+    return MIDItick % 96 == 0;
+  }
+};
+
+Clock master_clock;
 
 
 
 
-
-//newdigate::audiosample *pl5sample;
 
 
 
 void setup() {
-  Serial.begin(9600);  // set MIDI baud
-
+  Serial.begin(15200);  // set MIDI baud
   //initialize the TFT- and Touchscreen
   tft.begin();
   tft.setRotation(3);
@@ -268,12 +365,15 @@ void setup() {
   // Allocate dsend_noteOff array during runtime
   dsend_noteOff = new bool[num_voice];
   //tft.updateScreen();
+
+  //allocate tracks2-8 "array"
+  ctrack = calloc(NUM_TRACKS, sizeof(track_t));
   //allocate tracks
   track = new tracks[NUM_TRACKS];
   //ctrack = new track_t[NUM_TRACKS];
   //allocate plugins
   plugin = new plugin_t[MAX_PLUGINS];
-
+  effect = new effect_t[MAX_EFFECTS];
   //allocate NFX1
   NFX1 = new Grids[MAX_PRESETS];
   //allocate NFX2
@@ -430,203 +530,14 @@ void setup() {
   //tft.updateScreen();
 }
 
-elapsedMillis msecs;
-elapsedMicros msecsclock;
+
+
 long oldEnc[4] = { -999, -999, -999, -999 };
 
 
-void SerialPrintSeq() {
 
-  Serial.print(tempo);
-  Serial.print("-");
-  Serial.print(tick_16);
-  Serial.print("-   ");
-
-  for (int i = 0; i < 12; i++) {
-    Serial.print(drumnotes[i]);
-    Serial.print("-");
-  }
-
-  Serial.print("-   ");
-
-  for (int desired_tracks = 1; desired_tracks < 8; desired_tracks++) {
-    Serial.print(track[desired_tracks].notePlayed);
-    Serial.print("-");
-    Serial.print(track[desired_tracks].envActive);
-    Serial.print("-   ");
-  }
-  debug_free_ram();
-}
-void SerialPrintPlugins() {
-  Serial.print("PL1");
-  Serial.print("-   ");
-  Serial.print("note: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[0]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[1]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[2]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[3]);
-  Serial.print("   ");
-  Serial.print("W~F: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[4]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[5]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[6]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[7]);
-  Serial.print("   ");
-  Serial.print("Velo: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[8]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[9]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[10]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[11]);
-  Serial.print("   ");
-  Serial.print("Mod: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[12]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[13]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[14]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[15]);
-  Serial.print("     ");
-  Serial.print("Filter: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[0]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[1]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[2]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[3]);
-  Serial.print("   ");
-  Serial.print("ADSR: ");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[4]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[5]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[6]);
-  Serial.print("-");
-  Serial.print(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value[7]);
-
-  Serial.println();
-
-  Serial.print("PL2");
-  Serial.print("-   ");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[0]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[1]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[2]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[3]);
-  Serial.print("  ");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[4]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[5]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[6]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[7]);
-  Serial.print("  ");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[8]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[9]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[10]);
-  Serial.print("-");
-  Serial.print(plugin[1].preset[plpreset[1]].Pot_Value[11]);
-  Serial.println();
-
-  Serial.print("PL3");
-  Serial.print("-   ");
-  Serial.print("W~F: ");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[0]);
-  Serial.print("   ");
-  Serial.print("Filter: ");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[4]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[5]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[6]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[7]);
-  Serial.print("   ");
-  Serial.print("ADSR: ");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[8]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[9]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[10]);
-  Serial.print("-");
-  Serial.print(plugin[pl3NR].preset[plpreset[pl3NR]].Pot_Value[11]);
-  Serial.println();
-
-  Serial.print("PL4");
-  Serial.print("-   ");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[0]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[1]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[2]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[3]);
-  Serial.print("  ");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[4]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[5]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[6]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[7]);
-  Serial.print("  ");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[8]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[9]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[10]);
-  Serial.print("-");
-  Serial.print(plugin[3].preset[plpreset[3]].Pot_Value[11]);
-  Serial.println();
-
-  Serial.print("PL8");
-  Serial.print("-   ");
-  Serial.print("W~F: ");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[0]);
-  Serial.print("   ");
-  Serial.print("Filter: ");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[4]);
-  Serial.print("-");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[5]);
-  Serial.print("-");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[6]);
-  Serial.print("   ");
-  Serial.print("ADSR: ");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[8]);
-  Serial.print("-");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[9]);
-  Serial.print("-");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[10]);
-  Serial.print("-");
-  Serial.print(plugin[pl8NR].preset[plpreset[pl8NR]].Pot_Value[11]);
-  Serial.println();
-
-
-  showSerialonce = false;
-}
-int freeRam() {
-  return (char *)&_heap_end - __brkval;
-}
-
-void debug_free_ram() {
-  Serial.printf(F("debug_free_ram: %i\n"), freeRam());
-}
 void loop() {
+
   //Serial.println("==== start of loop ====");
   usbMIDI.read();
   myusb.Task();
@@ -642,8 +553,8 @@ void loop() {
   midi10.read();
   detect_and_assign_midi_devices();
   kpd.tick();
-  sendClock();
-  step();
+  process_clock();
+
 
   readMainButtons();
   readEncoders();
@@ -655,7 +566,7 @@ void loop() {
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
 
   //placeholder for debugging
-  if (msecs % 100 == 0) {
+  if (msecs % 500 == 0) {
   }
 
   if (gridTouchY == 1) trackTouchY = 0;
@@ -701,9 +612,10 @@ void loop() {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //TempoSelect button
       if (gridTouchX == POSITION_BPM_BUTTON || gridTouchX == POSITION_BPM_BUTTON + 1) {
-        if (abs(map(Potentiometer[0], 0, 127, 55, 200) - tempo) < 10) {
-          tempo = map(Potentiometer[0], 0, 127, 55, 200);
-          setTempo(tempo);
+        if (abs(map(Potentiometer[0], 0, 127, 55, 200) - seq_tempo) < 10) {
+          seq_tempo = map(Potentiometer[0], 0, 127, 55, 200);
+          master_clock.set_tempo(seq_tempo);
+          show_tempo();
         }
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -776,6 +688,8 @@ void loop() {
     }
     //tft.updateScreen();
   }
+  // tft.updateScreenAsync();
+  // tft.waitUpdateAsyncComplete();
 }
 void readMainButtons() {
 
@@ -786,26 +700,44 @@ void readMainButtons() {
       //cursor
       //curser left
       if (otherCtrlButtons && key.bit.KEY == 68) {  //"D" 68 1st button
-        gridTouchX = constrain(gridTouchX - 1, 0, 19);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          pixelTouchX = constrain((pixelTouchX - 2), 0, 320);
+          drawCursorPixel();
+        } else {
+          gridTouchX = constrain(gridTouchX - 1, 0, 19);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor right
       if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
-        gridTouchX = constrain(gridTouchX + 1, 0, 19);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          pixelTouchX = constrain((pixelTouchX + 2), 0, 320);
+          drawCursorPixel();
+        } else {
+          gridTouchX = constrain(gridTouchX + 1, 0, 19);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor up
       if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
-        gridTouchY = constrain(gridTouchY - 1, 0, 14);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          drawCursorPixel();
+        } else {
+          gridTouchY = constrain(gridTouchY - 1, 0, 14);
+          drawCursor();
+        }
         showCoordinates();
       }
       //cursor down
       if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
-        gridTouchY = constrain(gridTouchY + 1, 0, 14);
-        drawCursor();
+        if (selectPage == NFX8_PAGE1) {
+          drawCursorPixel();
+        } else {
+          gridTouchY = constrain(gridTouchY + 1, 0, 14);
+          drawCursor();
+        }
         showCoordinates();
       }
       //last-pot-row
@@ -1157,7 +1089,7 @@ void readMainButtons() {
           FX3Delay_static();
         }
         if (key.bit.KEY == 55) {
-          if (track[desired_instrument].seqMode == 1) {
+          if (track[desired_instrument].seqMode == 6) {
             selectPage = NFX1_PAGE1;
             NoteFX1_Page_Static();
           }
@@ -1176,6 +1108,11 @@ void readMainButtons() {
           if (track[desired_instrument].seqMode == 5) {
             selectPage = NFX5_PAGE1;
             NoteFX5_Page_Static();
+          }
+          
+          if (track[desired_instrument].seqMode == 1) {
+            selectPage = NFX8_PAGE1;
+            NoteFX8_Page_Static();
           }
         }
       }
@@ -1335,371 +1272,12 @@ void readEncoders() {
   }
 }
 
-void drawCursor() {
-  static byte last_button_X = 0;
-  static byte last_button_Y = 0;
-  for (int pixel = 0; pixel < 16; pixel++) {
-    tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 1, tftRAM[0][pixel]);
-    tft.drawPixel(pixel + (STEP_FRAME_W * last_button_X), (STEP_FRAME_H * last_button_Y) + 15, tftRAM[1][pixel]);
-    tft.drawPixel((STEP_FRAME_W * last_button_X) + 1, pixel + (STEP_FRAME_H * last_button_Y), tftRAM[2][pixel]);
-    tft.drawPixel((STEP_FRAME_W * last_button_X) + 15, pixel + (STEP_FRAME_H * last_button_Y), tftRAM[3][pixel]);
-  }
-
-
-  for (int pixel = 0; pixel < 16; pixel++) {
-    tftRAM[0][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 1);
-    tftRAM[1][pixel] = tft.readPixel(pixel + (STEP_FRAME_W * gridTouchX), (STEP_FRAME_H * gridTouchY) + 15);
-    tftRAM[2][pixel] = tft.readPixel((STEP_FRAME_W * gridTouchX) + 1, pixel + (STEP_FRAME_H * gridTouchY));
-    tftRAM[3][pixel] = tft.readPixel((STEP_FRAME_W * gridTouchX) + 15, pixel + (STEP_FRAME_H * gridTouchY));
-  }
-
-  tft.drawRect((STEP_FRAME_W * gridTouchX) + 1, (STEP_FRAME_H * gridTouchY) + 1, STEP_FRAME_W - 1, STEP_FRAME_H - 1, ILI9341_WHITE);
-  last_button_X = gridTouchX;
-  last_button_Y = gridTouchY;
-}
-
-void startUpScreen() {  //static Display rendering
-  tft.fillScreen(ILI9341_DARKGREY);
-
-  tft.setFont(Arial_9);
-
-  //songmode button
-  tft.setTextColor(ILI9341_BLACK);
-  tft.fillRect(1, 1, 15, 16, ILI9341_MAGENTA);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setCursor(4, 3);
-  tft.print("S");
-
-  //Drumtrack button
-  tft.fillRect(1, STEP_FRAME_H, 15, TRACK_FRAME_H, trackColor[0]);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setCursor(4, TRACK_FRAME_H);
-  tft.print("D");
-
-  //other tracks buttons
-  for (int otherTracks = 2; otherTracks <= 8; otherTracks++) {
-    tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]);  //Xmin, Ymin, Xlength, Ylength, color
-    tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
-    tft.print(otherTracks);
-  }
-  //Mixer button
-  tft.fillRect(1, STEP_FRAME_H * 13, 15, TRACK_FRAME_H, ILI9341_LIGHTGREY);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setCursor(3, STEP_FRAME_H * 13 + 6);
-  tft.print("M");
-
-  //scale Select
-  tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
-
-  //arrangment Select
-  tft.drawRect(STEP_FRAME_W * POSITION_ARR_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
-
-  // record button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_RECORD_BUTTON, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
-  tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
-
-  //Play button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_PLAY_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);                                                                      //PLAY RECT FRAME
-  tft.fillTriangle(STEP_FRAME_W * POSITION_PLAY_BUTTON + 12, 3, STEP_FRAME_W * POSITION_PLAY_BUTTON + 12, 13, STEP_FRAME_W * POSITION_PLAY_BUTTON + 22, 8, ILI9341_GREEN);  // x1, y1, x2, y2, x3, y3
-
-  //stop button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_STOP_BUTTON, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
-  tft.fillRect(STEP_FRAME_W * POSITION_STOP_BUTTON + 3, 3, 10, 10, ILI9341_LIGHTGREY);
-
-  //barcounter & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_BAR_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
-
-  //tempo button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_BPM_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
-
-  //save button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_SAVE_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
-  tft.fillRect(STEP_FRAME_W * POSITION_SAVE_BUTTON + 1, 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_ORANGE);
-  tft.setTextColor(ILI9341_BLACK);
-  tft.setFont(Arial_9);
-  tft.setCursor(STEP_FRAME_W * POSITION_SAVE_BUTTON + 2, 3);
-  tft.print("SAV");
-
-  //load button & Rectangle
-  tft.drawRect(STEP_FRAME_W * POSITION_LOAD_BUTTON, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
-  tft.fillRect(STEP_FRAME_W * POSITION_LOAD_BUTTON + 1, 1, STEP_FRAME_W - 2, STEP_FRAME_H - 2, ILI9341_GREENYELLOW);
-  tft.setTextColor(ILI9341_BLACK);
-  tft.setFont(Arial_9);
-  tft.setCursor(STEP_FRAME_W * POSITION_LOAD_BUTTON + 4, 3);
-  tft.print("L");
-}
-void showCoordinates() {
-  tft.fillRect(20, 0, 50, 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setTextColor(ILI9341_GREEN);
-  tft.setFont(Arial_10);
-  tft.setCursor(20, 3);
-  tft.print("X");
-  tft.print(gridTouchX);
-  tft.setCursor(45, 3);
-  tft.print("Y");
-  tft.print(gridTouchY);
-}
-
-
-void gridScaleSelector() {  //static Display rendering
-  clearWorkSpace();
-  tft.drawRect(STEP_FRAME_W * 2, STEP_FRAME_H, STEP_FRAME_W * 16, STEP_FRAME_H * MAX_SCALES, ILI9341_WHITE);  //Xmin, Ymin, Xlength, Ylength, color
-}
-void scaleSelector() {
-  if (millis() % interval == 0) {
-    for (int i = 0; i < MAX_SCALES; i++) {
-      tft.setCursor(STEP_FRAME_W * 2, STEP_FRAME_H * i + STEP_FRAME_H);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print(scaleNames[i]);
-
-      if (gridTouchX > 1 && gridTouchX < 15 && gridTouchY == i + 1) {
-        scaleSelected = i;
-        tft.fillRect(STEP_FRAME_W * POSITION_SCALE_BUTTON + 1, 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
-        tft.setCursor(STEP_FRAME_W * POSITION_SCALE_BUTTON + 2, 4);
-        tft.setFont(Arial_8);
-        tft.setTextColor(ILI9341_WHITE);
-        tft.setTextSize(1);
-        tft.print(scaleNamesShort[scaleSelected]);
-      }
-    }
-  }
-}
-
-void drawStepSequencerStatic(int desired_instrument) {
-  //draw the Main Grid
-  for (int i = 0; i < 17; i++) {  //vert Lines
-    int step_Frame_X = i * STEP_FRAME_W;
-    tft.drawFastVLine(step_Frame_X + STEP_FRAME_W * 2, STEP_FRAME_H, GRID_LENGTH_VERT, ILI9341_WHITE);  //(x, y-start, length, color)
-    if (i % 4 == 0) {
-      tft.drawFastVLine((i * STEP_FRAME_W) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, ILI9341_LIGHTGREY);  //(x, y-start, y-length, color)
-    }
-  }
-  for (int i = 0; i < 13; i++) {  //hor lines
-    int step_Frame_Y = i * 16;
-    tft.drawFastHLine(STEP_FRAME_W * 2, step_Frame_Y + STEP_FRAME_H, GRID_LENGTH_HOR, ILI9341_WHITE);  //(x-start, y, length, color)
-  }
-}
-
-void draw_Notenames() {
-  for (int n = 0; n < num_voice; n++) {  //hor notes
-    if (scales[scaleSelected][n]) {
-      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
-    }
-
-    tft.setCursor(20, STEP_FRAME_H * n + 20);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setTextSize(1);
-    tft.print(noteNames[n]);
-  }
-}
-void draw_Drumnotes() {
-  for (int n = 0; n < num_voice; n++) {  //hor notes
-    tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
-    tft.setCursor(18, STEP_FRAME_H * n + 18);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setTextSize(1);
-    tft.print(drumnote[n]);
-  }
-}
-
-void draw_Clipselector() {
-  for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
-    tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + (ClipNr * 20));
-    tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setTextSize(1);
-    tft.print("Clip ");
-    tft.print(ClipNr);
-  }
-}
-void draw_SeqMode() {
-  drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
-}
-void drawOctaveNumber() {
-  //draw the octave number
-  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
-  tft.setFont(Arial_16);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  tft.print(track[desired_instrument].shown_octaves);
-}
-void drawMIDIchannel() {
-  //MIDIChannel assign button
-  tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 10 + 2);
-  tft.setFont(Arial_8);
-  tft.setTextColor(trackColor[desired_instrument]);
-  tft.setTextSize(1);
-  tft.print("MCh:");
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-  //show midichannel
-  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
-  tft.setFont(Arial_10);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  tft.print(track[desired_track].MIDIchannel);
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-  //draw MidiCC
-  for (int plugintext = 0; plugintext <= 16; plugintext++) {
-    if (track[desired_instrument].MIDIchannel == plugintext) {
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print("CC");
-    }
-  }
-  //draw Plugin
-  for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
-    if (track[desired_track].MIDIchannel == plugintext + 17) {
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print(pluginName[plugintext]);
-    }
-  }
-}
-
-void clearStepsGrid() {  // clear all Steps from Display
-  for (int T = 0; T < 12; T++) {
-    for (int S = 0; S < 16; S++) {
-      tft.fillCircle(S * STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + 24, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
-    }
-  }
-}
-void clearStepsGridY(int X_Axis) {  // clear all Steps in the same column
-  for (int T = 0; T < 12; T++) {
-
-    tft.fillCircle((X_Axis)*STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
-  }
-}
 
 
 
-#define BUFFPIXEL 80
 
 
-//===========================================================
-// Try Draw using writeRect
-void bmpDraw(const char *filename, uint8_t x, uint16_t y) {
 
-  File bmpFile;
-  int bmpWidth, bmpHeight;              // W+H in pixels
-  uint8_t bmpDepth;                     // Bit depth (currently must be 24)
-  uint32_t bmpImageoffset;              // Start of image data in file
-  uint32_t rowSize;                     // Not always = bmpWidth; may have padding
-  uint8_t sdbuffer[3 * BUFFPIXEL];      // pixel buffer (R+G+B per pixel)
-  uint16_t buffidx = sizeof(sdbuffer);  // Current position in sdbuffer
-  boolean goodBmp = false;              // Set to true on valid header parse
-  boolean flip = true;                  // BMP is stored bottom-to-top
-  int w, h, row, col;
-  uint8_t r, g, b;
-  uint32_t pos = 0, startTime = millis();
-
-  uint16_t awColors[320];  // hold colors for one row at a time...
-
-  if ((x >= tft.width()) || (y >= tft.height())) return;
-
-  Serial.println();
-  Serial.print(F("Loading image '"));
-  Serial.print(filename);
-  Serial.println('\'');
-
-  // Open requested file on SD card
-  if (!(bmpFile = SD.open(filename))) {
-    Serial.print(F("File not found"));
-    return;
-  }
-
-  // Parse BMP header
-  if (read16(bmpFile) == 0x4D42) {  // BMP signature
-    Serial.print(F("File size: "));
-    Serial.println(read32(bmpFile));
-    (void)read32(bmpFile);             // Read & ignore creator bytes
-    bmpImageoffset = read32(bmpFile);  // Start of image data
-    Serial.print(F("Image Offset: "));
-    Serial.println(bmpImageoffset, DEC);
-    // Read DIB header
-    Serial.print(F("Header size: "));
-    Serial.println(read32(bmpFile));
-    bmpWidth = read32(bmpFile);
-    bmpHeight = read32(bmpFile);
-    if (read16(bmpFile) == 1) {    // # planes -- must be '1'
-      bmpDepth = read16(bmpFile);  // bits per pixel
-      Serial.print(F("Bit Depth: "));
-      Serial.println(bmpDepth);
-      if ((bmpDepth == 24) && (read32(bmpFile) == 0)) {  // 0 = uncompressed
-
-        goodBmp = true;  // Supported BMP format -- proceed!
-        Serial.print(F("Image size: "));
-        Serial.print(bmpWidth);
-        Serial.print('x');
-        Serial.println(bmpHeight);
-
-        // BMP rows are padded (if needed) to 4-byte boundary
-        rowSize = (bmpWidth * 3 + 3) & ~3;
-
-        // If bmpHeight is negative, image is in top-down order.
-        // This is not canon but has been observed in the wild.
-        if (bmpHeight < 0) {
-          bmpHeight = -bmpHeight;
-          flip = false;
-        }
-
-        // Crop area to be loaded
-        w = bmpWidth;
-        h = bmpHeight;
-        if ((x + w - 1) >= tft.width()) w = tft.width() - x;
-        if ((y + h - 1) >= tft.height()) h = tft.height() - y;
-
-        for (row = 0; row < h; row++) {  // For each scanline...
-
-          // Seek to start of scan line.  It might seem labor-
-          // intensive to be doing this on every line, but this
-          // method covers a lot of gritty details like cropping
-          // and scanline padding.  Also, the seek only takes
-          // place if the file position actually needs to change
-          // (avoids a lot of cluster math in SD library).
-          if (flip)  // Bitmap is stored bottom-to-top order (normal BMP)
-            pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize;
-          else  // Bitmap is stored top-to-bottom
-            pos = bmpImageoffset + row * rowSize;
-          if (bmpFile.position() != pos) {  // Need seek?
-            bmpFile.seek(pos);
-            buffidx = sizeof(sdbuffer);  // Force buffer reload
-          }
-
-          for (col = 0; col < w; col++) {  // For each pixel...
-            // Time to read more pixel data?
-            if (buffidx >= sizeof(sdbuffer)) {  // Indeed
-              bmpFile.read(sdbuffer, sizeof(sdbuffer));
-              buffidx = 0;  // Set index to beginning
-            }
-
-            // Convert pixel from BMP to TFT format, push to display
-            b = sdbuffer[buffidx++];
-            g = sdbuffer[buffidx++];
-            r = sdbuffer[buffidx++];
-            awColors[col] = tft.color565(r, g, b);
-          }  // end pixel
-          tft.writeRect(0, row, w, 1, awColors);
-        }  // end scanline
-        Serial.print(F("Loaded in "));
-        Serial.print(millis() - startTime);
-        Serial.println(" ms");
-      }  // end goodBmp
-    }
-  }
-
-  bmpFile.close();
-  if (!goodBmp) Serial.println(F("BMP format not recognized."));
-}
 
 
 

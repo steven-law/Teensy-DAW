@@ -1,6 +1,6 @@
 void drumStepSequencer_Static() {  //static Display rendering
   clearWorkSpace();
-  drawStepSequencerStatic(0);
+  drawStepSequencerStatic(16);
   drawActiveDrumSteps();
   draw_Drumnotes();
   drawMIDIchannel();
@@ -9,12 +9,12 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
   drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
 
-
-  midi01.sendControlChange(0, 0, 1);
-  LP_drawStepsequencer();
-  LP_drawOctave(3);
+  if (launchpad) {
+    midi01.sendControlChange(0, 0, 1);
+    LP_drawStepsequencer();
+    LP_drawOctave(3);
+  }
 }
-
 void drumStepSequencer() {
   if (launchpad) {
     for (int LPclips = 0; LPclips < 8; LPclips++) {
@@ -92,8 +92,12 @@ void drumStepSequencer() {
   //tho, this leads to a drop of the sequencertempo
 
 
+  static bool touched;
+  if (!ts.touched() && !button[15]) {
+    touched = false;
+  }
   if (ts.touched() || button[15]) {
-    if (millis() % interval == 0) {
+    if (!touched) {
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
 
         int dot_on_X = (gridTouchX - 2) * STEP_FRAME_W + DOT_OFFSET_X;
@@ -104,8 +108,10 @@ void drumStepSequencer() {
 
         if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
           channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
+          touched = true;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector) * 20));  //draw the active steps circles
         } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+          touched = true;
           channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
         }
@@ -127,19 +133,6 @@ void drumStepSequencer() {
     }
     //assign drumnotes on the left
 
-
-    /*if (gridTouchX == 1) {
-      int noteselector = Potentiometer[3];
-      for (int i = 0; i < 12; i++) {
-        drumnote[gridTouchY - 1] = map(noteselector, 0, 127, 0, 48);
-        tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
-        tft.setCursor(18, STEP_FRAME_H * i + 18);
-        tft.setFont(Arial_8);
-        tft.setTextColor(ILI9341_BLACK);
-        tft.setTextSize(1);
-        tft.print(drumnote[i]);
-      }
-    }*/
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
       track[0].clip_selector = (gridTouchX / 2) - 1;
@@ -151,26 +144,11 @@ void drumStepSequencer() {
     }
   }
 }
-
-
-void drawActiveDrumSteps() {
-  for (int tone = 0; tone < 12; tone++) {
-    for (int steps = 0; steps < STEP_QUANT; steps++) {
-      if (channel1Clip[track[0].clip_selector][tone][steps]) {
-        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + ((track[0].clip_selector) * 20));
-      }
-    }
-  }
-}
-
-
 void saveMIDItrackDrum() {
   SmfWriter writer;
   writer.setFilename("track1");
   writer.writeHeader();
   //Serial.print("Start saving-> ");
-  //writer.addSetTempo(tempo);
-  //double microsPerTick = writer.get_microseconds_per_tick();
   int deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
     for (int svoice = 0; svoice < num_voice; svoice++) {

@@ -48,16 +48,11 @@ static const int VALUE_NOTEOFF = 0;
 #define num_voice 12
 
 #define NUM_STEPS 16
+#define MAX_TICKS 96
 #define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
-unsigned long _next_clock = 0;
-unsigned long _clock = 0;
-unsigned long MIDItick = 0;
-int tick_16 = -1;
-bool seq_run = false;
-bool seq_rec = false;
-byte tempo = 120;
+
 #define tuning 440
 
 
@@ -72,7 +67,7 @@ byte tempo = 120;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-
+#define MAX_VOICES 4
 
 byte selectPage;
 #define DRUMTRACK 0
@@ -160,6 +155,7 @@ float audio_rec_volume = 0;
 byte audio_rec_selected_file;
 byte audio_rec_selected_file_graph = 50;
 byte audio_rec_peak_graph;
+byte AudioYdot = 255;
 // The file where data is recorded
 File frec;
 
@@ -167,18 +163,6 @@ File frec;
 
 
 //FX variables
-//FX1
-//reverb variables
-float fx1reverbtime = 0;
-byte fx1reverbtime_graph = 0;
-
-//FX2
-//bitcrusher variables
-int fx2bitcrush = 16;
-byte fx2bitcrush_graph = 127;
-
-int fx2samplerate = 44100;
-byte fx2samplerate_graph = 127;
 
 //FX3
 //delay variables
@@ -222,8 +206,7 @@ byte songpages;
 byte gridTouchX;  //decided to handle touchthingys with a grid, so here it is, 20 grids
 byte gridTouchY;  //decided to handle touchthingys with a grid, so here it is, 15 grids
 byte trackTouchY;
-unsigned long previousMillis;
-
+int pixelTouchX;
 
 
 //DMAMEM uint16_t fb1[320 * 240];
@@ -272,51 +255,30 @@ bool LP_octave_bool_keys[12];
 bool LP_step_bool[16];
 bool LP_drawOnce[16];
 
-//drawPot Variables
-float circlePos;
-float circlePos_old;
-int dvalue_old;
-int dvalue_old2;
-char* dvalue_old_char;
-//drawPot Variables
-float circlePos_2;
-float circlePos_old_2;
-int dvalue_old_2;
-//drawPot Variables
-float circlePos_3;
-float circlePos_old_3;
-int dvalue_old_3;
-//drawPot Variables
-float circlePos_4;
-float circlePos_old_4;
-int dvalue_old_4;
-//drawPotcc Variables
-float circlePoscc;
-float circlePos_oldcc;
-int dvalue_oldcc;
-int dname_oldcc;
 
 
 
-
-
-
-
+struct tick_t {
+  byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+};
 
 struct sequence_t {
-  int step[NUM_STEPS];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE. note this is monophonic only (for now)!!
+  tick_t tick[MAX_TICKS];
+  byte voiceCount = 0;
 };
 
 struct track_t {
-  byte midi_channel;               // stores the MIDI channel that this track should output on; 10 is drums
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
-track_t ctrack[NUM_TRACKS];
+//track_t ctrack[NUM_TRACKS];
+track_t *ctrack = nullptr;
+
+
 
 //Scales
 bool scaleSelect = LOW;
 const int MAX_SCALES = 13;  //how many scales do we have
-int scaleSelected = 0;     //variable for scale selecting
+int scaleSelected = 0;      //variable for scale selecting
 
 
 const int scales[MAX_SCALES][12]{
@@ -341,7 +303,11 @@ const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", 
 
 
 
+uint32_t seq_MIDItick;
+int tick_16;
 
+int seq_tempo = 120;
+bool seq_rec = false;
 
 
 //Track Variables
@@ -352,7 +318,7 @@ struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_selector = 0;  //clipselection from trackview´s clip selector
   byte clip_songMode = 1;  //clipselection from the arrangement
-  int tone = 0;
+  //int tone = 0;
   byte shown_octaves = 5;  //
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
@@ -384,10 +350,10 @@ struct tracks {
   int lastpresetNr = 0;
   int lastvolume = 100;
 
-  int notePlayed = 0;
-  bool notePressed;
-  bool envActive;
-  bool playNoteOnce;
+  int notePlayed[MAX_VOICES] = { 0 };
+  bool notePressed[MAX_VOICES] = { false };
+  bool envActive[MAX_VOICES] = { false };
+  bool playNoteOnce[MAX_VOICES] = { false };
   byte MIDI_velocity = 99;
 
   int MIDItick = 0;

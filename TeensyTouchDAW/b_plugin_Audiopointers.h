@@ -10,7 +10,12 @@
 #define pl9NR 8
 #define pl10NR 9
 
-const char* pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "11", "12", "13", "14", "15", "16" };
+
+#define fx1NR 0
+#define fx2NR 1
+
+#define fx3NR 2
+const char *pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "11", "12", "13", "14", "15", "16" };
 
 #define PLUGIN1_PAGE1 40
 #define PLUGIN2_PAGE1 41
@@ -110,11 +115,11 @@ AudioSynthWaveformPWM *PWM[2]{
 #define pl10PWM2 1
 
 AudioSynthWaveformDc *DC[8]{
-  &pl1dc1, //0
-  &pl3dc1,//1
-  &pl5dc1,//2
-  &pl6dc1,//3
-  &pl8dc1,//4
+  &pl1dc1,                      //0
+  &pl3dc1,                      //1
+  &pl5dc1,                      //2
+  &pl6dc1,                      //3
+  &pl8dc1,                      //4
   &pl10dc1, &pl10dc2, &pl10dc3  //5,6,7
 };
 #define pl1DC1 0
@@ -189,6 +194,9 @@ AudioFilterLadder *LADDERFILTER[1]{ &pl8filter1 };  //pl8
 
 
 AudioPlaySdResmp *RAWPLAY[2]{ &playSdPitch1, &playSdPitch2 };
+#define pl5RAW 0
+#define pl6RAW 1
+
 
 AudioMixer4 *FILTERMIXER[6]{
   &pl1mixer2,  //0
@@ -204,6 +212,12 @@ AudioMixer4 *FILTERMIXER[6]{
 #define pl6TYPE 3
 #define pl9TYPE 4
 #define pl10TYPE 5
+
+AudioEffectBitcrusher *BITCRUSHER[1]{&bitcrusher2};
+#define FX2BITCRUSH 0
+
+AudioEffectReverb  *REVERB[1]{&reverb1};
+#define FX1REVERB 0
 
 AudioMixer4 *PL2MIX[3]{ &drummixer1, &drummixer1, &drummixer1 };
 AudioMixer4 *PL4MIX[3]{ &pl4drummixer1, &pl4drummixer1, &pl4drummixer1 };

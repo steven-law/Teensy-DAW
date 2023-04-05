@@ -15,25 +15,58 @@ void recorder_Page_Static() {
   drawActiveRect(CTRL_COL_0, CTRL_ROW_1, 2, 2, audio_rec_listen, "Listen", ILI9341_ORANGE);
   drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_now, "Rec", ILI9341_RED);
 }
-
+#define XPOS_OFFSET 32
+#define YPOS_OFFSET 150
+#define WAVEHEIGHT 64
 void recorder_Page1_Dynamic() {
+  float peaker;
+  static int posX_old = 288;
+  static int posY_old = 214;
   if (audio_rec_now) {
     continueRecording();
     drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_now, "Rec", ILI9341_RED);
   }
 
   if (peak1.available()) {
+    peaker = peak1.read();
+
     //level meter
     if (millis() % 100 == 0) {
-      audio_rec_peak_graph = peak1.read() * 127;
+      audio_rec_peak_graph = peaker * 127;
       if (audio_rec_peak_graph > 110) {
         drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_RED);
       } else {
         drawPot_4(3, 0, audio_rec_peak_graph, audio_rec_peak_graph, "Meter", ILI9341_OLIVE);
       }
     }
-  }
+    //oscilloscope
+    if (lastPotRow == 2) {
+      if (millis() % 1 == 0) {
+        AudioYdot++;
+      }
+      if (millis() % 2 == 0) {
+        int AudioYpos = ((1 - peaker) * WAVEHEIGHT) + YPOS_OFFSET;
+        int AudioXpos = AudioYdot + XPOS_OFFSET;
+        tft.drawFastVLine(AudioXpos + 3, YPOS_OFFSET, WAVEHEIGHT + 1, ILI9341_DARKGREY);  //(x, y-start, y-length, color)
+        tft.drawFastVLine(AudioXpos + 2, YPOS_OFFSET, WAVEHEIGHT + 1, ILI9341_DARKGREY);  //(x, y-start, y-length, color)
+        tft.drawFastVLine(AudioXpos + 1, YPOS_OFFSET, WAVEHEIGHT + 1, ILI9341_DARKGREY);  //(x, y-start, y-length, color)
+        tft.drawLine(posX_old, posY_old, AudioXpos, AudioYpos, ILI9341_WHITE);
+        Serial.print(AudioXpos);
+        Serial.print("-");
+        Serial.println(AudioYpos);
+        Serial.println(peaker);
 
+        if (AudioYdot >= 254) {
+          AudioYdot = 0;
+          posX_old = 32;
+          posY_old = 214;
+        } else {
+          posX_old = AudioXpos;
+          posY_old = AudioYpos;
+        }
+      }
+    }
+  }
 
   switch (lastPotRow) {
     case 0:
@@ -117,6 +150,7 @@ void recorder_Page1_Dynamic() {
       // }
       break;
     case 2:
+
 
       break;
     case 3:

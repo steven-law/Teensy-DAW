@@ -1,3 +1,5 @@
+
+
 void FX2Bitcrush_settings() {
   //bitcrusher1 controlled by startKnob on page 3
   bitcrusher2.bits(4);
@@ -45,28 +47,17 @@ void FX2Bitcrush_static() {
   drawActiveRect(1, 8, 2, 2, true, "BitC", ILI9341_LIGHTGREY);
   drawActiveRect(1, 11, 2, 2, false, "Dly", ILI9341_LIGHTGREY);
 
-  drawPot(0, 0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
-  drawPot(1, 0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
+   //saple rate
+  draw_bitCrush_sampleRate(fx2NR, FX2BITCRUSH, 0, 0, 1, 44100, "SRate");
+  //bitcrush
+  draw_bitCrush_bits(fx2NR, FX2BITCRUSH, 1, 0, 1, 16, "Bits");
 }
 
 void FX2Bitcrush_dynamic() {
   //saple rate
-  if (enc_moved[0]) {
-    fx2samplerate_graph = constrain((fx2samplerate_graph + encoded[0]), 0, 127);
-    fx2samplerate = map(fx2samplerate_graph, 0, 127, 0, 44200);
-    bitcrusher2.sampleRate(fx2samplerate);
-    drawPot(0, 0, fx2samplerate_graph, fx2samplerate, "SRate", trackColor[desired_instrument]);
-  }
-
-
-
+  bitCrush_sampleRate(fx2NR, FX2BITCRUSH, 0, 0, 1, 44100, "SRate");
   //bitcrush
-  if (enc_moved[1]) {
-    fx2bitcrush = constrain((fx2bitcrush + encoded[1]), 0, 16);
-    fx2bitcrush_graph = fx2bitcrush * 8;
-    bitcrusher2.bits(fx2bitcrush);
-    drawPot(1, 0, fx2bitcrush_graph, fx2bitcrush, "Crush", trackColor[desired_instrument]);
-  }
+  bitCrush_bits(fx2NR, FX2BITCRUSH, 1, 0, 1, 16, "Bits");
 
 
   TS_Point p = ts.getPoint();
@@ -131,8 +122,8 @@ void saveFX2() {
     tft.print("Writing plugin 1 to FX2.txt...");
     //save plugin 1 variables
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      myFile.print((char)fx2samplerate_graph);
-      myFile.print((char)fx2bitcrush_graph);
+    //  myFile.print((char)fx2samplerate_graph);
+    //  myFile.print((char)fx2bitcrush_graph);
     }
     tft.println("Done");
     // close the file:
@@ -157,8 +148,8 @@ void loadFX2() {
     //load plugin 1 variables
     tft.print("reading plugin 1 from FX2.txt...");
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-      fx2samplerate_graph = myFile.read();
-      fx2bitcrush_graph = myFile.read();
+      //fx2samplerate_graph = myFile.read();
+      //fx2bitcrush_graph = myFile.read();
     }
     tft.println("Done");
 
