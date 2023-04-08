@@ -130,13 +130,15 @@ const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.
 const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-const char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
+char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
 char _trackname[20];
 //const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
 
+byte incomingCC[4];
+bool incomingCC_changed[4]{ false };
 
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
@@ -150,14 +152,12 @@ byte audio_rec_rec_graph = 0;
 bool audio_rec_now = false;
 bool audio_rec_listen = false;
 int audio_rec_listen_graph = 0;
-byte audio_rec_volume_graph = 0;
-float audio_rec_volume = 0;
-byte audio_rec_selected_file;
-byte audio_rec_selected_file_graph = 50;
-byte audio_rec_peak_graph;
-byte AudioYdot = 255;
+
 // The file where data is recorded
 File frec;
+#define XPOS_OFFSET 32
+#define YPOS_OFFSET 150
+#define WAVEHEIGHT 64
 
 
 
@@ -271,7 +271,7 @@ struct track_t {
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
 //track_t ctrack[NUM_TRACKS];
-track_t *ctrack = nullptr;
+track_t* ctrack = nullptr;
 
 
 
@@ -322,8 +322,6 @@ struct tracks {
   byte shown_octaves = 5;  //
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
-  float gain = 1;
-  byte gain_graph = 127;
   bool mute_state = LOW;
   bool solo_state = LOW;
   bool solo_mutes_state = LOW;
@@ -364,18 +362,6 @@ struct tracks {
 
   byte Volume_graph = 50;
   float Volume = 1;
-
-  byte FXDryVolume_graph = 100;
-  float FXDryVolume = 1;
-
-  byte FX1Volume_graph = 0;
-  float FX1Volume = 0;
-
-  byte FX2Volume_graph = 0;
-  float FX2Volume = 0;
-
-  byte FX3Volume_graph = 0;
-  float FX3Volume = 0;
 
   int seqMode = 0;
 };

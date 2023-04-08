@@ -59,15 +59,14 @@ void Plugin4_Page_Static() {
     drawPot(MixerColumn, 2, plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8], plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
   }
 }
-
 void Plugin4_Change() {
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer1.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn] / 127.00));
-    plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn];
+ 
   }
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer2.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 4] / 127.00));
-    plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 4];
+ 
   }
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer3.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8] / 127.00));

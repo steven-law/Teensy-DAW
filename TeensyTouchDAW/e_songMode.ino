@@ -1,5 +1,24 @@
+void gridSongMode(int songpageNumber) {  //static Display rendering
+  page_phrase_start = songpageNumber * 16;
+  page_phrase_end = (songpageNumber + 1) * 16;
+  clearWorkSpace();
+  drawsongmodepageselector();
+  drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
+  draw_start_of_loop();
+  draw_end_of_loop();
+  midi01.sendControlChange(0, 0, 1);
+  //occationally working on a full arrangment view
 
-
+  //vertical pointer Lines
+  int shownLines = 257 / phraseSegmentLength;
+  for (int f = 0; f < shownLines; f++) {                                                      //do this for all phrases
+    tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 360);  //(x, y-start, y-length, color)
+    if (f % 4 == 0) {
+      tft.drawFastVLine((f * phraseSegmentLength) + 32, STEP_FRAME_H, STEP_FRAME_H * 12, 370);  //(x, y-start, y-length, color)
+    }
+  }
+  drawarrengmentLines(songpageNumber);
+}
 void songModePage(int songpageNumber) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
@@ -165,8 +184,6 @@ void songModePage(int songpageNumber) {
     }
   }
 }
-
-
 
 void savebutton() {
 

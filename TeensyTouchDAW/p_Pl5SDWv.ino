@@ -70,7 +70,6 @@ void Plugin5_Page_Static() {
   draw_ENV_ADSR(pl5NR, pl5ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
 }
 void Plugin5_Change() {
-  plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[0];
   change_SVF_frequency(pl5NR, pl5SVF, 0, 1, 0, 127, "Freq");            //MIN: unused MAX: unused
   change_SVF_resonance(pl5NR, pl5SVF, 1, 1, 0, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused
   change_DC_amplitude(pl5NR, pl5DC1, 2, 1, 0, SUSTAIN_LVL, "Swp");      //MIN: unused MAX: amplitud

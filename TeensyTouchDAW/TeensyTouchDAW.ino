@@ -41,6 +41,7 @@ void showCoordinates() shows the actual touch-coordinates
 Head over to Pl31OSC.ino to see how to implement new plugins
 */
 
+//#include "functions.h"
 
 #include <Audio.h>
 #include <Wire.h>
@@ -65,6 +66,8 @@ Head over to Pl31OSC.ino to see how to implement new plugins
 #include <Encoder.h>
 #include <MIDI.h>
 #include "v_smfwriter.h"
+//#include "b_display_functions.h"
+
 
 // WAV files converted to code by wav2sketch
 //#include "AudioSampleSnare.h"         // http://www.freesound.org/people/KEVOY/sounds/82583/
@@ -175,99 +178,24 @@ elapsedMillis msecs;
 elapsedMicros msecsclock;
 
 
-class Clock {
-public:
-  uint32_t _next_clock = 0;
-  uint32_t _clock = 160;
-  uint32_t MIDItick = -1;
-  uint32_t step_tick = -1;
-  uint32_t bar_tick = -1;
-  bool seq_run = false;
-  bool seq_rec = false;
-  bool playing = false;
-  byte master_tempo = 120;
-  int syncPin = -1;
-  uint32_t previousMillis_clock = 0;
-
-  //setup function, so we can put in an analog sync Output (Optional)
-  void setup(int new_syncPin) {
-    syncPin = new_syncPin;
-    if (syncPin >= 0) {
-      digitalWrite(syncPin, LOW);  //
-      pinMode(syncPin, OUTPUT);
-    }
-  }
-
-  bool is_playing() {
-    return playing;
-  }
-  void set_playing(bool p = false) {  //if we want to start the clock use, "clock.is_playing(true);"
-    this->playing = p;
-  }
-  void set_tempo(int tempo) {  //set the tempo with "clock.setTempo(tempo);"
-    master_tempo = tempo;
-    // midi clock messages should be sent 24 times
-    // for every quarter note
-    _clock = 60000000L / tempo / 24;
-  }
-  int get_tempo() {
-    return master_tempo;
-  }
-  void send_MIDIclock() {
-    //spit out a MIDItick
-    usbMIDI.sendRealTime(usbMIDI.Clock);  //send a midiclock to usb host
-    MIDI.sendRealTime(0xF8);              //send a midiclock to serial midi
-  }
-  void send_sync_clock() {
-
-    //spit out a MIDItick
-    if (syncPin >= 0) {
-      digitalWrite(syncPin, HIGH);
-      uint32_t currentMillis = millis();
-      if (currentMillis - previousMillis_clock >= 10) {
-        previousMillis_clock = currentMillis;
-        digitalWrite(syncPin, LOW);
-      }
-    }
-  }
-  bool process_MIDItick() {
-
-    if (playing) {
-      //if the clock is running
-      if (msecsclock >= _clock) {  //compare clockvalues
-        MIDItick++;                //spit out a MIDItick
-        send_MIDIclock();
-        msecsclock = 0;
-
-        return true;
-      }
-    }
-    return false;
-  }
-  uint32_t get_MIDItick() {  //returns the actual MIDItick count
-    return MIDItick;
-  }
 
 
 
-  uint32_t get_step_tick() {  //returns the actual STEPtick count
-    return MIDItick % 6;
-  }
-  bool is_tick_on_step() {
-    return MIDItick % 6 == 0;
-  }
 
-
-  uint32_t get_bar_tick() {  //returns the actual BARtick count
-    return MIDItick % 96;
-  }
-  bool is_tick_on_bar() {
-    return MIDItick % 96 == 0;
-  }
-};
-
+#include "trackfunctions.h"
 Clock master_clock;
+MixerForTracks MixerTr0;
+MixerForTracks MixerTr1;
+MixerForTracks MixerTr2;
+MixerForTracks MixerTr3;
+MixerForTracks MixerTr4;
+MixerForTracks MixerTr5;
+MixerForTracks MixerTr6;
+MixerForTracks MixerTr7;
 
+AudioRecorders AudioRecorder;
+
+MixerForTracks *allTracks[NUM_TRACKS] = { &MixerTr0, &MixerTr1, &MixerTr2, &MixerTr3, &MixerTr4, &MixerTr5, &MixerTr6, &MixerTr7 };
 
 
 
@@ -471,7 +399,15 @@ void setup() {
   FX1reverb_settings();
   FX2Bitcrush_settings();
   FX3Delay_settings();
-
+  
+  MixerTr0.setup(0);
+  MixerTr1.setup(1);
+  MixerTr2.setup(2);
+  MixerTr3.setup(3);
+  MixerTr4.setup(4);
+  MixerTr5.setup(5);
+  MixerTr6.setup(6);
+  MixerTr7.setup(7);
   clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
@@ -557,11 +493,11 @@ void loop() {
 
 
   readMainButtons();
-  readEncoders();
   Plugin_View_Dynamic();
   DrumPluginPlay();
   PluginNoteOn();
   PluginNoteOff();
+  readEncoders();
 
   otherCtrlButtons = (!button[8] && !button[9] && !button[10] && !button[11] && !button[12]);
 
@@ -761,6 +697,7 @@ void readMainButtons() {
           seq_rec = true;
           tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
           if (selectPage == RECORDER_PAGE) {
+          
             startRecording();
             drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
           }
@@ -1109,7 +1046,7 @@ void readMainButtons() {
             selectPage = NFX5_PAGE1;
             NoteFX5_Page_Static();
           }
-          
+
           if (track[desired_instrument].seqMode == 1) {
             selectPage = NFX8_PAGE1;
             NoteFX8_Page_Static();

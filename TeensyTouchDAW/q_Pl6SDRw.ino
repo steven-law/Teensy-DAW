@@ -71,7 +71,6 @@ void Plugin6_Page_Static() {
   draw_ENV_ADSR(pl6NR, pl6ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
 }
 void Plugin6_Change() {
-  plugin[pl6NR].preset[plpreset[pl6NR]].Pot_Value[0];
 
   change_SVF_frequency(pl6NR, pl6SVF, 0, 1, 0, 127, "Freq");            //MIN: unused MAX: unused
   change_SVF_resonance(pl6NR, pl6SVF, 1, 1, 0, MAX_RESONANCE, "Reso");  //MIN: unused MAX: unused

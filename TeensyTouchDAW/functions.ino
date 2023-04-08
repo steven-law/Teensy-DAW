@@ -1,3 +1,6 @@
+//#include <Arduino.h>
+
+
 //this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
 // just add your plugin-page static function here
 void Plugin_View_Static() {
@@ -284,7 +287,7 @@ void PluginNoteOn() {
     //send midi noteOn´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
-        if (ctrack[desired_instruments].sequence[track[desired_instruments].clip_songMode].tick[nfx6_MIDItick].voice[polys] > VALUE_NOTEOFF) {
+        if ((track[desired_instruments].notePlayed[polys] - track[desired_instruments].NoteOffset[phrase]) > VALUE_NOTEOFF) {
           if (track[desired_instruments].notePressed[polys]) {
             if (track[desired_instruments].playNoteOnce[polys]) {
               if (!track[desired_instruments].envActive[polys]) {
@@ -312,7 +315,7 @@ void PluginNoteOn() {
     if (track[desired_instruments].notePressed[0]) {
       if (track[desired_instruments].playNoteOnce[0]) {
         if (!track[desired_instruments].envActive[0]) {
-          
+
           if (track[desired_instruments].MIDIchannel == 17) {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed[0] + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
@@ -389,7 +392,7 @@ void PluginNoteOff() {
           if (!track[desired_instruments].notePressed[polys]) {
             track[desired_instruments].envActive[polys] = false;
             Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
-             Serial.println("");
+            Serial.println("");
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             for (int usbs = 0; usbs < 10; usbs++) {
@@ -400,7 +403,6 @@ void PluginNoteOff() {
           }
         }
       }
-     
     }
 
     if (!track[desired_instruments].notePressed[0]) {
@@ -534,15 +536,181 @@ void beatComponents() {
   }
 }
 
-//if you have a filter with multiple outputs like the AudioFilterStateVariable
-//this function will switch between the different inputs of the afterwards installed mixer
-//add your filtermixer here
+
+
+
+
+//end of the plugin-function-nightmare
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 void selectFilterType(int des_node, byte mixerchannel) {
   FILTERMIXER[des_node]->gain(0, 0);
   FILTERMIXER[des_node]->gain(1, 0);
   FILTERMIXER[des_node]->gain(2, 0);
   FILTERMIXER[des_node]->gain(mixerchannel, 1);
 }
+void saveMIDItrackDrum() {
+  SmfWriter writer;
+  writer.setFilename("track1");
+  writer.writeHeader();
+  //Serial.print("Start saving-> ");
+  int deltaStep = 0;
+  for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
+    for (int svoice = 0; svoice < num_voice; svoice++) {
+      for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+        if (channel1Clip[sclip][svoice][sstep] > 0) {
+          writer.addNoteOnEvent(deltaStep, desired_instrument, drumnote[svoice], 127);
+          writer.addNoteOffEvent(4, desired_instrument, drumnote[svoice]);
+          deltaStep = 0;
+        }
+        if (channel1Clip[sclip][svoice][sstep] <= 0) {
+          deltaStep = deltaStep + 4;
+        }
+      }
+    }
+  }
+  writer.flush();
+}
+/*
+void saveMIDItrack(const char* track, int trackNr) {
+  //sprintf(_trackname, "%s.mid\0", track);
+  SmfWriter writer;
+  writer.setFilename(track);
+  writer.writeHeader();
+  //Serial.print("Start saving-> ");
+
+  int deltaStep = 0;
+  for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
+    for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+      if (ctrack[trackNr].sequence[sclip].steps[sstep].voice[0] > 0) {
+        writer.addNoteOnEvent(deltaStep, trackNr, ctrack[trackNr].sequence[sclip].steps[sstep].voice[0], 127);
+        writer.addNoteOffEvent(4, trackNr, ctrack[trackNr].sequence[sclip].steps[sstep].voice[0]);
+        deltaStep = 0;
+      }
+      if (ctrack[trackNr].sequence[sclip].steps[sstep].voice[0] <= 0) {
+        deltaStep = deltaStep + 4;
+      }
+    }
+  }
+  writer.flush();
+}
+*/
+void saveTrack(const char* trackname, byte trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_8);
+  tft.setCursor(0, 0);
+
+
+  // delete the file:
+  tft.print("Removing:");
+  tft.print(_trackname);
+  SD.remove(_trackname);
+  tft.println("Done");
+
+  // open the file.
+  tft.print("Creating and opening:");
+  tft.print(_trackname);
+  myFile = SD.open(_trackname, FILE_WRITE);
+  tft.println("Done");
+
+  // if the file opened okay, write to it:
+  if (myFile) {
+    //save tracks
+    tft.print("Writing track to:");
+    tft.print(_trackname);
+
+    if (trackNr == 0) {
+      //save track1
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int snote = 0; snote < 12; snote++) {
+          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+            int step = channel1Clip[sclip][snote][sstep] + 48;
+            myFile.print((char)step);
+          }
+        }
+      }
+    }
+
+    if (trackNr > 0) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int sstep = 0; sstep < MAX_TICKS; sstep++) {
+          myFile.print((char)ctrack[trackNr].sequence[sclip].tick[sstep].voice[0]);
+        }
+      }
+    }
+
+    // int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
+
+    // close the file:
+    myFile.close();
+    tft.println("Done");
+
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.print(_trackname);
+  }
+
+  tft.println("Saving done.");
+  startUpScreen();
+}
+
+void loadTrack(char* trackname, int trackNr) {
+  sprintf(_trackname, "%s.txt\0", trackname);
+  tft.fillScreen(ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setCursor(0, 0);
+  // open the file for reading:
+  myFile = SD.open(_trackname);
+
+
+  if (myFile) {
+    tft.println("opening:");
+    tft.println(_trackname);
+
+    // read from the file until there's nothing else in it:
+    //load track 1
+    tft.print("Reading clips from:");
+    tft.println(_trackname);
+
+    if (trackNr == 0) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int snote = 0; snote < 12; snote++) {
+          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
+            int step;
+            step = myFile.read();
+            channel1Clip[sclip][snote][sstep] = step - 48;
+          }
+        }
+      }
+    }
+
+    if (trackNr > 0) {
+      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+        for (int sstep = 0; sstep < MAX_TICKS; sstep++) {
+          ctrack[trackNr].sequence[sclip].tick[sstep].voice[0] = myFile.read();
+        }
+      }
+    }
+
+    //int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)track[trackNr].MIDIchannel);
+
+    tft.println("Done");
+    startUpScreen();
+    // close the file:
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    tft.println("error opening:");
+    tft.println(_trackname);
+  }
+}
+
 void savePlugin(const char* trackname, byte trackNr) {
   sprintf(_trackname, "%s.txt\0", trackname);
   tft.fillScreen(ILI9341_DARKGREY);
@@ -850,10 +1018,6 @@ void loadPlugin(const char* trackname, int trackNr) {
     tft.println(_trackname);
   }
 }
-//end of the plugin-function-nightmare
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-
 void saveNoteFX(const char* trackname, byte trackNr) {
   sprintf(_trackname, "%s.txt\0", trackname);
   tft.fillScreen(ILI9341_DARKGREY);

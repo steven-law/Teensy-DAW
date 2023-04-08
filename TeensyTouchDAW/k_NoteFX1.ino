@@ -127,19 +127,7 @@ void NoteFX1_Page_Static() {
     drawPotDrum(MixerColumn, 2, NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8], NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8], drumnote[MixerColumn + 8], trackColor[desired_instrument]);
   }
 }
-
 void NoteFX1_Change() {
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-
-    NFX1[NFX1presetNr].Pot_Value[MixerColumn];
-  }
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-
-    NFX1[NFX1presetNr].Pot_Value[MixerColumn + 4];
-  }
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    NFX1[NFX1presetNr].Pot_Value[MixerColumn + 8];
-  }
 }
 
 void NoteFX2_Settings() {
@@ -289,14 +277,7 @@ void NoteFX2_Page_Static() {
     drawPot(MixerColumn, 3, NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12], noteNames[MixerColumn + 8], trackColor[desired_instrument]);
   }
 }
-
 void NoteFX2_Change() {
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    NFX2[NFX2presetNr].Pot_Value[MixerColumn];
-    NFX2[NFX2presetNr].Pot_Value[MixerColumn + 4];
-    NFX2[NFX2presetNr].Pot_Value[MixerColumn + 8];
-    NFX2[NFX2presetNr].Pot_Value[MixerColumn + 12];
-  }
 }
 
 void NoteFX3_Settings() {
@@ -444,14 +425,7 @@ void NoteFX3_Page_Static() {
     drawPot(MixerColumn, 3, NFX3[NFX3presetNr].Pot_Value[MixerColumn + 12], NFX3[NFX3presetNr].Pot_Value[MixerColumn + 12], NFX3_ROW2[MixerColumn], trackColor[desired_instrument]);
   }
 }
-
 void NoteFX3_Change() {
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    NFX3[NFX3presetNr].Pot_Value[MixerColumn];
-    NFX3[NFX3presetNr].Pot_Value[MixerColumn + 4];
-    NFX3[NFX3presetNr].Pot_Value[MixerColumn + 8];
-    NFX3[NFX3presetNr].Pot_Value[MixerColumn + 12];
-  }
 }
 
 void NoteFX4_Page1_Dynamic() {
@@ -544,19 +518,7 @@ void NoteFX4_Page_Static() {
     drawPotDrum(MixerColumn, 2, NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8], NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8], drumnote[MixerColumn + 8], trackColor[desired_instrument]);
   }
 }
-
 void NoteFX4_Change() {
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-
-    NFX4[NFX4presetNr].Pot_Value[MixerColumn];
-  }
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-
-    NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4];
-  }
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8];
-  }
 }
 
 void NoteFX5_Page1_Dynamic() {
@@ -714,10 +676,9 @@ void NoteFX8_Page_Static() {  //static Display rendering
     midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
   }*/
 }
-
 void NoteFX8_Page1_Dynamic() {
 
-  int touched_step = gridTouchX - 2;
+ // int touched_step = gridTouchX - 2;
   int touched_note = gridTouchY - 1;
   /*
     if (launchpad) {

@@ -99,7 +99,7 @@ void process_clock() {
         if (master_clock.get_MIDItick() % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
           if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
             if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
-              
+
               if (dsend_noteOff[b]) {
                 dsend_noteOff[b] = false;
                 repeatED[b]++;
@@ -174,7 +174,7 @@ void process_clock() {
             //if the actual step is high, play the notes
             for (int polys = 0; polys < MAX_VOICES; polys++) {
               if (ctrack[i].sequence[track[i].clip_songMode].tick[nfx6_MIDItick].voice[polys] > VALUE_NOTEOFF) {
-                int old_MIDItick = nfx6_MIDItick;
+                // int old_MIDItick = nfx6_MIDItick;
                 track[i].playNoteOnce[polys] = true;
                 track[i].notePressed[polys] = true;
                 track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[nfx6_MIDItick].voice[polys] + track[i].NoteOffset[phrase];
@@ -711,11 +711,11 @@ void myNoteOn(int channel, byte note, byte velocity) {
       track[channel - 1].notePressed[0] = true;
       track[channel - 1].playNoteOnce[0] = true;
       track[channel - 1].notePlayed[0] = note;
-      track[channel - 1].notePlayed[0] = note;
+      //track[channel - 1].notePlayed[0] = note;
     }
     if (seq_rec) {
       for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
-        ctrack[channel - 1].sequence[track[channel - 1].clip_selector].tick[tick_16 + touched_ticks].voice[0] = note;
+        ctrack[channel - 1].sequence[track[channel - 1].clip_songMode].tick[nfx6_MIDItick].voice[0] = note;
       }
     }
     // When a USB device with multiple virtual cables is used,
@@ -805,23 +805,41 @@ void myNoteOff(int channel, byte note, byte velocity) {
       LP_octave_bool_keys[0] = false;
       track[channel - 1].notePressed[0] = false;
       track[channel - 1].notePlayed[0] = note;
-      track[channel - 1].notePlayed[0] = note;
+      //track[channel - 1].notePlayed[0] = note;
     }
   }
 }
 
 void myControlChange(int channel, byte control, byte value) {
   if (control == 3) {
-    Potentiometer[0] = value;
+    if (Potentiometer[0] != value) {
+      incomingCC_changed[0] = true;
+    }
+
+    incomingCC[0] = value;
+
+    //  enc_moved[0] = false;
   }
   if (control == 9) {
-    Potentiometer[1] = value;
+    if (Potentiometer[1] != value) {
+      incomingCC_changed[1] = true;
+    }
+    incomingCC[1] = value;
+    // enc_moved[0] = false;
   }
   if (control == 14) {
-    Potentiometer[2] = value;
+    if (Potentiometer[2] != value) {
+      incomingCC_changed[2] = true;
+    }
+    incomingCC[2] = value;
+    // enc_moved[0] = false;
   }
   if (control == 15) {
-    Potentiometer[3] = value;
+    if (Potentiometer[3] != value) {
+      incomingCC_changed[3] = true;
+    }
+    incomingCC[3] = value;
+    // enc_moved[0] = false;
   }
 
 
@@ -882,6 +900,7 @@ void myControlChange(int channel, byte control, byte value) {
         seq_rec = true;
         tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
         if (selectPage == RECORDER_PAGE) {
+          
           startRecording();
           drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
         }
