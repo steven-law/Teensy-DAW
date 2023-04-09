@@ -130,6 +130,24 @@ void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, cha
   }
 }
 
+class drumtrack {
+public:
+  const int DTrack = 0;
+  void setDrumnotes(int YPos) {
+
+    for (int i = 0; i < 12; i++) {
+      drumnote[YPos] = constrain((drumnote[YPos] + encoded[0]), 0, 99);
+      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
+      tft.setCursor(18, STEP_FRAME_H * i + 18);
+      tft.setFont(Arial_8);
+      tft.setTextColor(ILI9341_BLACK);
+      tft.setTextSize(1);
+      tft.print(drumnote[i]);
+    }
+  }
+};
+
+
 class MixerForTracks {
 public:
   byte MixTrack;
@@ -137,13 +155,12 @@ public:
   bool mute = false;
   bool solo = false;
 
-  byte perBarVol = 100;
+
   byte gainVol = 127;
   byte dryVol = 100;
   byte FX1Vol = 0;
   byte FX2Vol = 0;
   byte FX3Vol = 0;
-
   void setup(byte new_track) {
     MixTrack = new_track;
   }

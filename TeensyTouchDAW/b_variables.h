@@ -335,7 +335,7 @@ struct tracks {
   byte midicc_value_row_4[4];
   byte midicc_number_row_4[4];
 
-  byte clip[MAX_CLIPS][NUM_STEPS];
+  //byte clip[MAX_CLIPS][NUM_STEPS];
 
   byte arrangment1[256];
   int NoteOffset[256];
