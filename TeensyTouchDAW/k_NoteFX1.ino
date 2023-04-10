@@ -526,13 +526,13 @@ void NoteFX5_Page1_Dynamic() {
   if (button[14]) {
 
     if (enc_moved[0]) {
-      int noteselector = constrain((NFX5[NFX5presetNr].Pot_Value[gridTouchY - 1] + encoded[0]), 1, track[0].MIDItick_reset - 1);
+      int noteselector = constrain((NFX5[NFX5presetNr].Pot_Value[gridTouchY - 1] + encoded[0]), 1, 5);
       NFX5[NFX5presetNr].Pot_Value[gridTouchY - 1] = noteselector;
       draw_Ratchrate();
     }
 
     if (enc_moved[1]) {
-      int noteselector = constrain((NFX5[NFX5presetNr].repeats[gridTouchY - 1] + encoded[1]), 1, track[0].MIDItick_reset - 1);
+      int noteselector = constrain((NFX5[NFX5presetNr].repeats[gridTouchY - 1] + encoded[1]), 1, 5);
       NFX5[NFX5presetNr].repeats[gridTouchY - 1] = noteselector;
       draw_Ratchrate();
     }
@@ -739,12 +739,12 @@ void NoteFX8_Page1_Dynamic() {
     }
     //step diviion
     if (enc_moved[2]) {
-      track[desired_instrument].MIDItick_reset = constrain((track[desired_instrument].MIDItick_reset + encoded[2]), 0, 97);
-      drawNrInRect(18, 8, track[desired_instrument].MIDItick_reset, trackColor[desired_instrument]);
+      track[desired_instrument].clockDivision = constrain((track[desired_instrument].clockDivision + encoded[2]), 0, 97);
+      drawNrInRect(18, 8, track[desired_instrument].clockDivision, trackColor[desired_instrument]);
     }
     //step length
     if (enc_moved[3]) {
-      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, (track[desired_instrument].MIDItick_reset - 1));
+      track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, 95);
       drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
     }
   }

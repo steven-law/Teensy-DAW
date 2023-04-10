@@ -131,8 +131,9 @@ const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
-const char* trackNames_long[8]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
+const char* trackNames_long[NUM_TRACKS]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
 char _trackname[20];
+const char* sideTabDigit[NUM_TRACKS]{ "D", "2", "3", "4", "5", "6", "7", "8" };
 //const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
@@ -356,12 +357,9 @@ struct tracks {
 
   int MIDItick = 0;
   int MIDItick_16 = 0;
-  int MIDItick_reset = 6;
   bool tick_true = false;
   int stepLength = 5;
-
-  byte Volume_graph = 50;
-  float Volume = 1;
+  byte clockDivision = 1;
 
   int seqMode = 0;
 };

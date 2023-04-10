@@ -149,7 +149,9 @@ public:
 
 class classForTracks {
 public:
-  byte MixTrack;
+
+
+  byte thisTrack;
 
   bool mute = false;
   bool solo = false;
@@ -162,13 +164,15 @@ public:
   byte FX3Vol = 0;
   
   void setup(byte new_track) {
-    MixTrack = new_track;
+    thisTrack = new_track;
   }
 
-  void drawLeftNavigator(const char* sideDigit, uint16_t color) {
-    tft.fillRect(1, TRACK_FRAME_H * (MixTrack + 1) - 8, 15, TRACK_FRAME_H, color);  //Xmin, Ymin, Xlength, Ylength, color
-    tft.setCursor(4, TRACK_FRAME_H * (MixTrack + 1) - 2);
-    tft.print(sideDigit);
+
+
+  void drawLeftNavigator(const char* sideDigit) {
+    tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
+    tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
+    tft.print(sideTabDigit[thisTrack]);
   }
 
   void setVolGain(byte XPos, byte YPos) {
@@ -177,53 +181,53 @@ public:
       incomingCC_changed[XPos] = false;
       gainVol = getValue(XPos, YPos, gainVol);
       drawPotPos(XPos, YPos, gainVol);
-      if (track[MixTrack].MIDIchannel > 16) {
-        gainmax[track[MixTrack].MIDIchannel - 17]->gain((float)(gainVol / 127.00));
+      if (track[thisTrack].MIDIchannel > 16) {
+        gainmax[track[thisTrack].MIDIchannel - 17]->gain((float)(gainVol / 127.00));
       }
     }
   }
   void setVolDry(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
-      dryVol = getValue(XPos, YPos);
+      dryVol = getValue(XPos, YPos, dryVol);
       drawPotPos(XPos, YPos, dryVol);
-      if (track[MixTrack].MIDIchannel > 16) {
-        dryVolume[track[MixTrack].MIDIchannel - 17]->gain((float)(dryVol / 127.00));
+      if (track[thisTrack].MIDIchannel > 16) {
+        dryVolume[track[thisTrack].MIDIchannel - 17]->gain((float)(dryVol / 127.00));
       }
     }
   }
   void setVolFX1(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
-      FX1Vol = getValue(XPos, YPos);
+      FX1Vol = getValue(XPos, YPos, FX1Vol);
       drawPotPos(XPos, YPos, FX1Vol);
-      if (track[MixTrack].MIDIchannel > 16) {
-        FX1Volume[track[MixTrack].MIDIchannel - 17]->gain((float)(FX1Vol / 127.00));
+      if (track[thisTrack].MIDIchannel > 16) {
+        FX1Volume[track[thisTrack].MIDIchannel - 17]->gain((float)(FX1Vol / 127.00));
       }
     }
   }
   void setVolFX2(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
-      FX2Vol = getValue(XPos, YPos);
+      FX2Vol = getValue(XPos, YPos, FX2Vol);
       drawPotPos(XPos, YPos, FX2Vol);
-      if (track[MixTrack].MIDIchannel > 16) {
-        FX2Volume[track[MixTrack].MIDIchannel - 17]->gain((float)(FX2Vol / 127.00));
+      if (track[thisTrack].MIDIchannel > 16) {
+        FX2Volume[track[thisTrack].MIDIchannel - 17]->gain((float)(FX2Vol / 127.00));
       }
     }
   }
   void setVolFX3(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
-      FX3Vol = getValue(XPos, YPos);
+      FX3Vol = getValue(XPos, YPos, FX3Vol);
       drawPotPos(XPos, YPos, FX3Vol);
-      if (track[MixTrack].MIDIchannel > 16) {
-        FX3Volume[track[MixTrack].MIDIchannel - 17]->gain((float)(FX3Vol / 127.00));
+      if (track[thisTrack].MIDIchannel > 16) {
+        FX3Volume[track[thisTrack].MIDIchannel - 17]->gain((float)(FX3Vol / 127.00));
       }
     }
   }
   void drawPotPos(byte XPos, byte YPos, byte value) {
-    drawPot(XPos, YPos, value, value, trackNames_short[MixTrack], trackColor[MixTrack]);
+    drawPot(XPos, YPos, value, value, trackNames_short[thisTrack], trackColor[thisTrack]);
   }
 };
 
@@ -235,7 +239,7 @@ public:
   void setRAWfile() {
     //RAW File
     if (enc_moved[0] || incomingCC_changed[0]) {
-      selected_file = getValue(0, 0);
+      selected_file = getValue(0, 0,selected_file);
       drawPot(0, 0, selected_file, selected_file, "RAW", ILI9341_OLIVE);
     }
   }
@@ -243,7 +247,7 @@ public:
     //rec volume
     if (enc_moved[1] || incomingCC_changed[1]) {
       incomingCC_changed[1] = false;
-      selected_gain = getValue(1, 0);
+      selected_gain = getValue(1, 0,selected_gain);
       amp1.gain(selected_gain / 64.00);
       drawPot_2(1, 0, selected_gain, selected_gain, "Volume", ILI9341_OLIVE);
     }
@@ -252,7 +256,7 @@ public:
 
     if (enc_moved[0] || incomingCC_changed[0]) {
       incomingCC_changed[0] = false;
-      monitoring = constrain(getValue(0, 1), 0, 1);
+      monitoring = constrain(getValue(0, 1,monitoring), 0, 1);
       if (monitoring == 1) {
         mixer11.gain(1, 1);
       }
@@ -296,7 +300,7 @@ public:
     static int peakIn;
     peakIn = peak * 127;
     if (peakIn > 110) {
-      drawPot(3, 0, peakIn, peakIn, "Meter", ILI9341_RED);
+      drawPot_4(3, 0, peakIn, peakIn, "Meter", ILI9341_RED);
     } else {
       drawPot_4(3, 0, peakIn, peakIn, "Meter", ILI9341_OLIVE);
     }
