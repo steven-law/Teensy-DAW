@@ -1,7 +1,6 @@
 
 #include <Arduino.h>
-byte getValue(byte XPos, byte YPos) {
-  static byte AnyValue;
+byte getValue(byte XPos, byte YPos, byte AnyValue ) {
   if (enc_moved[XPos]) {
     AnyValue = constrain(AnyValue + encoded[XPos], 0, 127);
   } else if (incomingCC_changed[XPos]) {
@@ -148,7 +147,7 @@ public:
 };
 
 
-class MixerForTracks {
+class classForTracks {
 public:
   byte MixTrack;
 
@@ -161,17 +160,22 @@ public:
   byte FX1Vol = 0;
   byte FX2Vol = 0;
   byte FX3Vol = 0;
+  
   void setup(byte new_track) {
     MixTrack = new_track;
   }
 
-
+  void drawLeftNavigator(const char* sideDigit, uint16_t color) {
+    tft.fillRect(1, TRACK_FRAME_H * (MixTrack + 1) - 8, 15, TRACK_FRAME_H, color);  //Xmin, Ymin, Xlength, Ylength, color
+    tft.setCursor(4, TRACK_FRAME_H * (MixTrack + 1) - 2);
+    tft.print(sideDigit);
+  }
 
   void setVolGain(byte XPos, byte YPos) {
 
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
-      gainVol = getValue(XPos, YPos);
+      gainVol = getValue(XPos, YPos, gainVol);
       drawPotPos(XPos, YPos, gainVol);
       if (track[MixTrack].MIDIchannel > 16) {
         gainmax[track[MixTrack].MIDIchannel - 17]->gain((float)(gainVol / 127.00));

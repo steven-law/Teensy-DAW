@@ -185,18 +185,18 @@ elapsedMicros msecsclock;
 #include "trackfunctions.h"
 Clock master_clock;
 drumtrack Track0;
-MixerForTracks MixerTr0;
-MixerForTracks MixerTr1;
-MixerForTracks MixerTr2;
-MixerForTracks MixerTr3;
-MixerForTracks MixerTr4;
-MixerForTracks MixerTr5;
-MixerForTracks MixerTr6;
-MixerForTracks MixerTr7;
-
+classForTracks MixerTr0;
+classForTracks MixerTr1;
+classForTracks MixerTr2;
+classForTracks MixerTr3;
+classForTracks MixerTr4;
+classForTracks MixerTr5;
+classForTracks MixerTr6;
+classForTracks MixerTr7;
+classForTracks *allTracks[NUM_TRACKS] = { &MixerTr0, &MixerTr1, &MixerTr2, &MixerTr3, &MixerTr4, &MixerTr5, &MixerTr6, &MixerTr7 };
 AudioRecorders AudioRecorder;
 
-MixerForTracks *allTracks[NUM_TRACKS] = { &MixerTr0, &MixerTr1, &MixerTr2, &MixerTr3, &MixerTr4, &MixerTr5, &MixerTr6, &MixerTr7 };
+
 
 
 
