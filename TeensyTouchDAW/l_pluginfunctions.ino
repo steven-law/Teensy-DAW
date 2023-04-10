@@ -8,7 +8,7 @@ void Encoder_to_Pot_Value2(int plug, int COL, int ROW, int MAX) {
     Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value2[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
   }
 }
-int store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: frequency |range: 0-22000
+void store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: frequency |range: 0-22000
   int pot_index = COL + (ROW * 4);
   int actual_pot_value = Potentiometer[COL];
   if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] != actual_pot_value && abs(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] - actual_pot_value) < POTPICKUP) {
@@ -18,7 +18,6 @@ int store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: fre
 
 void draw_A(int pluginNr, int des_node, int COL, int ROW, float max_value, const char* function) {
   int pot_index = COL + (ROW * 4);
-  int actual_pot_value = Potentiometer[COL];
 
   if (COL == 0) {
     drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);

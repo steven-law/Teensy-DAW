@@ -144,8 +144,6 @@ void LP_melodicstep() {
         int touched_step = LP_step_bool[steps] * steps;
         byte touched_note = LP_octave_bool_keys[notes] * notes;
         int note = touched_note + track[desired_instrument].shown_octaves * 12;
-        int dot_on_X = touched_step * STEP_FRAME_W + DOT_OFFSET_X;
-        int dot_on_Y = touched_note * STEP_FRAME_H + DOT_OFFSET_Y;
         int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step * 6].voice[0];
 
         if (!LP_octave_bool_keys[notes]) {
@@ -195,6 +193,19 @@ void detect_and_assign_midi_devices() {
     if (usb_midi_devices[i] && usb_midi_devices[i]->idVendor() == MIDI_VENDORID_LAUNCHPAD && usb_midi_devices[i]->idProduct() == MIDI_PRODUCTID_LAUNCHPAD) {
       // detected launchpad on midi device with index 'i'!
       launchpad = usb_midi_devices[i];  // assign pointer to this device to the 'launchpad' variable
+    }
+  }
+  if (millis() % 1000 == 0) {
+
+    for (int i = 0; i < MAX_USB_DEVICES; i++) {
+      const char *name = (const char *)usb_midi_devices[i]->product();
+      //uint8_t name
+      if (name != nullptr) {
+        //Serial.print(i);
+        //Serial.print("-");
+        //Serial.println(name);
+      } else {//Serial.println("n.C.");
+      }
     }
   }
 }

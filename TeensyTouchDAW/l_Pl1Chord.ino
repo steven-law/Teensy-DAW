@@ -218,7 +218,7 @@ void Plugin1_Page_Static(int Pagenumber) {
 }
 void Plugin1_Change() {
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn];
+  
     OSC_MOD[MixerColumn]->begin(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn + 4] / 10);
     mixer1.gain(0, (float)(plugin[pl1NR].preset[plpreset[pl1NR]].Pot_Value2[MixerColumn + 8] / 127.00));
   }
