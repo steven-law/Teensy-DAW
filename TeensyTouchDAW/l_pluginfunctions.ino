@@ -13,6 +13,9 @@ void Encoder_to_Pot_Value(int plug, int COL, int ROW, int MAX) {
 void Encoder_to_Pot_Value2(int plug, int COL, int ROW, int MAX) {
   if (enc_moved[COL]) {
     Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value2[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
+  } else if (incomingCC_changed[COL]) {
+    Potentiometer[COL] = incomingCC[COL];
+    incomingCC_changed[COL] = false;
   }
 }
 void store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: frequency |range: 0-22000
