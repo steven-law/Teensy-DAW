@@ -1,11 +1,21 @@
 
 void Encoder_to_Pot_Value(int plug, int COL, int ROW, int MAX) {
-  Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
+  if (enc_moved[COL]) {
+    Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
+  } else if (incomingCC_changed[COL]) {
+    Potentiometer[COL] = incomingCC[COL];
+    incomingCC_changed[COL] = false;
+  }
 }
+
+
 
 void Encoder_to_Pot_Value2(int plug, int COL, int ROW, int MAX) {
   if (enc_moved[COL]) {
     Potentiometer[COL] = constrain((plugin[plug].preset[plpreset[plug]].Pot_Value2[COL + (ROW * 4)] + encoded[COL]), 0, MAX);
+  } else if (incomingCC_changed[COL]) {
+    Potentiometer[COL] = incomingCC[COL];
+    incomingCC_changed[COL] = false;
   }
 }
 void store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: frequency |range: 0-22000
@@ -58,7 +68,7 @@ int store_effect_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: 
 
 //NODE: AudioSynthWaveform
 void OSC_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 13
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -73,7 +83,7 @@ void draw_OSC_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, in
 }
 
 void OSC_Detune(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 127
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_Detune(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -100,7 +110,7 @@ void draw_OSC_Detune(int pluginNr, int des_node, int COL, int ROW, float MIN, fl
 }
 
 void OSC_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: frequency MAX: frequency |range: 0-22000
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -117,7 +127,7 @@ void draw_OSC_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 
 void OSC_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: -1.00 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -133,7 +143,7 @@ void draw_OSC_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, fl
 }
 
 void OSC_PWM(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_PWM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -150,7 +160,7 @@ void draw_OSC_PWM(int pluginNr, int des_node, int COL, int ROW, float MIN, float
 
 
 void OSC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -172,7 +182,7 @@ void draw_OSC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 //NODE: AudioSynthWaveformMod
 void OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: Waveforms |range: 0-13
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_MOD_Waveform(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -187,7 +197,7 @@ void draw_OSC_MOD_Waveform(int pluginNr, int des_node, int COL, int ROW, int MIN
 }
 
 void OSC_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: frequency MAX: frequency |range: 0-22000
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_MOD_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -204,7 +214,7 @@ void draw_OSC_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float 
 }
 
 void OSC_MOD_offset(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_MOD_offset(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -221,7 +231,7 @@ void draw_OSC_MOD_offset(int pluginNr, int des_node, int COL, int ROW, float MIN
 }
 
 void OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_MOD_FM(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -238,7 +248,7 @@ void draw_OSC_MOD_FM(int pluginNr, int des_node, int COL, int ROW, int MIN, int 
 }
 
 void OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_MOD_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -258,7 +268,7 @@ void draw_OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float 
 
 //NODE: AudioSynthWaveformPWM
 void PWM_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  ///MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_PWM_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -277,7 +287,7 @@ void draw_PWM_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 //NODE: AudioSynthSimpleDrum
 void OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_DRUM_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -294,7 +304,7 @@ void draw_OSC_DRUM_frequency(int pluginNr, int des_node, int COL, int ROW, int M
 }
 
 void OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_DRUM_length(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -311,7 +321,7 @@ void draw_OSC_DRUM_length(int pluginNr, int des_node, int COL, int ROW, int MIN,
 }
 
 void OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_DRUM_secondMix(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -328,7 +338,7 @@ void draw_OSC_DRUM_secondMix(int pluginNr, int des_node, int COL, int ROW, float
 }
 
 void OSC_DRUM_pitchMod(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_OSC_DRUM_pitchMod(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -346,7 +356,7 @@ void draw_OSC_DRUM_pitchMod(int pluginNr, int des_node, int COL, int ROW, float 
 
 //NODE: AudioSynthWaveformDc
 void DC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_DC_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -364,7 +374,7 @@ void draw_DC_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, 
 
 //NODE: AudioSynthNoiseWhite
 void WHITE_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
 
@@ -384,7 +394,7 @@ void draw_WHITE_amplitude(int pluginNr, int des_node, int COL, int ROW, float MI
 
 //NODE: AudioEffectEnvelope
 void ENV_A(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_ENV_A(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -402,7 +412,7 @@ void draw_ENV_A(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, 
 
 
 void ENV_D(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_ENV_D(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -420,7 +430,7 @@ void draw_ENV_D(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, 
 
 
 void ENV_S(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_ENV_S(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -437,7 +447,7 @@ void draw_ENV_S(int pluginNr, int des_node, int COL, int ROW, float MIN, float M
 
 
 void ENV_R(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_ENV_R(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -455,7 +465,7 @@ void draw_ENV_R(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, 
 
 
 void ENV_H(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_ENV_H(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -495,7 +505,7 @@ void change_ENV_ADSR(int pluginNr, int des_node, int COL, int ROW, int AttDec, i
 
 //NODE: AudioFilterStateVariable
 void SVF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_SVF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -511,7 +521,7 @@ void draw_SVF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, i
 
 
 void SVF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_SVF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -529,7 +539,7 @@ void draw_SVF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 
 void SVF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_SVF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -547,7 +557,7 @@ void draw_SVF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MI
 
 
 void SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: Waveforms |range: 0-13
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_SVF_Type(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -568,7 +578,7 @@ void draw_SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MA
 
 //NODE: AudioFilterLadder
 void LDF_frequency(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_LDF_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -586,7 +596,7 @@ void draw_LDF_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 
 void LDF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_LDF_resonance(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -604,7 +614,7 @@ void draw_LDF_resonance(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 
 void LDF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: time MAX: time |range: 0-reasonable
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_LDF_octaveControl(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -624,7 +634,7 @@ void draw_LDF_octaveControl(int pluginNr, int des_node, int COL, int ROW, int MI
 
 //NODE: AudioEffectBitcrusher
 void bitCrush_sampleRate(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_Pot_Value(pluginNr, COL, ROW);
     change_bitCrush_sampleRate(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -639,7 +649,7 @@ void draw_bitCrush_sampleRate(int pluginNr, int des_node, int COL, int ROW, floa
 }
 
 void bitCrush_bits(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_effect_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_effect_Value(pluginNr, COL, ROW);
     change_bitCrush_bits(pluginNr, des_node, COL, ROW, MIN, MAX, text);
@@ -655,7 +665,7 @@ void draw_bitCrush_bits(int pluginNr, int des_node, int COL, int ROW, float MIN,
 
 //NODE: AudioEffectReverb
 void reverb_reverbTime(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
-  if (enc_moved[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_effect_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     store_effect_Value(pluginNr, COL, ROW);
     change_reverb_reverbTime(pluginNr, des_node, COL, ROW, MIN, MAX, text);

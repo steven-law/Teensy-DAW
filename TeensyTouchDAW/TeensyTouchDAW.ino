@@ -184,16 +184,15 @@ elapsedMicros msecsclock;
 
 #include "trackfunctions.h"
 Clock master_clock;
-drumtrack Track0;
-classForTracks MixerTr0;
-classForTracks MixerTr1;
-classForTracks MixerTr2;
-classForTracks MixerTr3;
-classForTracks MixerTr4;
-classForTracks MixerTr5;
-classForTracks MixerTr6;
-classForTracks MixerTr7;
-classForTracks *allTracks[NUM_TRACKS] = { &MixerTr0, &MixerTr1, &MixerTr2, &MixerTr3, &MixerTr4, &MixerTr5, &MixerTr6, &MixerTr7 };
+classForTracks track0;
+classForTracks track1;
+classForTracks track2;
+classForTracks track3;
+classForTracks track4;
+classForTracks track5;
+classForTracks track6;
+classForTracks track7;
+classForTracks *allTracks[NUM_TRACKS] = { &track0, &track1, &track2, &track3, &track4, &track5, &track6, &track7 };
 AudioRecorders AudioRecorder;
 
 
@@ -400,15 +399,15 @@ void setup() {
   FX1reverb_settings();
   FX2Bitcrush_settings();
   FX3Delay_settings();
-  
-  MixerTr0.setup(0);
-  MixerTr1.setup(1);
-  MixerTr2.setup(2);
-  MixerTr3.setup(3);
-  MixerTr4.setup(4);
-  MixerTr5.setup(5);
-  MixerTr6.setup(6);
-  MixerTr7.setup(7);
+
+  track0.setup(0);
+  track1.setup(1);
+  track2.setup(2);
+  track3.setup(3);
+  track4.setup(4);
+  track5.setup(5);
+  track6.setup(6);
+  track7.setup(7);
   clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
@@ -698,7 +697,7 @@ void readMainButtons() {
           seq_rec = true;
           tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
           if (selectPage == RECORDER_PAGE) {
-          
+
             startRecording();
             drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
           }

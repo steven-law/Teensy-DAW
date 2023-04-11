@@ -55,17 +55,11 @@ void startUpScreen() {  //static Display rendering
   tft.setCursor(4, 3);
   tft.print("S");
 
-  //Drumtrack button
-  tft.fillRect(1, STEP_FRAME_H, 15, TRACK_FRAME_H, trackColor[0]);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setCursor(4, TRACK_FRAME_H);
-  tft.print("D");
-
   //other tracks buttons
-  for (int otherTracks = 2; otherTracks <= 8; otherTracks++) {
-    tft.fillRect(1, TRACK_FRAME_H * otherTracks - 8, 15, TRACK_FRAME_H, trackColor[otherTracks - 1]);  //Xmin, Ymin, Xlength, Ylength, color
-    tft.setCursor(4, TRACK_FRAME_H * otherTracks - 2);
-    tft.print(otherTracks);
+  for (int otherTracks = 0; otherTracks < 8; otherTracks++) {
+    allTracks[otherTracks]->drawLeftNavigator(otherTracks);
   }
+
   //Mixer button
   tft.fillRect(1, STEP_FRAME_H * 13, 15, TRACK_FRAME_H, ILI9341_LIGHTGREY);  //Xmin, Ymin, Xlength, Ylength, color
   tft.setCursor(3, STEP_FRAME_H * 13 + 6);
@@ -346,11 +340,13 @@ void drawarrengmentLine(int songpageNumber, byte trackTouchY, byte touched_phras
     for (int thickness = -8; thickness < 8; thickness++) {
       tft.drawFastHLine(((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2) + 1, ((trackTouchY + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength - 1, ILI9341_DARKGREY);  //(x-start, y, length, color)
     }
+    
     //draw clipnumber
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_DARKGREY);
     tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (trackTouchY + 1) * TRACK_FRAME_H - 4);
     tft.print(track[trackTouchY].arrangment1[touched_phrase]);
+    
     //draw noteOffset
     tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (trackTouchY + 1) * TRACK_FRAME_H + 4);
     if (track[trackTouchY].NoteOffset[touched_phrase] < 0) {
