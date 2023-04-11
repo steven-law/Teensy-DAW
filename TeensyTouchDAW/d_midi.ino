@@ -21,11 +21,14 @@ void process_clock() {
 
 
         //if the actual step is high, play the notes
-        if (channel1Clip[track[0].clip_songMode][d][track[0].MIDItick_16]) {
+        if (channel1Clip[track[0].clip_songMode][d][tick_16]) {
           if (!dsend_noteOff[d]) {
+
             drumnotes[d] = true;
             dsend_noteOff[d] = true;
             //DrumPluginPlay();
+
+
             if (track[0].MIDIchannel < 17) {
               usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
               MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
@@ -146,6 +149,10 @@ void process_clock() {
         track[i].MIDItick++;
         if (!track[i].solo_mutes_state) {
           if (!track[i].mute_state) {
+            //Noteoff for drumtrack
+
+
+
 
             //stepwise
             if (track[i].seqMode == 0) {
@@ -255,6 +262,20 @@ void process_clock() {
     if (seq_MIDItick % 6 == 0) {
       tick_16++;
       track[0].MIDItick_16++;
+      for (int b = 0; b < num_voice; b++) {
+        if (dsend_noteOff[b]) {
+          dsend_noteOff[b] = false;
+          if (track[0].MIDIchannel < 17) {
+            usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+            MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+            for (int usbs = 0; usbs < 10; usbs++) {
+              if (!launchpad) {
+                usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
+              }
+            }
+          }
+        }
+      }
       //Serial.printf("%d-%d-%d-%d\n", track[desired_track].notePlayed[0], track[desired_track].notePlayed[1], track[desired_track].notePlayed[2], track[desired_track].notePlayed[3]);
       for (int b = 0; b < 12; b++) {
         repeatED[b] = 0;

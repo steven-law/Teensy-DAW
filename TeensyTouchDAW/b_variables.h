@@ -260,7 +260,7 @@ bool LP_drawOnce[16];
 
 
 struct tick_t {
-  byte voice[MAX_VOICES];  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+  byte voice[MAX_VOICES]{ 0 };  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
 };
 
 struct sequence_t {
