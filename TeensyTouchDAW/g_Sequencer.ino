@@ -7,8 +7,10 @@ void drumStepSequencer_Static() {  //static Display rendering
   allTracks[desired_instrument]->drawClipToEdit();
   allTracks[desired_instrument]->drawSeqMode();
   allTracks[desired_instrument]->drawMIDIChannel();
+  allTracks[desired_instrument]->drawStepLenght();
   drawNrInRect(18, 8, allTracks[desired_instrument]->clockDivision, trackColor[desired_instrument]);
   draw_ClipselectorRow();
+
   if (launchpad) {
     midi01.sendControlChange(0, 0, 1);
     LP_drawStepsequencer();
@@ -76,11 +78,8 @@ void drumStepSequencer() {
 
     //clip
     if (enc_moved[3]) {
-      allTracks[desired_instrument]->clipToEdit = constrain((allTracks[desired_instrument]->clipToEdit + encoded[3]), 0, MAX_CLIPS - 1);
       allTracks[desired_instrument]->setClipToEdit(encoded[3]);
-      clearStepsGrid();
       drawActiveDrumSteps();
-      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
     }
   }
 
@@ -132,10 +131,8 @@ void drumStepSequencer() {
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
       allTracks[0]->clipToEdit = (gridTouchX / 2) - 1;
-      clearStepsGrid();
-      //draw active steps
       drawActiveDrumSteps();
-      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
+      allTracks[desired_instrument]->drawClipToEdit();
       midi01.sendNoteOn(allTracks[desired_instrument]->clipToEdit, LP_RED, 1);
     }
   }
@@ -148,7 +145,7 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   drawActivePolySteps();
   draw_Notenames();
   drawNrInRect(18, 8, allTracks[desired_instrument]->clockDivision, trackColor[desired_instrument]);
-  drawNrInRect(18, 7, allTracks[desired_instrument]->stepLenght, trackColor[desired_instrument]);
+  allTracks[desired_instrument]->drawStepLenght();
   allTracks[desired_instrument]->drawClipToEdit();
   allTracks[desired_instrument]->drawVoiceCount();
   allTracks[desired_instrument]->drawSeqMode();
@@ -237,11 +234,8 @@ void melodicStepSequencer(int desired_instrument) {
     if (button[14]) {
       //clip
       if (enc_moved[3]) {
-        allTracks[desired_instrument]->clipToEdit = constrain((allTracks[desired_instrument]->clipToEdit + encoded[3]), 0, MAX_CLIPS - 1);
         allTracks[desired_instrument]->setClipToEdit(encoded[3]);
-        clearStepsGrid();
         drawActivePolySteps();
-        drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
     }
   }
@@ -336,7 +330,7 @@ void melodicStepSequencer(int desired_instrument) {
       allTracks[desired_instrument]->clipToEdit = (gridTouchX / 2) - 1;
       clearStepsGrid();
       drawActivePolySteps();
-      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
+      allTracks[desired_instrument]->drawClipToEdit();
     }
   }
 }

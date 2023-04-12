@@ -662,6 +662,7 @@ void NoteFX8_Page_Static() {  //static Display rendering
   drawStepSequencerStatic(12);
   clearPixelGrid();
   drawActivePolyPixel();
+  allTracks[desired_instrument]->drawStepLenght();
   allTracks[desired_instrument]->drawClipToEdit();
   allTracks[desired_instrument]->drawVoiceCount();
   allTracks[desired_instrument]->drawSeqMode();

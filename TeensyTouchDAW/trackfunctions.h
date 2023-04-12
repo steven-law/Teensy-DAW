@@ -176,7 +176,7 @@ public:
   byte MIDIChannel;
   byte clipToEdit = 0;
   byte shownOctaves = 5;
-  byte seqMode = 0;  //todo
+  byte seqMode = 0;
   byte voiceCount = 0;
   byte stepLenght = 5;
   byte clockDivision = 1;
@@ -229,45 +229,6 @@ public:
     drawMIDIChannel();
     Serial.printf("Track= %d, MIDIChannel= %d\n", thisTrack, MIDIChannel);
   }
-  void setClipToEdit(int encoderd) {
-    clipToEdit = constrain((clipToEdit + encoderd), 0, MAX_CLIPS - 1);
-    drawClipToEdit();
-    Serial.printf("Track= %d, clipToEdit= %d\n", thisTrack, clipToEdit);
-  }
-  void drawClipToEdit(){
-    drawNrInRect_short(18, 1, clipToEdit, trackColor[thisTrack] + (clipToEdit * 20), "Cl:");
-  }
-  void setVoiceCount(int encoderd) {
-    voiceCount = constrain((voiceCount + encoderd), 0, MAX_VOICES);
-    drawVoiceCount();
-    Serial.printf("Track= %d, voiceCount= %d\n", thisTrack, voiceCount);
-  }
-  void drawVoiceCount(){
-    drawNrInRect_short(18, 6, voiceCount, trackColor[desired_instrument], "Vox:");
-  }
-  void setClockDivision(int encoderd) {
-    clockDivision = constrain((clockDivision + encoderd), 1, 96);
-    drawNrInRect_short(18, 8, clockDivision, trackColor[desired_instrument], "cD:");
-    Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
-  }
-  void setShownOctaves(int encoderd) {
-    shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
-    Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
-  }
-  void setStepLenght(int encoderd) {
-    stepLenght = constrain((stepLenght + encoderd), 1, 96);
-    drawNrInRect_short(18, 7, stepLenght, trackColor[desired_instrument], "SL:");
-    Serial.printf("Track= %d, stepLenght= %d\n", thisTrack, stepLenght);
-  }
-  void setSeqMode(int encoderd) {
-    seqMode = constrain((seqMode + encoderd), 0, 5);
-    drawSeqMode();
-    Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
-  }
-  void drawSeqMode(){
-    drawNrInRect_short(18, 10, "", trackColor[desired_instrument], seqModes[seqMode]);
-  }
-
   void drawMIDIChannel() {
 
     //draw midichannel
@@ -302,6 +263,54 @@ public:
       }
     }
   }
+
+  void setClipToEdit(int encoderd) {
+    clipToEdit = constrain((clipToEdit + encoderd), 0, MAX_CLIPS - 1);
+    drawClipToEdit();
+    Serial.printf("Track= %d, clipToEdit= %d\n", thisTrack, clipToEdit);
+  }
+  void drawClipToEdit() {
+    drawNrInRect_short(18, 1, clipToEdit, trackColor[thisTrack] + (clipToEdit * 20), "Cl:");
+  }
+
+  void setVoiceCount(int encoderd) {
+    voiceCount = constrain((voiceCount + encoderd), 0, MAX_VOICES);
+    drawVoiceCount();
+    Serial.printf("Track= %d, voiceCount= %d\n", thisTrack, voiceCount);
+  }
+  void drawVoiceCount() {
+    drawNrInRect_short(18, 6, voiceCount, trackColor[desired_instrument], "Vox:");
+  }
+
+  void setClockDivision(int encoderd) {
+    clockDivision = constrain((clockDivision + encoderd), 1, 96);
+    drawNrInRect_short(18, 8, clockDivision, trackColor[desired_instrument], "cD:");
+    Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
+  }
+  
+  void setShownOctaves(int encoderd) {
+    shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
+    Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
+  }
+
+  void setStepLenght(int encoderd) {
+    stepLenght = constrain((stepLenght + encoderd), 1, 96);
+    drawStepLenght();
+    Serial.printf("Track= %d, stepLenght= %d\n", thisTrack, stepLenght);
+  }
+  void drawStepLenght() {
+    drawNrInRect_short(18, 7, stepLenght, trackColor[desired_instrument], "SL:");
+  }  
+  void setSeqMode(int encoderd) {
+    seqMode = constrain((seqMode + encoderd), 0, 5);
+    drawSeqMode();
+    Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
+  }
+  void drawSeqMode() {
+    drawNrInRect_short(18, 10, "", trackColor[desired_instrument], seqModes[seqMode]);
+  }
+
+
   void drawLeftNavigator(const char* sideDigit) {
     tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
