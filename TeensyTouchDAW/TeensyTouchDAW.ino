@@ -400,14 +400,14 @@ void setup() {
   FX2Bitcrush_settings();
   FX3Delay_settings();
 
-  track0.setup(0);
-  track1.setup(1);
-  track2.setup(2);
-  track3.setup(3);
-  track4.setup(4);
-  track5.setup(5);
-  track6.setup(6);
-  track7.setup(7);
+  track0.setup(0, 10);
+  track1.setup(1, 2);
+  track2.setup(2, 3);
+  track3.setup(3, 4);
+  track4.setup(4, 5);
+  track5.setup(5, 6);
+  track6.setup(6, 7);
+  track7.setup(7, 8);
   clearArrangment();
   Serial.println("Initializing Track- and Pluginsettings");
   tft.println("Initializing Track- and Pluginsettings");
@@ -727,6 +727,7 @@ void readMainButtons() {
           selectPage = DRUMTRACK;
           desired_instrument = 0;
           desired_track = 0;
+          //gridStepSequencer(1);
           drumStepSequencer_Static();
         }
         //select melodic track 2
@@ -1026,28 +1027,28 @@ void readMainButtons() {
           FX3Delay_static();
         }
         if (key.bit.KEY == 55) {
-          if (track[desired_instrument].seqMode == 6) {
+          if (allTracks[desired_instrument]->seqMode == 6) {
             selectPage = NFX1_PAGE1;
             NoteFX1_Page_Static();
           }
-          if (track[desired_instrument].seqMode == 2) {
+          if (allTracks[desired_instrument]->seqMode == 2) {
             selectPage = NFX2_PAGE1;
             NoteFX2_Page_Static();
           }
-          if (track[desired_instrument].seqMode == 3) {
+          if (allTracks[desired_instrument]->seqMode == 3) {
             selectPage = NFX3_PAGE1;
             NoteFX3_Page_Static();
           }
-          if (track[desired_instrument].seqMode == 4) {
+          if (allTracks[desired_instrument]->seqMode == 4) {
             selectPage = NFX4_PAGE1;
             NoteFX4_Page_Static();
           }
-          if (track[desired_instrument].seqMode == 5) {
+          if (allTracks[desired_instrument]->seqMode == 5) {
             selectPage = NFX5_PAGE1;
             NoteFX5_Page_Static();
           }
 
-          if (track[desired_instrument].seqMode == 1) {
+          if (allTracks[desired_instrument]->seqMode == 1) {
             selectPage = NFX8_PAGE1;
             NoteFX8_Page_Static();
           }

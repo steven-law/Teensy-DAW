@@ -1,6 +1,6 @@
 
 #include <Arduino.h>
-byte getValue(byte XPos, byte YPos, byte AnyValue ) {
+byte getValue(byte XPos, byte YPos, byte AnyValue) {
   if (enc_moved[XPos]) {
     AnyValue = constrain(AnyValue + encoded[XPos], 0, 127);
   } else if (incomingCC_changed[XPos]) {
@@ -128,6 +128,27 @@ void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, cha
     tft.print(name);
   }
 }
+//draws a number into a rect of 2x1grids
+void drawNrInRect_short(int xPos, byte yPos, byte dvalue, int color, const char* function) {
+  tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+  tft.setFont(Arial_8);
+  tft.setTextColor(color);
+  tft.setCursor(STEP_FRAME_W * xPos + 2, STEP_FRAME_H * yPos + 4);
+  tft.print(function);
+  tft.print(dvalue);
+}
+void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
+  static int dvalue_old;
+  tft.setFont(Arial_8);
+  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
+  tft.setTextColor(ILI9341_DARKGREY);
+  tft.setCursor(STEP_FRAME_W * xPos + 2, STEP_FRAME_H * yPos + 4);
+  tft.print(dvalue_old);
+  tft.setTextColor(color);
+  tft.setCursor(STEP_FRAME_W * xPos + 2, STEP_FRAME_H * yPos + 4);
+  tft.print(dvalue);
+  dvalue_old = dvalue;
+}
 
 class drumtrack {
 public:
@@ -152,9 +173,16 @@ public:
 
 
   byte thisTrack;
+  byte MIDIChannel;
+  byte clipToEdit = 0;
+  byte shownOctaves = 5;
+  byte seqMode = 0;  //todo
+  byte voiceCount = 0;
+  byte stepLenght = 5;
+  byte clockDivision = 1;
 
-  bool mute = false;
-  bool solo = false;
+  bool mute = false;  //todo
+  bool solo = false;  //todo
 
 
   byte gainVol = 127;
@@ -162,13 +190,118 @@ public:
   byte FX1Vol = 0;
   byte FX2Vol = 0;
   byte FX3Vol = 0;
-  
-  void setup(byte new_track) {
+
+  void setup(byte new_track, byte new_MIDIChannel) {
     thisTrack = new_track;
+    MIDIChannel = new_MIDIChannel;
+  }
+  void setNoteOnToStep(byte tick_s, byte voiceCount_s, byte note_s) {
+    if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
+      for (int touched_ticks = 0; touched_ticks < stepLenght; touched_ticks++) {
+        ctrack[thisTrack].sequence[clipToEdit].tick[tick_s + touched_ticks].voice[voiceCount_s] = note_s;
+      }
+    }
+    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+  }
+  void setNoteOffToStep(byte tick_s, byte voiceCount_s, byte note_s) {
+    if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] > VALUE_NOTEOFF) {
+      for (int touched_ticks = 0; touched_ticks < stepLenght; touched_ticks++) {
+        ctrack[thisTrack].sequence[clipToEdit].tick[tick_s + touched_ticks].voice[voiceCount_s] = note_s;
+      }
+    }
+    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+  }
+  void setNoteOnToTick(byte tick_s, byte voiceCount_s, byte note_s) {
+    if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
+      ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
+    }
+    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+  }
+  void setNoteOffToTick(byte tick_s, byte voiceCount_s, byte note_s) {
+    if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] > VALUE_NOTEOFF) {
+      ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
+    }
+    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
 
+  void setMIDIChannel(int encoderd) {
+    MIDIChannel = constrain((MIDIChannel + encoderd), 0, MAX_CHANNELS);
+    drawMIDIChannel();
+    Serial.printf("Track= %d, MIDIChannel= %d\n", thisTrack, MIDIChannel);
+  }
+  void setClipToEdit(int encoderd) {
+    clipToEdit = constrain((clipToEdit + encoderd), 0, MAX_CLIPS - 1);
+    drawClipToEdit();
+    Serial.printf("Track= %d, clipToEdit= %d\n", thisTrack, clipToEdit);
+  }
+  void drawClipToEdit(){
+    drawNrInRect_short(18, 1, clipToEdit, trackColor[thisTrack] + (clipToEdit * 20), "Cl:");
+  }
+  void setVoiceCount(int encoderd) {
+    voiceCount = constrain((voiceCount + encoderd), 0, MAX_VOICES);
+    drawVoiceCount();
+    Serial.printf("Track= %d, voiceCount= %d\n", thisTrack, voiceCount);
+  }
+  void drawVoiceCount(){
+    drawNrInRect_short(18, 6, voiceCount, trackColor[desired_instrument], "Vox:");
+  }
+  void setClockDivision(int encoderd) {
+    clockDivision = constrain((clockDivision + encoderd), 1, 96);
+    drawNrInRect_short(18, 8, clockDivision, trackColor[desired_instrument], "cD:");
+    Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
+  }
+  void setShownOctaves(int encoderd) {
+    shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
+    Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
+  }
+  void setStepLenght(int encoderd) {
+    stepLenght = constrain((stepLenght + encoderd), 1, 96);
+    drawNrInRect_short(18, 7, stepLenght, trackColor[desired_instrument], "SL:");
+    Serial.printf("Track= %d, stepLenght= %d\n", thisTrack, stepLenght);
+  }
+  void setSeqMode(int encoderd) {
+    seqMode = constrain((seqMode + encoderd), 0, 5);
+    drawSeqMode();
+    Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
+  }
+  void drawSeqMode(){
+    drawNrInRect_short(18, 10, "", trackColor[desired_instrument], seqModes[seqMode]);
+  }
 
+  void drawMIDIChannel() {
 
+    //draw midichannel
+    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+    tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 11 + 3);
+    tft.setFont(Arial_8);
+    tft.setTextColor(ILI9341_WHITE);
+    tft.setTextSize(1);
+    tft.print("Ch:");
+    tft.print(track[desired_track].MIDIchannel);
+    tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
+    //draw MidiCC
+    for (int plugintext = 0; plugintext <= 16; plugintext++) {
+      if (track[desired_instrument].MIDIchannel == plugintext) {
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print("CC");
+      }
+    }
+    //draw PluginName
+    for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
+      if (track[desired_track].MIDIchannel == plugintext + 17) {
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+        tft.setFont(Arial_8);
+        tft.setTextColor(ILI9341_WHITE);
+        tft.setTextSize(1);
+        tft.print(pluginName[plugintext]);
+      }
+    }
+  }
   void drawLeftNavigator(const char* sideDigit) {
     tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
@@ -239,7 +372,7 @@ public:
   void setRAWfile() {
     //RAW File
     if (enc_moved[0] || incomingCC_changed[0]) {
-      selected_file = getValue(0, 0,selected_file);
+      selected_file = getValue(0, 0, selected_file);
       drawPot(0, 0, selected_file, selected_file, "RAW", ILI9341_OLIVE);
     }
   }
@@ -247,7 +380,7 @@ public:
     //rec volume
     if (enc_moved[1] || incomingCC_changed[1]) {
       incomingCC_changed[1] = false;
-      selected_gain = getValue(1, 0,selected_gain);
+      selected_gain = getValue(1, 0, selected_gain);
       amp1.gain(selected_gain / 64.00);
       drawPot_2(1, 0, selected_gain, selected_gain, "Volume", ILI9341_OLIVE);
     }
@@ -256,7 +389,7 @@ public:
 
     if (enc_moved[0] || incomingCC_changed[0]) {
       incomingCC_changed[0] = false;
-      monitoring = constrain(getValue(0, 1,monitoring), 0, 1);
+      monitoring = constrain(getValue(0, 1, monitoring), 0, 1);
       if (monitoring == 1) {
         mixer11.gain(1, 1);
       }

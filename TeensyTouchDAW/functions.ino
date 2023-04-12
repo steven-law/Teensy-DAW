@@ -514,23 +514,23 @@ void beatComponents() {
       plpreset[8] = track[instruments].Ttrckprst[phrase];
       Plugin9_Change();
     }
-    if (track[instruments].seqMode == 1) {
+    if (allTracks[instruments]->seqMode == 1) {
       NFX1presetNr = track[instruments].clip_songMode;
       NoteFX1_Change();
     }
-    if (track[instruments].seqMode == 2) {
+    if (allTracks[instruments]->seqMode == 2) {
       NFX2presetNr = track[instruments].clip_songMode;
       NoteFX2_Change();
     }
-    if (track[instruments].seqMode == 3) {
+    if (allTracks[instruments]->seqMode == 3) {
       NFX3presetNr = track[instruments].clip_songMode;
       NoteFX3_Change();
     }
-    if (track[instruments].seqMode == 4) {
+    if (allTracks[instruments]->seqMode == 4) {
       //NFX4presetNr = track[instruments].clip_songMode;
       //NoteFX4_Change();
     }
-    if (track[instruments].seqMode == 5) {
+    if (allTracks[instruments]->seqMode == 5) {
       NFX5presetNr = track[instruments].clip_songMode;
     }
   }
@@ -1336,7 +1336,7 @@ void DrumPluginPlay() {
       drumnotes[1] = false;
       pl7envelope1.noteOn();
 
-      if (track[0].MIDItick >= track[0].stepLength) {
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
         pl7envelope1.noteOff();
       }
     }
@@ -1345,7 +1345,7 @@ void DrumPluginPlay() {
       pl7envelope2.noteOn();
       pl7envelope3.noteOn();
 
-      if (track[0].MIDItick >= track[0].stepLength) {
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
         pl7envelope2.noteOff();
         pl7envelope3.noteOff();
       }
@@ -1354,7 +1354,7 @@ void DrumPluginPlay() {
       drumnotes[3] = false;
       //playMem4.play(AudioSampleHihat);
 
-      if (track[0].MIDItick >= track[0].stepLength) {
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
       }
     }
 

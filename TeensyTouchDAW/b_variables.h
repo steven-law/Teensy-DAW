@@ -260,12 +260,11 @@ bool LP_drawOnce[16];
 
 
 struct tick_t {
-  byte voice[MAX_VOICES]{ 0 };  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+  byte voice[MAX_VOICES]{ 0 };
 };
 
 struct sequence_t {
   tick_t tick[MAX_TICKS];
-  byte voiceCount = 0;
 };
 
 struct track_t {
@@ -316,11 +315,9 @@ byte desired_track;
 byte desired_instrument;
 //track 2-8 variables
 struct tracks {
-  byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
-  byte clip_selector = 0;  //clipselection from trackview´s clip selector
+  byte MIDIchannel = 0;  // (although you may not need this, depends on how you structure thing later)
   byte clip_songMode = 1;  //clipselection from the arrangement
-  //int tone = 0;
-  byte shown_octaves = 5;  //
+
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
   bool mute_state = LOW;
@@ -358,10 +355,6 @@ struct tracks {
   int MIDItick = 0;
   int MIDItick_16 = 0;
   bool tick_true = false;
-  int stepLength = 5;
-  byte clockDivision = 1;
-
-  int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks* track;

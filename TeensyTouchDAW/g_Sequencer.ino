@@ -4,12 +4,11 @@ void drumStepSequencer_Static() {  //static Display rendering
   drawStepSequencerStatic(16);
   drawActiveDrumSteps();
   draw_Drumnotes();
-  drawMIDIchannel();
-  draw_Clipselector();
-  draw_SeqMode();
-  drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
-  drawNrInRect(18, 8, track[desired_instrument].clockDivision, trackColor[desired_instrument]);
-
+  allTracks[desired_instrument]->drawClipToEdit();
+  allTracks[desired_instrument]->drawSeqMode();
+  allTracks[desired_instrument]->drawMIDIChannel();
+  drawNrInRect(18, 8, allTracks[desired_instrument]->clockDivision, trackColor[desired_instrument]);
+  draw_ClipselectorRow();
   if (launchpad) {
     midi01.sendControlChange(0, 0, 1);
     LP_drawStepsequencer();
@@ -47,13 +46,11 @@ void drumStepSequencer() {
     }
     //seqMode
     if (enc_moved[1]) {
-      track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES - 1);
-      drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+      allTracks[desired_instrument]->setSeqMode(encoded[1]);
     }
-    //step diviion
+    //ClockDivision
     if (enc_moved[2]) {
-      track[desired_instrument].clockDivision = constrain((track[desired_instrument].clockDivision + encoded[2]), 0, 97);
-      drawNrInRect(18, 8, track[desired_instrument].clockDivision, trackColor[desired_instrument]);
+      allTracks[desired_instrument]->setClockDivision(encoded[2]);
     }
   }
 
@@ -73,16 +70,17 @@ void drumStepSequencer() {
 
     //midichannel
     if (enc_moved[2]) {
+      allTracks[desired_instrument]->setMIDIChannel(encoded[2]);
       track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[2]), 0, MAX_CHANNELS);
-      drawMIDIchannel();
     }
 
     //clip
     if (enc_moved[3]) {
-      track[desired_instrument].clip_selector = constrain((track[desired_instrument].clip_selector + encoded[3]), 0, MAX_CLIPS - 1);
+      allTracks[desired_instrument]->clipToEdit = constrain((allTracks[desired_instrument]->clipToEdit + encoded[3]), 0, MAX_CLIPS - 1);
+      allTracks[desired_instrument]->setClipToEdit(encoded[3]);
       clearStepsGrid();
       drawActiveDrumSteps();
-      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
     }
   }
 
@@ -101,15 +99,16 @@ void drumStepSequencer() {
         int dot_on_Y = (gridTouchY - 1) * STEP_FRAME_H + DOT_OFFSET_Y;
 
         ch1tone = (gridTouchY - 1);
+        int note = drumnote[ch1tone];
         int step_number = gridTouchX - 2;
 
-        if (!channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
-          channel1Clip[track[0].clip_selector][ch1tone][step_number] = true;
+        if (!channel1Clip[allTracks[0]->clipToEdit][ch1tone][step_number]) {
+          channel1Clip[allTracks[0]->clipToEdit][ch1tone][step_number] = true;
           touched = true;
-          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector) * 20));  //draw the active steps circles
-        } else if (channel1Clip[track[0].clip_selector][ch1tone][step_number]) {
+          tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (allTracks[0]->clipToEdit) * 20));  //draw the active steps circles
+        } else if (channel1Clip[allTracks[0]->clipToEdit][ch1tone][step_number]) {
           touched = true;
-          channel1Clip[track[0].clip_selector][ch1tone][step_number] = false;
+          channel1Clip[allTracks[0]->clipToEdit][ch1tone][step_number] = false;
           tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
         }
       }
@@ -132,12 +131,12 @@ void drumStepSequencer() {
 
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
-      track[0].clip_selector = (gridTouchX / 2) - 1;
+      allTracks[0]->clipToEdit = (gridTouchX / 2) - 1;
       clearStepsGrid();
       //draw active steps
       drawActiveDrumSteps();
-      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
-      midi01.sendNoteOn(track[desired_instrument].clip_selector, LP_RED, 1);
+      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
+      midi01.sendNoteOn(allTracks[desired_instrument]->clipToEdit, LP_RED, 1);
     }
   }
 }
@@ -148,14 +147,13 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
   drawStepSequencerStatic(16);
   drawActivePolySteps();
   draw_Notenames();
-  drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
-  drawNrInRect(18, 8, track[desired_instrument].clockDivision, trackColor[desired_instrument]);
-  drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
-  drawNrInRect(18, 6, ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount, trackColor[desired_instrument]);
-
-  drawMIDIchannel();
-  draw_Clipselector();
-  draw_SeqMode();
+  drawNrInRect(18, 8, allTracks[desired_instrument]->clockDivision, trackColor[desired_instrument]);
+  drawNrInRect(18, 7, allTracks[desired_instrument]->stepLenght, trackColor[desired_instrument]);
+  allTracks[desired_instrument]->drawClipToEdit();
+  allTracks[desired_instrument]->drawVoiceCount();
+  allTracks[desired_instrument]->drawSeqMode();
+  allTracks[desired_instrument]->drawMIDIChannel();
+  draw_ClipselectorRow();
   drawOctaveTriangle();
   drawOctaveNumber();
   if (launchpad) {
@@ -200,14 +198,13 @@ void melodicStepSequencer(int desired_instrument) {
 
     //voiceCount
     if (enc_moved[2]) {
-      ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount = constrain((ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount + encoded[2]), 0, (MAX_VOICES - 1));
-      drawNrInRect(18, 6, ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount, trackColor[desired_instrument]);
+      allTracks[desired_instrument]->setVoiceCount(encoded[2]);
     }
 
     //midichannel
     if (enc_moved[3]) {
+      allTracks[desired_instrument]->setMIDIChannel(encoded[3]);
       track[desired_instrument].MIDIchannel = constrain((track[desired_instrument].MIDIchannel + encoded[3]), 0, MAX_CHANNELS);
-      drawMIDIchannel();
     }
   }
   if (lastPotRow == 0) {
@@ -215,37 +212,36 @@ void melodicStepSequencer(int desired_instrument) {
     if (button[14]) {
       if (enc_moved[0]) {
         //octaves
-        track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
+        //track[desired_instrument].shown_octaves = track[desired_instrument].shown_octaves + encoded[0];
+        allTracks[desired_instrument]->setShownOctaves(encoded[0]);
         clearStepsGrid();
         drawActivePolySteps();
         drawOctaveNumber();
       }
       //seqMode
       if (enc_moved[1]) {
-        track[desired_instrument].seqMode = constrain((track[desired_instrument].seqMode + encoded[1]), 0, MAX_SEQMODES - 1);
-        drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+        allTracks[desired_instrument]->setSeqMode(encoded[1]);
       }
-      //step diviion
+      //clockDivision
       if (enc_moved[2]) {
-        track[desired_instrument].clockDivision = constrain((track[desired_instrument].clockDivision + encoded[2]), 0, 97);
-        drawNrInRect(18, 8, track[desired_instrument].clockDivision, trackColor[desired_instrument]);
+        allTracks[desired_instrument]->setClockDivision(encoded[2]);
       }
       //step length
       if (enc_moved[3]) {
-        track[desired_instrument].stepLength = constrain((track[desired_instrument].stepLength + encoded[3]), 0, 95);
-        drawNrInRect(18, 7, track[desired_instrument].stepLength, trackColor[desired_instrument]);
+        allTracks[desired_instrument]->setStepLenght(encoded[3]);
       }
     }
   }
   if (lastPotRow == 1) {
-    //octaves seqMode step diviion step length
+    //clip
     if (button[14]) {
       //clip
       if (enc_moved[3]) {
-        track[desired_instrument].clip_selector = constrain((track[desired_instrument].clip_selector + encoded[3]), 0, MAX_CLIPS - 1);
+        allTracks[desired_instrument]->clipToEdit = constrain((allTracks[desired_instrument]->clipToEdit + encoded[3]), 0, MAX_CLIPS - 1);
+        allTracks[desired_instrument]->setClipToEdit(encoded[3]);
         clearStepsGrid();
         drawActivePolySteps();
-        drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+        drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
     }
   }
@@ -263,32 +259,40 @@ void melodicStepSequencer(int desired_instrument) {
   if (ts.touched() || button[15]) {
     if (!touched) {
       if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
-        int note = touched_note + track[desired_instrument].shown_octaves * 12;
+        int note;
+        if (desired_instrument == 0) {
+          note = drumnote[touched_note];
+        } else {
+          note = touched_note + allTracks[desired_instrument]->shownOctaves * 12;
+        }
+
 
         for (int polys = 0; polys < MAX_VOICES; polys++) {
-          if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].voiceCount == polys) {
-            if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_tick].voice[polys] == VALUE_NOTEOFF) {
+          if (allTracks[desired_instrument]->voiceCount == polys) {
+            if (ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_tick].voice[polys] == VALUE_NOTEOFF) {
+              allTracks[desired_instrument]->setNoteOnToStep(touched_tick, polys, note);
               touched = true;
-              for (int touched_ticks = 0; touched_ticks < track[desired_instrument].stepLength; touched_ticks++) {
-                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_tick + touched_ticks].voice[polys] = note;
+              for (int touched_ticks = 0; touched_ticks < allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_tick + touched_ticks].voice[polys] = note;
               }
 
-            } else if (ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_tick].voice[polys] > VALUE_NOTEOFF) {
+            } else if (ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_tick].voice[polys] > VALUE_NOTEOFF) {
+              allTracks[desired_instrument]->setNoteOffToStep(touched_tick, polys, VALUE_NOTEOFF);
               touched = true;
-              for (int touched_ticks = 0; touched_ticks < track[desired_instrument].stepLength; touched_ticks++) {
-                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_tick + touched_ticks].voice[polys] = VALUE_NOTEOFF;
+              for (int touched_ticks = 0; touched_ticks < allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_tick + touched_ticks].voice[polys] = VALUE_NOTEOFF;
               }
             }
           }
         }
-        Serial.printf("entered note= %d at tick %d\n", note, touched_tick);
+        //Serial.printf("entered note= %d at tick %d\n", note, touched_tick);
         drawActivePolyStepsY(touched_step);
       }
-
+      //debug interrupt if you press the most right area
       if (gridTouchX >= 18) {
         touched = true;
         for (int ticks = 0; ticks < MAX_TICKS; ticks++) {
-          Serial.print(ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[ticks].voice[0]);
+          Serial.print(ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[ticks].voice[0]);
           Serial.print(",");
           if (ticks == 5 || ticks == 11 || ticks == 17 || ticks == 23 || ticks == 29 || ticks == 35 || ticks == 41 || ticks == 47 || ticks == 53 || ticks == 59 || ticks == 65 || ticks == 71 || ticks == 77 || ticks == 83 || ticks == 89) {
             Serial.println("");
@@ -301,12 +305,12 @@ void melodicStepSequencer(int desired_instrument) {
       //octave selection
       if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
         if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-          track[desired_instrument].shown_octaves--;
+          allTracks[desired_instrument]->shownOctaves--;
           touched = true;
           clearStepsGrid();
         }
         if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-          track[desired_instrument].shown_octaves++;
+          allTracks[desired_instrument]->shownOctaves++;
           touched = true;
           clearStepsGrid();
         }
@@ -329,10 +333,10 @@ void melodicStepSequencer(int desired_instrument) {
     }
     //clipselecting
     if (gridTouchX > 2 && gridTouchX < 18 && gridTouchY == 13) {
-      track[desired_instrument].clip_selector = (gridTouchX / 2) - 1;
+      allTracks[desired_instrument]->clipToEdit = (gridTouchX / 2) - 1;
       clearStepsGrid();
       drawActivePolySteps();
-      drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+      drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
     }
   }
 }
