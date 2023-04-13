@@ -1,17 +1,14 @@
+//file for the audio recorder, working on the class to be finished
+
+
 void recorder_settings() {
   amp1.gain(1);
 }
 
 
-
-
-
-
 void recorder_Page_Static() {
   clearWorkSpace();
-  //place here the (copied!) shown controls for your plugin
-  //if needed draw selecting pages buttons
-  //draw_sub_page_buttons(n); //max 4
+
 
   drawPot(0, 0, AudioRecorder.selected_file, AudioRecorder.selected_file, "RAW", ILI9341_OLIVE);
   drawPot(1, 0, AudioRecorder.selected_gain, AudioRecorder.selected_gain, "Volume", ILI9341_OLIVE);
@@ -63,51 +60,25 @@ void recorder_Page1_Dynamic() {
       break;
   }
   if (ts.touched() || button[15]) {
-
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
-    }
-
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-      if (gridTouchX == 3 || gridTouchX == 4) {
-        if (audio_rec_listen_graph == 1) {
-          audio_rec_listen = true;
-          mixer11.gain(1, 1);
-        }
-        if (audio_rec_listen_graph == 0) {
-          audio_rec_listen = false;
-          mixer11.gain(1, 0);
-        }
-        drawActiveRect(CTRL_COL_0, CTRL_ROW_1, 2, 2, audio_rec_listen, "Listen", ILI9341_ORANGE);
-      }
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-    if (gridTouchY >= 11 && gridTouchY <= 13) {
-      lastPotRow = 3;
-    }
+    readTouchinput();
   }
 }
 
 
 void startRecording() {
-  
-    Serial.println("startRecording");
-    if (SD.exists(RAW_files[AudioRecorder.selected_file])) {
-      // The SD library writes new data to the end of the
-      // file, so to start a new recording, the old file
-      // must be deleted before new data is written.
-      SD.remove(RAW_files[AudioRecorder.selected_file]);
-    }
-    frec = SD.open(RAW_files[AudioRecorder.selected_file], FILE_WRITE);
-    if (frec) {
-      queue1.begin();
-      audio_rec_now = true;
-    }
-  
+
+  Serial.println("startRecording");
+  if (SD.exists(RAW_files[AudioRecorder.selected_file])) {
+    // The SD library writes new data to the end of the
+    // file, so to start a new recording, the old file
+    // must be deleted before new data is written.
+    SD.remove(RAW_files[AudioRecorder.selected_file]);
+  }
+  frec = SD.open(RAW_files[AudioRecorder.selected_file], FILE_WRITE);
+  if (frec) {
+    queue1.begin();
+    audio_rec_now = true;
+  }
 }
 
 void continueRecording() {

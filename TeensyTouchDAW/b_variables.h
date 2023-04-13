@@ -90,7 +90,7 @@ byte selectPage;
 #define SONGMODE_PAGE_14 23
 #define SONGMODE_PAGE_15 24
 #define SONGMODE_PAGE_16 25
-
+#define MAX_SONGMODE_PAGES 16
 #define MIXER_PAGE_1 30
 #define MIXER_PAGE_2 31
 #define MIXER_PAGE_3 32
@@ -232,6 +232,22 @@ bool enc_button[4];
 //button variables
 
 bool drumnotes[12];
+#define BUTTON0 68
+#define BUTTON1 70
+#define BUTTON2 57
+#define BUTTON3 66
+#define BUTTON4 55
+#define BUTTON5 53
+#define BUTTON6 51
+#define BUTTON7 49
+#define BUTTON8 69
+#define BUTTON9 67
+#define BUTTON10 65
+#define BUTTON11 56
+#define BUTTON12 52
+#define BUTTON13 54
+#define BUTTON14 50
+#define BUTTON15 48
 bool button[16]{};
 
 bool showSerialonce = false;
@@ -315,7 +331,7 @@ byte desired_track;
 byte desired_instrument;
 //track 2-8 variables
 struct tracks {
-  byte MIDIchannel = 0;  // (although you may not need this, depends on how you structure thing later)
+  byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_songMode = 1;  //clipselection from the arrangement
 
   byte velocity_ON = 96;

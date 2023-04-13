@@ -1,3 +1,7 @@
+//songmode file contains the few functions needed for the songmode
+//draw functions are in a_display_functions.ino 
+
+
 void gridSongMode(int songpageNumber) {  //static Display rendering
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
@@ -302,10 +306,7 @@ void savebutton() {
     saveNoteFX("NoteFX4", 3);
     tft.println("Done");
 
-    tft.print("Writing FX 5 to project.txt...");
-    //save FX2 variables
-    saveNoteFX("NoteFX5", 4);
-    tft.println("Done");
+
 
 
     startUpScreen();
@@ -424,10 +425,7 @@ void loadbutton() {
     loadNoteFX("NoteFX4", 3);
     tft.println("Done");
 
-    //load FX 5 variables
-    tft.print("reading NoteFX 5 from project.txt...");
-    loadNoteFX("NoteFX5", 4);
-    tft.println("Done");
+
 
     startUpScreen();
   } else {

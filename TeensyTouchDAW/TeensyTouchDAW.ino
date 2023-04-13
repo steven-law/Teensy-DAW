@@ -274,22 +274,7 @@ void setup() {
     }
   }
 
-  //ratcheting array
-  ratchet = new bool **[NUM_CLIPS];
-  for (int i = 0; i < NUM_CLIPS; i++) {
-    ratchet[i] = new bool *[num_voice];
-    for (int j = 0; j < num_voice; j++) {
-      ratchet[i][j] = new bool[STEP_QUANT];
-    }
-  }
-  // fill the array
-  for (int i = 0; i < NUM_CLIPS; i++) {
-    for (int j = 0; j < num_voice; j++) {
-      for (int k = 0; k < STEP_QUANT; k++) {
-        ratchet[i][j][k] = 0;
-      }
-    }
-  }
+
   // Allocate dsend_noteOff array during runtime
   dsend_noteOff = new bool[num_voice];
   //tft.updateScreen();
@@ -310,8 +295,6 @@ void setup() {
   NFX3 = new rands[MAX_PRESETS];
   //allocate NFX4
   NFX4 = new PolyR[MAX_PRESETS];
-  //allocate NFX5
-  NFX5 = new Ratch[MAX_PRESETS];
   //allocate LaunchPad arrays
   LP_grid_notes = new byte[64];
   for (int r = 0; r < 8; r++) {
@@ -627,6 +610,8 @@ void loop() {
   // tft.updateScreenAsync();
   // tft.waitUpdateAsyncComplete();
 }
+
+//function to what to read when buttons are pressed, this needs to be changed!!
 void readMainButtons() {
 
   while (kpd.available()) {
@@ -645,8 +630,9 @@ void readMainButtons() {
         }
         showCoordinates();
       }
+      
       //cursor right
-      if (otherCtrlButtons && key.bit.KEY == 70) {  //"F"  70 2nd button
+      if (otherCtrlButtons && key.bit.KEY == BUTTON1) {  //"F"  70 2nd button
         if (selectPage == NFX8_PAGE1) {
           pixelTouchX = constrain((pixelTouchX + 2), 0, 320);
           drawCursorPixel();
@@ -657,7 +643,7 @@ void readMainButtons() {
         showCoordinates();
       }
       //cursor up
-      if (otherCtrlButtons && key.bit.KEY == 57) {  //"9"   57 3rd button
+      if (otherCtrlButtons && key.bit.KEY == BUTTON2) {  //"9"   57 3rd button
         if (selectPage == NFX8_PAGE1) {
           drawCursorPixel();
         } else {
@@ -667,7 +653,7 @@ void readMainButtons() {
         showCoordinates();
       }
       //cursor down
-      if (otherCtrlButtons && key.bit.KEY == 66) {  //"B"   66 4th button
+      if (otherCtrlButtons && key.bit.KEY == BUTTON3) {  //"B"   66 4th button
         if (selectPage == NFX8_PAGE1) {
           drawCursorPixel();
         } else {
@@ -677,7 +663,7 @@ void readMainButtons() {
         showCoordinates();
       }
       //last-pot-row
-      if (otherCtrlButtons && key.bit.KEY == 55) {  //"B"   66 5th button
+      if (otherCtrlButtons && key.bit.KEY == BUTTON4) {  //"B"   66 5th button
         lastPotRow++;
 
         if (lastPotRow >= 4) {
@@ -692,7 +678,7 @@ void readMainButtons() {
       }
 
       //recbutton
-      if (otherCtrlButtons && key.bit.KEY == 53) {  //"5" 53
+      if (otherCtrlButtons && key.bit.KEY == BUTTON5) {  //"5" 53
         if (seq_rec == false) {
           seq_rec = true;
           tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
@@ -712,18 +698,18 @@ void readMainButtons() {
       }
 
       //playbutton
-      if (otherCtrlButtons && key.bit.KEY == 51) {  //"3" 51
+      if (otherCtrlButtons && key.bit.KEY == BUTTON6) {  //"3" 51
         startSeq();
       }
       //stopbutton
-      if (otherCtrlButtons && key.bit.KEY == 49) {  //"1" 49
+      if (otherCtrlButtons && key.bit.KEY == BUTTON7) {  //"1" 49
         stopSeq();
       }
 
 
       //select tracks
       if (button[8]) {            //9th button
-        if (key.bit.KEY == 68) {  //"D"  68  1st button
+        if (key.bit.KEY == BUTTON0) {  //"D"  68  1st button
           selectPage = DRUMTRACK;
           desired_instrument = 0;
           desired_track = 0;
@@ -731,49 +717,49 @@ void readMainButtons() {
           drumStepSequencer_Static();
         }
         //select melodic track 2
-        if (key.bit.KEY == 70) {  //"F"  70 2nd button
+        if (key.bit.KEY == BUTTON1) {  //"F"  70 2nd button
           selectPage = 1;
           desired_instrument = 1;
           desired_track = 1;
           gridStepSequencer(1);
         }
         //select melodic track 3
-        if (key.bit.KEY == 57) {  //"9"  57 3rd button
+        if (key.bit.KEY == BUTTON2) {  //"9"  57 3rd button
           selectPage = 2;
           desired_instrument = 2;
           desired_track = 2;
           gridStepSequencer(2);
         }
         //select melodic track 4
-        if (key.bit.KEY == 66) {  //"B"  66 4th button
+        if (key.bit.KEY == BUTTON3) {  //"B"  66 4th button
           selectPage = 3;
           desired_instrument = 3;
           desired_track = 3;
           gridStepSequencer(3);
         }
         //select melodic track 5
-        if (key.bit.KEY == 55) {  //"7"  55 5th button
+        if (key.bit.KEY == BUTTON4) {  //"7"  55 5th button
           selectPage = 4;
           desired_instrument = 4;
           desired_track = 4;
           gridStepSequencer(4);
         }
         //select melodic track 6
-        if (key.bit.KEY == 53) {  //"5"  53 6th button
+        if (key.bit.KEY == BUTTON5) {  //"5"  53 6th button
           selectPage = 5;
           desired_instrument = 5;
           desired_track = 5;
           gridStepSequencer(5);
         }
         //select melodic track 7
-        if (key.bit.KEY == 51) {  //"3"  51 7th button
+        if (key.bit.KEY == BUTTON6) {  //"3"  51 7th button
           selectPage = 6;
           desired_instrument = 6;
           desired_track = 6;
           gridStepSequencer(6);
         }
         //select melodic track 8
-        if (key.bit.KEY == 49) {  //"1"  49 8th button
+        if (key.bit.KEY == BUTTON7) {  //"1"  49 8th button
           selectPage = 7;
           desired_instrument = 7;
           desired_track = 7;
@@ -1013,21 +999,21 @@ void readMainButtons() {
       }
       //FX Selection
       if (button[12]) {
-        if (key.bit.KEY == 68) {
+        if (key.bit.KEY == BUTTON0) {
           selectPage = FX1_PAGE1;
           FX1reverb_static();
         }
-        if (key.bit.KEY == 70) {
+        if (key.bit.KEY == BUTTON1) {
           selectPage = FX2_PAGE1;
           FX2Bitcrush_static();
         }
-        if (key.bit.KEY == 57) {
+        if (key.bit.KEY == BUTTON2) {
           //delay
           selectPage = FX3_PAGE1;
           FX3Delay_static();
         }
-        if (key.bit.KEY == 55) {
-          if (allTracks[desired_instrument]->seqMode == 6) {
+        if (key.bit.KEY == BUTTON4) {
+          if (allTracks[desired_instrument]->seqMode == 5) {
             selectPage = NFX1_PAGE1;
             NoteFX1_Page_Static();
           }
@@ -1043,18 +1029,17 @@ void readMainButtons() {
             selectPage = NFX4_PAGE1;
             NoteFX4_Page_Static();
           }
-          if (allTracks[desired_instrument]->seqMode == 5) {
-            selectPage = NFX5_PAGE1;
-            NoteFX5_Page_Static();
-          }
+
 
           if (allTracks[desired_instrument]->seqMode == 1) {
             selectPage = NFX8_PAGE1;
             NoteFX8_Page_Static();
           }
         }
+        Plugin_View_Static();
       }
-      //recorder
+
+      //Audiorecorder
       if (!button[10] && key.bit.KEY == 54) {  // 14th button
         selectPage = RECORDER_PAGE;
         recorder_Page_Static();
@@ -1064,65 +1049,65 @@ void readMainButtons() {
 
 
       // hold for track button
-      if (!button[10] && key.bit.KEY == 69) {  //"E"  69
+      if (!button[10] && key.bit.KEY == BUTTON8) {  //"E"  69
         button[8] = true;
       }
       // hold for plugin button
-      if (!button[10] && key.bit.KEY == 67) {  //"C"  67
+      if (!button[10] && key.bit.KEY == BUTTON9) {  //"C"  67
         button[9] = true;
       }
       // hold for Mixer button
-      if (!button[10] && key.bit.KEY == 56) {  //"4"  52
+      if (!button[10] && key.bit.KEY == BUTTON11) {  //"4"  52
         button[11] = true;
       }
       // hold for FX button
-      if (!button[10] && key.bit.KEY == 52) {  //"8"  56
+      if (!button[10] && key.bit.KEY == BUTTON12) {  //"8"  56
         button[12] = true;
       }
       // hold for cursor via pot
-      if (!button[10] && key.bit.KEY == 54) {
+      if (!button[10] && key.bit.KEY == BUTTON13) {
         button[13] = true;
       }
       // hold for cursor via pot
-      if (!button[10] && key.bit.KEY == 50) {
+      if (!button[10] && key.bit.KEY == BUTTON14) {
         button[14] = true;
       }
       // hold for enter button
-      if (!button[10] && key.bit.KEY == 48) {
+      if (!button[10] && key.bit.KEY == BUTTON15) {
         button[15] = true;
       }
     } else if (key.bit.EVENT == KEY_JUST_RELEASED) {
       //tft.updateScreen();
       // release for track button
-      if (key.bit.KEY == 69) {  //"E"  69
+      if (key.bit.KEY == BUTTON8) {  //"E"  69
         button[8] = false;
       }
       // release for plugin button
-      if (key.bit.KEY == 67) {  //"C"  67
+      if (key.bit.KEY == BUTTON9) {  //"C"  67
         button[9] = false;
       }
       // release for arranger button
-      if (key.bit.KEY == 65) {  //"A"  65
+      if (key.bit.KEY == BUTTON10) {  //"A"  65
         button[10] = false;
       }
       // hold for mixer button
-      if (key.bit.KEY == 56) {  //"8"  56
+      if (key.bit.KEY == BUTTON11) {  //"8"  56
         button[11] = false;
       }
       // release for FX button
-      if (key.bit.KEY == 52) {  //"4"  52
+      if (key.bit.KEY == BUTTON12) {  //"4"  52
         button[12] = false;
       }
       // rel for cursor via pot
-      if (!button[10] && key.bit.KEY == 54) {
+      if (!button[10] && key.bit.KEY == BUTTON13) {
         button[13] = false;
       }
       //release for cursor via pot
-      if (key.bit.KEY == 50) {
+      if (key.bit.KEY == BUTTON14) {
         button[14] = false;
       }
       //release for enter button
-      if (key.bit.KEY == 48) {
+      if (key.bit.KEY == BUTTON15) {
         button[15] = false;
       }
     }

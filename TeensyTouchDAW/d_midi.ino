@@ -4,7 +4,11 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
+//this page contains some MIDI related functions, like 
+//what to do when the clock is 
+//midicc plugin pages
+//start and stop sequencerplaying
+//and what happens with incoming midicc   ->needs some love
 
 
 
@@ -15,19 +19,15 @@ void process_clock() {
     seq_MIDItick++;
     nfx6_MIDItick++;
 
-
+//stepsequencer
     if (allTracks[0]->seqMode == 0) {
       for (int d = 0; d < 12; d++) {
-
-
-        //if the actual step is high, play the notes
+        //if the actual step is high, "free" the notes to be played
         if (channel1Clip[track[0].clip_songMode][d][tick_16]) {
           if (!dsend_noteOff[d]) {
 
             drumnotes[d] = true;
             dsend_noteOff[d] = true;
-            //DrumPluginPlay();
-
 
             if (track[0].MIDIchannel < 17) {
               usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
@@ -42,6 +42,7 @@ void process_clock() {
         }
       }
     }
+    //Polyrhytm
     if (allTracks[0]->seqMode == 4) {
       for (int d = 0; d < 12; d++) {
         //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
@@ -71,57 +72,8 @@ void process_clock() {
         }
       }
     }
+//grids
     if (allTracks[0]->seqMode == 5) {
-      if (track[0].clip_songMode < 8) {
-        for (int d = 0; d < 12; d++) {
-
-
-          //if the actual step is high, play the notes
-          if (channel1Clip[NFX5presetNr][d][track[0].MIDItick_16]) {
-            if (!dsend_noteOff[d]) {
-              drumnotes[d] = true;
-              dsend_noteOff[d] = true;
-              if (track[0].MIDIchannel < 17) {
-                usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                for (int usbs = 0; usbs < 10; usbs++) {
-                  if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (allTracks[0]->seqMode == 5) {
-
-      for (int b = 0; b < 12; b++) {
-
-        if (master_clock.get_MIDItick() % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
-          if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
-            if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
-
-              if (dsend_noteOff[b]) {
-                dsend_noteOff[b] = false;
-                repeatED[b]++;
-                if (track[0].MIDIchannel < 17) {
-                  usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  for (int usbs = 0; usbs < 10; usbs++) {
-                    if (!launchpad) {
-                      usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (allTracks[0]->seqMode == 6) {
       if (track[0].clip_songMode < 8) {
         for (int d = 0; d < num_voice; d++) {
 
@@ -148,7 +100,7 @@ void process_clock() {
       if (seq_MIDItick % allTracks[i]->clockDivision == 0) {
         track[i].MIDItick++;
         if (!track[i].solo_mutes_state) {
-          if (!track[i].mute_state) { 
+          if (!track[i].mute_state) {
 
             //stepwise
             if (allTracks[i]->seqMode == 0) {
@@ -275,7 +227,7 @@ void process_clock() {
       }
       //Serial.printf("%d-%d-%d-%d\n", track[desired_track].notePlayed[0], track[desired_track].notePlayed[1], track[desired_track].notePlayed[2], track[desired_track].notePlayed[3]);
       for (int b = 0; b < 12; b++) {
-        repeatED[b] = 0;
+
       }
 
 
@@ -291,18 +243,18 @@ void process_clock() {
       tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
       tft.print(phrase + 1);
     }
+
     for (int i = 0; i < NUM_TRACKS; i++) {
-      if (track[i].MIDItick >= 96) {
+      if (track[i].MIDItick >= MAX_TICKS) {
         track[i].MIDItick = 0;
       }
     }
-    if (tick_16 == 15) {
+    if (tick_16 == NUM_STEPS - 1) {
       tick_16 = -1;
       phrase++;
       pixelphrase++;
       drawbarPosition();
       nfx6_MIDItick = -1;
-
       showSerialonce = true;
     }
     if (tick_16 == -1) {
@@ -835,14 +787,12 @@ void myControlChange(int channel, byte control, byte value) {
       incomingCC_changed[2] = true;
     }
     incomingCC[2] = value;
-    // enc_moved[0] = false;
   }
   if (control == 15) {
     if (Potentiometer[3] != value) {
       incomingCC_changed[3] = true;
     }
     incomingCC[3] = value;
-    // enc_moved[0] = false;
   }
 
 
@@ -996,44 +946,34 @@ void myControlChange(int channel, byte control, byte value) {
     if (button[12]) {
       if (control == 104 && value == 127) {
         selectPage = FX1_PAGE1;
-        FX1reverb_static();
       }
       if (control == 105 && value == 127) {
         selectPage = FX2_PAGE1;
-        FX2Bitcrush_static();
       }
       if (control == 106 && value == 127) {
         //delay
         selectPage = FX3_PAGE1;
-        FX3Delay_static();
       }
+      //set the static views for the notefx
       if (control == 108 && value == 127) {
-        if (allTracks[desired_instrument]->seqMode== 6) {
-          selectPage = NFX1_PAGE1;
-          NoteFX1_Page_Static();
+        
+        if (allTracks[desired_instrument]->seqMode == 1) {
+          selectPage = NFX8_PAGE1;
         }
         if (allTracks[desired_instrument]->seqMode == 2) {
           selectPage = NFX2_PAGE1;
-          NoteFX2_Page_Static();
         }
         if (allTracks[desired_instrument]->seqMode == 3) {
           selectPage = NFX3_PAGE1;
-          NoteFX3_Page_Static();
         }
         if (allTracks[desired_instrument]->seqMode == 4) {
           selectPage = NFX4_PAGE1;
-          NoteFX4_Page_Static();
         }
         if (allTracks[desired_instrument]->seqMode == 5) {
-          selectPage = NFX5_PAGE1;
-          NoteFX5_Page_Static();
-        }
-
-        if (allTracks[desired_instrument]->seqMode == 1) {
-          selectPage = NFX8_PAGE1;
-          NoteFX8_Page_Static();
+          selectPage = NFX1_PAGE1;
         }
       }
+      Plugin_View_Static();
     }
   }
 }

@@ -1,3 +1,7 @@
+//this will probably hold some functions for external controllers
+//needs alot of love 
+//also working on a class for implementing complex controllers 
+
 void LP_drawclipRow() {
   if (launchpad) {
 

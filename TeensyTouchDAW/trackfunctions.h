@@ -150,51 +150,39 @@ void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
   dvalue_old = dvalue;
 }
 
-class drumtrack {
-public:
-  const int DTrack = 0;
-  void setDrumnotes(int YPos) {
 
-    for (int i = 0; i < 12; i++) {
-      drumnote[YPos] = constrain((drumnote[YPos] + encoded[0]), 0, 99);
-      tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * i + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[0]);
-      tft.setCursor(18, STEP_FRAME_H * i + 18);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_BLACK);
-      tft.setTextSize(1);
-      tft.print(drumnote[i]);
-    }
-  }
-};
 
 
 class classForTracks {
 public:
 
 
-  byte thisTrack;
-  byte MIDIChannel;
-  byte clipToEdit = 0;
-  byte shownOctaves = 5;
-  byte seqMode = 0;
-  byte voiceCount = 0;
-  byte stepLenght = 5;
-  byte clockDivision = 1;
+  byte thisTrack;          //desired track for the class
+  byte MIDIChannel;        //desired MIDIChannel
+  byte clipToEdit = 0;     //this is the clip to edit in the sequencerviews
+  byte shownOctaves = 5;   //shown Octave for the melodic tracks
+  byte seqMode = 0;        //active Sequencer Mode
+  byte voiceCount = 0;     //desired voiceCount number for polyphony
+  byte stepLenght = 5;     //step lenght for the step sequencerMode
+  byte clockDivision = 1;  //desired clockdivision for the track
 
   bool mute = false;  //todo
   bool solo = false;  //todo
 
 
-  byte gainVol = 127;
-  byte dryVol = 100;
-  byte FX1Vol = 0;
-  byte FX2Vol = 0;
-  byte FX3Vol = 0;
+  byte gainVol = 127;  //main volume for plugins
+  byte dryVol = 100;   //dry volume
+  byte FX1Vol = 0;     //volume to send to FX1 (Reverb)
+  byte FX2Vol = 0;     //volume to send to FX2 (BitCrusher)
+  byte FX3Vol = 0;     //volume to send to FX3 (Delay)
 
+  //setup function called in setup() to set the tracknumber and initial MIDIChannel
   void setup(byte new_track, byte new_MIDIChannel) {
     thisTrack = new_track;
     MIDIChannel = new_MIDIChannel;
   }
+  //sets the desired note into the desired voice, "stepPosition" and clip
+  //the step is "stepLenght" long
   void setNoteOnToStep(byte tick_s, byte voiceCount_s, byte note_s) {
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
       for (int touched_ticks = 0; touched_ticks < stepLenght; touched_ticks++) {
@@ -211,6 +199,7 @@ public:
     }
     Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
+  //sets the desired note into the desired voice, "tickPosition" and clip
   void setNoteOnToTick(byte tick_s, byte voiceCount_s, byte note_s) {
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
       ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
@@ -223,7 +212,7 @@ public:
     }
     Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
-
+  //sets the desired MIDIChannel
   void setMIDIChannel(int encoderd) {
     MIDIChannel = constrain((MIDIChannel + encoderd), 0, MAX_CHANNELS);
     drawMIDIChannel();
@@ -263,7 +252,7 @@ public:
       }
     }
   }
-
+  //sets the active clip to edit in the sequencerview
   void setClipToEdit(int encoderd) {
     clipToEdit = constrain((clipToEdit + encoderd), 0, MAX_CLIPS - 1);
     drawClipToEdit();
@@ -272,7 +261,7 @@ public:
   void drawClipToEdit() {
     drawNrInRect_short(18, 1, clipToEdit, trackColor[thisTrack] + (clipToEdit * 20), "Cl:");
   }
-
+  //sets the active voicecount(number) for polyphony
   void setVoiceCount(int encoderd) {
     voiceCount = constrain((voiceCount + encoderd), 0, MAX_VOICES);
     drawVoiceCount();
@@ -281,18 +270,20 @@ public:
   void drawVoiceCount() {
     drawNrInRect_short(18, 6, voiceCount, trackColor[desired_instrument], "Vox:");
   }
-
+  //sets the desired clockdivision
+  //in code we look if (Masterclock.tick % clockdivision == 0)
+  //to count the track´s MIDItick upwards
   void setClockDivision(int encoderd) {
     clockDivision = constrain((clockDivision + encoderd), 1, 96);
     drawNrInRect_short(18, 8, clockDivision, trackColor[desired_instrument], "cD:");
     Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
   }
-  
+  //sets the desired Octave for the melodictracks
   void setShownOctaves(int encoderd) {
     shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
     Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
   }
-
+  //sets the desired stepLenght for the stepsequencer
   void setStepLenght(int encoderd) {
     stepLenght = constrain((stepLenght + encoderd), 1, 96);
     drawStepLenght();
@@ -300,7 +291,8 @@ public:
   }
   void drawStepLenght() {
     drawNrInRect_short(18, 7, stepLenght, trackColor[desired_instrument], "SL:");
-  }  
+  }
+  //sets the desired sequencer Mode
   void setSeqMode(int encoderd) {
     seqMode = constrain((seqMode + encoderd), 0, 5);
     drawSeqMode();
@@ -310,13 +302,13 @@ public:
     drawNrInRect_short(18, 10, "", trackColor[desired_instrument], seqModes[seqMode]);
   }
 
-
+  //draws the left navigator for the tracks
   void drawLeftNavigator(const char* sideDigit) {
     tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
     tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
     tft.print(sideTabDigit[thisTrack]);
   }
-
+  //various "set Volumes" for the mixerpages
   void setVolGain(byte XPos, byte YPos) {
 
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
@@ -327,6 +319,8 @@ public:
         gainmax[track[thisTrack].MIDIchannel - 17]->gain((float)(gainVol / 127.00));
       }
     }
+  }
+  void setMuteSolo() {
   }
   void setVolDry(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
@@ -378,15 +372,15 @@ public:
   byte selected_file;
   byte selected_gain;
   bool monitoring;
+  //sets the desired RAW file
   void setRAWfile() {
-    //RAW File
     if (enc_moved[0] || incomingCC_changed[0]) {
       selected_file = getValue(0, 0, selected_file);
       drawPot(0, 0, selected_file, selected_file, "RAW", ILI9341_OLIVE);
     }
   }
+  //sets the desired recording Volume
   void setVolume() {
-    //rec volume
     if (enc_moved[1] || incomingCC_changed[1]) {
       incomingCC_changed[1] = false;
       selected_gain = getValue(1, 0, selected_gain);
@@ -394,8 +388,8 @@ public:
       drawPot_2(1, 0, selected_gain, selected_gain, "Volume", ILI9341_OLIVE);
     }
   }
+  //sets the Monitor to active
   void setMonitor() {
-
     if (enc_moved[0] || incomingCC_changed[0]) {
       incomingCC_changed[0] = false;
       monitoring = constrain(getValue(0, 1, monitoring), 0, 1);
@@ -408,6 +402,7 @@ public:
       drawActiveRect(CTRL_COL_0, CTRL_ROW_1, 2, 2, monitoring, "Listen", ILI9341_ORANGE);
     }
   }
+  //draws a simple Oscilloscope
   void drawOscilloscope(float peak) {
     static byte AudioYdot = 255;
     static int posX_old = 288;
@@ -437,6 +432,7 @@ public:
       }
     }
   }
+  //draws the volume graph
   void drawAudioPot(float peak) {
     //level meter
     static int peakIn;
@@ -519,15 +515,17 @@ public:
     }
     return false;
   }
-  uint32_t get_MIDItick() {  //returns the actual MIDItick count
+  //returns the actual MIDItick count
+  uint32_t get_MIDItick() {
     return MIDItick;
   }
 
 
-
-  uint32_t get_step_tick() {  //returns the actual STEPtick count
+  //returns the actual STEPtick count
+  uint32_t get_step_tick() {
     return MIDItick % 6;
   }
+  //returns if the clock is on a STEP
   bool is_tick_on_step() {
     return MIDItick % 6 == 0;
   }
@@ -538,5 +536,36 @@ public:
   }
   bool is_tick_on_bar() {
     return MIDItick % 96 == 0;
+  }
+};
+
+class Cursors {
+public:
+};
+
+class externalControllers {
+public:
+  //Potentiometer
+  byte extCC[4];            //sets the CC Number sent from the controller
+  byte extCCIn[4];          //sets the CC Value sent from the controller
+  bool extCCIn_changed[4];  //a bool to check if ccIn has changed, needs to turned off in code
+
+  //controllButtons
+  bool extButton[16];
+  bool extGrid[64];
+  //assign the midi cc value that will control the encoders
+  void assignExternalInputCCs(byte ext0, byte ext1, byte ext2, byte ext3) {
+    extCC[0] = ext0;
+    extCC[1] = ext1;
+    extCC[2] = ext2;
+    extCC[3] = ext3;
+  }
+  //assign the 16 controllbuttons for navigation and transport
+  void assignExternalButtons(byte pos, byte button) {
+    extButton[pos] = button;
+  }
+  //assign the 64 gridbuttons for selecting clips and stuff
+  void assignExternalGrid(byte pos, byte button) {
+    extGrid[pos] = button;
   }
 };

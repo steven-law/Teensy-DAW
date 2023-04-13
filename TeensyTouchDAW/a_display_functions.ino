@@ -1,4 +1,5 @@
-#include <Arduino.h>
+//this file contains several display functions, they will be moved somewhere else probably
+
 //general stuff
 void drawCursor() {
   static byte last_button_X = 0;
