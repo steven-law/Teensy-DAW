@@ -1,4 +1,5 @@
-#include <Arduino.h>
+//this file contains several display functions, they will be moved somewhere else probably
+
 //general stuff
 void drawCursor() {
   static byte last_button_X = 0;
@@ -119,6 +120,16 @@ void showCoordinates() {
   tft.setCursor(45, 3);
   tft.print("Y");
   tft.print(gridTouchY);
+}
+void drawLastPotRow() {
+  if (lastPotRow >= 4) {
+    lastPotRow = 0;
+  }
+  if (lastPotRow >= 4) {
+    tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+  }
+  tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+  tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
 }
 void show_tempo() {
   tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
@@ -340,13 +351,13 @@ void drawarrengmentLine(int songpageNumber, byte trackTouchY, byte touched_phras
     for (int thickness = -8; thickness < 8; thickness++) {
       tft.drawFastHLine(((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2) + 1, ((trackTouchY + 1) * TRACK_FRAME_H + thickness) + 4, phraseSegmentLength - 1, ILI9341_DARKGREY);  //(x-start, y, length, color)
     }
-    
+
     //draw clipnumber
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_DARKGREY);
     tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 1, (trackTouchY + 1) * TRACK_FRAME_H - 4);
     tft.print(track[trackTouchY].arrangment1[touched_phrase]);
-    
+
     //draw noteOffset
     tft.setCursor((touched_phrase - (16 * songpageNumber)) * phraseSegmentLength + STEP_FRAME_W * 2 + 6, (trackTouchY + 1) * TRACK_FRAME_H + 4);
     if (track[trackTouchY].NoteOffset[touched_phrase] < 0) {
@@ -468,10 +479,11 @@ void draw_Drumnotes() {
 
 
 void drawActiveDrumSteps() {
+  clearStepsGrid();
   for (int tone = 0; tone < 12; tone++) {
     for (int steps = 0; steps < STEP_QUANT; steps++) {
-      if (channel1Clip[track[0].clip_selector][tone][steps]) {
-        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + ((track[0].clip_selector) * 20));
+      if (channel1Clip[allTracks[0]->clipToEdit][tone][steps]) {
+        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + ((allTracks[0]->clipToEdit) * 20));
       }
     }
   }
@@ -480,15 +492,15 @@ void drawActiveDrumSteps() {
 
 void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
   clearStepsGrid();
-  int tone_start = track[desired_instrument].shown_octaves * 12;
+  int tone_start = allTracks[desired_instrument]->shownOctaves * 12;
   //draw active steps
   for (int steps = 0; steps < STEP_QUANT; steps++) {
     for (int polys = 0; polys < MAX_VOICES; polys++) {
       int dot_on_X = (steps * STEP_FRAME_W) + DOT_OFFSET_X;
-      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps*6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+      int dot_on_Y = ((ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps * 6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
 
-      if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps*6].voice[polys] > VALUE_NOTEOFF) {
-        tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+      if (ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps * 6].voice[polys] > VALUE_NOTEOFF) {
+        tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
     }
   }
@@ -496,22 +508,22 @@ void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
 }
 void drawActivePolyPixel() {  //draw steps for the melodic tracks 2-8
   clearPixelGrid();
-  int tone_start = track[desired_instrument].shown_octaves * 12;
+  int tone_start = allTracks[desired_instrument]->shownOctaves * 12;
   //draw active steps
   for (int steps = 0; steps < MAX_TICKS; steps++) {
     for (int polys = 0; polys < MAX_VOICES; polys++) {
       int dot_on_X = (steps * 2) + 32;
-      int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+      int dot_on_Y = ((ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
 
-      if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[polys] > VALUE_NOTEOFF) {
+      if (ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps].voice[polys] > VALUE_NOTEOFF) {
         for (int w = -4; w < 5; w++) {
-          tft.drawPixel(dot_on_X, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-          tft.drawPixel(dot_on_X + 1, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+          tft.drawPixel(dot_on_X, dot_on_Y + w, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
+          tft.drawPixel(dot_on_X + 1, dot_on_Y + w, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
         }
         Serial.printf("Shown: VoiceCount = %d, Tick = %d, Note%d\n",
                       polys,
                       steps,
-                      ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[steps].voice[polys]);
+                      ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps].voice[polys]);
       }
     }
   }
@@ -522,37 +534,37 @@ void drawActivePolyPixel() {  //draw steps for the melodic tracks 2-8
 
 void drawActivePolyStepsY(int X_Axis) {
   clearStepsGridY(X_Axis);
-  int tone_start = track[desired_track].shown_octaves * 12;
+  int tone_start = allTracks[desired_instrument]->shownOctaves * 12;
   int dot_on_X = (X_Axis * STEP_FRAME_W) + DOT_OFFSET_X;
   //draw active steps
   for (int polys = 0; polys < MAX_VOICES; polys++) {
 
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis*6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis*6].voice[polys] > VALUE_NOTEOFF) {
-      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+    int dot_on_Y = ((ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[X_Axis * 6].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+    if (ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[X_Axis * 6].voice[polys] > VALUE_NOTEOFF) {
+      tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
     }
   }
 
   Serial.println("polysteps drawn");
 }
 void drawActivePolyPixelY(int X_Axis) {
-  
-  int tone_start = track[desired_track].shown_octaves * 12;
+
+  int tone_start = allTracks[desired_instrument]->shownOctaves * 12;
   int dot_on_X = (X_Axis * 2) + 32;
   clearPixelGridY(dot_on_X);
   //draw active steps
   for (int polys = 0; polys < MAX_VOICES; polys++) {
 
-    int dot_on_Y = ((ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
-    if (ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis].voice[polys] > VALUE_NOTEOFF) {
+    int dot_on_Y = ((ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[X_Axis].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
+    if (ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[X_Axis].voice[polys] > VALUE_NOTEOFF) {
       for (int w = -4; w < 5; w++) {
-        tft.drawPixel(dot_on_X, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
-        tft.drawPixel(dot_on_X + 1, dot_on_Y + w, trackColor[desired_track] + (track[desired_track].clip_selector * 20));
+        tft.drawPixel(dot_on_X, dot_on_Y + w, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
+        tft.drawPixel(dot_on_X + 1, dot_on_Y + w, trackColor[desired_track] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
-        Serial.printf("Drawing: VoiceCount = %d, Tick = %d, Note%d\n",
-                      polys,
-                      X_Axis,
-                      ctrack[desired_track].sequence[track[desired_track].clip_selector].tick[X_Axis].voice[polys]);
+      Serial.printf("Drawing: VoiceCount = %d, Tick = %d, Note%d\n",
+                    polys,
+                    X_Axis,
+                    ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[X_Axis].voice[polys]);
     }
   }
 
@@ -595,13 +607,13 @@ void clearPixelGridY(int X_Axis) {  // clear all Steppixels in the same column
   for (int T = 0; T < 12; T++) {
 
     for (int w = -4; w < 5; w++) {
-      tft.drawPixel((X_Axis), (T * STEP_FRAME_H) + w + DOT_OFFSET_Y, ILI9341_DARKGREY);  // circle: x, y, radius, color
-      tft.drawPixel((X_Axis+1), (T * STEP_FRAME_H) + w + DOT_OFFSET_Y, ILI9341_DARKGREY);  // circle: x, y, radius, color
+      tft.drawPixel((X_Axis), (T * STEP_FRAME_H) + w + DOT_OFFSET_Y, ILI9341_DARKGREY);      // circle: x, y, radius, color
+      tft.drawPixel((X_Axis + 1), (T * STEP_FRAME_H) + w + DOT_OFFSET_Y, ILI9341_DARKGREY);  // circle: x, y, radius, color
     }
   }
 }
 
-void draw_Clipselector() {
+void draw_ClipselectorRow() {
   for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
     tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + (ClipNr * 20));
     tft.setCursor(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
@@ -613,7 +625,7 @@ void draw_Clipselector() {
   }
 }
 void draw_SeqMode() {
-  drawChar(18, 9, seqModes[track[desired_instrument].seqMode], trackColor[desired_instrument]);
+  drawChar(18, 9, seqModes[allTracks[desired_instrument]->seqMode], trackColor[desired_instrument]);
 }
 void drawOctaveNumber() {
   //draw the octave number
@@ -622,7 +634,7 @@ void drawOctaveNumber() {
   tft.setFont(Arial_16);
   tft.setTextColor(ILI9341_WHITE);
   tft.setTextSize(1);
-  tft.print(track[desired_instrument].shown_octaves);
+  tft.print(allTracks[desired_instrument]->shownOctaves);
 }
 void drawOctaveTriangle() {
   //draw Octavebuttons
@@ -694,7 +706,7 @@ void draw_sub_page_buttons(int maxpages) {
 
 
 void drawPotDrum(int XPos, byte YPos, byte fvalue, int dvalue, byte dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-   //drawPot Variables
+                                                                                         //drawPot Variables
   static float circlePos;
   static float circlePos_old;
   static int dvalue_old;
@@ -774,19 +786,7 @@ void drawPotCC(int XPos, byte YPos, byte fvaluecc, byte dvaluecc, int color) {  
   dvalue_oldcc = dvaluecc;
 }
 
-//draws a number into a rect of 2x1grids
-void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
-  static int dvalue_old;
-  tft.setFont(Arial_8);
-  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue_old);
-  tft.setTextColor(color);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue);
-  dvalue_old = dvalue;
-}
+
 void drawNrInRect2(int xPos, byte yPos, byte dvalue, int color) {
   static int dvalue_old2;
   tft.setFont(Arial_8);

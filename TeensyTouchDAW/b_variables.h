@@ -32,7 +32,7 @@
 #define STEP_POSITION_POINTER_Y 236
 #define GRID_POSITION_POINTER_Y 232
 #define POSITION_POINTER_THICKNESS 3
-#define POTPICKUP 3
+#define POTPICKUP 10
 
 #define AUDIO_MEMORYS 600
 #define SPI_FREQUENCY 40000000
@@ -90,7 +90,7 @@ byte selectPage;
 #define SONGMODE_PAGE_14 23
 #define SONGMODE_PAGE_15 24
 #define SONGMODE_PAGE_16 25
-
+#define MAX_SONGMODE_PAGES 16
 #define MIXER_PAGE_1 30
 #define MIXER_PAGE_2 31
 #define MIXER_PAGE_3 32
@@ -232,6 +232,22 @@ bool enc_button[4];
 //button variables
 
 bool drumnotes[12];
+#define BUTTON0 68
+#define BUTTON1 70
+#define BUTTON2 57
+#define BUTTON3 66
+#define BUTTON4 55
+#define BUTTON5 53
+#define BUTTON6 51
+#define BUTTON7 49
+#define BUTTON8 69
+#define BUTTON9 67
+#define BUTTON10 65
+#define BUTTON11 56
+#define BUTTON12 52
+#define BUTTON13 54
+#define BUTTON14 50
+#define BUTTON15 48
 bool button[16]{};
 
 bool showSerialonce = false;
@@ -260,12 +276,11 @@ bool LP_drawOnce[16];
 
 
 struct tick_t {
-  byte voice[MAX_VOICES]{ 0 };  // stores the PITCH VALUE to be played at this step, or 0xFF (255) for NONE.
+  byte voice[MAX_VOICES]{ 0 };
 };
 
 struct sequence_t {
   tick_t tick[MAX_TICKS];
-  byte voiceCount = 0;
 };
 
 struct track_t {
@@ -317,10 +332,8 @@ byte desired_instrument;
 //track 2-8 variables
 struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
-  byte clip_selector = 0;  //clipselection from trackview´s clip selector
   byte clip_songMode = 1;  //clipselection from the arrangement
-  //int tone = 0;
-  byte shown_octaves = 5;  //
+
   byte velocity_ON = 96;
   byte velocity_ON_graph = 96;
   bool mute_state = LOW;
@@ -358,10 +371,6 @@ struct tracks {
   int MIDItick = 0;
   int MIDItick_16 = 0;
   bool tick_true = false;
-  int stepLength = 5;
-  byte clockDivision = 1;
-
-  int seqMode = 0;
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks* track;

@@ -4,7 +4,11 @@
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-
+//this page contains some MIDI related functions, like
+//what to do when the clock is
+//midicc plugin pages
+//start and stop sequencerplaying
+//and what happens with incoming midicc   ->needs some love
 
 
 
@@ -15,19 +19,15 @@ void process_clock() {
     seq_MIDItick++;
     nfx6_MIDItick++;
 
-
-    if (track[0].seqMode == 0) {
+    //stepsequencer
+    if (allTracks[0]->seqMode == 0) {
       for (int d = 0; d < 12; d++) {
-
-
-        //if the actual step is high, play the notes
+        //if the actual step is high, "free" the notes to be played
         if (channel1Clip[track[0].clip_songMode][d][tick_16]) {
           if (!dsend_noteOff[d]) {
 
             drumnotes[d] = true;
             dsend_noteOff[d] = true;
-            //DrumPluginPlay();
-
 
             if (track[0].MIDIchannel < 17) {
               usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
@@ -42,7 +42,8 @@ void process_clock() {
         }
       }
     }
-    if (track[0].seqMode == 4) {
+    //Polyrhytm
+    if (allTracks[0]->seqMode == 4) {
       for (int d = 0; d < 12; d++) {
         //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
         NFX4[NFX4presetNr].reset[d]++;
@@ -71,57 +72,8 @@ void process_clock() {
         }
       }
     }
-    if (track[0].seqMode == 5) {
-      if (track[0].clip_songMode < 8) {
-        for (int d = 0; d < 12; d++) {
-
-
-          //if the actual step is high, play the notes
-          if (channel1Clip[NFX5presetNr][d][track[0].MIDItick_16]) {
-            if (!dsend_noteOff[d]) {
-              drumnotes[d] = true;
-              dsend_noteOff[d] = true;
-              if (track[0].MIDIchannel < 17) {
-                usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                for (int usbs = 0; usbs < 10; usbs++) {
-                  if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (track[0].seqMode == 5) {
-
-      for (int b = 0; b < 12; b++) {
-
-        if (master_clock.get_MIDItick() % NFX5[NFX5presetNr].Pot_Value[b] == 0) {
-          if (ratchet[NFX5presetNr][b][track[0].MIDItick_16]) {
-            if (repeatED[b] < NFX5[NFX5presetNr].repeats[b]) {
-
-              if (dsend_noteOff[b]) {
-                dsend_noteOff[b] = false;
-                repeatED[b]++;
-                if (track[0].MIDIchannel < 17) {
-                  usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                  for (int usbs = 0; usbs < 10; usbs++) {
-                    if (!launchpad) {
-                      usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (track[0].seqMode == 6) {
+    //grids
+    if (allTracks[0]->seqMode == 5) {
       if (track[0].clip_songMode < 8) {
         for (int d = 0; d < num_voice; d++) {
 
@@ -145,17 +97,13 @@ void process_clock() {
       }
     }
     for (int i = 0; i < NUM_TRACKS; i++) {
-      if (seq_MIDItick % track[i].clockDivision == 0) {
+      if (seq_MIDItick % allTracks[i]->clockDivision == 0) {
         track[i].MIDItick++;
         if (!track[i].solo_mutes_state) {
           if (!track[i].mute_state) {
-            //Noteoff for drumtrack
-
-
-
 
             //stepwise
-            if (track[i].seqMode == 0) {
+            if (allTracks[i]->seqMode == 0) {
               //if the actual step is high, play the notes
               for (int polys = 0; polys < MAX_VOICES; polys++) {
                 if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
@@ -171,7 +119,7 @@ void process_clock() {
               }
             }
             //tickwise
-            if (track[i].seqMode == 1) {
+            if (allTracks[i]->seqMode == 1) {
               //if the actual step is high, play the notes
               for (int polys = 0; polys < MAX_VOICES; polys++) {
                 if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
@@ -186,7 +134,7 @@ void process_clock() {
               }
             }
             //dropseq
-            if (track[i].seqMode == 2) {
+            if (allTracks[i]->seqMode == 2) {
 
               cc23 = NFX2[NFX2presetNr].Pot_Value[2];
               cc24 = NFX2[NFX2presetNr].Pot_Value[3];
@@ -237,7 +185,7 @@ void process_clock() {
               }
             }
             //random
-            if (track[i].seqMode == 3) {
+            if (allTracks[i]->seqMode == 3) {
               //if the actual step is high, play the notes
               if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] > VALUE_NOTEOFF) {
                 if (track[i].tick_true) {
@@ -262,6 +210,10 @@ void process_clock() {
     if (seq_MIDItick % 6 == 0) {
       tick_16++;
       track[0].MIDItick_16++;
+      if (debugTime) {
+        SerialPrintSeq();
+      }
+      //Noteoff for drumtrack
       for (int b = 0; b < num_voice; b++) {
         if (dsend_noteOff[b]) {
           dsend_noteOff[b] = false;
@@ -276,16 +228,8 @@ void process_clock() {
           }
         }
       }
-      //Serial.printf("%d-%d-%d-%d\n", track[desired_track].notePlayed[0], track[desired_track].notePlayed[1], track[desired_track].notePlayed[2], track[desired_track].notePlayed[3]);
-      for (int b = 0; b < 12; b++) {
-        repeatED[b] = 0;
-      }
 
 
-
-      if (debugTime) {
-        SerialPrintSeq();
-      }
       drawstepPosition(tick_16);
       //draw phrasenumber
       tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
@@ -294,18 +238,18 @@ void process_clock() {
       tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
       tft.print(phrase + 1);
     }
+
     for (int i = 0; i < NUM_TRACKS; i++) {
-      if (track[i].MIDItick >= 96) {
+      if (track[i].MIDItick >= MAX_TICKS) {
         track[i].MIDItick = 0;
       }
     }
-    if (tick_16 == 15) {
+    if (tick_16 == NUM_STEPS - 1) {
       tick_16 = -1;
       phrase++;
       pixelphrase++;
       drawbarPosition();
       nfx6_MIDItick = -1;
-
       showSerialonce = true;
     }
     if (tick_16 == -1) {
@@ -654,7 +598,7 @@ void myNoteOn(int channel, byte note, byte velocity) {
           LP_octave_bool_keys[octNotes] = true;
           track[desired_instrument].notePressed[0] = true;
           track[desired_instrument].playNoteOnce[0] = true;
-          track[desired_instrument].notePlayed[0] = octNotes + (track[desired_instrument].shown_octaves * 12);
+          track[desired_instrument].notePlayed[0] = octNotes + (allTracks[desired_instrument]->shownOctaves * 12);
           track[desired_instrument].notePlayed[0] = track[desired_instrument].notePlayed[0];
         }
       }
@@ -690,8 +634,6 @@ void myNoteOn(int channel, byte note, byte velocity) {
     //  hold for recorder button
     if (!button[10] && note == 88) {  //"A"  65
       button[13] = true;
-      selectPage = RECORDER_PAGE;
-      recorder_Page_Static();
     }
     // hold for shift button
     if (!button[10] && note == 104) {
@@ -720,7 +662,7 @@ void myNoteOn(int channel, byte note, byte velocity) {
       //track[channel - 1].notePlayed[0] = note;
     }
     if (seq_rec) {
-      for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
+      for (int touched_ticks = 0; touched_ticks <= allTracks[desired_instrument]->stepLenght; touched_ticks++) {
         ctrack[channel - 1].sequence[track[channel - 1].clip_songMode].tick[nfx6_MIDItick].voice[0] = note;
       }
     }
@@ -753,7 +695,7 @@ void myNoteOff(int channel, byte note, byte velocity) {
           channel = desired_instrument + 1;
           LP_octave_bool_keys[octNotes] = false;
           track[desired_instrument].notePressed[0] = false;
-          track[desired_instrument].notePlayed[0] = octNotes + (track[desired_instrument].shown_octaves * 12);
+          track[desired_instrument].notePlayed[0] = octNotes + (allTracks[desired_instrument]->shownOctaves * 12);
           track[desired_instrument].notePlayed[0] = track[desired_instrument].notePlayed[0];
         }
       }
@@ -766,11 +708,11 @@ void myNoteOff(int channel, byte note, byte velocity) {
     }
 
     // hold for track button
-    if (!button[10] && note == 8) {  //"E"  69
+    if (note == 8) {  //"E"  69
       button[8] = false;
     }
     // hold for plugin button
-    if (!button[10] && note == 24) {  //"C"  67
+    if (note == 24) {  //"C"  67
       button[9] = false;
     }
     // hold for Mixer button
@@ -778,24 +720,24 @@ void myNoteOff(int channel, byte note, byte velocity) {
       button[10] = false;
     }
     // hold for Mixer button
-    if (!button[10] && note == 56) {  //"4"  52
+    if (note == 56) {  //"4"  52
       button[11] = false;
     }
 
     // hold for FX button
-    if (!button[10] && note == 72) {  //"8"  56
+    if (note == 72) {  //"8"  56
       button[12] = false;
     }
     // hold for recorder button
-    if (!button[10] && note == 88) {
+    if (note == 88) {
       button[13] = false;
     }
     // hold for shift button
-    if (!button[10] && note == 104) {
+    if (note == 104) {
       button[14] = false;
     }
     // hold for enter button
-    if (!button[10] && note == 120) {
+    if (note == 120) {
       button[15] = false;
     }
   }
@@ -821,31 +763,25 @@ void myControlChange(int channel, byte control, byte value) {
     if (Potentiometer[0] != value) {
       incomingCC_changed[0] = true;
     }
-
     incomingCC[0] = value;
-
-    //  enc_moved[0] = false;
   }
   if (control == 9) {
     if (Potentiometer[1] != value) {
       incomingCC_changed[1] = true;
     }
     incomingCC[1] = value;
-    // enc_moved[0] = false;
   }
   if (control == 14) {
     if (Potentiometer[2] != value) {
       incomingCC_changed[2] = true;
     }
     incomingCC[2] = value;
-    // enc_moved[0] = false;
   }
   if (control == 15) {
     if (Potentiometer[3] != value) {
       incomingCC_changed[3] = true;
     }
     incomingCC[3] = value;
-    // enc_moved[0] = false;
   }
 
 
@@ -854,189 +790,36 @@ void myControlChange(int channel, byte control, byte value) {
   //launchpad control up-est row, they send cc´s
   if (launchpad) {
     //cursor left
-    if (otherCtrlButtons && control == 104 && value == 127) {
+    if (control == 104 && value == 127) {
       button[0] = true;
-      gridTouchX = constrain(gridTouchX - 1, 0, 19);
-      drawCursor();
-      showCoordinates();
-    } else if (otherCtrlButtons && control == 104 && value != 127) {
-      button[0] = false;
     }
     //cursor right
     if (otherCtrlButtons && control == 105 && value == 127) {
       button[1] = true;
-      gridTouchX = constrain(gridTouchX + 1, 0, 19);
-      drawCursor();
-      showCoordinates();
-    } else if (otherCtrlButtons && control == 105 && value != 127) {
-      button[1] = false;
     }
     //cursor up
     if (otherCtrlButtons && control == 106 && value == 127) {
       button[2] = true;
-      gridTouchY = constrain(gridTouchY - 1, 0, 14);
-      drawCursor();
-      showCoordinates();
-    } else if (otherCtrlButtons && control == 106 && value != 127) {
-      button[2] = false;
     }
     //cursor down
     if (otherCtrlButtons && control == 107 && value == 127) {
       button[3] = true;
-      gridTouchY = constrain(gridTouchY + 1, 0, 14);
-      drawCursor();
-      showCoordinates();
-    } else if (otherCtrlButtons && control == 107 && value != 127) {
-      button[3] = false;
     }
     //last pot row
     if (otherCtrlButtons && control == 108 && value == 127) {
       button[4] = true;
-      lastPotRow++;
-      if (lastPotRow >= 4) {
-        lastPotRow = 0;
-      }
-    } else if (otherCtrlButtons && control == 108 && value != 127) {
-      button[4] = false;
     }
     //recbutton
     if (otherCtrlButtons && control == 109 && value == 127) {
       button[5] = true;
-      if (seq_rec == false) {
-        seq_rec = true;
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
-        if (selectPage == RECORDER_PAGE) {
-
-          startRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
-        }
-      } else {
-        seq_rec = false;
-        tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
-        if (selectPage == RECORDER_PAGE) {
-          stopRecording();
-          drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 2, audio_rec_rec, "Rec", ILI9341_GREEN);
-        }
-      }
-    } else if (otherCtrlButtons && control == 109 && value != 127) {
-      button[5] = false;
     }
     //playbutton
     if (otherCtrlButtons && control == 110 && value == 127) {
       button[6] = true;
-      startSeq();
-    } else if (otherCtrlButtons && control == 110 && value != 127) {
-      button[6] = false;
     }
     //stopbutton
     if (otherCtrlButtons && control == 111 && value == 127) {
       button[7] = true;
-      stopSeq();
-    } else if (otherCtrlButtons && control == 111 && value != 127) {
-      button[7] = false;
-    }
-
-
-    //select tracks
-    if (button[8]) {                         //9th button
-      if (control == 104 && value == 127) {  //"D"  68  1st button
-        selectPage = DRUMTRACK;
-        desired_instrument = 0;
-        desired_track = 0;
-        drumStepSequencer_Static();
-      }
-      for (int controlss = 1; controlss < 8; controlss++) {
-        //select melodic track 2
-        if (control == controlss + 104 && value == 127) {  //"F"  70 2nd button
-          selectPage = controlss;
-          desired_instrument = controlss;
-          desired_track = controlss;
-          gridStepSequencer(controlss);
-        }
-      }
-    }
-
-    //plugin selection
-    if (button[9]) {
-      for (int controlss = 0; controlss < 8; controlss++) {
-        if (control == controlss + 104 && value == 127) {  //"D"  68  1st button
-          desired_track = controlss;
-          desired_instrument = controlss;
-          //midicc_view
-          for (int pluginSelection = 0; pluginSelection <= MAX_PLUGINS; pluginSelection++) {
-            if (track[desired_instrument].MIDIchannel == pluginSelection) {
-              selectPage = MIDICC_PAGE_1;
-              midiCC_view_Static(0, desired_track);
-            }
-            //plugin_1_view
-            if (track[desired_instrument].MIDIchannel == pluginSelection + 17) {
-              selectPage = pluginSelection + 40;
-              Plugin_View_Static();
-            }
-          }
-        }
-      }
-    }
-
-    //  select Mixer
-    if (button[11]) {                        //"8"  56
-      if (control == 104 && value == 127) {  //"D"  68
-        selectPage = MIXER_PAGE_1;
-        mixerPage1_Static(0);
-      }
-      //select melodic track 2
-      if (control == 105 && value == 127) {  //"F"  70
-        selectPage = MIXER_PAGE_2;
-        mixerPage2_Static();
-      }
-      //select melodic track 3
-      if (control == 106 && value == 127) {  //"9"  57
-        selectPage = MIXER_PAGE_3;
-        mixerPage3_Static();
-      }
-    }
-    //FX Selection
-    if (button[12]) {
-      if (control == 104 && value == 127) {
-        selectPage = FX1_PAGE1;
-        FX1reverb_static();
-      }
-      if (control == 105 && value == 127) {
-        selectPage = FX2_PAGE1;
-        FX2Bitcrush_static();
-      }
-      if (control == 106 && value == 127) {
-        //delay
-        selectPage = FX3_PAGE1;
-        FX3Delay_static();
-      }
-      if (control == 108 && value == 127) {
-        if (track[desired_instrument].seqMode == 6) {
-          selectPage = NFX1_PAGE1;
-          NoteFX1_Page_Static();
-        }
-        if (track[desired_instrument].seqMode == 2) {
-          selectPage = NFX2_PAGE1;
-          NoteFX2_Page_Static();
-        }
-        if (track[desired_instrument].seqMode == 3) {
-          selectPage = NFX3_PAGE1;
-          NoteFX3_Page_Static();
-        }
-        if (track[desired_instrument].seqMode == 4) {
-          selectPage = NFX4_PAGE1;
-          NoteFX4_Page_Static();
-        }
-        if (track[desired_instrument].seqMode == 5) {
-          selectPage = NFX5_PAGE1;
-          NoteFX5_Page_Static();
-        }
-
-        if (track[desired_instrument].seqMode == 1) {
-          selectPage = NFX8_PAGE1;
-          NoteFX8_Page_Static();
-        }
-      }
     }
   }
 }

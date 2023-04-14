@@ -1,3 +1,5 @@
+//some general debug function
+
 void SerialPrintSeq() {
 
   Serial.print(master_clock.get_tempo());

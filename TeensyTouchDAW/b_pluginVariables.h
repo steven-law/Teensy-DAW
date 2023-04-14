@@ -38,7 +38,7 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 
 //SeqMode variables
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_SEQMODES 7
+#define MAX_SEQMODES 6
 #define NFX1_PAGE1 129
 #define NFX2_PAGE1 132
 #define NFX3_PAGE1 135
@@ -47,8 +47,13 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 #define NFX6_PAGE1 142
 #define NFX7_PAGE1 144
 #define NFX8_PAGE1 146
-const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "Ratch",  "Grid" };
-
+const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "Grid" };
+#define NFX1NR 0
+#define NFX2NR 1
+#define NFX3NR 2
+#define NFX4NR 3
+#define NFX5NR 4
+#define NFX6NR 5
 //seqmode "grid"
 struct Grids {
   byte Pot_Value[12]{ 0 };
@@ -201,19 +206,6 @@ PolyR* NFX4;
 byte NFX4presetNr = 0;
 
 
-
-
-//seqmode Ratch
-struct Ratch {
-  // Initialize the array of input values (assuming they are provided by some external source)
-  int Pot_Value[12]{ 3 };
-  int repeats[12] = { 0 };
-};
-//seqmode ratcheting
-bool*** ratchet;
-Ratch* NFX5;
-byte NFX5presetNr = 0;
-byte repeatED[12]{ 5 };
 
 byte NFX6presetNr = 0;
 int nfx6_MIDItick = 0;

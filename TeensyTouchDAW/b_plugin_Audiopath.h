@@ -1,4 +1,5 @@
-
+//please use this Audio GUI from Newdigate
+//https://newdigate.github.io/teensy-eurorack-audio-gui/
 // GUItool: begin automatically generated code
 AudioSynthWaveformDc     pl10dc2;            //xy=65.99999237060547,1984.2001028060913
 AudioSynthWaveformDc     pl10dc3;            //xy=69.19999694824219,2107.199996948242

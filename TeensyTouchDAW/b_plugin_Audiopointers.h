@@ -1,3 +1,6 @@
+//pointers for the audio plugins, maybe this will get easier with mannickens audio lib tool
+
+
 //please use this Audio GUI from Newdigate
 //https://newdigate.github.io/teensy-eurorack-audio-gui/
 

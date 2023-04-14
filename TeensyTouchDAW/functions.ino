@@ -1,4 +1,4 @@
-//#include <Arduino.h>
+
 
 
 //this calls the static plugin view for your plugin, it is used when the plugin page is called or if you change presets
@@ -82,11 +82,30 @@ void Plugin_View_Static() {
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page_Static();
   }
-  if (selectPage == NFX5_PAGE1) {
-    NoteFX5_Page_Static();
-  }
+
   if (selectPage == NFX8_PAGE1) {
     NoteFX8_Page_Static();
+  }
+  if (selectPage == MIXER_PAGE_1) {
+    mixerPage1_Static(0);
+  }
+  if (selectPage == MIXER_PAGE_2) {
+    mixerPage2_Static();
+  }
+  if (selectPage == MIXER_PAGE_3) {
+    mixerPage3_Static();
+  }
+  if (selectPage == FX1_PAGE1) {
+    FX1reverb_static();
+  }
+  if (selectPage == FX2_PAGE1) {
+    FX2Bitcrush_static();
+  }
+  if (selectPage == FX3_PAGE1) {
+    FX3Delay_static();
+  }
+  if (selectPage == RECORDER_PAGE) {
+    recorder_Page_Static();
   }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
@@ -215,10 +234,7 @@ void Plugin_View_Dynamic() {
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page1_Dynamic();
   }
-  //setting up the NoteFX5-view
-  if (selectPage == NFX5_PAGE1) {
-    NoteFX5_Page1_Dynamic();
-  }
+
   if (selectPage == NFX8_PAGE1) {
     NoteFX8_Page1_Dynamic();
   }
@@ -229,7 +245,7 @@ void Plugin_View_Dynamic() {
     drumStepSequencer();
   }
   //setting up the melodicStepSequencer-view for #2-8
-  for (int i = 1; i < 8; i++) {
+  for (int i = 1; i < NUM_TRACKS; i++) {
     if (selectPage == i) {
       melodicStepSequencer(i);
     }
@@ -240,7 +256,7 @@ void Plugin_View_Dynamic() {
   }
 
   //setting up the songMode-view1
-  for (int pagenr = 0; pagenr < 16; pagenr++) {
+  for (int pagenr = 0; pagenr < MAX_SONGMODE_PAGES; pagenr++) {
     if (selectPage == pagenr + 10) {
       songModePage(pagenr);
     }
@@ -280,7 +296,7 @@ void Plugin_View_Dynamic() {
     midiCCpage1_Dynamic(desired_track);
   }
 }
-//here you have to put your NoteOn/Off´s into
+//here you have to put your NoteOn´s into
 void PluginNoteOn() {
 
   for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
@@ -381,7 +397,7 @@ void PluginNoteOn() {
     }
   }
 }
-//here you have to put your NoteOn/Off´s into
+//here you have to put your NoteOff´s into
 void PluginNoteOff() {
 
   for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
@@ -451,7 +467,156 @@ void PluginNoteOff() {
     }
   }
 }
+void DrumPluginPlay() {
 
+  //play drumplugin when midichannel = 18
+  if (track[0].MIDIchannel == 18) {
+
+    if (drumnotes[0]) {
+      drumnotes[0] = false;
+      playSdWav1.play(wavKit[0]);
+    }
+    if (drumnotes[1]) {
+      drumnotes[1] = false;
+      playSdWav2.play(wavKit[1]);
+    }
+    if (drumnotes[2]) {
+      drumnotes[2] = false;
+      playSdWav3.play(wavKit[2]);
+    }
+    if (drumnotes[3]) {
+      drumnotes[3] = false;
+      playSdWav4.play(wavKit[3]);
+    }
+    if (drumnotes[4]) {
+      drumnotes[4] = false;
+      playSdWav5.play(wavKit[4]);
+    }
+    if (drumnotes[5]) {
+      drumnotes[5] = false;
+      playSdWav6.play(wavKit[5]);
+    }
+    if (drumnotes[6]) {
+      drumnotes[6] = false;
+      playSdWav7.play(wavKit[6]);
+    }
+    if (drumnotes[7]) {
+      drumnotes[7] = false;
+      playSdWav8.play(wavKit[7]);
+    }
+    if (drumnotes[8]) {
+      drumnotes[8] = false;
+      playSdWav9.play(wavKit[8]);
+    }
+    if (drumnotes[9]) {
+      drumnotes[9] = false;
+      playSdWav10.play(wavKit[9]);
+    }
+    if (drumnotes[10]) {
+      drumnotes[10] = false;
+      playSdWav11.play(wavKit[10]);
+    }
+    if (drumnotes[11]) {
+      drumnotes[11] = false;
+      //playSdWav12.play(wavKit[11]);
+    }
+  }
+  //play Memory drumplugin when midichannel = 20
+  if (track[0].MIDIchannel == 20) {
+    if (drumnotes[0]) {
+      drumnotes[0] = false;
+      playMem1.play(AudioSampleKick);
+    }
+    if (drumnotes[1]) {
+      drumnotes[1] = false;
+      playMem2.play(AudioSampleSnare);
+    }
+    if (drumnotes[2]) {
+      drumnotes[2] = false;
+      playMem3.play(AudioSampleP2);
+    }
+    if (drumnotes[3]) {
+      drumnotes[3] = false;
+      playMem4.play(AudioSampleHihat);
+    }
+    if (drumnotes[4]) {
+      drumnotes[4] = false;
+      playMem5.play(AudioSampleCashregister);
+    }
+    if (drumnotes[5]) {
+      drumnotes[5] = false;
+      playMem6.play(AudioSampleTomtom);
+    }
+    if (drumnotes[6]) {
+      drumnotes[6] = false;
+      playMem7.play(AudioSampleGong);
+    }
+    if (drumnotes[7]) {
+      drumnotes[7] = false;
+      playMem7.play(AudioSamplePongblip);
+    }
+    if (drumnotes[8]) {
+      drumnotes[8] = false;
+      playMem7.play(AudioSampleClap);
+    }
+    if (drumnotes[9]) {
+      drumnotes[9] = false;
+      //playSdWav10.play("P9.WAV");
+    }
+    if (drumnotes[10]) {
+      drumnotes[10] = false;
+      //playSdWav11.play("P10.WAV");
+    }
+    if (drumnotes[11]) {
+      drumnotes[11] = false;
+      //playSdWav12.play("P11.WAV");
+    }
+  }
+  //play Memory drumplugin when midichannel = 20
+  if (track[0].MIDIchannel == 23) {
+
+    if (drumnotes[0]) {
+      drumnotes[0] = false;
+      pl7drum1.noteOn();
+    }
+    if (drumnotes[1]) {
+      drumnotes[1] = false;
+      pl7envelope1.noteOn();
+
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
+        pl7envelope1.noteOff();
+      }
+    }
+    if (drumnotes[2]) {
+      drumnotes[2] = false;
+      pl7envelope2.noteOn();
+      pl7envelope3.noteOn();
+
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
+        pl7envelope2.noteOff();
+        pl7envelope3.noteOff();
+      }
+    }
+    if (drumnotes[3]) {
+      drumnotes[3] = false;
+      //playMem4.play(AudioSampleHihat);
+
+      if (track[0].MIDItick >= allTracks[0]->stepLenght) {
+      }
+    }
+
+    if (drumnotes[4]) {
+      drumnotes[4] = false;
+      //playMem4.play(AudioSampleHihat);
+    } else {
+    }
+
+    if (drumnotes[5]) {
+      drumnotes[5] = false;
+      //playMem4.play(AudioSampleHihat);
+    }
+  }
+}
 //this function is called for every beatchange for preset/clip/noteoffset/clip change
 //add your soundcontrol functions like desired osc frequency etc, so the presetchange can be applied
 void beatComponents() {
@@ -514,24 +679,21 @@ void beatComponents() {
       plpreset[8] = track[instruments].Ttrckprst[phrase];
       Plugin9_Change();
     }
-    if (track[instruments].seqMode == 1) {
+    if (allTracks[instruments]->seqMode == 5) {
       NFX1presetNr = track[instruments].clip_songMode;
       NoteFX1_Change();
     }
-    if (track[instruments].seqMode == 2) {
+    if (allTracks[instruments]->seqMode == 2) {
       NFX2presetNr = track[instruments].clip_songMode;
       NoteFX2_Change();
     }
-    if (track[instruments].seqMode == 3) {
+    if (allTracks[instruments]->seqMode == 3) {
       NFX3presetNr = track[instruments].clip_songMode;
       NoteFX3_Change();
     }
-    if (track[instruments].seqMode == 4) {
+    if (allTracks[instruments]->seqMode == 4) {
       //NFX4presetNr = track[instruments].clip_songMode;
       //NoteFX4_Change();
-    }
-    if (track[instruments].seqMode == 5) {
-      NFX5presetNr = track[instruments].clip_songMode;
     }
   }
 }
@@ -1086,21 +1248,7 @@ void saveNoteFX(const char* trackname, byte trackNr) {
         }
       }
     }
-    if (trackNr == 4) {
-      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn]);
-          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn + 4]);
-          myFile.print((char)NFX5[maxpreset].Pot_Value[MixerColumn + 8]);
-          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn]);
-          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn + 4]);
-          myFile.print((char)NFX5[maxpreset].repeats[MixerColumn + 8]);
-          //        myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn]);
-          //       myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn + 4]);
-          //     myFile.print((char)NFX5[maxpreset].repeatED[MixerColumn + 8]);
-        }
-      }
-    }
+
     // close the file:
     myFile.close();
     tft.println("Done");
@@ -1178,21 +1326,7 @@ void loadNoteFX(const char* trackname, int trackNr) {
         }
       }
     }
-    if (trackNr == 4) {
-      for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          NFX5[maxpreset].Pot_Value[MixerColumn] = myFile.read();
-          NFX5[maxpreset].Pot_Value[MixerColumn + 4] = myFile.read();
-          NFX5[maxpreset].Pot_Value[MixerColumn + 8] = myFile.read();
-          NFX5[maxpreset].repeats[MixerColumn] = myFile.read();
-          NFX5[maxpreset].repeats[MixerColumn + 4] = myFile.read();
-          NFX5[maxpreset].repeats[MixerColumn + 8] = myFile.read();
-          //       NFX5[maxpreset].repeatED[MixerColumn] = myFile.read();
-          //     NFX5[maxpreset].repeatED[MixerColumn + 4] = myFile.read();
-          //   NFX5[maxpreset].repeatED[MixerColumn + 8] = myFile.read();
-        }
-      }
-    }
+
 
 
     //int channel = track[trackNr].MIDIchannel + 48;
@@ -1217,156 +1351,6 @@ void change_preset(int plNR) {
       plpreset[plNR] = constrain((plpreset[plNR] + encoded[0]), 0, MAX_PRESETS - 1);  // with every movement of the encoder we change the preset by -+1
       drawNrInRect(18, 1, plpreset[plNR], ILI9341_PURPLE);                            //show the new presetnr
       Plugin_View_Static();                                                           //show the actual potpositions
-    }
-  }
-}
-void DrumPluginPlay() {
-
-  //play drumplugin when midichannel = 18
-  if (track[0].MIDIchannel == 18) {
-
-    if (drumnotes[0]) {
-      drumnotes[0] = false;
-      playSdWav1.play(wavKit[0]);
-    }
-    if (drumnotes[1]) {
-      drumnotes[1] = false;
-      playSdWav2.play(wavKit[1]);
-    }
-    if (drumnotes[2]) {
-      drumnotes[2] = false;
-      playSdWav3.play(wavKit[2]);
-    }
-    if (drumnotes[3]) {
-      drumnotes[3] = false;
-      playSdWav4.play(wavKit[3]);
-    }
-    if (drumnotes[4]) {
-      drumnotes[4] = false;
-      playSdWav5.play(wavKit[4]);
-    }
-    if (drumnotes[5]) {
-      drumnotes[5] = false;
-      playSdWav6.play(wavKit[5]);
-    }
-    if (drumnotes[6]) {
-      drumnotes[6] = false;
-      playSdWav7.play(wavKit[6]);
-    }
-    if (drumnotes[7]) {
-      drumnotes[7] = false;
-      playSdWav8.play(wavKit[7]);
-    }
-    if (drumnotes[8]) {
-      drumnotes[8] = false;
-      playSdWav9.play(wavKit[8]);
-    }
-    if (drumnotes[9]) {
-      drumnotes[9] = false;
-      playSdWav10.play(wavKit[9]);
-    }
-    if (drumnotes[10]) {
-      drumnotes[10] = false;
-      playSdWav11.play(wavKit[10]);
-    }
-    if (drumnotes[11]) {
-      drumnotes[11] = false;
-      //playSdWav12.play(wavKit[11]);
-    }
-  }
-  //play Memory drumplugin when midichannel = 20
-  if (track[0].MIDIchannel == 20) {
-    if (drumnotes[0]) {
-      drumnotes[0] = false;
-      playMem1.play(AudioSampleKick);
-    }
-    if (drumnotes[1]) {
-      drumnotes[1] = false;
-      playMem2.play(AudioSampleSnare);
-    }
-    if (drumnotes[2]) {
-      drumnotes[2] = false;
-      playMem3.play(AudioSampleP2);
-    }
-    if (drumnotes[3]) {
-      drumnotes[3] = false;
-      playMem4.play(AudioSampleHihat);
-    }
-    if (drumnotes[4]) {
-      drumnotes[4] = false;
-      playMem5.play(AudioSampleCashregister);
-    }
-    if (drumnotes[5]) {
-      drumnotes[5] = false;
-      playMem6.play(AudioSampleTomtom);
-    }
-    if (drumnotes[6]) {
-      drumnotes[6] = false;
-      playMem7.play(AudioSampleGong);
-    }
-    if (drumnotes[7]) {
-      drumnotes[7] = false;
-      playMem7.play(AudioSamplePongblip);
-    }
-    if (drumnotes[8]) {
-      drumnotes[8] = false;
-      playMem7.play(AudioSampleClap);
-    }
-    if (drumnotes[9]) {
-      drumnotes[9] = false;
-      //playSdWav10.play("P9.WAV");
-    }
-    if (drumnotes[10]) {
-      drumnotes[10] = false;
-      //playSdWav11.play("P10.WAV");
-    }
-    if (drumnotes[11]) {
-      drumnotes[11] = false;
-      //playSdWav12.play("P11.WAV");
-    }
-  }
-  //play Memory drumplugin when midichannel = 20
-  if (track[0].MIDIchannel == 23) {
-
-    if (drumnotes[0]) {
-      drumnotes[0] = false;
-      pl7drum1.noteOn();
-    }
-    if (drumnotes[1]) {
-      drumnotes[1] = false;
-      pl7envelope1.noteOn();
-
-      if (track[0].MIDItick >= track[0].stepLength) {
-        pl7envelope1.noteOff();
-      }
-    }
-    if (drumnotes[2]) {
-      drumnotes[2] = false;
-      pl7envelope2.noteOn();
-      pl7envelope3.noteOn();
-
-      if (track[0].MIDItick >= track[0].stepLength) {
-        pl7envelope2.noteOff();
-        pl7envelope3.noteOff();
-      }
-    }
-    if (drumnotes[3]) {
-      drumnotes[3] = false;
-      //playMem4.play(AudioSampleHihat);
-
-      if (track[0].MIDItick >= track[0].stepLength) {
-      }
-    }
-
-    if (drumnotes[4]) {
-      drumnotes[4] = false;
-      //playMem4.play(AudioSampleHihat);
-    } else {
-    }
-
-    if (drumnotes[5]) {
-      drumnotes[5] = false;
-      //playMem4.play(AudioSampleHihat);
     }
   }
 }

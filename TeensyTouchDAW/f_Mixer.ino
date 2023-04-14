@@ -176,17 +176,7 @@ void MixerPage1_Dynamic() {
   if (ts.touched() || button[15]) {
     if (!touched) {
 
-      if (gridTouchY >= 2 && gridTouchY <= 4) {
-        lastPotRow = 0;
-      }
-
-      if (gridTouchY >= 5 && gridTouchY <= 7) {
-        lastPotRow = 1;
-      }
-
-      if (gridTouchX >= 18 || gridTouchY >= 12) {
-        lastPotRow = 2;
-      }
+      readTouchinput();
 
 
 
@@ -194,6 +184,7 @@ void MixerPage1_Dynamic() {
       //mute and solo states track 1-4
       //for better behaviour here we wait for "interval, unless it would switch within micrseconds
       if (gridTouchY == 5) {
+
 
         for (int mutes = 0; mutes < 4; mutes++) {
           if (gridTouchX == (((mutes + 1) * 4) - 1)) {

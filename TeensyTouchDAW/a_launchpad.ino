@@ -1,9 +1,13 @@
+//this will probably hold some functions for external controllers
+//needs alot of love 
+//also working on a class for implementing complex controllers 
+
 void LP_drawclipRow() {
   if (launchpad) {
 
     for (int LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
-        track[desired_instrument].clip_selector = LPclips;
+        allTracks[desired_instrument]->clipToEdit = LPclips;
         clearStepsGrid();
         if (selectPage == 0) {
           drawActiveDrumSteps();
@@ -11,10 +15,10 @@ void LP_drawclipRow() {
         if (selectPage > 0 && selectPage < 8) {
           drawActivePolySteps();
         }
-        drawNrInRect(18, 1, track[desired_instrument].clip_selector, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));
+        drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
       midi01.sendNoteOn(LPclips, LP_RED_DIM, 1);
-      midi01.sendNoteOn(track[desired_instrument].clip_selector, LP_RED, 1);
+      midi01.sendNoteOn(allTracks[desired_instrument]->clipToEdit, LP_RED, 1);
     }
   }
 }
@@ -98,18 +102,18 @@ void LP_drumstep() {
           //    LP_drawStepsequencer();
           //    LP_drawOnce = false;
           //  }
-          if (channel1Clip[track[0].clip_selector][notes][steps]) {
+          if (channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
             midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
           }
 
 
           if (LP_step_bool[steps]) {
-            if (!channel1Clip[track[0].clip_selector][notes][steps]) {
-              channel1Clip[track[0].clip_selector][notes][steps] = true;
-              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (track[0].clip_selector) * 20));  //draw the active steps circles
+            if (!channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
+              channel1Clip[allTracks[0]->clipToEdit][notes][steps] = true;
+              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (allTracks[0]->clipToEdit) * 20));  //draw the active steps circles
               midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
-            } else if (channel1Clip[track[0].clip_selector][notes][steps]) {
-              channel1Clip[track[0].clip_selector][notes][steps] = false;
+            } else if (channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
+              channel1Clip[allTracks[0]->clipToEdit][notes][steps] = false;
               tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
               midi01.sendNoteOn(LP_step_notes[steps], LP_GREEN_DIM, 1);
             }
@@ -123,13 +127,13 @@ void LP_drumstep() {
 void LP_melodicstep() {
   if (millis() % interval == 0) {
     if (LP_grid_bool[24]) {
-      track[desired_instrument].shown_octaves--;
+      allTracks[desired_instrument]->shownOctaves--;
       clearStepsGrid();
       drawOctaveNumber();
       drawActivePolySteps();
     }
     if (LP_grid_bool[31]) {
-      track[desired_instrument].shown_octaves++;
+      allTracks[desired_instrument]->shownOctaves++;
       clearStepsGrid();
       drawOctaveNumber();
       drawActivePolySteps();
@@ -143,8 +147,8 @@ void LP_melodicstep() {
 
         int touched_step = LP_step_bool[steps] * steps;
         byte touched_note = LP_octave_bool_keys[notes] * notes;
-        int note = touched_note + track[desired_instrument].shown_octaves * 12;
-        int notevalue_on_step = ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step * 6].voice[0];
+        int note = touched_note + allTracks[desired_instrument]->shownOctaves * 12;
+        int notevalue_on_step = ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_step * 6].voice[0];
 
         if (!LP_octave_bool_keys[notes]) {
           if (!LP_drawOnce[notes]) {
@@ -154,7 +158,7 @@ void LP_melodicstep() {
         }
 
         else if (LP_octave_bool_keys[notes]) {
-          if (note == ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[steps * 6].voice[0]) {
+          if (note == ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps * 6].voice[0]) {
             //Serial.println("hello");
             midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
           }
@@ -163,15 +167,15 @@ void LP_melodicstep() {
           if (LP_step_bool[steps]) {
 
             if (notevalue_on_step == VALUE_NOTEOFF) {
-              for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
-                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step + touched_ticks].voice[0] = note;
+              for (int touched_ticks = 0; touched_ticks <= allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_step + touched_ticks].voice[0] = note;
               }
               clearStepsGridY(touched_step);
-              // tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (track[desired_instrument].clip_selector * 20));  //draw the active steps circles
+              // tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));  //draw the active steps circles
               midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
             } else if (notevalue_on_step > VALUE_NOTEOFF) {
-              for (int touched_ticks = 0; touched_ticks <= track[desired_instrument].stepLength; touched_ticks++) {
-                ctrack[desired_instrument].sequence[track[desired_instrument].clip_selector].tick[touched_step + touched_ticks].voice[0] = VALUE_NOTEOFF;
+              for (int touched_ticks = 0; touched_ticks <= allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_step + touched_ticks].voice[0] = VALUE_NOTEOFF;
                 //  tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the in-active steps circles
               }
               midi01.sendNoteOn(LP_step_notes[steps], LP_GREEN_DIM, 1);
