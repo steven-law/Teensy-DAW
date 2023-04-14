@@ -86,14 +86,26 @@ void Plugin_View_Static() {
   if (selectPage == NFX8_PAGE1) {
     NoteFX8_Page_Static();
   }
+  if (selectPage == MIXER_PAGE_1) {
+    mixerPage1_Static(0);
+  }
+  if (selectPage == MIXER_PAGE_2) {
+    mixerPage2_Static();
+  }
+  if (selectPage == MIXER_PAGE_3) {
+    mixerPage3_Static();
+  }
   if (selectPage == FX1_PAGE1) {
     FX1reverb_static();
   }
-  if (selectPage = FX2_PAGE1) {
+  if (selectPage == FX2_PAGE1) {
     FX2Bitcrush_static();
   }
-  if (selectPage = FX3_PAGE1) {
+  if (selectPage == FX3_PAGE1) {
     FX3Delay_static();
+  }
+  if (selectPage == RECORDER_PAGE) {
+    recorder_Page_Static();
   }
 }
 //this calls the dynamic plugin view for your plugin, where your "pots"  (via encoder) of the soundcontrols are assigned and happening
@@ -683,7 +695,6 @@ void beatComponents() {
       //NFX4presetNr = track[instruments].clip_songMode;
       //NoteFX4_Change();
     }
-    
   }
 }
 
@@ -1237,7 +1248,7 @@ void saveNoteFX(const char* trackname, byte trackNr) {
         }
       }
     }
-   
+
     // close the file:
     myFile.close();
     tft.println("Done");
@@ -1315,7 +1326,7 @@ void loadNoteFX(const char* trackname, int trackNr) {
         }
       }
     }
-  
+
 
 
     //int channel = track[trackNr].MIDIchannel + 48;
@@ -1343,4 +1354,3 @@ void change_preset(int plNR) {
     }
   }
 }
-

@@ -121,6 +121,16 @@ void showCoordinates() {
   tft.print("Y");
   tft.print(gridTouchY);
 }
+void drawLastPotRow() {
+  if (lastPotRow >= 4) {
+    lastPotRow = 0;
+  }
+  if (lastPotRow >= 4) {
+    tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+  }
+  tft.fillRect(70, 0, 10, 16, ILI9341_DARKGREY);
+  tft.fillRect(70, lastPotRow * 4, 10, 3, ILI9341_RED);
+}
 void show_tempo() {
   tft.setCursor(STEP_FRAME_W * POSITION_BPM_BUTTON + 2, 3);
   tft.setFont(Arial_10);
