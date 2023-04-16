@@ -260,14 +260,14 @@ void setup() {
 
   channel1Clip = new bool **[NUM_CLIPS];
   for (int i = 0; i < NUM_CLIPS; i++) {
-    channel1Clip[i] = new bool *[num_voice];
-    for (int j = 0; j < num_voice; j++) {
+    channel1Clip[i] = new bool *[MAX_DrumVoices];
+    for (int j = 0; j < MAX_DrumVoices; j++) {
       channel1Clip[i][j] = new bool[STEP_QUANT];
     }
   }
   // fill the array
   for (int i = 0; i < NUM_CLIPS; i++) {
-    for (int j = 0; j < num_voice; j++) {
+    for (int j = 0; j < MAX_DrumVoices; j++) {
       for (int k = 0; k < STEP_QUANT; k++) {
         channel1Clip[i][j][k] = 0;
       }
@@ -276,7 +276,7 @@ void setup() {
 
 
   // Allocate dsend_noteOff array during runtime
-  dsend_noteOff = new bool[num_voice];
+  dsend_noteOff = new bool[MAX_DrumVoices];
   //tft.updateScreen();
 
   //allocate tracks2-8 "array"
@@ -446,6 +446,7 @@ void setup() {
   delay(500);
 
   drumStepSequencer_Static();
+  debug_free_ram();
   //tft.updateScreen();
 }
 
@@ -540,6 +541,7 @@ void loop() {
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //Scale Select
+      /*
       if (gridTouchX == POSITION_SCALE_BUTTON || gridTouchX == POSITION_SCALE_BUTTON + 1) {
         selectPage = SCALESELECT;
         gridScaleSelector();
@@ -552,6 +554,7 @@ void loop() {
           tft.print(scaleNames[i]);
         }
       }
+      */
     }
 
     if (gridTouchX == 0) {  //Songmode- and Trackselection
@@ -763,7 +766,7 @@ void doMainButtons() {
         gridTouchX = constrain(gridTouchX - 1, 0, 19);
         drawCursor();
       }
-      showCoordinates();
+      //showCoordinates();
     }
     //cursor right
     if (button[1]) {
@@ -775,7 +778,7 @@ void doMainButtons() {
         gridTouchX = constrain(gridTouchX + 1, 0, 19);
         drawCursor();
       }
-      showCoordinates();
+      //showCoordinates();
     }
     //cursor up
     if (button[2]) {
@@ -786,7 +789,7 @@ void doMainButtons() {
         gridTouchY = constrain(gridTouchY - 1, 0, 14);
         drawCursor();
       }
-      showCoordinates();
+      //showCoordinates();
     }
     //cursor down
     if (button[3]) {
@@ -797,12 +800,13 @@ void doMainButtons() {
         gridTouchY = constrain(gridTouchY + 1, 0, 14);
         drawCursor();
       }
-      showCoordinates();
+      //showCoordinates();
     }
     //last-pot-row
     if (button[4]) {
       button[4] = false;
       lastPotRow++;
+      rowButtonpressed = true;
       drawLastPotRow();
     }
     //recbutton

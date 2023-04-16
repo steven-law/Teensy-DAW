@@ -1,5 +1,5 @@
 //songmode file contains the few functions needed for the songmode
-//draw functions are in a_display_functions.ino 
+//draw functions are in a_display_functions.ino
 
 
 void gridSongMode(int songpageNumber) {  //static Display rendering
@@ -10,6 +10,9 @@ void gridSongMode(int songpageNumber) {  //static Display rendering
   drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
   draw_end_of_loop();
+  
+  drawChar(1, 0, "", ILI9341_BLUE);
+  drawChar(3, 0, "", ILI9341_RED);
   midi01.sendControlChange(0, 0, 1);
   //occationally working on a full arrangment view
 
@@ -38,13 +41,13 @@ void songModePage(int songpageNumber) {
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
       drawCursor();
-      showCoordinates();
+      //showCoordinates();
     }
     //gridTouchY
     if (enc_moved[1]) {
       gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
       drawCursor();
-      showCoordinates();
+      //showCoordinates();
     }
     //Start of loop
     if (enc_moved[2]) {
@@ -240,7 +243,7 @@ void savebutton() {
     //save plugin 2-8 variables
     for (int tracks = 1; tracks < 8; tracks++) {
       saveTrack(trackNames_long[tracks], tracks);
-     // saveMIDItrack(trackNames_long[tracks], tracks);
+      // saveMIDItrack(trackNames_long[tracks], tracks);
     }
     //save Mixersettings
     saveMixer();

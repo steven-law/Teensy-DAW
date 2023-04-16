@@ -4,7 +4,7 @@ void SerialPrintSeq() {
 
   Serial.print(master_clock.get_tempo());
   Serial.print("-");
-  Serial.print(master_clock.get_step_tick());
+  Serial.print(master_clock.get_stepTick());
   Serial.print("-   ");
 
   for (int i = 0; i < 12; i++) {

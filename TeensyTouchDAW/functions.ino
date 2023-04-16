@@ -311,7 +311,7 @@ void PluginNoteOn() {
 
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
-                Serial.printf("Note: %d, on at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
+                Serial.printf("Send NoteOn: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], seq_MIDItick);
 
                 usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
                 MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
@@ -400,14 +400,14 @@ void PluginNoteOn() {
 //here you have to put your NoteOff´s into
 void PluginNoteOff() {
 
-  for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
+  for (int desired_instruments = 0; desired_instruments < 8; desired_instruments++) {
     //send midi noteOff´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
         if (track[desired_instruments].envActive[polys]) {
           if (!track[desired_instruments].notePressed[polys]) {
             track[desired_instruments].envActive[polys] = false;
-            Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
+            Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], seq_MIDItick);
             Serial.println("");
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
@@ -718,7 +718,7 @@ void saveMIDItrackDrum() {
   //Serial.print("Start saving-> ");
   int deltaStep = 0;
   for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
-    for (int svoice = 0; svoice < num_voice; svoice++) {
+    for (int svoice = 0; svoice < MAX_DrumVoices; svoice++) {
       for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
         if (channel1Clip[sclip][svoice][sstep] > 0) {
           writer.addNoteOnEvent(deltaStep, desired_instrument, drumnote[svoice], 127);

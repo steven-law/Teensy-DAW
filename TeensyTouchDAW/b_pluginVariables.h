@@ -4,8 +4,8 @@
 
 int oldWave; //wfselect
 
-int pl2Pot[num_voice];
-int pl4Pot[num_voice];
+int pl2Pot[MAX_DrumVoices];
+int pl4Pot[MAX_DrumVoices];
 
 struct plugin_preset_data_t {
   byte Pot_Value[16]{ 0 };
@@ -63,6 +63,7 @@ Grids* NFX1;
 byte NFX1presetNr = 0;
 byte clock_count = 0;
 #define BEAT_ARRAY_SIZE 100
+
 
 
 const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
@@ -206,6 +207,3 @@ PolyR* NFX4;
 byte NFX4presetNr = 0;
 
 
-
-byte NFX6presetNr = 0;
-int nfx6_MIDItick = 0;

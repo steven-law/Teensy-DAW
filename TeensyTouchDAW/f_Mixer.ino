@@ -1,26 +1,4 @@
-void selectSolo(int tracknumber) {
 
-  if (!track[tracknumber].solo_state) {
-    for (int others = 0; others <= 7; others++) {
-      track[others].solo_mutes_state = HIGH;
-    }
-    track[tracknumber].solo_mutes_state = LOW;
-    track[tracknumber].solo_state = HIGH;
-  } else if (track[tracknumber].solo_state) {
-    for (int others = 0; others <= 7; others++) {
-      track[others].solo_mutes_state = LOW;
-    }
-    track[tracknumber].solo_mutes_state = LOW;
-    track[tracknumber].solo_state = LOW;
-  }
-}
-void selectMute(int tracknumber) {
-  if (!track[tracknumber].mute_state) {
-    track[tracknumber].mute_state = HIGH;
-  } else if (track[tracknumber].mute_state) {
-    track[tracknumber].mute_state = LOW;
-  }
-}
 
 
 void Mixer_Settings() {
@@ -119,31 +97,30 @@ void mixerPage1_Static(int mixerpage) {
     allTracks[MixerColumn + 4]->drawPotPos(MixerColumn, 2, allTracks[MixerColumn + 4]->gainVol);
   }
 
+  drawActiveRect(3, 5, 1, 1, allTracks[0]->muted, "M", ILI9341_RED);
+  drawActiveRect(4, 5, 1, 1, allTracks[0]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(3, 5, 1, 1, track[0].mute_state, "M", ILI9341_RED);
-  drawActiveRect(4, 5, 1, 1, track[0].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(7, 5, 1, 1, allTracks[1]->muted, "M", ILI9341_RED);
+  drawActiveRect(8, 5, 1, 1, allTracks[1]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(7, 5, 1, 1, track[1].mute_state, "M", ILI9341_RED);
-  drawActiveRect(8, 5, 1, 1, track[1].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(11, 5, 1, 1, allTracks[2]->muted, "M", ILI9341_RED);
+  drawActiveRect(12, 5, 1, 1, allTracks[2]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(11, 5, 1, 1, track[2].mute_state, "M", ILI9341_RED);
-  drawActiveRect(12, 5, 1, 1, track[2].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(15, 5, 1, 1, allTracks[3]->muted, "M", ILI9341_RED);
+  drawActiveRect(16, 5, 1, 1, allTracks[3]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(15, 5, 1, 1, track[3].mute_state, "M", ILI9341_RED);
-  drawActiveRect(16, 5, 1, 1, track[3].solo_state, "S", ILI9341_WHITE);
-
-  drawActiveRect(3, 11, 1, 1, track[4].mute_state, "M", ILI9341_RED);
-  drawActiveRect(4, 11, 1, 1, track[4].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(3, 11, 1, 1, allTracks[4]->muted, "M", ILI9341_RED);
+  drawActiveRect(4, 11, 1, 1, allTracks[4]->soloed, "S", ILI9341_WHITE);
 
 
-  drawActiveRect(7, 11, 1, 1, track[5].mute_state, "M", ILI9341_RED);
-  drawActiveRect(8, 11, 1, 1, track[5].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(7, 11, 1, 1, allTracks[5]->muted, "M", ILI9341_RED);
+  drawActiveRect(8, 11, 1, 1, allTracks[5]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(11, 11, 1, 1, track[6].mute_state, "M", ILI9341_RED);
-  drawActiveRect(12, 11, 1, 1, track[6].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(11, 11, 1, 1, allTracks[6]->muted, "M", ILI9341_RED);
+  drawActiveRect(12, 11, 1, 1, allTracks[6]->soloed, "S", ILI9341_WHITE);
 
-  drawActiveRect(15, 11, 1, 1, track[7].mute_state, "M", ILI9341_RED);
-  drawActiveRect(16, 11, 1, 1, track[7].solo_state, "S", ILI9341_WHITE);
+  drawActiveRect(15, 11, 1, 1, allTracks[7]->muted, "M", ILI9341_RED);
+  drawActiveRect(16, 11, 1, 1, allTracks[7]->soloed, "S", ILI9341_WHITE);
 
   drawPot(3, 3, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
 }
@@ -157,19 +134,21 @@ void MixerPage1_Dynamic() {
       break;
     case 1:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        allTracks[MixerColumn + 4]->setVolGain(MixerColumn, 2);
+        allTracks[MixerColumn]->setMuteSolo(MixerColumn, 1, encoded[MixerColumn]);
       }
       break;
     case 2:
-      if (enc_moved[3]) {
-        MasterVol_graph = constrain((MasterVol_graph + encoded[3]), 0, 127);
-        MasterVol = MasterVol_graph / 127.00;
-        sgtl5000_1.volume(MasterVol);
-        drawPot(3, 3, MasterVol_graph, MasterVol_graph, "OUT", ILI9341_BLACK);
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        allTracks[MixerColumn + 4]->setVolGain(MixerColumn, 2);
+      }
+      break;
+    case 3:
+      for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+        allTracks[MixerColumn + 4]->setMuteSolo(MixerColumn, 1, encoded[MixerColumn]);
       }
       break;
   }
-  static bool touched;
+  
   if (!ts.touched() && !button[15]) {
     touched = false;
   }
@@ -177,49 +156,6 @@ void MixerPage1_Dynamic() {
     if (!touched) {
 
       readTouchinput();
-
-
-
-
-      //mute and solo states track 1-4
-      //for better behaviour here we wait for "interval, unless it would switch within micrseconds
-      if (gridTouchY == 5) {
-
-
-        for (int mutes = 0; mutes < 4; mutes++) {
-          if (gridTouchX == (((mutes + 1) * 4) - 1)) {
-            touched = true;
-            selectMute(mutes);
-            drawActiveRect((((mutes + 1) * 4) - 1), 5, 1, 1, track[mutes].mute_state, "M", ILI9341_RED);
-          }
-        }
-        for (int solos = 0; solos < 4; solos++) {
-          if (gridTouchX == (solos + 1) * 4) {
-            touched = true;
-            selectSolo(solos);
-            drawActiveRect((solos + 1) * 4, 5, 1, 1, track[solos].solo_state, "S", ILI9341_WHITE);
-          }
-        }
-      }
-      //mute and solo states Track 5-8
-      //for better behaviour here we wait for "interval, unless it would switch within micrseconds
-      if (gridTouchY == 11) {
-
-        for (int mutes = 0; mutes < 4; mutes++) {
-          if (gridTouchX == (((mutes + 1) * 4) - 1)) {
-            selectMute(mutes + 4);
-            drawActiveRect((((mutes + 1) * 4) - 1), 11, 1, 1, track[mutes + 4].mute_state, "M", ILI9341_RED);
-            touched = true;
-          }
-        }
-        for (int solos = 0; solos < 4; solos++) {
-          if (gridTouchX == (solos + 1) * 4) {
-            touched = true;
-            selectSolo(solos + 4);
-            drawActiveRect((solos + 1) * 4, 11, 1, 1, track[solos + 4].solo_state, "S", ILI9341_WHITE);
-          }
-        }
-      }
 
       //page selection
       if (gridTouchX >= 18 && gridTouchY >= 3 && gridTouchY <= 4) {
