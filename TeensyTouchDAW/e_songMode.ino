@@ -10,7 +10,7 @@ void gridSongMode(int songpageNumber) {  //static Display rendering
   drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
   draw_end_of_loop();
-  
+
   drawChar(1, 0, "", ILI9341_BLUE);
   drawChar(3, 0, "", ILI9341_RED);
   midi01.sendControlChange(0, 0, 1);
@@ -74,6 +74,7 @@ void songModePage(int songpageNumber) {
     if (enc_moved[0]) {
       track[trackTouchY].arrangment1[touched_phrase] = constrain((track[trackTouchY].lastclip + encoded[0]), 0, MAX_CLIPS);
       track[trackTouchY].lastclip = track[trackTouchY].arrangment1[touched_phrase];
+      Serial.println(touched_phrase);
     }
     //Note transpose
     if (enc_moved[1]) {
@@ -169,6 +170,7 @@ void songModePage(int songpageNumber) {
           selectPage = SONGMODE_PAGE_1 + songpages;
           gridSongMode(songpages);
           songModePage(songpages);
+          
         }
       }
     }
@@ -236,7 +238,6 @@ void savebutton() {
     tft.print("Writing track 1 to project.txt...");
     //save plugin 1 variables
     saveTrack(trackNames_long[0], 0);
-    saveMIDItrackDrum();
     tft.println("Done");
 
     tft.print("Writing track 2-8 to project.txt...");

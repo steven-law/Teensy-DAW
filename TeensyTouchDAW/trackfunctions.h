@@ -170,7 +170,7 @@ void drawbarPosition() {
   tft.setTextColor(ILI9341_WHITE);
   tft.setFont(Arial_9);
   tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-  tft.print(phrase + 1);
+  tft.print(phrase);
   //drawbarPosition
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
@@ -194,7 +194,10 @@ void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
   tft.print(dvalue_char);
   dvalue_old_char = dvalue_char;
 }
-
+#define SHOW_ENCODER0 1
+#define SHOW_ENCODER1 3
+#define SHOW_ENCODER2 16
+#define SHOW_ENCODER3 18
 
 class classForTracks {
 public:
@@ -203,7 +206,7 @@ public:
   byte thisTrack;          //desired track for the class
   byte MIDIChannel;        //desired MIDIChannel
   byte clipToEdit = 0;     //this is the clip to edit in the sequencerviews
-  byte shownOctaves = 5;   //shown Octave for the melodic tracks
+  byte shownOctaves = 3;   //shown Octave for the melodic tracks
   byte seqMode = 0;        //active Sequencer Mode
   byte voiceCount = 0;     //desired voiceCount number for polyphony
   byte maxVoiceCount;      //sets the maximum voices for the track
@@ -223,7 +226,7 @@ public:
   byte FX3Vol = 0;     //volume to send to FX3 (Delay)
 
   //setup function called in setup() to set the tracknumber and initial MIDIChannel
-  void setup(byte new_track, byte new_MIDIChannel, byte new_maxVoiceCount = 4) {
+  void setup(byte new_track, byte new_MIDIChannel, byte new_maxVoiceCount = 12) {
     thisTrack = new_track;
     MIDIChannel = new_MIDIChannel;
     maxVoiceCount = new_maxVoiceCount;
@@ -251,13 +254,13 @@ public:
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
       ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
     }
-    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+    Serial.printf("Set NoteON: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d\n", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
   void setNoteOffToTick(byte tick_s, byte voiceCount_s, byte note_s) {
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] > VALUE_NOTEOFF) {
       ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
     }
-    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+    Serial.printf("Set NoteOFF: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d\n", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
   //sets the desired MIDIChannel
   void setMIDIChannel(int encoderd) {
@@ -306,7 +309,7 @@ public:
     Serial.printf("Track= %d, clipToEdit= %d\n", thisTrack, clipToEdit);
   }
   void drawClipToEdit() {
-    drawNrInRect_short(1, 0, ILI9341_BLUE, "Cl:", clipToEdit);
+    drawNrInRect_short(SHOW_ENCODER1, 0, ILI9341_RED, "Cl:", clipToEdit);
   }
   //sets the active voicecount(number) for polyphony
   void setVoiceCount(int encoderd) {
@@ -315,32 +318,35 @@ public:
     Serial.printf("Track= %d, voiceCount= %d\n", thisTrack, voiceCount);
   }
   void drawVoiceCount() {
-    drawNrInRect_short(16, 0, ILI9341_GREEN, "Vox:", voiceCount);
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "Vx", voiceCount);
   }
   //sets the desired clockdivision
   //in code we look if (Masterclock.tick % clockdivision == 0)
   //to count the track´s MIDItick upwards
   void setClockDivision(int encoderd) {
-    clockDivision = constrain((clockDivision + encoderd), 1, 96);
+    clockDivision = constrain((clockDivision + encoderd), 1, TICKS_PER_BAR);
     drawClockDivision();
     Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
   }
   void drawClockDivision() {
-    drawNrInRect_short(16, 0, ILI9341_GREEN, "cD:", clockDivision);
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "cD:", clockDivision);
   }
   //sets the desired Octave for the melodictracks
   void setShownOctaves(int encoderd) {
     shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
     Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
   }
+  void drawShownOctave() {
+    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, "Oct", stepLenght);
+  }
   //sets the desired stepLenght for the stepsequencer
   void setStepLenght(int encoderd) {
-    stepLenght = constrain((stepLenght + encoderd), 1, 96);
+    stepLenght = constrain((stepLenght + encoderd), 1, TICKS_PER_BAR);
     drawStepLenght();
     Serial.printf("Track= %d, stepLenght= %d\n", thisTrack, stepLenght);
   }
   void drawStepLenght() {
-    drawNrInRect_short(18, 0, ILI9341_WHITE, "SL:", stepLenght);
+    drawNrInRect_short(SHOW_ENCODER3, 0, ILI9341_WHITE, "SL:", stepLenght);
   }
   //sets the desired sequencer Mode
   void setSeqMode(int encoderd) {
@@ -349,7 +355,7 @@ public:
     Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
   }
   void drawSeqMode() {
-    drawNrInRect_short(3, 0, ILI9341_RED, seqModes[seqMode]);
+    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, seqModes[seqMode]);
   }
 
   //draws the left navigator for the tracks
@@ -621,10 +627,10 @@ public:
 
 
   uint32_t get_barTick() {  //returns the actual BARtick count
-    return MIDItick % 96;
+    return MIDItick % TICKS_PER_BAR;
   }
   bool is_tick_on_bar() {
-    return MIDItick % 96 == 0;
+    return MIDItick % TICKS_PER_BAR == 0;
   }
   //draws all the timerelated stuff for the sequencer
   void drawPositionPointers() {
@@ -635,7 +641,7 @@ public:
       }
       drawstepPosition(stepTick);
     }
-    if (MIDItick % 96 == 0) {
+    if (MIDItick % TICKS_PER_BAR == 0) {
       barTick++;
       if (barTick == 16) {
         barTick == 0;

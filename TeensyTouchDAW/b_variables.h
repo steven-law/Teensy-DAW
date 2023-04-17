@@ -45,10 +45,10 @@ static const int VALUE_NOTEOFF = 0;
 //variables for own clock
 #define NUM_CLIPS 9
 #define NUM_TRACKS 8
-#define MAX_DrumVoices 12
-
+#define MAX_VOICES 12
+#define TICKS_PER_STEP 6
 #define NUM_STEPS 16
-#define MAX_TICKS 96
+#define TICKS_PER_BAR 96
 #define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
@@ -67,7 +67,7 @@ static const int VALUE_NOTEOFF = 0;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-#define MAX_VOICES 12
+
 
 byte selectPage;
 #define DRUMTRACK 0
@@ -281,7 +281,7 @@ struct tick_t {
 };
 
 struct sequence_t {
-  tick_t tick[MAX_TICKS];
+  tick_t tick[TICKS_PER_BAR];
 };
 
 struct track_t {
@@ -321,7 +321,6 @@ const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", 
 
 
 uint32_t seq_MIDItick;
-int seq_tick_16;
 
 int seq_tempo = 120;
 bool seq_rec = false;
@@ -367,10 +366,3 @@ struct tracks {
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks* track;
-
-
-
-//channel 1 variables
-byte ch1tone;
-bool* dsend_noteOff;
-bool*** channel1Clip;

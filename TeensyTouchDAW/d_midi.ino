@@ -18,39 +18,57 @@ void process_clock() {
   if (master_clock.process_MIDItick()) {
     seq_MIDItick++;
 
-    master_clock.drawPositionPointers();
+    //NoteOff for drumtrack
+    //for (int b = 0; b < MAX_VOICES; b++) {
+    // track[0].notePressed[b] = false;
+    //}
+    //clockstuff before we let the notes fly
+    //SerialPrints for debugging;
+    if (track[0].MIDItick % TICKS_PER_STEP == 0) {
+      track[0].MIDItick_16++;
+      if (debugTime) {
+        SerialPrintSeq();
+      }
+    }
+    //reset MIDItick every bar
+    for (int i = 0; i < NUM_TRACKS; i++) {
+      if (track[i].MIDItick == TICKS_PER_BAR - 1) {
+        track[i].MIDItick = -1;
+        track[i].MIDItick_16 = -1;
+      }
+    }
+    //reset steptick every bar
+    //beatcomponents
+    if (seq_MIDItick >= TICKS_PER_BAR) {
+      phrase++;
+      pixelphrase++;
+      seq_MIDItick = 0;
+      showSerialonce = true;
+      beatComponents();
+      if (debugTime) {
+        if (showSerialonce) {
+          SerialPrintPlugins();
+        }
+      }
+    }
 
+    //reset barcounter at end of song/loop
+    if (phrase == MAX_PHRASES - 1 || phrase == end_of_loop) {
+      //master_clock.set_playing(false);
+      phrase = start_of_loop;
+      pixelphrase = 0;
+      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
+    }
+
+
+    master_clock.drawPositionPointers();
     //seqModes note "freeing"
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (seq_MIDItick % allTracks[i]->clockDivision == 0) {
         track[i].MIDItick++;
         if (!allTracks[i]->soloMuteState) {
           if (!allTracks[i]->muted) {
-            //stepsequencer for drumtrack
-            
-            if (allTracks[0]->seqMode == 0) {
-              for (int d = 0; d < 12; d++) {
-                //if the actual step is high, "free" the notes to be played
-                if (channel1Clip[track[0].clip_songMode][d][seq_tick_16]) {
-                  if (!dsend_noteOff[d]) {
 
-                    drumnotes[d] = true;
-                    dsend_noteOff[d] = true;
-
-                    if (track[0].MIDIchannel < 17) {
-                      usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                      MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                      for (int usbs = 0; usbs < 10; usbs++) {
-                        if (!launchpad) {
-                          usb_midi_devices[usbs]->sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            
             //stepseqeucer for melodic track
             if (allTracks[i]->seqMode == 0) {
               //if the actual step is high, play the notes
@@ -151,55 +169,40 @@ void process_clock() {
               }
             }
             //Polyrhytm
-            if (allTracks[0]->seqMode == 4) {
-              for (int d = 0; d < 12; d++) {
-                //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
-                NFX4[NFX4presetNr].reset[d]++;
-
-                //Serial.println(NFX4[1].reset[0]);
-                if (NFX4[NFX4presetNr].reset[d] >= NFX4[NFX4presetNr].Pot_Value[d]) {
-                  NFX4[NFX4presetNr].reset[d] = 0;
-                }
-
-                //if the actual step is high, play the notes
-                if (channel1Clip[track[0].clip_songMode][d][NFX4[NFX4presetNr].reset[d]]) {
-                  if (!dsend_noteOff[d]) {
-                    drumnotes[d] = true;
-                    dsend_noteOff[d] = true;
-                    //DrumPluginPlay();
-                    if (track[0].MIDIchannel < 17) {
-                      usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                      MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                      for (int usbs = 0; usbs < 10; usbs++) {
-                        if (!launchpad) {
-                          usb_midi_devices[usbs]->sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                        }
-                      }
-                    }
+            if (allTracks[i]->seqMode == 4) {
+              if (track[i].MIDItick % TICKS_PER_STEP == 0) {
+                for (int polys = polys; polys < MAX_VOICES; polys++) {
+                  //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
+                  NFX4[NFX4presetNr].reset[polys]++;
+                  //Serial.println(NFX4[1].reset[0]);
+                  if (NFX4[NFX4presetNr].reset[polys] >= NFX4[NFX4presetNr].Pot_Value[polys]) {
+                    NFX4[NFX4presetNr].reset[polys] = 0;
+                  }
+                  //if the actual step is high, play the notes d
+                  if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] > VALUE_NOTEOFF) {
+                    track[i].playNoteOnce[polys] = true;
+                    track[i].notePressed[polys] = true;
+                    track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
+                  }
+                  //NoteOff
+                  if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] == VALUE_NOTEOFF) {
+                    track[i].notePressed[polys] = false;
                   }
                 }
               }
             }
             //grids
-            if (allTracks[0]->seqMode == 5) {
-              if (track[0].clip_songMode < 8) {
-                for (int d = 0; d < MAX_DrumVoices; d++) {
-
-
-                  if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[d]][track[0].MIDItick_16]) {
-                    if (!dsend_noteOff[d]) {
-                      drumnotes[d] = true;
-                      dsend_noteOff[d] = true;
-                      if (track[0].MIDIchannel < 17) {
-                        usbMIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                        MIDI.sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                        for (int usbs = 0; usbs < 10; usbs++) {
-                          if (!launchpad) {
-                            usb_midi_devices[usbs]->sendNoteOn(drumnote[d], track[0].MIDI_velocity, track[0].MIDIchannel);
-                          }
-                        }
-                      }
-                    }
+            if (allTracks[i]->seqMode == 5) {
+              if (track[i].clip_songMode < 8) {
+                for (int polys = 0; polys < MAX_VOICES; polys++) {
+                  if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
+                    track[i].playNoteOnce[polys] = true;
+                    track[i].notePressed[polys] = true;
+                    track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
+                  }
+                  //NoteOff
+                  if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick_16].voice[polys] == VALUE_NOTEOFF) {
+                    track[i].notePressed[polys] = false;
                   }
                 }
               }
@@ -208,71 +211,7 @@ void process_clock() {
         }
       }
     }
-    //set stepTick++;
-    //drawPositionPointer;
-    //SerialPrints for debugging;
-    //NoteOff for drumtrack
-    if (seq_MIDItick % 6 == 0) {
-      seq_tick_16++;
-      track[0].MIDItick_16++;
-      if (debugTime) {
-        SerialPrintSeq();
-      }
-      //Noteoff for drumtrack
-      for (int b = 0; b < MAX_DrumVoices; b++) {
-        if (dsend_noteOff[b]) {
-          dsend_noteOff[b] = false;
-          if (track[0].MIDIchannel < 17) {
-            usbMIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-            MIDI.sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-            for (int usbs = 0; usbs < 10; usbs++) {
-              if (!launchpad) {
-                usb_midi_devices[usbs]->sendNoteOff(drumnote[b], track[0].MIDI_velocity, track[0].MIDIchannel);
-              }
-            }
-          }
-        }
-      }
-    }
-    //reset MIDItick every bar
-    for (int i = 0; i < NUM_TRACKS; i++) {
-      if (track[i].MIDItick >= MAX_TICKS) {
-        track[i].MIDItick = 0;
-      }
-    }
-    //reset steptick every bar
-    //beatcomponents
-    if (seq_tick_16 == NUM_STEPS - 1) {
-      seq_tick_16 = -1;
-      phrase++;
-      pixelphrase++;
-      
-      seq_MIDItick = -1;
-      showSerialonce = true;
-      beatComponents();
-      if (debugTime) {
-        if (showSerialonce) {
-          SerialPrintPlugins();
-        }
-      }
-    }
-
-    //reset barcounter at end of song
-    if (phrase == MAX_PHRASES - 1) {
-      master_clock.set_playing(false);
-      phrase = -1;
-      pixelphrase = -1;
-      phrase = 0;
-      
-      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
-    }
-    //reset barcounter at end of loop
-    if (phrase == end_of_loop - 1) {
-      phrase = start_of_loop;
-      pixelphrase = 0;
-      
-      tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
-    }
+    Serial.printf("bar:%d, step:%d, seq_MIDItick: %d\n", phrase, track[0].MIDItick_16, track[0].MIDItick);
   }
 }
 
@@ -474,11 +413,10 @@ void startSeq() {
 }
 void stopSeq() {
   master_clock.set_playing(false);
-  seq_tick_16 = -1;
-  phrase = start_of_loop - 1;
+  phrase = start_of_loop;
   pixelphrase = -1;
   phrase = 0;
-  
+
   seq_MIDItick = -1;
   for (int track_number = 0; track_number < NUM_TRACKS; track_number++) {
     track[track_number].MIDItick_16 = -1;
@@ -549,7 +487,6 @@ void myStart() {
 }
 void myStop() {
   master_clock.set_playing(false);
-  seq_tick_16 = -1;
   phrase = -1;
   pixelphrase = -1;
   phrase = 0;

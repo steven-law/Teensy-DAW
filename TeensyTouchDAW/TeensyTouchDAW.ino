@@ -256,30 +256,8 @@ void setup() {
 
   Serial.println("Initializing Sequencer");
   tft.println("Initializing Sequencer");
-  // Allocate channel1Clip array during runtime
 
-  channel1Clip = new bool **[NUM_CLIPS];
-  for (int i = 0; i < NUM_CLIPS; i++) {
-    channel1Clip[i] = new bool *[MAX_DrumVoices];
-    for (int j = 0; j < MAX_DrumVoices; j++) {
-      channel1Clip[i][j] = new bool[STEP_QUANT];
-    }
-  }
-  // fill the array
-  for (int i = 0; i < NUM_CLIPS; i++) {
-    for (int j = 0; j < MAX_DrumVoices; j++) {
-      for (int k = 0; k < STEP_QUANT; k++) {
-        channel1Clip[i][j][k] = 0;
-      }
-    }
-  }
-
-
-  // Allocate dsend_noteOff array during runtime
-  dsend_noteOff = new bool[MAX_DrumVoices];
-  //tft.updateScreen();
-
-  //allocate tracks2-8 "array"
+  //allocate tracks0-7 "array"
   ctrack = calloc(NUM_TRACKS, sizeof(track_t));
   //allocate tracks
   track = new tracks[NUM_TRACKS];
@@ -351,7 +329,7 @@ void setup() {
   delay(100);
 
   /// set the default channel of each track
-  track[0].MIDIchannel = 9;
+  track[0].MIDIchannel = 10;
   track[1].MIDIchannel = 2;
   track[2].MIDIchannel = 3;
   track[3].MIDIchannel = 4;
@@ -445,7 +423,7 @@ void setup() {
   startUpScreen();
   delay(500);
 
-  drumStepSequencer_Static();
+  gridStepSequencer(0);
   debug_free_ram();
   //tft.updateScreen();
 }
@@ -856,16 +834,8 @@ void doMainButtons() {
   //bottom row buttons
   if (!button[10]) {
     //select tracks
-    if (button[8]) {    //9th button
-      if (button[0]) {  //"D"  68  1st button
-        selectPage = DRUMTRACK;
-        desired_instrument = 0;
-        desired_track = 0;
-        //gridStepSequencer(1);
-        drumStepSequencer_Static();
-        button[0] = false;
-      }
-      for (int i = 1; i < NUM_TRACKS; i++) {
+    if (button[8]) {  //9th button
+      for (int i = 0; i < NUM_TRACKS; i++) {
         //select melodic track 2-8
         if (button[i]) {
           button[i] = false;

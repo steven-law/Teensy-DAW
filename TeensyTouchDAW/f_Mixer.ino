@@ -148,7 +148,7 @@ void MixerPage1_Dynamic() {
       }
       break;
   }
-  
+
   if (!ts.touched() && !button[15]) {
     touched = false;
   }
