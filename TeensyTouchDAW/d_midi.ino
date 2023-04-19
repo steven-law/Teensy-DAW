@@ -23,35 +23,45 @@ void process_clock() {
     // track[0].notePressed[b] = false;
     //}
     //clockstuff before we let the notes fly
-    //SerialPrints for debugging;
-    if (track[0].MIDItick % TICKS_PER_STEP == 0) {
-      ///////////////////////////////////////////////////////////////track[0].MIDItick_16++;
-      if (debugTime) {
-        SerialPrintSeq();
-      }
-    }
+
+
     //clockdivision
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (seq_MIDItick % allTracks[i]->clockDivision == 0) {
         track[i].MIDItick++;
       }
     }
+    //MIDItick_16++, SerialPrints for debugging;
+    for (int i = 0; i < NUM_TRACKS; i++) {
+      if (track[i].MIDItick % TICKS_PER_STEP == 0) {
+        track[i].MIDItick_16++;
+        if (debugTime) {
+          SerialPrintSeq();
+        }
+      }
+    }
     //reset MIDItick every bar
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick == TICKS_PER_BAR) {
         track[i].MIDItick = 0;
-        ///////////////////////////////////////////////////////////////track[i].MIDItick_16 = -1;
+      }
+    }
+    //reset MIDItick_16 when NUM_STEPS 16 is reached
+    for (int i = 0; i < NUM_TRACKS; i++) {
+      if (track[i].MIDItick_16 == NUM_STEPS) {
+        track[i].MIDItick_16 = 0;
       }
     }
     //reset barcounter at end of song/loop
-    if (phrase == MAX_PHRASES - 1 || phrase == end_of_loop) {
+    if (phrase == MAX_PHRASES || phrase == end_of_loop) {
       //master_clock.set_playing(false);
       phrase = start_of_loop - 1;
       seq_MIDItick = 0;
       pixelphrase = 0;
       for (int i = 0; i < NUM_TRACKS; i++) {
         track[i].MIDItick = 0;
-        ///////////////////////////////////////////////////////////////track[i].MIDItick_16 = -1;
+        track[i].MIDItick_16 = 0;
+
       }
       tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
     }
@@ -205,10 +215,10 @@ void process_clock() {
                 if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
                   track[i].playNoteOnce[polys] = true;
                   track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
+                  track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves*12);
                 }
                 //NoteOff
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick_16].voice[polys] == VALUE_NOTEOFF) {
+                if (!beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
                   track[i].notePressed[polys] = false;
                 }
               }
@@ -218,7 +228,7 @@ void process_clock() {
       }
     }
     master_clock.drawPositionPointers();
-    Serial.printf("phrase:%d, track-0 MIDItick:%d, seq_MIDItick: %d\n", phrase, track[0].MIDItick, seq_MIDItick);
+    Serial.printf("phrase:%d, track-0 MIDItick_16:%d,MIDItick:%d, seq_MIDItick: %d\n", phrase,track[0].MIDItick_16, track[0].MIDItick, seq_MIDItick);
   }
 }
 
