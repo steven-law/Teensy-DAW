@@ -988,6 +988,8 @@ void doMainButtons() {
 
     Serial.println("plugins:");
     //SerialPrintPlugins();
+    Serial.println("Free RAM:");
+    debug_free_ram();
   }
 }
 void readTouchinput() {
