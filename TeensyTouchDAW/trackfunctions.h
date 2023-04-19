@@ -603,9 +603,6 @@ public:
         send_MIDIclock();
         msecsclock = 0;
         return true;
-        /*
-        
- */
       }
     }
     return false;

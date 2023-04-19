@@ -61,8 +61,33 @@ void songModePage(int songpageNumber) {
       draw_end_of_loop();
     }
   }
-  //clipassign
-  if (button[15]) {
+
+
+  //end of loop
+  if (button[14]) {
+    //set Tempo
+    if (enc_moved[0]) {
+      seq_tempo = constrain((seq_tempo + encoded[0]), 55, 200);
+      master_clock.set_tempo(seq_tempo);
+      show_tempo();
+      Serial.print("seq_tempo");
+      Serial.println(seq_tempo);
+      //master_clock.get_tempo();
+    }
+    //Start of loop
+    if (enc_moved[2]) {
+      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, MAX_PHRASES - 2);
+      draw_start_of_loop();
+    }
+    //end of loop
+    if (enc_moved[3]) {
+      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, MAX_PHRASES - 1);
+      draw_end_of_loop();
+    }
+  }
+
+  if (ts.touched() || button[15]) {
+
     if (seq_rec) {
       track[trackTouchY].arrangment1[touched_phrase] = track[trackTouchY].lastclip;
       track[trackTouchY].NoteOffset[touched_phrase] = track[trackTouchY].lastNoteOffset;
@@ -99,67 +124,6 @@ void songModePage(int songpageNumber) {
       drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
     }
-  }
-
-  //end of loop
-  if (button[14]) {
-    //set Tempo
-    if (enc_moved[0]) {
-      seq_tempo = constrain((seq_tempo + encoded[0]), 55, 200);
-      master_clock.set_tempo(seq_tempo);
-      show_tempo();
-      Serial.print("seq_tempo");
-      Serial.println(seq_tempo);
-      //master_clock.get_tempo();
-    }
-    //Start of loop
-    if (enc_moved[2]) {
-      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, MAX_PHRASES - 2);
-      draw_start_of_loop();
-    }
-    //end of loop
-    if (enc_moved[3]) {
-      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, MAX_PHRASES - 1);
-      draw_end_of_loop();
-    }
-  }
-
-  if (ts.touched() || button[15]) {
-
-
-    /*
-    //Assigning clips to the arranger
-    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
-
-      //if (abs(map(Potentiometer[0], 0, 127, 0, 8) - track[trackTouchY].arrangment1[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].arrangment1[touched_phrase] != map(Potentiometer[0], 0, 127, 0, 8)) {
-        track[trackTouchY].arrangment1[touched_phrase] = map(Potentiometer[0], 0, 127, 0, 8);
-      }
-      //}
-      // if (abs(map(Potentiometer[1], 0, 127, -32, 32) - track[trackTouchY].NoteOffset[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].NoteOffset[touched_phrase] != map(Potentiometer[1], 0, 127, -32, 32)) {
-        track[trackTouchY].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
-      }
-      // }
-      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].Ttrckprst[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].Ttrckprst[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
-        track[trackTouchY].Ttrckprst[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
-        drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      }
-      // }
-      //if (abs(Potentiometer[3] - track[trackTouchY].volume[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].volume[touched_phrase] != Potentiometer[3]) {
-        track[trackTouchY].volume[touched_phrase] = Potentiometer[3];
-        drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        //pluginVolume(track[trackTouchY].MIDIchannel, Potentiometer[3] / 127.00);
-        //   }
-      }
-      //draw horizontal song arrangment Lines
-      drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
-    }
-    */
 
 
     //page selection
@@ -169,8 +133,7 @@ void songModePage(int songpageNumber) {
           //phraseSegmentLength = 16;
           selectPage = SONGMODE_PAGE_1 + songpages;
           gridSongMode(songpages);
-          songModePage(songpages);
-          
+          songModePage(songpages);          
         }
       }
     }

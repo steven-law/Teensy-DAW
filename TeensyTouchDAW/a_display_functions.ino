@@ -379,9 +379,11 @@ void clearArrangment() {
 }
 void draw_start_of_loop() {
   drawNrInRect_short(16, 0, ILI9341_GREEN, "S", start_of_loop);
+  Serial.printf("start of loop: %d\n",start_of_loop);
 }
 void draw_end_of_loop() {
   drawNrInRect_short(18, 0, ILI9341_WHITE, "E", end_of_loop);
+  Serial.printf("end of loop: %d\n",end_of_loop);
 }
 
 

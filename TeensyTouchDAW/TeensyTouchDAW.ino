@@ -259,6 +259,16 @@ void setup() {
 
   //allocate tracks0-7 "array"
   ctrack = calloc(NUM_TRACKS, sizeof(track_t));
+  //fill the tracks0-7 "array"
+  for (int t = 0; t < NUM_TRACKS; t++) {
+    for (int c = 0; c < 8; c++) {
+      for (int s = 0; s < TICKS_PER_BAR; s++) {
+        for (int v = 0; v < MAX_VOICES; v++) {
+          ctrack[t].sequence[c].tick[s].voice[v] = 0;
+        }
+      }
+    }
+  }
   //allocate tracks
   track = new tracks[NUM_TRACKS];
   //ctrack = new track_t[NUM_TRACKS];
@@ -935,6 +945,49 @@ void doMainButtons() {
       button[13] = false;
       Plugin_View_Static();
     }
+  }
+  if (button[14] && button[15]) {
+    button[15] = false;
+
+    Serial.println("debugging:");
+    Serial.println("arrangment1:");
+    for (int t = 0; t < NUM_TRACKS; t++) {
+      for (int s = 0; s < MAX_PHRASES - 2; s++) {
+        if (track[t].arrangment1[s] == 8) {
+          Serial.print(".");
+        } else {
+          Serial.print(track[t].arrangment1[s]);
+        }
+      }
+      Serial.println("");
+    }
+    Serial.println("");
+    Serial.println("clips:");
+
+    for (int t = 0; t < NUM_TRACKS; t++) {
+      Serial.printf("track:%d\n", t);
+      for (int c = 0; c < 8; c++) {
+        Serial.printf("clip:%d\n", c);
+        for (int v = 0; v < MAX_VOICES; v++) {
+          for (int s = 0; s < TICKS_PER_BAR; s++) {
+            if (ctrack[t].sequence[c].tick[s].voice[v] == 0) {
+              Serial.print("..");
+            } else {
+              Serial.print(ctrack[t].sequence[c].tick[s].voice[v]);
+            }
+            Serial.print("-");
+          }
+          Serial.println("");
+        }
+        Serial.println("");
+        Serial.println("");
+      }
+    }
+    Serial.println("");
+    Serial.println("");
+
+    Serial.println("plugins:");
+    //SerialPrintPlugins();
   }
 }
 void readTouchinput() {
