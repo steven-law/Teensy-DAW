@@ -18,13 +18,8 @@ void process_clock() {
   if (master_clock.process_MIDItick()) {
     seq_MIDItick++;
 
-    //NoteOff for drumtrack
-    //for (int b = 0; b < MAX_VOICES; b++) {
-    // track[0].notePressed[b] = false;
-    //}
+  
     //clockstuff before we let the notes fly
-
-
     //clockdivision
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (seq_MIDItick % allTracks[i]->clockDivision == 0) {

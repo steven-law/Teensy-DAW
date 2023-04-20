@@ -224,6 +224,7 @@ void NoteFX8_Page1_Dynamic() {
 
   // int touched_step = gridTouchX - 2;
   int touched_note = gridTouchY - 1;
+  allTracks[0]->voiceCount = touched_note;
   /*
     if (launchpad) {
     for (int LPclips = 0; LPclips < 8; LPclips++) {
