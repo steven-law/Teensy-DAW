@@ -307,7 +307,7 @@ void PluginNoteOn() {
               if (track[desired_instruments].MIDIchannel < 17) {
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
-                // Serial.printf("Send NoteON: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, seq_MIDItick);
+                // Serial.printf("Send NoteON: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, master_clock.MIDItick);
                 usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
                 MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
                 for (int usbs = 0; usbs < 10; usbs++) {
@@ -506,7 +506,7 @@ void PluginNoteOff() {
           //send midi noteOff´s with channel 1-16
           if (track[desired_instruments].MIDIchannel < 17) {
             track[desired_instruments].envActive[polys] = false;
-            // Serial.printf("Send NoteOFF: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, seq_MIDItick);
+            // Serial.printf("Send NoteOFF: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, master_clock.MIDItick);
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             for (int usbs = 0; usbs < 10; usbs++) {

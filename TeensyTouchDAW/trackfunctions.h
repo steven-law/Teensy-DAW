@@ -607,6 +607,10 @@ public:
         msecsclock = 0;
         return true;
       }
+    } else {
+      MIDItick = 0;
+      stepTick = 0;
+      barTick = 0;
     }
     return false;
   }
@@ -616,7 +620,7 @@ public:
   }
 
 
-    //returns the actual STEPtick count
+  //returns the actual STEPtick count
   uint32_t get_stepTick() {
     return MIDItick % 6;
   }

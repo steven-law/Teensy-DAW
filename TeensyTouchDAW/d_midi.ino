@@ -17,7 +17,7 @@ void process_clock() {
 
   if (master_clock.process_MIDItick()) {
     seq_MIDItick++;
-
+    //Serial.printf("bar:%d, step:%d, tick:%d\n", master_clock.barTick, master_clock.stepTick, master_clock.MIDItick);
 
     //clockstuff before we let the notes fly
     //clockdivision
@@ -113,42 +113,31 @@ void process_clock() {
           //dropseq
           if (allTracks[i]->seqMode == 2) {
 
-            cc23 = NFX2[NFX2presetNr].Pot_Value[2];
-            cc24 = NFX2[NFX2presetNr].Pot_Value[3];
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] > VALUE_NOTEOFF) {
               if (track[i].tick_true) {
                 track[i].tick_true = false;
-                maxVal = 0;
-                //if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
+                byte maxVal = 0;
+                byte maxValIndex;
+                byte octave;
+                static byte analogReadArray[12];
+                //determine the note with the highest "weight"
                 for (int d = 0; d < 12; d++) {
                   if (analogReadArray[d] > maxVal) {
                     maxVal = analogReadArray[d];
                     maxValIndex = d;
-                    octave = random(cc23, cc24);
                   }
                 }
-                // }
-
-                /* if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
-                  for (int d = 11; d >= 0; d--) {
-                    if (analogReadArray[d] > maxVal) {
-                      maxVal = analogReadArray[d];
-                      maxValIndex = d;
-                      octave = random(cc24, cc23);
-                    }
-                  }
-                }
-                */
+                //set an octave range
+                octave = random(NFX2[NFX2presetNr].Pot_Value[2], NFX2[NFX2presetNr].Pot_Value[3]);
+                //Set the notes free
                 //Serial.printf("dropseq: maxValIndex:%d, maxVal:%d - analogReadArray%d, octave:%d\n",
-                              maxValIndex, maxVal, analogReadArray[maxValIndex], octave);
+                //maxValIndex, maxVal, analogReadArray[maxValIndex], octave);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
                 track[i].notePlayed[0] = (maxValIndex) + (octave * 12) + track[i].NoteOffset[phrase];
-                // Serial.print(track[i].notePlayed[0]);
-                // Serial.print("--");
-
+                //every step, the last played note gets subtracted by the "drop"pot_value[0] value
                 analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
-                // Serial.println(maxValIndex);
+                //if one of the note "weights" has reached the "tide"Pot_Value[1] level, we recall all "weights" from the pot positions
                 if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
                   for (int d = 0; d < 12; d++) {
                     analogReadArray[d] = NFX2[NFX2presetNr].Pot_Value[d + 4];
@@ -161,7 +150,6 @@ void process_clock() {
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] == VALUE_NOTEOFF) {
               track[i].notePressed[0] = false;
               track[i].tick_true = true;
-              //Serial.println(track[i].notePlayed[0]);
             }
           }
           //random
@@ -170,8 +158,8 @@ void process_clock() {
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] > VALUE_NOTEOFF) {
               if (track[i].tick_true) {
                 track[i].tick_true = false;
-                NFX3[NFX3presetNr].Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
-                track[i].notePlayed[0] = random(0, 11) + (NFX3[NFX3presetNr].Oct1 * 12);
+                int NFX3Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
+                track[i].notePlayed[0] = random(0, 11) + (NFX3Oct1 * 12);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
               }
@@ -184,22 +172,23 @@ void process_clock() {
           }
           //Polyrhytm
           if (allTracks[i]->seqMode == 4) {
+            static int NFX4reset[MAX_VOICES];
             if (track[i].MIDItick % TICKS_PER_STEP == 0) {
               for (int polys = polys; polys < MAX_VOICES; polys++) {
                 //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
-                NFX4[NFX4presetNr].reset[polys]++;
+                NFX4reset[polys]++;
                 //Serial.println(NFX4[1].reset[0]);
-                if (NFX4[NFX4presetNr].reset[polys] >= NFX4[NFX4presetNr].Pot_Value[polys]) {
-                  NFX4[NFX4presetNr].reset[polys] = 0;
+                if (NFX4reset[polys] >= NFX4[NFX4presetNr].Pot_Value[polys]) {
+                  NFX4reset[polys] = 0;
                 }
                 //if the actual step is high, play the notes d
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] > VALUE_NOTEOFF) {
+                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] > VALUE_NOTEOFF) {
                   track[i].playNoteOnce[polys] = true;
                   track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
+                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
                 }
                 //NoteOff
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4[NFX4presetNr].reset[polys]].voice[polys] == VALUE_NOTEOFF) {
+                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] == VALUE_NOTEOFF) {
                   track[i].notePressed[polys] = false;
                 }
               }
