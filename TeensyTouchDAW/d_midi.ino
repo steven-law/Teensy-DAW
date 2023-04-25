@@ -18,7 +18,7 @@ void process_clock() {
   if (master_clock.process_MIDItick()) {
     seq_MIDItick++;
 
-  
+
     //clockstuff before we let the notes fly
     //clockdivision
     for (int i = 0; i < NUM_TRACKS; i++) {
@@ -56,7 +56,6 @@ void process_clock() {
       for (int i = 0; i < NUM_TRACKS; i++) {
         track[i].MIDItick = 0;
         track[i].MIDItick_16 = 0;
-
       }
       tft.fillRect(STEP_FRAME_W * 2, STEP_FRAME_H * 14, STEP_FRAME_W * 16, STEP_FRAME_H, ILI9341_DARKGREY);
     }
@@ -120,25 +119,28 @@ void process_clock() {
               if (track[i].tick_true) {
                 track[i].tick_true = false;
                 maxVal = 0;
-                if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
-                  for (int i = 0; i < 12; i++) {
-                    if (analogReadArray[i] > maxVal) {
-                      maxVal = analogReadArray[i];
-                      maxValIndex = i;
-                      octave = random(cc23, cc24);
-                    }
+                //if (NFX2[NFX2presetNr].Pot_Value[2] <= NFX2[NFX2presetNr].Pot_Value[3]) {
+                for (int d = 0; d < 12; d++) {
+                  if (analogReadArray[d] > maxVal) {
+                    maxVal = analogReadArray[d];
+                    maxValIndex = d;
+                    octave = random(cc23, cc24);
                   }
                 }
+                // }
 
-                if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value) {
-                  for (int i = 11; i >= 0; i--) {
-                    if (analogReadArray[i] > maxVal) {
-                      maxVal = analogReadArray[i];
-                      maxValIndex = i;
+                /* if (NFX2[NFX2presetNr].Pot_Value[2] > NFX2[NFX2presetNr].Pot_Value[3]) {
+                  for (int d = 11; d >= 0; d--) {
+                    if (analogReadArray[d] > maxVal) {
+                      maxVal = analogReadArray[d];
+                      maxValIndex = d;
                       octave = random(cc24, cc23);
                     }
                   }
                 }
+                */
+                //Serial.printf("dropseq: maxValIndex:%d, maxVal:%d - analogReadArray%d, octave:%d\n",
+                              maxValIndex, maxVal, analogReadArray[maxValIndex], octave);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
                 track[i].notePlayed[0] = (maxValIndex) + (octave * 12) + track[i].NoteOffset[phrase];
@@ -147,19 +149,19 @@ void process_clock() {
 
                 analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
                 // Serial.println(maxValIndex);
+                if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
+                  for (int d = 0; d < 12; d++) {
+                    analogReadArray[d] = NFX2[NFX2presetNr].Pot_Value[d + 4];
+                  }
+                }
               }
             }
+
             //NoteOff
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] == VALUE_NOTEOFF) {
               track[i].notePressed[0] = false;
               track[i].tick_true = true;
               //Serial.println(track[i].notePlayed[0]);
-            }
-
-            if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
-              for (int i = 0; i < 12; i++) {
-                analogReadArray[i] = NFX2[NFX2presetNr].Pot_Value[i + 4];
-              }
             }
           }
           //random
@@ -210,7 +212,7 @@ void process_clock() {
                 if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
                   track[i].playNoteOnce[polys] = true;
                   track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves*12);
+                  track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
                 }
                 //NoteOff
                 if (!beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
@@ -223,7 +225,7 @@ void process_clock() {
       }
     }
     master_clock.drawPositionPointers();
-    Serial.printf("phrase:%d, track-0 MIDItick_16:%d,MIDItick:%d, seq_MIDItick: %d\n", phrase,track[0].MIDItick_16, track[0].MIDItick, seq_MIDItick);
+    //Serial.printf("phrase:%d, track-0 MIDItick_16:%d,MIDItick:%d, seq_MIDItick: %d\n", phrase, track[0].MIDItick_16, track[0].MIDItick, seq_MIDItick);
   }
 }
 

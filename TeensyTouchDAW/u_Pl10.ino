@@ -84,11 +84,11 @@ void Plugin10_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin("plugin10", 26);
+        savePlugin("plugin10", 9);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin("plugin10", 26);
+        loadPlugin("plugin10", 9);
       }
     }
   }

@@ -54,9 +54,10 @@ const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "G
 #define NFX4NR 3
 #define NFX5NR 4
 #define NFX6NR 5
+
 //seqmode "grid"
 struct Grids {
-  byte Pot_Value[12]{ 0 };
+  byte Pot_Value[16]{ 0 };
   //  byte Pot_Value_graph[12]{0};
 };
 Grids* NFX1;
@@ -200,7 +201,7 @@ const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
 
 //seqmode "PolyR"
 struct PolyR {
-  byte Pot_Value[12]{ 15 };
+  byte Pot_Value[16]{ 15 };
   byte reset[12];
 };
 PolyR* NFX4;
