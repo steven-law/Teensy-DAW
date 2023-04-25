@@ -129,13 +129,16 @@ void drawActiveRect(int xPos, byte yPos, byte xsize, byte ysize, bool state, cha
   }
 }
 //draws a number into a rect of 2x1grids
-void drawNrInRect_short(int xPos, byte yPos, byte dvalue, int color, const char* function) {
+void drawNrInRect_short(int xPos, byte yPos, int color, const char* function, byte dvalue = 255) {
   tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
   tft.setFont(Arial_8);
   tft.setTextColor(color);
   tft.setCursor(STEP_FRAME_W * xPos + 2, STEP_FRAME_H * yPos + 4);
   tft.print(function);
-  tft.print(dvalue);
+  if (dvalue != 255) {
+    tft.print(dvalue);
+  }
 }
 void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
   static int dvalue_old;
@@ -149,9 +152,52 @@ void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
   tft.print(dvalue);
   dvalue_old = dvalue;
 }
-
-
-
+void drawstepPosition(int current) {
+  //draw the songpointer positions
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
+    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
+      tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
+      tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+    }
+    if (current == 0) {
+      tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
+    }
+  }
+}
+void drawbarPosition() {
+  //draw phrasenumber
+  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
+  tft.setTextColor(ILI9341_WHITE);
+  tft.setFont(Arial_9);
+  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
+  tft.print(phrase);
+  //drawbarPosition
+  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
+    tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
+    tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
+    tft.drawFastHLine((pixelphrase - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
+  }
+  if (phrase % 16 == 0) {
+    pixelphrase = 0;
+    tft.fillRect(STEP_FRAME_W * 15, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 4, 4, ILI9341_DARKGREY);
+    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 1, 4, ILI9341_GREEN);
+  }
+}
+//draws a number into a rect of 2x1grids
+void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
+  static char* dvalue_old_char;
+  tft.setFont(Arial_8);
+  tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
+  tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+  tft.setTextColor(color);
+  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
+  tft.print(dvalue_char);
+  dvalue_old_char = dvalue_char;
+}
+#define SHOW_ENCODER0 1
+#define SHOW_ENCODER1 3
+#define SHOW_ENCODER2 16
+#define SHOW_ENCODER3 18
 
 class classForTracks {
 public:
@@ -160,14 +206,17 @@ public:
   byte thisTrack;          //desired track for the class
   byte MIDIChannel;        //desired MIDIChannel
   byte clipToEdit = 0;     //this is the clip to edit in the sequencerviews
-  byte shownOctaves = 5;   //shown Octave for the melodic tracks
+  byte shownOctaves = 3;   //shown Octave for the melodic tracks
   byte seqMode = 0;        //active Sequencer Mode
   byte voiceCount = 0;     //desired voiceCount number for polyphony
+  byte maxVoiceCount;      //sets the maximum voices for the track
   byte stepLenght = 5;     //step lenght for the step sequencerMode
   byte clockDivision = 1;  //desired clockdivision for the track
 
-  bool mute = false;  //todo
-  bool solo = false;  //todo
+
+  bool muted = false;   //todo
+  bool soloed = false;  //todo
+  bool soloMuteState = false;
 
 
   byte gainVol = 127;  //main volume for plugins
@@ -177,9 +226,10 @@ public:
   byte FX3Vol = 0;     //volume to send to FX3 (Delay)
 
   //setup function called in setup() to set the tracknumber and initial MIDIChannel
-  void setup(byte new_track, byte new_MIDIChannel) {
+  void setup(byte new_track, byte new_MIDIChannel, byte new_maxVoiceCount = 12) {
     thisTrack = new_track;
     MIDIChannel = new_MIDIChannel;
+    maxVoiceCount = new_maxVoiceCount;
   }
   //sets the desired note into the desired voice, "stepPosition" and clip
   //the step is "stepLenght" long
@@ -204,13 +254,13 @@ public:
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] == VALUE_NOTEOFF) {
       ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
     }
-    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+    Serial.printf("Set NoteON: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d\n", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
   void setNoteOffToTick(byte tick_s, byte voiceCount_s, byte note_s) {
     if (ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] > VALUE_NOTEOFF) {
       ctrack[thisTrack].sequence[clipToEdit].tick[tick_s].voice[voiceCount_s] = note_s;
     }
-    Serial.printf("Set: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
+    Serial.printf("Set NoteOFF: Track: %d, Clip: %d, Tick: %d, Voice: %d, Note: %d\n", thisTrack, clipToEdit, tick_s, voiceCount_s, note_s);
   }
   //sets the desired MIDIChannel
   void setMIDIChannel(int encoderd) {
@@ -221,19 +271,19 @@ public:
   void drawMIDIChannel() {
 
     //draw midichannel
-    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-    tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 11 + 3);
+    tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 0 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+    tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 0 + 3);
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_WHITE);
     tft.setTextSize(1);
     tft.print("Ch:");
     tft.print(track[desired_track].MIDIchannel);
-    tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
+    tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
     //draw MidiCC
     for (int plugintext = 0; plugintext <= 16; plugintext++) {
       if (track[desired_instrument].MIDIchannel == plugintext) {
-        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1 + 5);
         tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
         tft.setTextSize(1);
@@ -243,8 +293,8 @@ public:
     //draw PluginName
     for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
       if (track[desired_track].MIDIchannel == plugintext + 17) {
-        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
+        tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
+        tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1 + 5);
         tft.setFont(Arial_8);
         tft.setTextColor(ILI9341_WHITE);
         tft.setTextSize(1);
@@ -259,38 +309,44 @@ public:
     Serial.printf("Track= %d, clipToEdit= %d\n", thisTrack, clipToEdit);
   }
   void drawClipToEdit() {
-    drawNrInRect_short(18, 1, clipToEdit, trackColor[thisTrack] + (clipToEdit * 20), "Cl:");
+    drawNrInRect_short(SHOW_ENCODER1, 0, ILI9341_RED, "Cl:", clipToEdit);
   }
   //sets the active voicecount(number) for polyphony
   void setVoiceCount(int encoderd) {
-    voiceCount = constrain((voiceCount + encoderd), 0, MAX_VOICES);
+    voiceCount = constrain((voiceCount + encoderd), 0, maxVoiceCount);
     drawVoiceCount();
     Serial.printf("Track= %d, voiceCount= %d\n", thisTrack, voiceCount);
   }
   void drawVoiceCount() {
-    drawNrInRect_short(18, 6, voiceCount, trackColor[desired_instrument], "Vox:");
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "Vx", voiceCount);
   }
   //sets the desired clockdivision
   //in code we look if (Masterclock.tick % clockdivision == 0)
   //to count the track´s MIDItick upwards
   void setClockDivision(int encoderd) {
-    clockDivision = constrain((clockDivision + encoderd), 1, 96);
-    drawNrInRect_short(18, 8, clockDivision, trackColor[desired_instrument], "cD:");
+    clockDivision = constrain((clockDivision + encoderd), 1, TICKS_PER_BAR);
+    drawClockDivision();
     Serial.printf("Track= %d, clockDivision= %d\n", thisTrack, clockDivision);
+  }
+  void drawClockDivision() {
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "cD:", clockDivision);
   }
   //sets the desired Octave for the melodictracks
   void setShownOctaves(int encoderd) {
     shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
     Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
   }
+  void drawShownOctave() {
+    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, "Oct", stepLenght);
+  }
   //sets the desired stepLenght for the stepsequencer
   void setStepLenght(int encoderd) {
-    stepLenght = constrain((stepLenght + encoderd), 1, 96);
+    stepLenght = constrain((stepLenght + encoderd), 1, TICKS_PER_BAR);
     drawStepLenght();
     Serial.printf("Track= %d, stepLenght= %d\n", thisTrack, stepLenght);
   }
   void drawStepLenght() {
-    drawNrInRect_short(18, 7, stepLenght, trackColor[desired_instrument], "SL:");
+    drawNrInRect_short(SHOW_ENCODER3, 0, ILI9341_WHITE, "SL:", stepLenght);
   }
   //sets the desired sequencer Mode
   void setSeqMode(int encoderd) {
@@ -299,7 +355,7 @@ public:
     Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
   }
   void drawSeqMode() {
-    drawNrInRect_short(18, 10, "", trackColor[desired_instrument], seqModes[seqMode]);
+    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, seqModes[seqMode]);
   }
 
   //draws the left navigator for the tracks
@@ -320,7 +376,21 @@ public:
       }
     }
   }
-  void setMuteSolo() {
+  void setMuteSolo(byte XPos, byte YPos, int encoder) {
+    static byte muteSolo = 1;
+    if (enc_moved[XPos] || incomingCC_changed[XPos]) {
+      incomingCC_changed[XPos] = false;
+      muteSolo = constrain(getValue(XPos, 1, muteSolo), 0, 2);
+      if (muteSolo == 2) {
+        selectSolo(XPos);
+      }
+      if (muteSolo == 1) {
+        unselectMuteSolo(XPos);
+      }
+      if (muteSolo == 0) {
+        selectMute(XPos);
+      }
+    }
   }
   void setVolDry(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
@@ -364,6 +434,29 @@ public:
   }
   void drawPotPos(byte XPos, byte YPos, byte value) {
     drawPot(XPos, YPos, value, value, trackNames_short[thisTrack], trackColor[thisTrack]);
+  }
+  void selectSolo(byte XPos) {
+    for (int others = 0; others <= 7; others++) {
+      soloMuteState = HIGH;
+    }
+    soloMuteState = LOW;
+    soloed = HIGH;
+    drawActiveRect((XPos + 1) * 4, 5, 1, 1, soloed, "S", ILI9341_WHITE);
+  }
+
+  void selectMute(byte XPos) {
+    muted = true;
+    drawActiveRect((((XPos + 1) * 4) - 1), 5, 1, 1, muted, "M", ILI9341_RED);
+  }
+  void unselectMuteSolo(byte XPos) {
+    for (int others = 0; others <= 7; others++) {
+      soloMuteState = LOW;
+    }
+    soloMuteState = LOW;
+    soloed = LOW;
+    muted = LOW;
+    drawActiveRect((((XPos + 1) * 4) - 1), 5, 1, 1, muted, "M", ILI9341_RED);
+    drawActiveRect((XPos + 1) * 4, 5, 1, 1, soloed, "S", ILI9341_WHITE);
   }
 };
 
@@ -451,8 +544,8 @@ public:
   uint32_t _next_clock = 0;
   uint32_t _clock = 160;
   uint32_t MIDItick = -1;
-  uint32_t step_tick = -1;
-  uint32_t bar_tick = -1;
+  uint32_t stepTick = -1;
+  uint32_t barTick = -1;
   bool seq_run = false;
   bool seq_rec = false;
   bool playing = false;
@@ -509,7 +602,6 @@ public:
         MIDItick++;                //spit out a MIDItick
         send_MIDIclock();
         msecsclock = 0;
-
         return true;
       }
     }
@@ -522,7 +614,7 @@ public:
 
 
   //returns the actual STEPtick count
-  uint32_t get_step_tick() {
+  uint32_t get_stepTick() {
     return MIDItick % 6;
   }
   //returns if the clock is on a STEP
@@ -531,11 +623,28 @@ public:
   }
 
 
-  uint32_t get_bar_tick() {  //returns the actual BARtick count
-    return MIDItick % 96;
+  uint32_t get_barTick() {  //returns the actual BARtick count
+    return MIDItick % TICKS_PER_BAR;
   }
   bool is_tick_on_bar() {
-    return MIDItick % 96 == 0;
+    return MIDItick % TICKS_PER_BAR == 0;
+  }
+  //draws all the timerelated stuff for the sequencer
+  void drawPositionPointers() {
+    if (MIDItick % 6 == 0) {
+      stepTick++;
+      if (stepTick == NUM_STEPS) {
+        stepTick = 0;
+      }
+      drawstepPosition(stepTick);
+    }
+    if (MIDItick % TICKS_PER_BAR == 0) {
+      barTick++;
+      if (barTick == 16) {
+        barTick == 0;
+      }
+      drawbarPosition();
+    }
   }
 };
 

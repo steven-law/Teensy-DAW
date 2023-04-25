@@ -67,10 +67,10 @@ void startUpScreen() {  //static Display rendering
   tft.print("M");
 
   //scale Select
-  tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
+  // tft.drawRect(STEP_FRAME_W * POSITION_SCALE_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
 
   //arrangment Select
-  tft.drawRect(STEP_FRAME_W * POSITION_ARR_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
+  // tft.drawRect(STEP_FRAME_W * POSITION_ARR_BUTTON, 0, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_WHITE);
 
   // record button & Rectangle
   tft.drawRect(STEP_FRAME_W * POSITION_RECORD_BUTTON, 0, STEP_FRAME_W, STEP_FRAME_H, ILI9341_WHITE);
@@ -112,11 +112,12 @@ void clearWorkSpace() {                                                         
 }
 void showCoordinates() {
   tft.fillRect(20, 0, 50, 13, ILI9341_DARKGREY);  //Xmin, Ymin, Xlength, Ylength, color
-  tft.setTextColor(ILI9341_GREEN);
+  tft.setTextColor(ILI9341_BLUE);
   tft.setFont(Arial_10);
   tft.setCursor(20, 3);
   tft.print("X");
   tft.print(gridTouchX);
+  tft.setTextColor(ILI9341_RED);
   tft.setCursor(45, 3);
   tft.print("Y");
   tft.print(gridTouchY);
@@ -142,38 +143,9 @@ void show_tempo() {
   Serial.println(master_clock.get_tempo());
   // }
 }
-void drawbarPosition() {
-  //draw phrasenumber
-  tft.fillRect(STEP_FRAME_W * POSITION_BAR_BUTTON + 1, 2, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 3, ILI9341_DARKGREY);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setFont(Arial_9);
-  tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
-  tft.print(phrase + 1);
-  //drawbarPosition
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
-    tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
-    tft.drawFastHLine((pixelphrase - 1) * phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_DARKGREY);
-  }
-  if (phrase % 16 == 0) {
-    pixelphrase = 0;
-    tft.fillRect(STEP_FRAME_W * 15, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 4, 4, ILI9341_DARKGREY);
-    tft.fillRect(STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y, STEP_FRAME_W * 1, 4, ILI9341_GREEN);
-  }
-}
 
-void drawstepPosition(int current) {
-  //draw the songpointer positions
-  for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
-    for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
-      tft.drawFastHLine(current * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_GREEN);
-      tft.drawFastHLine((current - 1) * stepwidth + STEP_FRAME_W * 2, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
-    }
-    if (current == 0) {
-      tft.drawFastHLine(STEP_FRAME_W * 17, STEP_POSITION_POINTER_Y + songPointerThickness, STEP_FRAME_W, ILI9341_DARKGREY);
-    }
-  }
-}
+
+
 //===========================================================
 // Try Draw using writeRect
 #define BUFFPIXEL 80
@@ -341,7 +313,6 @@ void drawarrengmentLines(int songpageNumber) {
     }
   }
 }
-
 void drawarrengmentLine(int songpageNumber, byte trackTouchY, byte touched_phrase) {
   page_phrase_start = songpageNumber * 16;
   page_phrase_end = (songpageNumber + 1) * 16;
@@ -396,7 +367,6 @@ void drawarrengmentLine(int songpageNumber, byte trackTouchY, byte touched_phras
     tft.print(abs(track[trackTouchY].NoteOffset[touched_phrase]));
   }
 }
-
 void clearArrangment() {
   for (int ctrack = 0; ctrack < 8; ctrack++) {
     for (int cphrase = 0; cphrase < MAX_PHRASES - 1; cphrase++) {
@@ -407,33 +377,13 @@ void clearArrangment() {
     }
   }
 }
-
 void draw_start_of_loop() {
-  byte start_of_loop_old;
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
-  tft.print("S");
-  tft.print(start_of_loop_old);
-  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 1, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H + 4);
-  tft.print("S");
-  tft.print(start_of_loop);
-  start_of_loop_old = start_of_loop;
+  drawNrInRect_short(16, 0, ILI9341_GREEN, "S", start_of_loop);
+  Serial.printf("start of loop: %d\n",start_of_loop);
 }
 void draw_end_of_loop() {
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
-  tft.print("E");
-  tft.print(end_of_loop_old);
-  tft.drawRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2 - 1, STEP_FRAME_H, ILI9341_WHITE);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * 18 + 4, STEP_FRAME_H * 2 + 4);
-  tft.print("E");
-  tft.print(end_of_loop - 1);
-  end_of_loop_old = end_of_loop - 1;
+  drawNrInRect_short(18, 0, ILI9341_WHITE, "E", end_of_loop);
+  Serial.printf("end of loop: %d\n",end_of_loop);
 }
 
 
@@ -454,7 +404,7 @@ void drawStepSequencerStatic(int stepWidth) {
   }
 }
 void draw_Notenames() {
-  for (int n = 0; n < num_voice; n++) {  //hor notes
+  for (int n = 0; n < MAX_VOICES; n++) {  //hor notes
     if (scales[scaleSelected][n]) {
       tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
     }
@@ -463,29 +413,33 @@ void draw_Notenames() {
     tft.setFont(Arial_8);
     tft.setTextColor(ILI9341_BLACK);
     tft.setTextSize(1);
-    tft.print(noteNames[n]);
-  }
-}
-void draw_Drumnotes() {
-  for (int n = 0; n < num_voice; n++) {  //hor notes
-    tft.fillRect(STEP_FRAME_W, STEP_FRAME_H * n + STEP_FRAME_H, STEP_FRAME_W, STEP_FRAME_H, trackColor[desired_instrument]);
-    tft.setCursor(18, STEP_FRAME_H * n + 18);
-    tft.setFont(Arial_8);
-    tft.setTextColor(ILI9341_BLACK);
-    tft.setTextSize(1);
-    tft.print(drumnote[n]);
-  }
-}
-
-
-void drawActiveDrumSteps() {
-  clearStepsGrid();
-  for (int tone = 0; tone < 12; tone++) {
-    for (int steps = 0; steps < STEP_QUANT; steps++) {
-      if (channel1Clip[allTracks[0]->clipToEdit][tone][steps]) {
-        tft.fillCircle((steps * STEP_FRAME_W) + DOT_OFFSET_X, ((tone)*STEP_FRAME_H) + DOT_OFFSET_Y, DOT_RADIUS, trackColor[0] + ((allTracks[0]->clipToEdit) * 20));
-      }
+    if (desired_instrument == 0) {
+      tft.print(n + allTracks[desired_instrument]->shownOctaves * 12);
+    } else {
+      tft.print(noteNames[n]);
     }
+  }
+}
+void drawMelodicControls() {
+  switch (lastPotRow) {
+    case 0:
+      showCoordinates();
+      allTracks[desired_instrument]->drawStepLenght();
+      allTracks[desired_instrument]->drawVoiceCount();
+
+      break;
+    case 1:
+      allTracks[desired_instrument]->drawShownOctave();
+      allTracks[desired_instrument]->drawClipToEdit();
+      allTracks[desired_instrument]->drawClockDivision();
+      allTracks[desired_instrument]->drawMIDIChannel();
+      break;
+    case 2:
+      allTracks[desired_instrument]->drawSeqMode();
+      drawChar(3, 0, "", ILI9341_RED);
+      drawChar(16, 0, "", ILI9341_GREEN);
+      drawChar(18, 0, "", ILI9341_WHITE);
+      break;
   }
 }
 
@@ -509,8 +463,9 @@ void drawActivePolySteps() {  //draw steps for the melodic tracks 2-8
 void drawActivePolyPixel() {  //draw steps for the melodic tracks 2-8
   clearPixelGrid();
   int tone_start = allTracks[desired_instrument]->shownOctaves * 12;
+
   //draw active steps
-  for (int steps = 0; steps < MAX_TICKS; steps++) {
+  for (int steps = 0; steps < TICKS_PER_BAR; steps++) {
     for (int polys = 0; polys < MAX_VOICES; polys++) {
       int dot_on_X = (steps * 2) + 32;
       int dot_on_Y = ((ctrack[desired_track].sequence[allTracks[desired_instrument]->clipToEdit].tick[steps].voice[polys] - tone_start) * STEP_FRAME_H) + DOT_OFFSET_Y;
@@ -581,7 +536,7 @@ void clearStepsGrid() {  // clear all Steps from Display
 }
 void clearPixelGrid() {  // clear all Steppixels from Display
   for (int T = 0; T < 12; T++) {
-    for (int S = 0; S < MAX_TICKS; S++) {
+    for (int S = 0; S < TICKS_PER_BAR; S++) {
       for (int w = -4; w < 5; w++) {
         tft.drawPixel(S * 2 + 32, T * STEP_FRAME_H + DOT_OFFSET_Y + w, ILI9341_DARKGREY);  // circle: x, y, radius, color
         tft.drawPixel((S * 2) + 1 + 32, T * STEP_FRAME_H + DOT_OFFSET_Y + w, ILI9341_DARKGREY);
@@ -632,7 +587,11 @@ void drawOctaveNumber() {
   tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * OCTAVE_CHANGE_TEXT, STEP_FRAME_W * 2, STEP_FRAME_H * 1 + 1, ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * 18 + 11, STEP_FRAME_H * OCTAVE_CHANGE_TEXT);
   tft.setFont(Arial_16);
-  tft.setTextColor(ILI9341_WHITE);
+  if (lastPotRow == 1) {
+    tft.setTextColor(ILI9341_BLUE);
+  } else {
+    tft.setTextColor(ILI9341_LIGHTGREY);
+  }
   tft.setTextSize(1);
   tft.print(allTracks[desired_instrument]->shownOctaves);
 }
@@ -644,49 +603,17 @@ void drawOctaveTriangle() {
   int UP_bottommost = STEP_FRAME_H * OCTAVE_CHANGE_UP_BOTTOMMOST;
   int DOWN_topmost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_TOPMOST;
   int DOWN_bottommost = STEP_FRAME_H * OCTAVE_CHANGE_DOWN_BOTTOMMOST;
+  uint32_t color;
+  if (lastPotRow == 1) {
+    color = ILI9341_BLUE;
+  } else {
+    color = ILI9341_LIGHTGREY;
+  }
   tft.fillRect(leftmost + 1, STEP_FRAME_H * 2, STEP_FRAME_W * 2, STEP_FRAME_H * 3, ILI9341_DARKGREY);
-  tft.fillTriangle(leftmost + 1, UP_bottommost, rightmost, UP_bottommost, leftmost + STEP_FRAME_W, UP_topmost, ILI9341_LIGHTGREY);         //octave arrow up
-  tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W, DOWN_bottommost, ILI9341_LIGHTGREY);  //x1, y1, x2, y2, x3, y3
+  tft.fillTriangle(leftmost + 1, UP_bottommost, rightmost, UP_bottommost, leftmost + STEP_FRAME_W, UP_topmost, color);         //octave arrow up
+  tft.fillTriangle(leftmost + 1, DOWN_topmost, rightmost - 2, DOWN_topmost, leftmost + STEP_FRAME_W, DOWN_bottommost, color);  //x1, y1, x2, y2, x3, y3
 }
-void drawMIDIchannel() {
-  //MIDIChannel assign button
-  tft.setCursor(STEP_FRAME_W * 18 + 2, STEP_FRAME_H * 10 + 2);
-  tft.setFont(Arial_8);
-  tft.setTextColor(trackColor[desired_instrument]);
-  tft.setTextSize(1);
-  tft.print("MCh:");
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 11, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-  //show midichannel
-  tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 11 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * 18 + 8, STEP_FRAME_H * 11 + 3);
-  tft.setFont(Arial_10);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  tft.print(track[desired_track].MIDIchannel);
-  tft.drawRect(STEP_FRAME_W * 18, STEP_FRAME_H * 12, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument]);
-  //draw MidiCC
-  for (int plugintext = 0; plugintext <= 16; plugintext++) {
-    if (track[desired_instrument].MIDIchannel == plugintext) {
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print("CC");
-    }
-  }
-  //draw Plugin
-  for (int plugintext = 0; plugintext < MAX_PLUGINS; plugintext++) {
-    if (track[desired_track].MIDIchannel == plugintext + 17) {
-      tft.fillRect(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-      tft.setCursor(STEP_FRAME_W * 18 + 1, STEP_FRAME_H * 12 + 5);
-      tft.setFont(Arial_8);
-      tft.setTextColor(ILI9341_WHITE);
-      tft.setTextSize(1);
-      tft.print(pluginName[plugintext]);
-    }
-  }
-}
+
 
 
 //plugin stuff
@@ -730,6 +657,7 @@ void drawPotDrum(int XPos, byte YPos, byte fvalue, int dvalue, byte dname, int c
   circlePos_old = circlePos;
   dvalue_old = dvalue;
 }
+/*
 void drawPot(int XPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
 
   //drawPot Variables
@@ -756,7 +684,7 @@ void drawPot(int XPos, byte YPos, byte fvalue, char* dvalue_char, char* dname, i
   tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
   circlePos_old = circlePos;
   dvalue_old_char = dvalue_char;
-}
+}*/
 
 void drawPotCC(int XPos, byte YPos, byte fvaluecc, byte dvaluecc, int color) {  //xposition, yposition, value 1-127, value to draw, name to draw, color
   //drawPotcc Variables
@@ -798,15 +726,4 @@ void drawNrInRect2(int xPos, byte yPos, byte dvalue, int color) {
   tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
   tft.print(dvalue);
   dvalue_old2 = dvalue;
-}
-//draws a number into a rect of 2x1grids
-void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
-  static char* dvalue_old_char;
-  tft.setFont(Arial_8);
-  //tft.drawRect(STEP_FRAME_W * xPos, STEP_FRAME_H * yPos, STEP_FRAME_W * 2, STEP_FRAME_H, color);
-  tft.fillRect(STEP_FRAME_W * xPos + 1, STEP_FRAME_H * yPos + 1, STEP_FRAME_W * 2 - 2, STEP_FRAME_H - 2, ILI9341_DARKGREY);
-  tft.setTextColor(color);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos + 4);
-  tft.print(dvalue_char);
-  dvalue_old_char = dvalue_char;
 }

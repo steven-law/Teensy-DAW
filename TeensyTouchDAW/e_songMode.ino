@@ -1,5 +1,5 @@
 //songmode file contains the few functions needed for the songmode
-//draw functions are in a_display_functions.ino 
+//draw functions are in a_display_functions.ino
 
 
 void gridSongMode(int songpageNumber) {  //static Display rendering
@@ -10,6 +10,9 @@ void gridSongMode(int songpageNumber) {  //static Display rendering
   drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
   draw_start_of_loop();
   draw_end_of_loop();
+
+  drawChar(1, 0, "", ILI9341_BLUE);
+  drawChar(3, 0, "", ILI9341_RED);
   midi01.sendControlChange(0, 0, 1);
   //occationally working on a full arrangment view
 
@@ -38,13 +41,13 @@ void songModePage(int songpageNumber) {
     if (enc_moved[0]) {
       gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
       drawCursor();
-      showCoordinates();
+      //showCoordinates();
     }
     //gridTouchY
     if (enc_moved[1]) {
       gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
       drawCursor();
-      showCoordinates();
+      //showCoordinates();
     }
     //Start of loop
     if (enc_moved[2]) {
@@ -58,44 +61,7 @@ void songModePage(int songpageNumber) {
       draw_end_of_loop();
     }
   }
-  //clipassign
-  if (button[15]) {
-    if (seq_rec) {
-      track[trackTouchY].arrangment1[touched_phrase] = track[trackTouchY].lastclip;
-      track[trackTouchY].NoteOffset[touched_phrase] = track[trackTouchY].lastNoteOffset;
-      track[trackTouchY].Ttrckprst[touched_phrase] = track[trackTouchY].lastpresetNr;
-      track[trackTouchY].volume[touched_phrase] = track[trackTouchY].lastvolume;
-    }
 
-    //Clipassign
-    if (enc_moved[0]) {
-      track[trackTouchY].arrangment1[touched_phrase] = constrain((track[trackTouchY].lastclip + encoded[0]), 0, MAX_CLIPS);
-      track[trackTouchY].lastclip = track[trackTouchY].arrangment1[touched_phrase];
-    }
-    //Note transpose
-    if (enc_moved[1]) {
-      track[trackTouchY].NoteOffset[touched_phrase] = constrain((track[trackTouchY].lastNoteOffset + encoded[1]), -32, 32);
-      track[trackTouchY].lastNoteOffset = track[trackTouchY].NoteOffset[touched_phrase];
-    }
-    //presetnr
-    if (enc_moved[2]) {
-      track[trackTouchY].Ttrckprst[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
-      track[trackTouchY].lastpresetNr = track[trackTouchY].Ttrckprst[touched_phrase];
-    }
-    //volume
-    if (enc_moved[3]) {
-      track[trackTouchY].volume[touched_phrase] = constrain((track[trackTouchY].lastvolume + encoded[3]), 0, 127);
-      track[trackTouchY].lastvolume = track[trackTouchY].volume[touched_phrase];
-    }
-    //draw horizontal song arrangment Lines
-    if (msecs % 100 == 0) {
-      drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
-      drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-    }
-  }
 
   //end of loop
   if (button[14]) {
@@ -122,40 +88,42 @@ void songModePage(int songpageNumber) {
 
   if (ts.touched() || button[15]) {
 
-
-    /*
-    //Assigning clips to the arranger
-    if (gridTouchX >= SEQ_GRID_LEFT && gridTouchX <= SEQ_GRID_RIGHT && trackTouchY >= 0 && trackTouchY < 8) {
-
-      //if (abs(map(Potentiometer[0], 0, 127, 0, 8) - track[trackTouchY].arrangment1[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].arrangment1[touched_phrase] != map(Potentiometer[0], 0, 127, 0, 8)) {
-        track[trackTouchY].arrangment1[touched_phrase] = map(Potentiometer[0], 0, 127, 0, 8);
-      }
-      //}
-      // if (abs(map(Potentiometer[1], 0, 127, -32, 32) - track[trackTouchY].NoteOffset[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].NoteOffset[touched_phrase] != map(Potentiometer[1], 0, 127, -32, 32)) {
-        track[trackTouchY].NoteOffset[touched_phrase] = map(Potentiometer[1], 0, 127, -32, 32);
-      }
-      // }
-      //if (abs(map(Potentiometer[2], 0, 127, 0, 7) - track[trackTouchY].Ttrckprst[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].Ttrckprst[touched_phrase] != map(Potentiometer[2], 0, 127, 0, 7)) {
-        track[trackTouchY].Ttrckprst[touched_phrase] = map(Potentiometer[2], 0, 127, 0, 7);
-        drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      }
-      // }
-      //if (abs(Potentiometer[3] - track[trackTouchY].volume[touched_phrase]) < POTPICKUP) {
-      if (track[trackTouchY].volume[touched_phrase] != Potentiometer[3]) {
-        track[trackTouchY].volume[touched_phrase] = Potentiometer[3];
-        drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        drawNrInRect(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-        //pluginVolume(track[trackTouchY].MIDIchannel, Potentiometer[3] / 127.00);
-        //   }
-      }
-      //draw horizontal song arrangment Lines
-      drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
+    if (seq_rec) {
+      track[trackTouchY].arrangment1[touched_phrase] = track[trackTouchY].lastclip;
+      track[trackTouchY].NoteOffset[touched_phrase] = track[trackTouchY].lastNoteOffset;
+      track[trackTouchY].Ttrckprst[touched_phrase] = track[trackTouchY].lastpresetNr;
+      track[trackTouchY].volume[touched_phrase] = track[trackTouchY].lastvolume;
     }
-    */
+
+    //Clipassign
+    if (enc_moved[0]) {
+      track[trackTouchY].arrangment1[touched_phrase] = constrain((track[trackTouchY].lastclip + encoded[0]), 0, MAX_CLIPS);
+      track[trackTouchY].lastclip = track[trackTouchY].arrangment1[touched_phrase];
+      Serial.println(touched_phrase);
+    }
+    //Note transpose
+    if (enc_moved[1]) {
+      track[trackTouchY].NoteOffset[touched_phrase] = constrain((track[trackTouchY].lastNoteOffset + encoded[1]), -32, 32);
+      track[trackTouchY].lastNoteOffset = track[trackTouchY].NoteOffset[touched_phrase];
+    }
+    //presetnr
+    if (enc_moved[2]) {
+      track[trackTouchY].Ttrckprst[touched_phrase] = constrain((track[trackTouchY].lastpresetNr + encoded[2]), 0, MAX_PRESETS - 1);
+      track[trackTouchY].lastpresetNr = track[trackTouchY].Ttrckprst[touched_phrase];
+    }
+    //volume
+    if (enc_moved[3]) {
+      track[trackTouchY].volume[touched_phrase] = constrain((track[trackTouchY].lastvolume + encoded[3]), 0, 127);
+      track[trackTouchY].lastvolume = track[trackTouchY].volume[touched_phrase];
+    }
+    //draw horizontal song arrangment Lines
+    if (msecs % 100 == 0) {
+      drawarrengmentLine(songpageNumber, trackTouchY, touched_phrase);
+      drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+    }
 
 
     //page selection
@@ -165,7 +133,7 @@ void songModePage(int songpageNumber) {
           //phraseSegmentLength = 16;
           selectPage = SONGMODE_PAGE_1 + songpages;
           gridSongMode(songpages);
-          songModePage(songpages);
+          songModePage(songpages);          
         }
       }
     }
@@ -233,14 +201,13 @@ void savebutton() {
     tft.print("Writing track 1 to project.txt...");
     //save plugin 1 variables
     saveTrack(trackNames_long[0], 0);
-    saveMIDItrackDrum();
     tft.println("Done");
 
     tft.print("Writing track 2-8 to project.txt...");
     //save plugin 2-8 variables
     for (int tracks = 1; tracks < 8; tracks++) {
       saveTrack(trackNames_long[tracks], tracks);
-     // saveMIDItrack(trackNames_long[tracks], tracks);
+      // saveMIDItrack(trackNames_long[tracks], tracks);
     }
     //save Mixersettings
     saveMixer();

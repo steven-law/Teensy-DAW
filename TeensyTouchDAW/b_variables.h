@@ -45,10 +45,10 @@ static const int VALUE_NOTEOFF = 0;
 //variables for own clock
 #define NUM_CLIPS 9
 #define NUM_TRACKS 8
-#define num_voice 12
-
+#define MAX_VOICES 12
+#define TICKS_PER_STEP 6
 #define NUM_STEPS 16
-#define MAX_TICKS 96
+#define TICKS_PER_BAR 96
 #define MAX_PHRASES 256
 #define FS_MIN_TEMPO 55
 #define FS_MAX_TEMPO 200
@@ -67,7 +67,7 @@ static const int VALUE_NOTEOFF = 0;
 #define MAX_CLIPS 8    //max cliips per track
 #define MAX_PLUGINS 16
 #define MAX_CHANNELS 32  //   = MAX_PLUGINS + 16 (Midichannels)
-#define MAX_VOICES 4
+
 
 byte selectPage;
 #define DRUMTRACK 0
@@ -138,8 +138,7 @@ const char* sideTabDigit[NUM_TRACKS]{ "D", "2", "3", "4", "5", "6", "7", "8" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
 
-byte incomingCC[4];
-bool incomingCC_changed[4]{ false };
+
 
 float MasterVol = 0.12;
 byte MasterVol_graph = 15;
@@ -185,7 +184,6 @@ float* note_frequency;
 
 
 //songmode variables
-
 byte page_phrase_start;
 byte page_phrase_end;
 byte songpageNumber = 10;
@@ -195,7 +193,6 @@ byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte phraser;
 byte end_of_loop = MAX_PHRASES - 1;
 byte start_of_loop = 0;
-byte end_of_loop_old = MAX_PHRASES - 1;
 byte arrangmentSelect = 0;
 byte songpages;
 
@@ -210,7 +207,7 @@ byte trackTouchY;
 int pixelTouchX;
 
 
-//DMAMEM uint16_t fb1[320 * 240];
+
 
 
 #define CTRL_ROW_0 3
@@ -225,12 +222,15 @@ int pixelTouchX;
 //potentiomer variables
 
 int lastPotRow = 0;
+bool rowButtonpressed = false;
 int Potentiometer[4];
 bool enc_moved[4]{ 0, 0, 0, 0 };
 int encoded[4];
 bool enc_button[4];
-//button variables
+byte incomingCC[4];
+bool incomingCC_changed[4]{ false };
 
+//button variables
 bool drumnotes[12];
 #define BUTTON0 68
 #define BUTTON1 70
@@ -249,6 +249,7 @@ bool drumnotes[12];
 #define BUTTON14 50
 #define BUTTON15 48
 bool button[16]{};
+bool touched;
 
 bool showSerialonce = false;
 bool otherCtrlButtons = true;
@@ -280,7 +281,7 @@ struct tick_t {
 };
 
 struct sequence_t {
-  tick_t tick[MAX_TICKS];
+  tick_t tick[TICKS_PER_BAR];
 };
 
 struct track_t {
@@ -320,7 +321,6 @@ const char* scaleNamesShort[MAX_SCALES] = { "Chrom", "Major", "NatMi", "HarMi", 
 
 
 uint32_t seq_MIDItick;
-int tick_16;
 
 int seq_tempo = 120;
 bool seq_rec = false;
@@ -334,12 +334,6 @@ struct tracks {
   byte MIDIchannel = 0;    // (although you may not need this, depends on how you structure thing later)
   byte clip_songMode = 1;  //clipselection from the arrangement
 
-  byte velocity_ON = 96;
-  byte velocity_ON_graph = 96;
-  bool mute_state = LOW;
-  bool solo_state = LOW;
-  bool solo_mutes_state = LOW;
-
   byte midicc_value_row_1[4];
   byte midicc_number_row_1[4]{ 20, 21, 22, 23 };
   byte midicc_value_row_2[4];
@@ -348,8 +342,6 @@ struct tracks {
   byte midicc_number_row_3[4];
   byte midicc_value_row_4[4];
   byte midicc_number_row_4[4];
-
-  //byte clip[MAX_CLIPS][NUM_STEPS];
 
   byte arrangment1[256];
   int NoteOffset[256];
@@ -374,10 +366,3 @@ struct tracks {
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks* track;
-
-
-
-//channel 1 variables
-byte ch1tone;
-bool* dsend_noteOff;
-bool*** channel1Clip;

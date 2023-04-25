@@ -240,12 +240,9 @@ void Plugin_View_Dynamic() {
   }
 
 
-  //setting up the StepSequencer-view for drumtrack #1
-  if (selectPage == DRUMTRACK) {
-    drumStepSequencer();
-  }
-  //setting up the melodicStepSequencer-view for #2-8
-  for (int i = 1; i < NUM_TRACKS; i++) {
+
+  //setting up the StepSequencer-view for #1-8
+  for (int i = 0; i < NUM_TRACKS; i++) {
     if (selectPage == i) {
       melodicStepSequencer(i);
     }
@@ -299,7 +296,7 @@ void Plugin_View_Dynamic() {
 //here you have to put your NoteOn´s into
 void PluginNoteOn() {
 
-  for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
+  for (int desired_instruments = 0; desired_instruments < 8; desired_instruments++) {
     //send midi noteOn´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
@@ -307,12 +304,9 @@ void PluginNoteOn() {
           if (track[desired_instruments].notePressed[polys]) {
             if (track[desired_instruments].playNoteOnce[polys]) {
               if (!track[desired_instruments].envActive[polys]) {
-
-
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
-                Serial.printf("Note: %d, on at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
-
+                // Serial.printf("Send NoteON: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, seq_MIDItick);
                 usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
                 MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
                 for (int usbs = 0; usbs < 10; usbs++) {
@@ -400,15 +394,14 @@ void PluginNoteOn() {
 //here you have to put your NoteOff´s into
 void PluginNoteOff() {
 
-  for (int desired_instruments = 1; desired_instruments < 8; desired_instruments++) {
+  for (int desired_instruments = 0; desired_instruments < 8; desired_instruments++) {
     //send midi noteOff´s with channel 1-16
     if (track[desired_instruments].MIDIchannel < 17) {
       for (int polys = 0; polys < MAX_VOICES; polys++) {
         if (track[desired_instruments].envActive[polys]) {
           if (!track[desired_instruments].notePressed[polys]) {
             track[desired_instruments].envActive[polys] = false;
-            Serial.printf("Note: %d, off at tick: %d\n", track[desired_instruments].notePlayed[polys], nfx6_MIDItick);
-            Serial.println("");
+            // Serial.printf("Send NoteOFF: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, seq_MIDItick);
             usbMIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             MIDI.sendNoteOff(track[desired_instruments].notePlayed[polys], VELOCITYOFF, track[desired_instruments].MIDIchannel);
             for (int usbs = 0; usbs < 10; usbs++) {
@@ -711,28 +704,7 @@ void selectFilterType(int des_node, byte mixerchannel) {
   FILTERMIXER[des_node]->gain(2, 0);
   FILTERMIXER[des_node]->gain(mixerchannel, 1);
 }
-void saveMIDItrackDrum() {
-  SmfWriter writer;
-  writer.setFilename("track1");
-  writer.writeHeader();
-  //Serial.print("Start saving-> ");
-  int deltaStep = 0;
-  for (int sclip = 0; sclip < MAX_CLIPS; sclip++) {
-    for (int svoice = 0; svoice < num_voice; svoice++) {
-      for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
-        if (channel1Clip[sclip][svoice][sstep] > 0) {
-          writer.addNoteOnEvent(deltaStep, desired_instrument, drumnote[svoice], 127);
-          writer.addNoteOffEvent(4, desired_instrument, drumnote[svoice]);
-          deltaStep = 0;
-        }
-        if (channel1Clip[sclip][svoice][sstep] <= 0) {
-          deltaStep = deltaStep + 4;
-        }
-      }
-    }
-  }
-  writer.flush();
-}
+
 /*
 void saveMIDItrack(const char* track, int trackNr) {
   //sprintf(_trackname, "%s.mid\0", track);
@@ -783,25 +755,12 @@ void saveTrack(const char* trackname, byte trackNr) {
     tft.print("Writing track to:");
     tft.print(_trackname);
 
-    if (trackNr == 0) {
-      //save track1
-      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (int snote = 0; snote < 12; snote++) {
-          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
-            int step = channel1Clip[sclip][snote][sstep] + 48;
-            myFile.print((char)step);
-          }
-        }
+    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+      for (int sstep = 0; sstep < TICKS_PER_BAR; sstep++) {
+        myFile.print((char)ctrack[trackNr].sequence[sclip].tick[sstep].voice[0]);
       }
     }
 
-    if (trackNr > 0) {
-      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (int sstep = 0; sstep < MAX_TICKS; sstep++) {
-          myFile.print((char)ctrack[trackNr].sequence[sclip].tick[sstep].voice[0]);
-        }
-      }
-    }
 
     // int channel = track[trackNr].MIDIchannel + 48;
     myFile.print((char)track[trackNr].MIDIchannel);
@@ -839,25 +798,13 @@ void loadTrack(char* trackname, int trackNr) {
     tft.print("Reading clips from:");
     tft.println(_trackname);
 
-    if (trackNr == 0) {
-      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (int snote = 0; snote < 12; snote++) {
-          for (int sstep = 0; sstep < STEP_QUANT; sstep++) {
-            int step;
-            step = myFile.read();
-            channel1Clip[sclip][snote][sstep] = step - 48;
-          }
-        }
+
+    for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
+      for (int sstep = 0; sstep < TICKS_PER_BAR; sstep++) {
+        ctrack[trackNr].sequence[sclip].tick[sstep].voice[0] = myFile.read();
       }
     }
 
-    if (trackNr > 0) {
-      for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
-        for (int sstep = 0; sstep < MAX_TICKS; sstep++) {
-          ctrack[trackNr].sequence[sclip].tick[sstep].voice[0] = myFile.read();
-        }
-      }
-    }
 
     //int channel = track[trackNr].MIDIchannel + 48;
     myFile.print((char)track[trackNr].MIDIchannel);

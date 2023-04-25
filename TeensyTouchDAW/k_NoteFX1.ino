@@ -1,5 +1,5 @@
 //this file holds the various sequencermodes inside
-
+//grid sequencer
 void NoteFX1_Control() {
   switch (lastPotRow) {
     case 0:

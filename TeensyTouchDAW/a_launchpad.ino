@@ -1,6 +1,6 @@
 //this will probably hold some functions for external controllers
-//needs alot of love 
-//also working on a class for implementing complex controllers 
+//needs alot of love
+//also working on a class for implementing complex controllers
 
 void LP_drawclipRow() {
   if (launchpad) {
@@ -9,12 +9,7 @@ void LP_drawclipRow() {
       if (LP_grid_bool[LPclips]) {
         allTracks[desired_instrument]->clipToEdit = LPclips;
         clearStepsGrid();
-        if (selectPage == 0) {
-          drawActiveDrumSteps();
-        }
-        if (selectPage > 0 && selectPage < 8) {
-          drawActivePolySteps();
-        }
+        drawActivePolySteps();
         drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
       }
       midi01.sendNoteOn(LPclips, LP_RED_DIM, 1);
@@ -74,55 +69,7 @@ void LP_drawStepsequencer() {
   }
 }
 
-void LP_drumstep() {
 
-
-  if (millis() % interval == 0) {
-    //Serial.println("LP_drumstep");
-    for (int notes = 0; notes < 12; notes++) {
-      for (int steps = 0; steps < 16; steps++) {
-
-        int dot_on_X = (steps)*STEP_FRAME_W + DOT_OFFSET_X;
-        int dot_on_Y = (notes)*STEP_FRAME_H + DOT_OFFSET_Y;
-
-
-        if (!LP_octave_bool[notes]) {  //if (function_to_find_out_if_button_is held()) {
-          if (!LP_drawOnce[notes]) {
-            // control is held now, but it wasnt before -- clear screen
-            LP_drawStepsequencer();
-          }
-          LP_drawOnce[notes] = true;
-        }
-        // control was released - do something if needed when control is released?
-
-
-        else if (LP_octave_bool[notes]) {
-          LP_drawOnce[notes] = false;
-          //  if (LP_drawOnce) {
-          //    LP_drawStepsequencer();
-          //    LP_drawOnce = false;
-          //  }
-          if (channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
-            midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
-          }
-
-
-          if (LP_step_bool[steps]) {
-            if (!channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
-              channel1Clip[allTracks[0]->clipToEdit][notes][steps] = true;
-              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, (trackColor[0] + (allTracks[0]->clipToEdit) * 20));  //draw the active steps circles
-              midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
-            } else if (channel1Clip[allTracks[0]->clipToEdit][notes][steps]) {
-              channel1Clip[allTracks[0]->clipToEdit][notes][steps] = false;
-              tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, ILI9341_DARKGREY);  //draw the inactive steps circles
-              midi01.sendNoteOn(LP_step_notes[steps], LP_GREEN_DIM, 1);
-            }
-          }
-        }
-      }
-    }
-  }
-}
 
 void LP_melodicstep() {
   if (millis() % interval == 0) {
@@ -208,7 +155,7 @@ void detect_and_assign_midi_devices() {
         //Serial.print(i);
         //Serial.print("-");
         //Serial.println(name);
-      } else {//Serial.println("n.C.");
+      } else {  //Serial.println("n.C.");
       }
     }
   }

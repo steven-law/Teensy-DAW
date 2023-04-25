@@ -4,20 +4,17 @@ void SerialPrintSeq() {
 
   Serial.print(master_clock.get_tempo());
   Serial.print("-");
-  Serial.print(master_clock.get_step_tick());
+  Serial.print(master_clock.get_stepTick());
   Serial.print("-   ");
 
-  for (int i = 0; i < 12; i++) {
-    Serial.print(drumnotes[i]);
-    Serial.print("-");
-  }
 
-  Serial.print("-   ");
-
-  for (int desired_tracks = 1; desired_tracks < 8; desired_tracks++) {
-    Serial.print(track[desired_tracks].notePlayed[0]);
+  for (int desired_tracks = 0; desired_tracks < 8; desired_tracks++) {
+    for (int v=0;v<MAX_VOICES;v++){
+    Serial.print(track[desired_tracks].notePlayed[v]);
     Serial.print("-");
-    Serial.print(track[desired_tracks].envActive[0]);
+    Serial.print(track[desired_tracks].envActive[v]);
+    Serial.print("--");
+  }    
     Serial.print("-   ");
   }
   debug_free_ram();
