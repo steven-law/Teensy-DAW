@@ -153,6 +153,9 @@ void drawNrInRect(int xPos, byte yPos, byte dvalue, int color) {
   dvalue_old = dvalue;
 }
 void drawstepPosition(int current) {
+  //#define SONG_POSITION_POINTER_Y 228
+  //#define STEP_POSITION_POINTER_Y 236
+  //#define GRID_POSITION_POINTER_Y 232
   //draw the songpointer positions
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     for (int stepwidth = 1; stepwidth <= 16; stepwidth++) {
@@ -171,7 +174,7 @@ void drawbarPosition() {
   tft.setFont(Arial_9);
   tft.setCursor(STEP_FRAME_W * POSITION_BAR_BUTTON + 4, 3);
   tft.print(phrase);
-  //drawbarPosition
+  //draw barPosition
   for (int songPointerThickness = 0; songPointerThickness <= POSITION_POINTER_THICKNESS; songPointerThickness++) {
     tft.drawPixel(phrase + STEP_FRAME_W * 2, (SONG_POSITION_POINTER_Y + songPointerThickness), ILI9341_GREEN);
     tft.drawFastHLine((pixelphrase)*phraseSegmentLength + STEP_FRAME_W * 2, GRID_POSITION_POINTER_Y + songPointerThickness, phraseSegmentLength, ILI9341_GREEN);
@@ -613,7 +616,7 @@ public:
   }
 
 
-  //returns the actual STEPtick count
+    //returns the actual STEPtick count
   uint32_t get_stepTick() {
     return MIDItick % 6;
   }

@@ -101,11 +101,11 @@ void Plugin1_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin("plugin1", 17);
+        savePlugin("plugin1", 0);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin("plugin1", 17);
+        loadPlugin("plugin1", 0);
       }
     }
 

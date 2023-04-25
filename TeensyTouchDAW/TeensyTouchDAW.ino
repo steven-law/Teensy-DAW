@@ -467,7 +467,7 @@ void loop() {
   readMainButtons();
   doMainButtons();
   Plugin_View_Dynamic();
-  DrumPluginPlay();
+
   PluginNoteOn();
   PluginNoteOff();
   readEncoders();

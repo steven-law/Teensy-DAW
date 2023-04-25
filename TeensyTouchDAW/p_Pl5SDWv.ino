@@ -45,11 +45,11 @@ void Plugin5_Page1_Dynamic() {
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
-        savePlugin("plugin5", 21);
+        savePlugin("plugin5", 4);
       }
       //Load button
       if (gridTouchX == POSITION_LOAD_BUTTON) {
-        loadPlugin("plugin5", 21);
+        loadPlugin("plugin5", 4);
       }
     }
   }

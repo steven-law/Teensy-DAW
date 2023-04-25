@@ -147,6 +147,22 @@ AudioSynthNoiseWhite *WHITE[3]{
 #define pl7WHITE2 1
 #define pl10WHITE 2
 
+AudioPlaySdWav *PL2PLAYER[12]{
+  &playSdWav1, &playSdWav2, &playSdWav3, &playSdWav4,
+  &playSdWav5, &playSdWav6, &playSdWav7, &playSdWav8,
+  &playSdWav9, &playSdWav10, &playSdWav11, &playSdWav12
+};
+
+/*
+AudioPlayMemory *PL4PLAYER[12]{
+  &playMem1, &playMem2, &playMem3, &playMem4,
+  &playMem5, &playMem6, &playMem7, &playMem8,
+  &playMem9, &playMem10, &playMem11, &playMem12
+};
+*/
+
+
+
 AudioEffectEnvelope *ENVELOPE1[16]{
   &envelope1, &envelope2,         //0,1
   &pl3envelope1, &pl3envelope2,   //2,3
@@ -216,10 +232,10 @@ AudioMixer4 *FILTERMIXER[6]{
 #define pl9TYPE 4
 #define pl10TYPE 5
 
-AudioEffectBitcrusher *BITCRUSHER[1]{&bitcrusher2};
+AudioEffectBitcrusher *BITCRUSHER[1]{ &bitcrusher2 };
 #define FX2BITCRUSH 0
 
-AudioEffectReverb  *REVERB[1]{&reverb1};
+AudioEffectReverb *REVERB[1]{ &reverb1 };
 #define FX1REVERB 0
 
 AudioMixer4 *PL2MIX[3]{ &drummixer1, &drummixer1, &drummixer1 };
