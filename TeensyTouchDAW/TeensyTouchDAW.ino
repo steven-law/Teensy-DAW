@@ -276,13 +276,14 @@ void setup() {
   plugin = new plugin_t[MAX_PLUGINS];
   effect = new effect_t[MAX_EFFECTS];
   //allocate NFX1
-  NFX1 = new Grids[MAX_PRESETS];
+  NFX1 = new NFX[MAX_PRESETS];
   //allocate NFX2
-  NFX2 = new Drops[MAX_PRESETS];
+  NFX2 = new NFX[MAX_PRESETS];
   //allocate NFX3
-  NFX3 = new rands[MAX_PRESETS];
+  NFX3 = new NFX[MAX_PRESETS];
   //allocate NFX4
-  NFX4 = new PolyR[MAX_PRESETS];
+  NFX4 = new NFX[MAX_PRESETS];
+
   //allocate LaunchPad arrays
   LP_grid_notes = new byte[64];
   for (int r = 0; r < 8; r++) {

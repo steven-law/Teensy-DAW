@@ -2,7 +2,7 @@
 //https://newdigate.github.io/teensy-eurorack-audio-gui/
 
 
-int oldWave; //wfselect
+int oldWave;  //wfselect
 
 int pl2Pot[MAX_VOICES];
 int pl4Pot[MAX_VOICES];
@@ -47,7 +47,7 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 #define NFX6_PAGE1 142
 #define NFX7_PAGE1 144
 #define NFX8_PAGE1 146
-const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "Grid" };
+const char* seqModes[MAX_SEQMODES]{ "Step", "Tick", "Drop", "Rand", "PolyR", "Grid" };
 #define NFX1NR 0
 #define NFX2NR 1
 #define NFX3NR 2
@@ -56,17 +56,13 @@ const char* seqModes[MAX_SEQMODES]{ "Step", "Tick" , "Drop", "Rand", "PolyR", "G
 #define NFX6NR 5
 
 //seqmode "grid"
-struct Grids {
+struct NFX {
+  //public:
   byte Pot_Value[16]{ 0 };
-  //  byte Pot_Value_graph[12]{0};
 };
-Grids* NFX1;
+NFX* NFX1;
 byte NFX1presetNr = 0;
-byte clock_count = 0;
 #define BEAT_ARRAY_SIZE 100
-
-
-
 const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  //silence 0
   { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  //kick
@@ -171,40 +167,17 @@ const bool beatArray[BEAT_ARRAY_SIZE][NUM_STEPS] = {
 };
 
 //seqmode "dropseq"
-struct Drops {
-  byte Pot_Value[16]{ 0 };
-};
-Drops* NFX2;
+NFX* NFX2;
 byte NFX2presetNr = 0;
-byte cc23 = 5;
-byte cc24 = 6;
-byte octave;
-byte maxValIndex;
-byte maxVal = 0;
-byte analogReadArray[16];
 const char* NFX2_ROW1[4]{ "Drop", "Tide", "Oct1", "Oct2" };
 
-
-
-
 //seqmode "Rand"
-struct rands {
-  byte Pot_Value[16]{ 5 };
-  byte Oct1 = 5;
-  byte Oct2 = 6;
-};
-rands* NFX3;
+NFX* NFX3;
 byte NFX3presetNr = 0;
 const char* NFX3_ROW1[4]{ "--", "--", "Oct1", "Oct2" };
 const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
 
-
 //seqmode "PolyR"
-struct PolyR {
-  byte Pot_Value[16]{ 15 };
-  byte reset[12];
-};
-PolyR* NFX4;
+NFX* NFX4;
 byte NFX4presetNr = 0;
-
 
