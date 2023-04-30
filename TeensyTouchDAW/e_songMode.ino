@@ -8,8 +8,9 @@ void gridSongMode(int songpageNumber) {  //static Display rendering
   clearWorkSpace();
   drawsongmodepageselector();
   drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
-  draw_start_of_loop();
-  draw_end_of_loop();
+  master_clock.drawStartOfLoop();
+  master_clock.drawEndOfLoop();
+
 
   drawChar(1, 0, "", ILI9341_BLUE);
   drawChar(3, 0, "", ILI9341_RED);
@@ -51,14 +52,12 @@ void songModePage(int songpageNumber) {
     }
     //Start of loop
     if (enc_moved[2]) {
-      start_of_loop = constrain((start_of_loop + encoded[2]), 0, MAX_PHRASES - 2);
-      draw_start_of_loop();
+      master_clock.setStartOfLoop(encoded[2]);
     }
 
     //end of loop
     if (enc_moved[3]) {
-      end_of_loop = constrain((end_of_loop + encoded[3]), 1, MAX_PHRASES - 1);
-      draw_end_of_loop();
+      master_clock.setEndOfLoop(encoded[3]);
     }
   }
 
@@ -69,20 +68,16 @@ void songModePage(int songpageNumber) {
     if (enc_moved[0]) {
       seq_tempo = constrain((seq_tempo + encoded[0]), 55, 200);
       master_clock.set_tempo(seq_tempo);
-      show_tempo();
-      Serial.print("seq_tempo");
-      Serial.println(seq_tempo);
+
       //master_clock.get_tempo();
     }
     //Start of loop
     if (enc_moved[2]) {
-      start_of_loop = constrain(start_of_loop + (encoded[2] * 8), 0, MAX_PHRASES - 2);
-      draw_start_of_loop();
+      master_clock.setStartOfLoop(encoded[2] * 8);
     }
     //end of loop
     if (enc_moved[3]) {
-      end_of_loop = constrain(end_of_loop + (encoded[3] * 8), 1, MAX_PHRASES - 1);
-      draw_end_of_loop();
+      master_clock.setEndOfLoop(encoded[3] * 8);
     }
   }
 
@@ -122,7 +117,7 @@ void songModePage(int songpageNumber) {
       drawChar(18, 9, "Prst:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawNrInRect(18, 10, track[trackTouchY].Ttrckprst[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
       drawChar(18, 11, "Vol:", trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
-      drawNrInRect2(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
+      drawNrInRect(18, 12, track[trackTouchY].volume[touched_phrase], trackColor[trackTouchY] + (track[trackTouchY].arrangment1[touched_phrase] * 20));
     }
 
 
@@ -133,7 +128,7 @@ void songModePage(int songpageNumber) {
           //phraseSegmentLength = 16;
           selectPage = SONGMODE_PAGE_1 + songpages;
           gridSongMode(songpages);
-          songModePage(songpages);          
+          songModePage(songpages);
         }
       }
     }

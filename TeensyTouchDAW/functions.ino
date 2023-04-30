@@ -82,10 +82,11 @@ void Plugin_View_Static() {
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page_Static();
   }
-
+  /*
   if (selectPage == NFX8_PAGE1) {
-    NoteFX8_Page_Static();
+    gridStepSequencer();
   }
+  */
   if (selectPage == MIXER_PAGE_1) {
     mixerPage1_Static(0);
   }
@@ -235,16 +236,20 @@ void Plugin_View_Dynamic() {
     NoteFX4_Page1_Dynamic();
   }
 
-  if (selectPage == NFX8_PAGE1) {
-    NoteFX8_Page1_Dynamic();
-  }
+
+
 
 
 
   //setting up the StepSequencer-view for #1-8
   for (int i = 0; i < NUM_TRACKS; i++) {
     if (selectPage == i) {
-      melodicStepSequencer(i);
+      if (allTracks[desired_instrument]->noteInputMode == 0) {
+        melodicStepSequencer();
+      }
+      if (allTracks[desired_instrument]->noteInputMode == 1) {
+        melodicTickSequencer();
+      }
     }
   }
   //setting up the scaleSelector-view
@@ -455,17 +460,17 @@ void PluginNoteOn() {
           if (track[desired_instruments].MIDIchannel == 21) {
 
             playSdPitch1.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed[0]]);
-            playSdPitch1.playRaw(RAW_files[plugin[pl5NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
+            sprintf(_RawFile, "%d.RAW\0", plugin[pl5NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]);
+            playSdPitch1.playRaw(_RawFile, 1);
             pl5envelope1.noteOn();
             pl5envelope2.noteOn();
             track[desired_instruments].playNoteOnce[0] = false;
             track[desired_instruments].envActive[0] = true;
           }
           if (track[desired_instruments].MIDIchannel == 22) {
-
-
             playSdPitch2.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed[0]]);
-            playSdPitch2.playRaw(RAW_files[plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]], 1);
+            sprintf(_RawFile2, "%d.RAW\0", plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]);
+            playSdPitch2.playRaw(_RawFile2, 1);
             pl6envelope1.noteOn();
             pl6envelope2.noteOn();
             track[desired_instruments].playNoteOnce[0] = false;
@@ -652,7 +657,8 @@ void beatComponents() {
       plpreset[8] = track[instruments].Ttrckprst[phrase];
       Plugin9_Change();
     }
-    if (allTracks[instruments]->seqMode == 5) {
+
+    if (allTracks[instruments]->seqMode == 1) {
       NFX1presetNr = track[instruments].clip_songMode;
       NoteFX1_Change();
     }

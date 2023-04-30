@@ -112,29 +112,15 @@ byte selectPage;
 #define MAX_WAV_FILES 12
 
 const char* wavKit[MAX_WAV_FILES] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
-const char* RAW_files[MAX_RAW_FILES] = { "0.RAW", "1.RAW", "2.RAW", "3.RAW", "4.RAW", "5.RAW", "6.RAW", "7.RAW", "8.RAW", "9.RAW", "10.RAW",
-                                         "11.RAW", "12.RAW", "13.RAW", "14.RAW", "15.RAW", "16.RAW", "17.RAW", "18.RAW", "19.RAW", "20.RAW",
-                                         "21.RAW", "22.RAW", "23.RAW", "24.RAW", "25.RAW", "26.RAW", "27.RAW", "28.RAW", "29.RAW", "30.RAW",
-                                         "31.RAW", "32.RAW", "33.RAW", "34.RAW", "35.RAW", "36.RAW", "37.RAW", "38.RAW", "39.RAW", "40.RAW",
-                                         "41.RAW", "42.RAW", "43.RAW", "44.RAW", "45.RAW", "46.RAW", "47.RAW", "48.RAW", "49.RAW", "50.RAW",
-                                         "51.RAW", "52.RAW", "53.RAW", "54.RAW", "55.RAW", "56.RAW", "57.RAW", "58.RAW", "59.RAW", "60.RAW",
-                                         "61.RAW", "62.RAW", "63.RAW", "64.RAW", "65.RAW", "66.RAW", "67.RAW", "68.RAW", "69.RAW", "70.RAW",
-                                         "71.RAW", "72.RAW", "73.RAW", "74.RAW", "75.RAW", "76.RAW", "77.RAW", "78.RAW", "79.RAW", "80.RAW",
-                                         "81.RAW", "82.RAW", "83.RAW", "84.RAW", "85.RAW", "86.RAW", "87.RAW", "88.RAW", "89.RAW", "90.RAW",
-                                         "91.RAW", "92.RAW", "93.RAW", "94.RAW", "95.RAW", "96.RAW", "97.RAW", "98.RAW", "99.RAW", "100.RAW",
-                                         "101.RAW", "102.RAW", "103.RAW", "104.RAW", "105.RAW", "106.RAW", "107.RAW", "108.RAW", "109.RAW", "110.RAW",
-                                         "111.RAW", "112.RAW", "113.RAW", "114.RAW", "115.RAW", "116.RAW", "117.RAW", "118.RAW", "119.RAW", "120.RAW",
-                                         "121.RAW", "122.RAW", "123.RAW", "124.RAW", "125.RAW", "126.RAW", "127.RAW" };
-
-
-const char* WAV_files[MAX_WAV_FILES] = { "0.WAV", "1.WAV", "2.WAV", "3.WAV", "4.WAV", "5.WAV", "6.WAV", "7.WAV", "8.WAV", "9.WAV", "10.WAV" };
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
 const char* trackNames_long[NUM_TRACKS]{ "track1", "track2", "track3", "track4", "track5", "track6", "track7", "track8" };
 char _trackname[20];
+char _RawFile[20];
+char _RawFile2[20];
+char _RecFile[20];
 const char* sideTabDigit[NUM_TRACKS]{ "D", "2", "3", "4", "5", "6", "7", "8" };
-//const char* trackNames_txt[8]{ "track1.txt", "track2.txt", "track3.txt", "track4.txt", "track5.txt", "track6.txt", "track7.txt", "track8.txt" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
 
@@ -191,8 +177,6 @@ byte songpageNumber = 10;
 byte pixelphrase = 0;           // a counter for the positionpointers
 byte phrase = 0;                // the main unit in songmode 1phrase = 16 bars
 byte phraser;
-byte end_of_loop = MAX_PHRASES - 1;
-byte start_of_loop = 0;
 byte arrangmentSelect = 0;
 byte songpages;
 
@@ -279,11 +263,9 @@ bool LP_drawOnce[16];
 struct tick_t {
   byte voice[MAX_VOICES]{ 0 };
 };
-
 struct sequence_t {
   tick_t tick[TICKS_PER_BAR];
 };
-
 struct track_t {
   sequence_t sequence[NUM_CLIPS];  // the sequence-clips associated with this track
 };
