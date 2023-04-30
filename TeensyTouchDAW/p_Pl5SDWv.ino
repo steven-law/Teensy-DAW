@@ -21,7 +21,7 @@ void Plugin5_Page1_Dynamic() {
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
-        //Waveform
+        //Waveform 
         Encoder_to_Pot_Value(pl5NR, 0, 0, MAX_ENC_RANGE);
         if (plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[0] != Potentiometer[0]) {
           plugin[pl5NR].preset[plpreset[pl5NR]].Pot_Value[0] = Potentiometer[0];

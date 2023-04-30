@@ -434,7 +434,7 @@ void setup() {
   startUpScreen();
   delay(500);
 
-  gridStepSequencer(0);
+  gridStepSequencer();
   debug_free_ram();
   //tft.updateScreen();
 }
@@ -525,7 +525,6 @@ void loop() {
         if (abs(map(Potentiometer[0], 0, 127, 55, 200) - seq_tempo) < 10) {
           seq_tempo = map(Potentiometer[0], 0, 127, 55, 200);
           master_clock.set_tempo(seq_tempo);
-          show_tempo();
         }
       }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -853,7 +852,7 @@ void doMainButtons() {
           selectPage = i;
           desired_instrument = i;  //desired_instrument=desired_track
           desired_track = i;
-          gridStepSequencer(i);
+          gridStepSequencer();
         }
       }
     }
@@ -922,19 +921,17 @@ void doMainButtons() {
       //NoteFX
       if (button[4]) {
         button[4] = false;
+
         if (allTracks[desired_instrument]->seqMode == 1) {
-          selectPage = NFX8_PAGE1;
-        }
-        if (allTracks[desired_instrument]->seqMode == 2) {
           selectPage = NFX2_PAGE1;
         }
-        if (allTracks[desired_instrument]->seqMode == 3) {
+        if (allTracks[desired_instrument]->seqMode == 2) {
           selectPage = NFX3_PAGE1;
         }
-        if (allTracks[desired_instrument]->seqMode == 4) {
+        if (allTracks[desired_instrument]->seqMode == 3) {
           selectPage = NFX4_PAGE1;
         }
-        if (allTracks[desired_instrument]->seqMode == 5) {
+        if (allTracks[desired_instrument]->seqMode == 4) {
           selectPage = NFX1_PAGE1;
         }
         Plugin_View_Static();

@@ -28,19 +28,7 @@ void store_Pot_Value(int pluginNr, int COL, int ROW) {  //MIN: frequency MAX: fr
 
 void draw_A(int pluginNr, int des_node, int COL, int ROW, float max_value, const char* function) {
   int pot_index = COL + (ROW * 4);
-
-  if (COL == 0) {
-    drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
-  }
-  if (COL == 1) {
-    drawPot_2(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
-  }
-  if (COL == 2) {
-    drawPot_3(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
-  }
-  if (COL == 3) {
-    drawPot_4(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
-  }
+  drawPot(COL, ROW, plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index], function, trackColor[desired_instrument]);
   Serial.print(function);
   Serial.print(": ");
   Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index]);

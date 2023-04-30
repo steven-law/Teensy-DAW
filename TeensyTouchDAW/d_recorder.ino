@@ -68,13 +68,14 @@ void recorder_Page1_Dynamic() {
 void startRecording() {
 
   Serial.println("startRecording");
-  if (SD.exists(RAW_files[AudioRecorder.selected_file])) {
+  sprintf(_RecFile, "%d.RAW\0", AudioRecorder.selected_file);
+  if (SD.exists(_RecFile)) {
     // The SD library writes new data to the end of the
     // file, so to start a new recording, the old file
     // must be deleted before new data is written.
-    SD.remove(RAW_files[AudioRecorder.selected_file]);
+    SD.remove(_RecFile);
   }
-  frec = SD.open(RAW_files[AudioRecorder.selected_file], FILE_WRITE);
+  frec = SD.open(_RecFile, FILE_WRITE);
   if (frec) {
     queue1.begin();
     audio_rec_now = true;

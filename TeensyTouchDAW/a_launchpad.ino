@@ -10,7 +10,7 @@ void LP_drawclipRow() {
         allTracks[desired_instrument]->clipToEdit = LPclips;
         clearStepsGrid();
         drawActivePolySteps();
-        drawNrInRect(18, 1, allTracks[desired_instrument]->clipToEdit, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));
+        allTracks[desired_instrument]->drawClipToEdit();
       }
       midi01.sendNoteOn(LPclips, LP_RED_DIM, 1);
       midi01.sendNoteOn(allTracks[desired_instrument]->clipToEdit, LP_RED, 1);
@@ -76,13 +76,11 @@ void LP_melodicstep() {
     if (LP_grid_bool[24]) {
       allTracks[desired_instrument]->shownOctaves--;
       clearStepsGrid();
-      drawOctaveNumber();
       drawActivePolySteps();
     }
     if (LP_grid_bool[31]) {
       allTracks[desired_instrument]->shownOctaves++;
       clearStepsGrid();
-      drawOctaveNumber();
       drawActivePolySteps();
     }
   }

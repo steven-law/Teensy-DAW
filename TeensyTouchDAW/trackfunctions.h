@@ -11,80 +11,30 @@ byte getValue(byte XPos, byte YPos, byte AnyValue) {
 }
 void drawPot(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
                                                                                       //drawPot Variables
-  static float circlePos;
-  static float circlePos_old;
-  static int dvalue_old;
+  static float circlePos[4];
+  static float circlePos_old[4];
+  static int dvalue_old[4];
   int xPos = ((XPos + 1) * 4) - 1;
   int yPos = (YPos + 1) * 3;
-  circlePos = fvalue / 63.5;
+  circlePos[XPos] = fvalue / 63.5;
 
   tft.setFont(Arial_8);
   tft.setTextColor(ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old);
+  tft.print(dvalue_old[XPos]);
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
   tft.print(dvalue);
   tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
   tft.print(dname);
 
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old) + 2.25), 4, ILI9341_DARKGREY);
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old[XPos]) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old[XPos]) + 2.25), 4, ILI9341_DARKGREY);
   tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos) + 2.25), 4, color);
-  circlePos_old = circlePos;
-  dvalue_old = dvalue;
+  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos[XPos]) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos[XPos]) + 2.25), 4, color);
+  circlePos_old[XPos] = circlePos[XPos];
+  dvalue_old[XPos] = dvalue;
 }
-void drawPot_2(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-                                                                                        //drawPot Variables
-  static float circlePos_2;
-  static float circlePos_old_2;
-  static int dvalue_old_2;
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos_2 = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_2);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old_2) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old_2) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_2) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_2) + 2.25), 4, color);
-  circlePos_old_2 = circlePos_2;
-  dvalue_old_2 = dvalue;
-}
-void drawPot_3(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-  //drawPot Variables
-  static float circlePos_3;
-  static float circlePos_old_3;
-  static int dvalue_old_3;
-  int yPos = (YPos + 1) * 3;
-  int xPos = ((XPos + 1) * 4) - 1;
-  circlePos_3 = fvalue / 63.5;
-
-  tft.setFont(Arial_8);
-  tft.setTextColor(ILI9341_DARKGREY);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue_old_3);
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
-  tft.print(dvalue);
-  tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
-  tft.print(dname);
-
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_old_3) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_old_3) + 2.25), 4, ILI9341_DARKGREY);
-  tft.drawCircle(STEP_FRAME_W * (xPos + 1), STEP_FRAME_H * yPos, 16, ILI9341_LIGHTGREY);
-  tft.fillCircle(STEP_FRAME_W * (xPos + 1) + 16 * cos((2.5 * circlePos_3) + 2.25), STEP_FRAME_H * yPos + 16 * sin((2.5 * circlePos_3) + 2.25), 4, color);
-  circlePos_old_3 = circlePos_3;
-  dvalue_old_3 = dvalue;
-}
-void drawPot_4(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
+void drawPot_LVL(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
                                                                                         //drawPot Variables
   static float circlePos_4;
   static float circlePos_old_4;
@@ -211,6 +161,7 @@ public:
   byte clipToEdit = 0;     //this is the clip to edit in the sequencerviews
   byte shownOctaves = 3;   //shown Octave for the melodic tracks
   byte seqMode = 0;        //active Sequencer Mode
+  byte noteInputMode = 0;  //active Note input Method; stepsequencer or tickwise
   byte voiceCount = 0;     //desired voiceCount number for polyphony
   byte maxVoiceCount;      //sets the maximum voices for the track
   byte stepLenght = 5;     //step lenght for the step sequencerMode
@@ -337,10 +288,11 @@ public:
   //sets the desired Octave for the melodictracks
   void setShownOctaves(int encoderd) {
     shownOctaves = constrain((shownOctaves + encoderd), 0, 9);
+    drawShownOctave();
     Serial.printf("Track= %d, shownOctaves= %d\n", thisTrack, shownOctaves);
   }
   void drawShownOctave() {
-    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, "Oct", stepLenght);
+    drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, "Oct", shownOctaves);
   }
   //sets the desired stepLenght for the stepsequencer
   void setStepLenght(int encoderd) {
@@ -353,12 +305,21 @@ public:
   }
   //sets the desired sequencer Mode
   void setSeqMode(int encoderd) {
-    seqMode = constrain((seqMode + encoderd), 0, 5);
+    seqMode = constrain((seqMode + encoderd), 0, MAX_SEQMODES - 1);
     drawSeqMode();
     Serial.printf("Track= %d, seqMode= %d\n", thisTrack, seqMode);
   }
   void drawSeqMode() {
     drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, seqModes[seqMode]);
+  }
+  //sets the desired Note input Mode
+  void setNoteInputMode(int encoderd) {
+    noteInputMode = constrain((noteInputMode + encoderd), 0, MAX_NOTE_INPUT_MODES - 1);
+    drawNoteInputMode();
+    Serial.printf("Track= %d, noteInputMode= %d\n", thisTrack, noteInputMode);
+  }
+  void drawNoteInputMode() {
+    drawNrInRect_short(SHOW_ENCODER1, 0, ILI9341_RED, noteInputModes[noteInputMode]);
   }
 
   //draws the left navigator for the tracks
@@ -481,7 +442,7 @@ public:
       incomingCC_changed[1] = false;
       selected_gain = getValue(1, 0, selected_gain);
       amp1.gain(selected_gain / 64.00);
-      drawPot_2(1, 0, selected_gain, selected_gain, "Volume", ILI9341_OLIVE);
+      drawPot(1, 0, selected_gain, selected_gain, "Volume", ILI9341_OLIVE);
     }
   }
   //sets the Monitor to active
@@ -534,9 +495,9 @@ public:
     static int peakIn;
     peakIn = peak * 127;
     if (peakIn > 110) {
-      drawPot_4(3, 0, peakIn, peakIn, "Meter", ILI9341_RED);
+      drawPot_LVL(3, 0, peakIn, peakIn, "Meter", ILI9341_RED);
     } else {
-      drawPot_4(3, 0, peakIn, peakIn, "Meter", ILI9341_OLIVE);
+      drawPot_LVL(3, 0, peakIn, peakIn, "Meter", ILI9341_OLIVE);
     }
   }
 };
@@ -549,6 +510,8 @@ public:
   uint32_t MIDItick = -1;
   uint32_t stepTick = -1;
   uint32_t barTick = -1;
+  byte startOfLoop = 0;
+  byte endOfLoop = 0;
   bool seq_run = false;
   bool seq_rec = false;
   bool playing = false;
@@ -576,6 +539,11 @@ public:
     // midi clock messages should be sent 24 times
     // for every quarter note
     _clock = 60000000L / tempo / 24;
+    draw_tempo();
+     Serial.printf("tempo= %d\n", tempo);
+  }
+  void draw_tempo() {
+    drawNrInRect_short(11, 0, ILI9341_WHITE, "", master_tempo);
   }
   int get_tempo() {
     return master_tempo;
@@ -635,6 +603,25 @@ public:
   }
   bool is_tick_on_bar() {
     return MIDItick % TICKS_PER_BAR == 0;
+  }
+
+  //sets the startpoint of loop
+  void setStartOfLoop(int encoderd) {
+    startOfLoop = constrain((startOfLoop + encoderd), 0, MAX_PHRASES - 2);
+    drawStartOfLoop();
+    Serial.printf("startOfLoop= %d\n", startOfLoop);
+  }
+  void drawStartOfLoop() {
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "S", startOfLoop);
+  }
+  //sets the endpoint of loop
+  void setEndOfLoop(int encoderd) {
+    endOfLoop = constrain((endOfLoop + encoderd), 0, MAX_PHRASES - 1);
+    drawEndOfLoop();
+    Serial.printf("endOfLoop= %d\n", endOfLoop);
+  }
+  void drawEndOfLoop() {
+    drawNrInRect_short(SHOW_ENCODER3, 0, ILI9341_WHITE, "E", endOfLoop);
   }
   //draws all the timerelated stuff for the sequencer
   void drawPositionPointers() {

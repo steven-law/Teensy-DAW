@@ -3,15 +3,19 @@
 //ticksequencer for track 0-7
 
 //Notes assigning
-void gridStepSequencer(int desired_instrument) {  //static Display rendering
+void gridStepSequencer() {  //static Display rendering
   clearWorkSpace();
-  drawStepSequencerStatic(16);
-  drawActivePolySteps();
+
   draw_Notenames();
   drawMelodicControls();
   draw_ClipselectorRow();
-  drawOctaveTriangle();
-  drawOctaveNumber();
+  if (allTracks[desired_instrument]->noteInputMode == 0) {
+    drawStepSequencerStatic(16);
+    drawActivePolySteps();
+  } else {
+    drawStepSequencerStatic(TICK_PIXEL_WIDTH * TICKS_PER_STEP);
+    drawActivePolyPixel();
+  }
   if (launchpad) {
     midi01.sendControlChange(0, 0, 1);
     LP_drawStepsequencer();
@@ -21,7 +25,8 @@ void gridStepSequencer(int desired_instrument) {  //static Display rendering
     midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
   }
 }
-void melodicStepSequencer(int desired_instrument) {
+//"Steps" sets the desired notes steptickwise
+void melodicStepSequencer() {
   if (launchpad) {
     for (int LPclips = 0; LPclips < 8; LPclips++) {
       if (LP_grid_bool[LPclips]) {
@@ -39,8 +44,6 @@ void melodicStepSequencer(int desired_instrument) {
   if (rowButtonpressed) {
     rowButtonpressed = false;
     drawMelodicControls();
-    drawOctaveTriangle();
-    drawOctaveNumber();
   }
   switch (lastPotRow) {
     case 0:
@@ -73,7 +76,6 @@ void melodicStepSequencer(int desired_instrument) {
       if (enc_moved[0]) {
         allTracks[desired_instrument]->setShownOctaves(encoded[0]);
         drawActivePolySteps();
-        drawOctaveNumber();
         draw_Notenames();
       }
       //clip
@@ -98,7 +100,10 @@ void melodicStepSequencer(int desired_instrument) {
       if (enc_moved[0]) {
         allTracks[desired_instrument]->setSeqMode(encoded[0]);
       }
-
+      if (enc_moved[1]) {
+        allTracks[desired_instrument]->setNoteInputMode(encoded[1]);
+        gridStepSequencer();
+      }
       break;
   }
 
@@ -156,22 +161,6 @@ void melodicStepSequencer(int desired_instrument) {
         }
         Serial.println("");
       }
-      //octave selection
-      if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
-        if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-          allTracks[desired_instrument]->shownOctaves--;
-          touched = true;
-          clearStepsGrid();
-        }
-        if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-          allTracks[desired_instrument]->shownOctaves++;
-          touched = true;
-          clearStepsGrid();
-        }
-        //draw the octave number
-        drawOctaveNumber();
-        drawActivePolySteps();
-      }
     }
 
     //load and save
@@ -196,31 +185,8 @@ void melodicStepSequencer(int desired_instrument) {
   }
 }
 
-//Ticks sets the desired notes miditickwise
-void NoteFX8_Page_Static() {  //static Display rendering
-
-  clearWorkSpace();
-  draw_Notenames();
-  drawOctaveTriangle();
-  drawOctaveNumber();
-  drawStepSequencerStatic(12);
-  clearPixelGrid();
-  drawActivePolyPixel();
-  drawMelodicControls();
-
-
-
-  /*
-  if (launchpad) {
-    midi01.sendControlChange(0, 0, 1);
-    LP_drawStepsequencer();
-    LP_drawOctave(3);
-    //LP_drawOctave(5);
-    midi01.sendNoteOn(LP_grid_notes[31], LP_GREEN, 1);
-    midi01.sendNoteOn(LP_grid_notes[24], LP_RED, 1);
-  }*/
-}
-void NoteFX8_Page1_Dynamic() {
+//"Ticks" sets the desired notes miditickwise
+void melodicTickSequencer() {
 
   // int touched_step = gridTouchX - 2;
   int touched_note = gridTouchY - 1;
@@ -248,8 +214,6 @@ void NoteFX8_Page1_Dynamic() {
   if (rowButtonpressed) {
     rowButtonpressed = false;
     drawMelodicControls();
-    drawOctaveTriangle();
-    drawOctaveNumber();
   }
 
   switch (lastPotRow) {
@@ -258,7 +222,7 @@ void NoteFX8_Page1_Dynamic() {
       //gridTouchX
 
       if (enc_moved[0]) {
-        pixelTouchX = constrain((pixelTouchX + (encoded[0] * 2)), 0, 320);
+        pixelTouchX = constrain((pixelTouchX + (encoded[0] * TICK_PIXEL_WIDTH)), 0, 320);
         drawCursorPixel();
         showCoordinates();
         gridTouchX = (pixelTouchX + 7) / 16;
@@ -284,7 +248,6 @@ void NoteFX8_Page1_Dynamic() {
       if (enc_moved[0]) {
         allTracks[desired_instrument]->setShownOctaves(encoded[0]);
         drawActivePolyPixel();
-        drawOctaveNumber();
         draw_Notenames();
       }
       //clip
@@ -308,7 +271,10 @@ void NoteFX8_Page1_Dynamic() {
       if (enc_moved[0]) {
         allTracks[desired_instrument]->setSeqMode(encoded[0]);
       }
-
+      if (enc_moved[1]) {
+        allTracks[desired_instrument]->setNoteInputMode(encoded[1]);
+        gridStepSequencer();
+      }
       break;
   }
 
@@ -336,43 +302,36 @@ void NoteFX8_Page1_Dynamic() {
       drawActivePolyPixel();
     }
 
-    if (pixelTouchX >= 30 && pixelTouchX <= 220 && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
+    if (pixelTouchX >= 28 && pixelTouchX <= 320 && gridTouchY >= SEQ_GRID_TOP && gridTouchY <= SEQ_GRID_BOTTOM) {
       if (!touched) {
         //some variables
-        int desired_tick = ((pixelTouchX + 2) - (2 * STEP_FRAME_W)) / 2;
+        int desired_tick = (((pixelTouchX) - (2 * STEP_FRAME_W)) / TICK_PIXEL_WIDTH) + 1;
         int note = touched_note + allTracks[desired_instrument]->shownOctaves * 12;
 
         //assign notes to voices
         for (int polys = 0; polys < MAX_VOICES; polys++) {
           if (allTracks[desired_instrument]->voiceCount == polys) {
             if (ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick].voice[polys] == VALUE_NOTEOFF) {
-              allTracks[desired_instrument]->setNoteOnToTick(desired_tick, polys, note);
+              for (int touched_ticks = 0; touched_ticks < allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick + touched_ticks].voice[polys] = note;
+                allTracks[desired_instrument]->setNoteOnToTick(desired_tick + touched_ticks, polys, note);
+                drawActivePolyPixelY(desired_tick + touched_ticks);
+              }
               touched = true;
-              ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick].voice[polys] = note;
             } else if (ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick].voice[polys] > VALUE_NOTEOFF) {
-              allTracks[desired_instrument]->setNoteOffToTick(desired_tick, polys, VALUE_NOTEOFF);
+              for (int touched_ticks = 0; touched_ticks < allTracks[desired_instrument]->stepLenght; touched_ticks++) {
+                ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick + touched_ticks].voice[polys] = VALUE_NOTEOFF;
+                allTracks[desired_instrument]->setNoteOffToTick(desired_tick + touched_ticks, polys, VALUE_NOTEOFF);
+                drawActivePolyPixelY(desired_tick + touched_ticks);
+              }
               touched = true;
-              ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[desired_tick].voice[polys] = VALUE_NOTEOFF;
             }
           }
         }
-        drawActivePolyPixelY(desired_tick);
       }
     }
     touched = true;
-    //octave selection
-    if (gridTouchX >= OCTAVE_CHANGE_LEFTMOST) {
-      if (gridTouchY >= OCTAVE_CHANGE_UP_TOPMOST && gridTouchY < OCTAVE_CHANGE_UP_BOTTOMMOST) {
-        allTracks[desired_instrument]->shownOctaves--;
-      }
-      if (gridTouchY >= OCTAVE_CHANGE_DOWN_TOPMOST && gridTouchY < OCTAVE_CHANGE_DOWN_BOTTOMMOST) {
-        allTracks[desired_instrument]->shownOctaves++;
-      }
-      clearPixelGrid();
-      //draw the octave number
-      drawOctaveNumber();
-      drawActivePolyPixel();
-    }
+
 
 
     //load and save
@@ -514,7 +473,7 @@ void NoteFX1_Page_Static() {
   clearWorkSpace();
   NoteFX1_Change();
   drawNrInRect(18, 1, NFX1presetNr, ILI9341_PURPLE);
-  draw_SeqMode();
+
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     drawPotDrum(MixerColumn, 0, NFX1[NFX1presetNr].Pot_Value[MixerColumn], NFX1[NFX1presetNr].Pot_Value[MixerColumn], drumnote[MixerColumn], trackColor[desired_instrument]);
 
@@ -647,7 +606,7 @@ void NoteFX2_Page_Static() {
   clearWorkSpace();
   NoteFX2_Change();
   drawNrInRect(18, 1, NFX2presetNr, ILI9341_PURPLE);
-  draw_SeqMode();
+
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     drawPot(MixerColumn, 0, NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2[NFX2presetNr].Pot_Value[MixerColumn], NFX2_ROW1[MixerColumn], trackColor[desired_instrument]);
 
@@ -781,7 +740,7 @@ void NoteFX3_Page_Static() {
   clearWorkSpace();
   NoteFX3_Change();
   drawNrInRect(18, 1, NFX3presetNr, ILI9341_PURPLE);
-  draw_SeqMode();
+
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     drawPot(MixerColumn, 0, NFX3[NFX3presetNr].Pot_Value[MixerColumn], NFX3[NFX3presetNr].Pot_Value[MixerColumn], NFX3_ROW1[MixerColumn], trackColor[desired_instrument]);
     drawPot(MixerColumn, 1, NFX3[NFX3presetNr].Pot_Value[MixerColumn + 4], NFX3[NFX3presetNr].Pot_Value[MixerColumn + 4], NFX3_ROW2[MixerColumn], trackColor[desired_instrument]);
@@ -861,7 +820,6 @@ void NoteFX4_Page_Static() {
   clearWorkSpace();
   NoteFX4_Change();
   drawNrInRect(18, 1, NFX4presetNr, ILI9341_PURPLE);
-  draw_SeqMode();
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     drawPotDrum(MixerColumn, 0, NFX4[NFX4presetNr].Pot_Value[MixerColumn], NFX4[NFX4presetNr].Pot_Value[MixerColumn], drumnote[MixerColumn], trackColor[desired_instrument]);
     drawPotDrum(MixerColumn, 1, NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4], NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4], drumnote[MixerColumn + 4], trackColor[desired_instrument]);
