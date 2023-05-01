@@ -181,3 +181,4 @@ const char* NFX3_ROW2[4]{ "--", "--", "--", "--" };
 //seqmode "PolyR"
 NFX* NFX4;
 byte NFX4presetNr = 0;
+byte NFX4reset[MAX_VOICES];

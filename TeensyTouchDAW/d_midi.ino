@@ -30,6 +30,9 @@ void process_clock() {
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick % TICKS_PER_STEP == 0) {
         track[i].MIDItick_16++;
+        for (int polys = polys; polys < MAX_VOICES; polys++) {
+            NFX4reset[polys]++;
+        }
         if (debugTime) {
           SerialPrintSeq();
         }
@@ -152,7 +155,7 @@ void process_clock() {
                 track[i].tick_true[0] = false;
                 int NFX3Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
                 track[i].notePlayed[0] = random(0, 11) + (NFX3Oct1 * 12);
-                track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(30, 127) / 127.00);
+                track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(NFX3[NFX3presetNr].Pot_Value[0], NFX3[NFX3presetNr].Pot_Value[1]) / 127.00);
                 pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
                 Serial.println(track[i].MIDI_velocity);
                 track[i].playNoteOnce[0] = true;
@@ -167,12 +170,13 @@ void process_clock() {
           }
           //Polyrhytm
           if (allTracks[i]->seqMode == 3) {
-            static int NFX4reset[MAX_VOICES];
-            if (track[i].MIDItick % TICKS_PER_STEP == 0) {
+            
+            Serial.println(NFX4reset[0]);
+            if (track[i].MIDItick  % TICKS_PER_STEP == 0) {
               for (int polys = polys; polys < MAX_VOICES; polys++) {
                 //if (NFX4[NFX4presetNr].reset[d]<=NFX4[NFX4presetNr].Pot_Value[d])
-                NFX4reset[polys]++;
-                //Serial.println(NFX4[1].reset[0]);
+                // NFX4reset[polys]++;
+                Serial.println("NFX4reset[0]");
                 if (NFX4reset[polys] >= NFX4[NFX4presetNr].Pot_Value[polys]) {
                   NFX4reset[polys] = 0;
                 }
@@ -181,7 +185,7 @@ void process_clock() {
                   track[i].playNoteOnce[polys] = true;
                   track[i].notePressed[polys] = true;
                   track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[i]].voice[polys] + track[i].NoteOffset[phrase];
-                  track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[polys] / 127.00);
+                  track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(NFX4[track[i].clip_songMode].Pot_Value[12], NFX4[track[i].clip_songMode].Pot_Value[13]) / 127.00);
                   pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
                   Serial.println(track[i].MIDI_velocity);
                 }
@@ -203,7 +207,7 @@ void process_clock() {
                     track[i].playNoteOnce[polys] = true;
                     track[i].notePressed[polys] = true;
                     track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
-                    track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(30, 127) / 127.00);
+                    track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(NFX1[track[i].clip_songMode].Pot_Value[12], NFX1[track[i].clip_songMode].Pot_Value[13]) / 127.00);
                     pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
                     Serial.println(track[i].MIDI_velocity);
                   }

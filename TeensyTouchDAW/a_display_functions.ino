@@ -483,7 +483,6 @@ void drawActivePolyPixelY(int X_Axis) {
 
   Serial.println("polytick drawn");
 }
-
 void clearPixelGrid() {  // clear all Steppixels from Display
   for (int T = 0; T < 12; T++) {
     for (int S = 0; S < TICKS_PER_BAR; S++) {
@@ -495,7 +494,6 @@ void clearPixelGrid() {  // clear all Steppixels from Display
     }
   }
 }
-
 void clearPolyGridY(int X_Axis) {  // clear all Steps in the same column
 
   for (int T = 0; T < 12; T++) {
@@ -512,7 +510,6 @@ void clearPixelGridY(int X_Axis) {  // clear all Steppixels in the same column
     }
   }
 }
-
 void draw_ClipselectorRow() {
   for (int ClipNr = 0; ClipNr < 8; ClipNr++) {
     tft.fillRect(STEP_FRAME_W * 2 * ClipNr + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, trackColor[desired_instrument] + (ClipNr * 20));
@@ -523,6 +520,9 @@ void draw_ClipselectorRow() {
     tft.print("Clip ");
     tft.print(ClipNr);
   }
+  tft.fillRect(STEP_FRAME_W * 2 * 8 + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_RED);
+  tft.setCursor(STEP_FRAME_W * 2 * 8 + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
+  tft.print("Clear");
 }
 
 

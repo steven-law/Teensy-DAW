@@ -229,6 +229,7 @@ void Plugin_View_Dynamic() {
   //setting up the NoteFX4-view
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page1_Dynamic();
+    NoteFX4_Control();
   }
 
 
@@ -665,8 +666,6 @@ void beatComponents() {
     }
   }
 }
-
-
 
 
 
