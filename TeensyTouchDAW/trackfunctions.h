@@ -35,7 +35,7 @@ void drawPot(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int colo
   dvalue_old[XPos] = dvalue;
 }
 void drawPot_LVL(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int color) {  //xposition, yposition, value 1-100, value to draw, name to draw, color
-                                                                                        //drawPot Variables
+                                                                                          //drawPot Variables
   static float circlePos_4;
   static float circlePos_old_4;
   static int dvalue_old_4;
@@ -160,11 +160,11 @@ public:
   byte MIDIChannel;        //desired MIDIChannel
   byte clipToEdit = 0;     //this is the clip to edit in the sequencerviews
   byte shownOctaves = 3;   //shown Octave for the melodic tracks
+  byte seqVelocity = 99;   //velocity applied in sequencerview
   byte seqMode = 0;        //active Sequencer Mode
-  byte noteInputMode = 0;  //active Note input Method; stepsequencer or tickwise
   byte voiceCount = 0;     //desired voiceCount number for polyphony
   byte maxVoiceCount;      //sets the maximum voices for the track
-  byte stepLenght = 5;     //step lenght for the step sequencerMode
+  byte stepLenght = 3;     //step lenght for the step sequencerMode
   byte clockDivision = 1;  //desired clockdivision for the track
 
 
@@ -294,6 +294,7 @@ public:
   void drawShownOctave() {
     drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, "Oct", shownOctaves);
   }
+
   //sets the desired stepLenght for the stepsequencer
   void setStepLenght(int encoderd) {
     stepLenght = constrain((stepLenght + encoderd), 1, TICKS_PER_BAR);
@@ -312,15 +313,16 @@ public:
   void drawSeqMode() {
     drawNrInRect_short(SHOW_ENCODER0, 0, ILI9341_BLUE, seqModes[seqMode]);
   }
-  //sets the desired Note input Mode
-  void setNoteInputMode(int encoderd) {
-    noteInputMode = constrain((noteInputMode + encoderd), 0, MAX_NOTE_INPUT_MODES - 1);
-    drawNoteInputMode();
-    Serial.printf("Track= %d, noteInputMode= %d\n", thisTrack, noteInputMode);
+  //sets the desired Octave for the melodictracks
+  void setSeqVelocity(int encoderd) {
+    seqVelocity = constrain((seqVelocity + encoderd), 0, 127);
+    drawSeqVelocity();
+    Serial.printf("Track= %d, seqVelocity= %d\n", thisTrack, seqVelocity);
   }
-  void drawNoteInputMode() {
-    drawNrInRect_short(SHOW_ENCODER1, 0, ILI9341_RED, noteInputModes[noteInputMode]);
+  void drawSeqVelocity() {
+    drawNrInRect_short(SHOW_ENCODER2, 0, ILI9341_GREEN, "V", seqVelocity);
   }
+
 
   //draws the left navigator for the tracks
   void drawLeftNavigator(const char* sideDigit) {
@@ -540,7 +542,7 @@ public:
     // for every quarter note
     _clock = 60000000L / tempo / 24;
     draw_tempo();
-     Serial.printf("tempo= %d\n", tempo);
+    Serial.printf("tempo= %d\n", tempo);
   }
   void draw_tempo() {
     drawNrInRect_short(11, 0, ILI9341_WHITE, "", master_tempo);

@@ -82,11 +82,6 @@ void Plugin_View_Static() {
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page_Static();
   }
-  /*
-  if (selectPage == NFX8_PAGE1) {
-    gridStepSequencer();
-  }
-  */
   if (selectPage == MIXER_PAGE_1) {
     mixerPage1_Static(0);
   }
@@ -244,12 +239,7 @@ void Plugin_View_Dynamic() {
   //setting up the StepSequencer-view for #1-8
   for (int i = 0; i < NUM_TRACKS; i++) {
     if (selectPage == i) {
-      if (allTracks[desired_instrument]->noteInputMode == 0) {
-        melodicStepSequencer();
-      }
-      if (allTracks[desired_instrument]->noteInputMode == 1) {
-        melodicTickSequencer();
-      }
+      melodicTickSequencer();
     }
   }
   //setting up the scaleSelector-view
@@ -439,10 +429,10 @@ void PluginNoteOn() {
           if (track[desired_instruments].MIDIchannel == 17) {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed[0] + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
-              int veloCity = plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn + 8];
+              int pl1velocity = plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn + 8];
               OSC_MOD[MixerColumn]->frequency(note_frequency[Note2play] * tuning);
-              usbMIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
-              MIDI.sendNoteOn(Note2play, veloCity, desired_instruments + 1);
+              usbMIDI.sendNoteOn(Note2play, pl1velocity, desired_instruments + 1);
+              MIDI.sendNoteOn(Note2play, pl1velocity, desired_instruments + 1);
             }
             envelope1.noteOn();
             envelope2.noteOn();
@@ -603,8 +593,7 @@ void beatComponents() {
   for (int instruments = 0; instruments < 8; instruments++) {
 
     track[instruments].clip_songMode = track[instruments].arrangment1[phrase];
-    track[instruments].MIDI_velocity = track[instruments].volume[phrase];
-    pluginVolume(track[instruments].MIDIchannel, track[instruments].volume[phrase] / 127.00);
+
 
     for (int songpages = 0; songpages < 16; songpages++) {
       if (selectPage == SONGMODE_PAGE_1 + songpages) {

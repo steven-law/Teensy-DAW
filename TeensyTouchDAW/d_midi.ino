@@ -39,14 +39,17 @@ void process_clock() {
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick == TICKS_PER_BAR) {
         track[i].MIDItick = 0;
+        track[i].MIDItick_16 = 0;  //!!!!try this tomorrow
       }
     }
+    /*
     //reset MIDItick_16 when NUM_STEPS 16 is reached
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick_16 == NUM_STEPS) {
         track[i].MIDItick_16 = 0;
       }
     }
+    */
     //reset barcounter at end of song/loop
     if (phrase == MAX_PHRASES || phrase == master_clock.endOfLoop) {
       //master_clock.set_playing(false);
@@ -82,33 +85,20 @@ void process_clock() {
         if (!allTracks[i]->muted) {
           //stepseqeucer for melodic track
           if (allTracks[i]->seqMode == 0) {
-            if (allTracks[i]->noteInputMode == 0) {
-              //if the actual step is high, play the notes
-              for (int polys = 0; polys < MAX_VOICES; polys++) {
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
-                  track[i].playNoteOnce[polys] = true;
-                  track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] + track[i].NoteOffset[phrase];
-                }
-                //NoteOff
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] == VALUE_NOTEOFF) {
-                  track[i].notePressed[polys] = false;
-                }
-              }
-            }
             //tickwise
-            if (allTracks[i]->noteInputMode == 1) {
-              //if the actual step is high, play the notes
-              for (int polys = 0; polys < MAX_VOICES; polys++) {
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
-                  track[i].playNoteOnce[polys] = true;
-                  track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] + track[i].NoteOffset[phrase];
-                }
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] == VALUE_NOTEOFF) {
-                  track[i].notePressed[polys] = false;
-                  //track[i].notePlayed[polys] = VALUE_NOTEOFF;
-                }
+            //if the actual step is high, play the notes
+            for (int polys = 0; polys < MAX_VOICES; polys++) {
+              if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
+                track[i].playNoteOnce[polys] = true;
+                track[i].notePressed[polys] = true;
+                track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] + track[i].NoteOffset[phrase];
+                track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[polys] / 127.00);
+                pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
+                Serial.println(track[i].MIDI_velocity);
+              }
+              if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] == VALUE_NOTEOFF) {
+                track[i].notePressed[polys] = false;
+                //track[i].notePlayed[polys] = VALUE_NOTEOFF;
               }
             }
           }
@@ -116,8 +106,8 @@ void process_clock() {
           if (allTracks[i]->seqMode == 1) {
 
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] > VALUE_NOTEOFF) {
-              if (track[i].tick_true) {
-                track[i].tick_true = false;
+              if (track[i].tick_true[0]) {
+                track[i].tick_true[0] = false;
                 byte maxVal = 0;
                 byte maxValIndex;
                 byte octave;
@@ -132,12 +122,12 @@ void process_clock() {
                 //set an octave range
                 octave = random(NFX2[NFX2presetNr].Pot_Value[2], NFX2[NFX2presetNr].Pot_Value[3]);
                 //Set the notes free
-                //Serial.printf("dropseq: maxValIndex:%d, maxVal:%d - analogReadArray%d, octave:%d\n",
-                //maxValIndex, maxVal, analogReadArray[maxValIndex], octave);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
                 track[i].notePlayed[0] = (maxValIndex) + (octave * 12) + track[i].NoteOffset[phrase];
-                //every step, the last played note gets subtracted by the "drop"pot_value[0] value
+                track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[0] / 127.00);
+                pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
+                Serial.println(track[i].MIDI_velocity);  //every step, the last played note gets subtracted by the "drop"pot_value[0] value
                 analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
                 //if one of the note "weights" has reached the "tide"Pot_Value[1] level, we recall all "weights" from the pot positions
                 if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
@@ -151,17 +141,20 @@ void process_clock() {
             //NoteOff
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] == VALUE_NOTEOFF) {
               track[i].notePressed[0] = false;
-              track[i].tick_true = true;
+              track[i].tick_true[0] = true;
             }
           }
           //random
           if (allTracks[i]->seqMode == 2) {
             //if the actual step is high, play the notes
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] > VALUE_NOTEOFF) {
-              if (track[i].tick_true) {
-                track[i].tick_true = false;
+              if (track[i].tick_true[0]) {
+                track[i].tick_true[0] = false;
                 int NFX3Oct1 = random(NFX3[NFX3presetNr].Pot_Value[2], NFX3[NFX3presetNr].Pot_Value[3]);
                 track[i].notePlayed[0] = random(0, 11) + (NFX3Oct1 * 12);
+                track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(30, 127) / 127.00);
+                pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
+                Serial.println(track[i].MIDI_velocity);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
               }
@@ -169,7 +162,7 @@ void process_clock() {
             //NoteOff
             if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[0] == VALUE_NOTEOFF) {
               track[i].notePressed[0] = false;
-              track[i].tick_true = true;
+              track[i].tick_true[0] = true;
             }
           }
           //Polyrhytm
@@ -187,10 +180,13 @@ void process_clock() {
                 if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] > VALUE_NOTEOFF) {
                   track[i].playNoteOnce[polys] = true;
                   track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] + track[i].NoteOffset[phrase];
+                  track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[i]].voice[polys] + track[i].NoteOffset[phrase];
+                  track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[polys] / 127.00);
+                  pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
+                  Serial.println(track[i].MIDI_velocity);
                 }
                 //NoteOff
-                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[polys]].voice[polys] == VALUE_NOTEOFF) {
+                if (ctrack[i].sequence[track[i].clip_songMode].tick[NFX4reset[i]].voice[polys] == VALUE_NOTEOFF) {
                   track[i].notePressed[polys] = false;
                 }
               }
@@ -199,15 +195,24 @@ void process_clock() {
           //grids
           if (allTracks[i]->seqMode == 4) {
             if (track[i].clip_songMode < 8) {
+
               for (int polys = 0; polys < MAX_VOICES; polys++) {
-                if (beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
-                  track[i].playNoteOnce[polys] = true;
-                  track[i].notePressed[polys] = true;
-                  track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
+                if (track[i].tick_true[polys]) {
+                  track[i].tick_true[polys] = false;
+                  if (beatArray[NFX1[track[i].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
+                    track[i].playNoteOnce[polys] = true;
+                    track[i].notePressed[polys] = true;
+                    track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
+                    track[i].MIDI_velocity = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(30, 127) / 127.00);
+                    pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity / 127.00);
+                    Serial.println(track[i].MIDI_velocity);
+                  }
                 }
                 //NoteOff
-                if (!beatArray[NFX1[track[0].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
+
+                if (!beatArray[NFX1[track[i].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
                   track[i].notePressed[polys] = false;
+                  track[i].tick_true[polys] = true;
                 }
               }
             }
@@ -512,27 +517,17 @@ void myNoteOn(int channel, byte note, byte velocity) {
     }
 
 
-    if (desired_instrument == 0) {
-      for (int octNotes = 0; octNotes < 12; octNotes++) {
-        if (note == LP_octave_notes[octNotes]) {
-          LP_octave_bool[octNotes] = true;
-          drumnotes[octNotes] = true;
-        }
+
+    for (int octNotes = 0; octNotes < 12; octNotes++) {
+      if (note == LP_octave_notes[octNotes]) {
+        channel = desired_instrument + 1;
+        LP_octave_bool_keys[octNotes] = true;
+        track[desired_instrument].notePressed[0] = true;
+        track[desired_instrument].playNoteOnce[0] = true;
+        track[desired_instrument].notePlayed[0] = octNotes + (allTracks[desired_instrument]->shownOctaves * 12);
       }
     }
 
-    else {
-      for (int octNotes = 0; octNotes < 12; octNotes++) {
-        if (note == LP_octave_notes[octNotes]) {
-          channel = desired_instrument + 1;
-          LP_octave_bool_keys[octNotes] = true;
-          track[desired_instrument].notePressed[0] = true;
-          track[desired_instrument].playNoteOnce[0] = true;
-          track[desired_instrument].notePlayed[0] = octNotes + (allTracks[desired_instrument]->shownOctaves * 12);
-          track[desired_instrument].notePlayed[0] = track[desired_instrument].notePlayed[0];
-        }
-      }
-    }
 
     for (int stepss = 0; stepss < 16; stepss++) {
       if (note == LP_step_notes[stepss]) {
@@ -577,20 +572,13 @@ void myNoteOn(int channel, byte note, byte velocity) {
 
   if (!launchpad) {
     //send midinotes for drumtrack
-    if (channel == 1) {
-      LP_octave_bool[note - 60] = true;
-      for (int files = 0; files < 12; files++) {
-        if (note == (files + 60) || LP_octave_bool[files]) {
-          drumnotes[files] = true;
-        }
-      }
-    } else {
-      LP_octave_bool_keys[0] = true;
-      track[channel - 1].notePressed[0] = true;
-      track[channel - 1].playNoteOnce[0] = true;
-      track[channel - 1].notePlayed[0] = note;
-      //track[channel - 1].notePlayed[0] = note;
-    }
+
+    LP_octave_bool_keys[0] = true;
+    track[channel - 1].notePressed[0] = true;
+    track[channel - 1].playNoteOnce[0] = true;
+    track[channel - 1].notePlayed[0] = note;
+    //track[channel - 1].notePlayed[0] = note;
+
     if (seq_rec) {
       for (int touched_ticks = 0; touched_ticks <= allTracks[desired_instrument]->stepLenght; touched_ticks++) {
         ctrack[channel - 1].sequence[track[channel - 1].clip_songMode].tick[seq_MIDItick].voice[0] = note;
@@ -672,19 +660,11 @@ void myNoteOff(int channel, byte note, byte velocity) {
     }
   }
   if (!launchpad) {
-    if (channel == 1) {
-      LP_octave_bool[note - 60] = false;
-      for (int files = 0; files < 12; files++) {
-        if (note == (files + 60) && !LP_octave_bool[files]) {
-          drumnotes[files] = false;
-        }
-      }
-    } else {
-      LP_octave_bool_keys[0] = false;
-      track[channel - 1].notePressed[0] = false;
-      track[channel - 1].notePlayed[0] = note;
-      //track[channel - 1].notePlayed[0] = note;
-    }
+
+    LP_octave_bool_keys[0] = false;
+    track[channel - 1].notePressed[0] = false;
+    track[channel - 1].notePlayed[0] = note;
+    //track[channel - 1].notePlayed[0] = note;
   }
 }
 

@@ -39,7 +39,6 @@ byte fxpreset[MAX_EFFECTS]{ 0 };
 //SeqMode variables
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define MAX_NOTE_INPUT_MODES 2
-const char* noteInputModes[MAX_NOTE_INPUT_MODES]{ "Step", "Tick" };
 #define MAX_SEQMODES 5
 #define NFX1_PAGE1 129
 #define NFX2_PAGE1 132
@@ -49,7 +48,7 @@ const char* noteInputModes[MAX_NOTE_INPUT_MODES]{ "Step", "Tick" };
 #define NFX6_PAGE1 142
 #define NFX7_PAGE1 144
 #define NFX8_PAGE1 146
-const char* seqModes[MAX_SEQMODES]{"Norm", "Drop", "Rand", "PolyR", "Grid" };
+const char* seqModes[MAX_SEQMODES]{"Note", "Drop", "Rand", "PolyR", "Grid" };
 #define NFX1NR 0
 #define NFX2NR 1
 #define NFX3NR 2
