@@ -129,8 +129,7 @@ const int chipSelect = BUILTIN_SDCARD;
 //initial drumnotes
 byte drumnote[12]{ 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 };
 
-//noteOn velocity for all tracks
-#define VELOCITY 96
+
 
 
 
@@ -265,6 +264,7 @@ void setup() {
       for (int s = 0; s < TICKS_PER_BAR; s++) {
         for (int v = 0; v < MAX_VOICES; v++) {
           ctrack[t].sequence[c].tick[s].voice[v] = 0;
+          ctrack[t].sequence[c].tick[s].velo[v] = 99;
         }
       }
     }

@@ -20,6 +20,7 @@
 #define POSITION_BAR_BUTTON 5
 #define DOT_OFFSET_X 40  //STEP_FRAME_W * 2 + 8
 #define DOT_OFFSET_Y 24  //STEP_FRAME_H + 8
+#define PIX_OFFSET_Y 18
 #define DOT_RADIUS 5
 #define OCTAVE_CHANGE_TEXT 3
 #define OCTAVE_CHANGE_LEFTMOST 18
@@ -215,7 +216,6 @@ byte incomingCC[4];
 bool incomingCC_changed[4]{ false };
 
 //button variables
-bool drumnotes[12];
 #define BUTTON0 68
 #define BUTTON1 70
 #define BUTTON2 57
@@ -262,6 +262,7 @@ bool LP_drawOnce[16];
 
 struct tick_t {
   byte voice[MAX_VOICES]{ 0 };
+  byte velo[MAX_VOICES]{ 0 };
 };
 struct sequence_t {
   tick_t tick[TICKS_PER_BAR];
@@ -344,7 +345,7 @@ struct tracks {
 
   int MIDItick = 0;
   int MIDItick_16 = 0;
-  bool tick_true = false;
+  bool tick_true[MAX_VOICES] = { false };
 };
 // make an array of 8 channel_types, numbered 0-7
 tracks* track;

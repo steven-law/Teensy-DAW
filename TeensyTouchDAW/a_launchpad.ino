@@ -3,6 +3,7 @@
 //also working on a class for implementing complex controllers
 
 void LP_drawclipRow() {
+  /*
   if (launchpad) {
 
     for (int LPclips = 0; LPclips < 8; LPclips++) {
@@ -16,6 +17,7 @@ void LP_drawclipRow() {
       midi01.sendNoteOn(allTracks[desired_instrument]->clipToEdit, LP_RED, 1);
     }
   }
+  */
 }
 
 void LP_songmode(int note) {
@@ -72,6 +74,7 @@ void LP_drawStepsequencer() {
 
 
 void LP_melodicstep() {
+  /*
   if (millis() % interval == 0) {
     if (LP_grid_bool[24]) {
       allTracks[desired_instrument]->shownOctaves--;
@@ -84,6 +87,7 @@ void LP_melodicstep() {
       drawActivePolySteps();
     }
   }
+  */
 
 
   if (millis() % interval == 0) {
@@ -115,7 +119,7 @@ void LP_melodicstep() {
               for (int touched_ticks = 0; touched_ticks <= allTracks[desired_instrument]->stepLenght; touched_ticks++) {
                 ctrack[desired_instrument].sequence[allTracks[desired_instrument]->clipToEdit].tick[touched_step + touched_ticks].voice[0] = note;
               }
-              clearStepsGridY(touched_step);
+              //clearStepsGridY(touched_step);
               // tft.fillCircle(dot_on_X, dot_on_Y, DOT_RADIUS, trackColor[desired_instrument] + (allTracks[desired_instrument]->clipToEdit * 20));  //draw the active steps circles
               midi01.sendNoteOn(LP_step_notes[steps], LP_YELLOW, 1);
             } else if (notevalue_on_step > VALUE_NOTEOFF) {
@@ -125,7 +129,7 @@ void LP_melodicstep() {
               }
               midi01.sendNoteOn(LP_step_notes[steps], LP_GREEN_DIM, 1);
             }
-            drawActivePolyStepsY(touched_step);
+            //drawActivePolyStepsY(touched_step);
           }
         }
       }
