@@ -126,12 +126,6 @@ const long interval = 200;
 //pinout for SD CARD
 const int chipSelect = BUILTIN_SDCARD;
 
-//initial drumnotes
-byte drumnote[12]{ 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 };
-
-
-
-
 
 //individual trackcolors
 int trackColor[9]{ 6150246, 8256638, 1095334, 12643941, 2583100, 9365295, 12943157, 5678954, ILI9341_WHITE };
@@ -923,16 +917,16 @@ void doMainButtons() {
         button[4] = false;
 
         if (allTracks[desired_instrument]->seqMode == 1) {
-          selectPage = NFX2_PAGE1;
+          selectPage = NFX2_PAGE1;//dropseq
         }
         if (allTracks[desired_instrument]->seqMode == 2) {
-          selectPage = NFX3_PAGE1;
+          selectPage = NFX3_PAGE1;//random
         }
         if (allTracks[desired_instrument]->seqMode == 3) {
-          selectPage = NFX4_PAGE1;
+          selectPage = NFX4_PAGE1;//polyRhythm
         }
         if (allTracks[desired_instrument]->seqMode == 4) {
-          selectPage = NFX1_PAGE1;
+          selectPage = NFX1_PAGE1;//grids
         }
         Plugin_View_Static();
       }
