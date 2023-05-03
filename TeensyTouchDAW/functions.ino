@@ -304,11 +304,11 @@ void PluginNoteOn() {
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
                 // Serial.printf("Send NoteON: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, master_clock.MIDItick);
-                usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
-                MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+                usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
+                MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
                 for (int usbs = 0; usbs < 10; usbs++) {
                   if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+                    usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
                   }
                 }
               }
@@ -666,8 +666,6 @@ void beatComponents() {
     }
   }
 }
-
-
 
 //end of the plugin-function-nightmare
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -341,7 +341,7 @@ struct tracks {
   bool notePressed[MAX_VOICES] = { false };
   bool envActive[MAX_VOICES] = { false };
   bool playNoteOnce[MAX_VOICES] = { false };
-  byte MIDI_velocity = 99;
+  byte MIDI_velocity[MAX_VOICES] = { 99 };
 
   int MIDItick = 0;
   int MIDItick_16 = 0;

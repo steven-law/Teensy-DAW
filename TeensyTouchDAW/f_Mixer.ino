@@ -1,5 +1,50 @@
 
-
+void selectSolo(int XPos, int YPos) {
+  int tracknumber = XPos + (YPos * 4);
+  byte YPosition = 5 + (YPos*2);
+  for (int others = 0; others <= 7; others++) {
+    allTracks[others]->muteThruSolo = true;
+  }
+  allTracks[tracknumber]->muteThruSolo = false;
+  allTracks[tracknumber]->soloed = true;
+  drawActiveRect((XPos + 1) * 4, YPosition, 1, 1, allTracks[tracknumber]->soloed, "S", ILI9341_WHITE);
+}
+void selectMute(int XPos, int YPos) {
+  int tracknumber = XPos + (YPos * 4);
+   byte YPosition = 5 + (YPos*2);
+  allTracks[tracknumber]->muted = true;
+  drawActiveRect((((XPos + 1) * 4) - 1), YPosition, 1, 1, allTracks[tracknumber]->muted, "M", ILI9341_RED);
+}
+void unselectMuteSolo(int XPos, int YPos) {
+  int tracknumber = XPos + (YPos * 4);
+   byte YPosition = 5 + (YPos*2);
+  //unmute desired track
+  allTracks[tracknumber]->muted = false;
+  drawActiveRect((((XPos + 1) * 4) - 1), YPosition, 1, 1, allTracks[tracknumber]->muted, "M", ILI9341_RED);
+  //unsolo desired track
+  for (int others = 0; others <= 7; others++) {
+    allTracks[others]->muteThruSolo = false;
+  }
+  allTracks[tracknumber]->muteThruSolo = false;
+  allTracks[tracknumber]->soloed = false;
+  drawActiveRect((XPos + 1) * 4, YPosition, 1, 1, allTracks[tracknumber]->soloed, "S", ILI9341_WHITE);
+}
+void setMuteSolo(byte XPos, byte YPos, int encoder) {
+  static byte muteSolo = 1;
+  if (enc_moved[XPos] || incomingCC_changed[XPos]) {
+    incomingCC_changed[XPos] = false;
+    muteSolo = constrain(getValue(XPos, 1, muteSolo), 0, 2);
+    if (muteSolo == 2) {
+      selectSolo(XPos, YPos);
+    }
+    if (muteSolo == 1) {
+      unselectMuteSolo(XPos, YPos);
+    }
+    if (muteSolo == 0) {
+      selectMute(XPos, YPos);
+    }
+  }
+}
 
 void Mixer_Settings() {
   sgtl5000_1.enable();
@@ -134,7 +179,7 @@ void MixerPage1_Dynamic() {
       break;
     case 1:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        allTracks[MixerColumn]->setMuteSolo(MixerColumn, 1, encoded[MixerColumn]);
+        setMuteSolo(MixerColumn, 0, encoded[MixerColumn]);
       }
       break;
     case 2:
@@ -144,7 +189,7 @@ void MixerPage1_Dynamic() {
       break;
     case 3:
       for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-        allTracks[MixerColumn + 4]->setMuteSolo(MixerColumn, 1, encoded[MixerColumn]);
+        setMuteSolo(MixerColumn, 3, encoded[MixerColumn]);
       }
       break;
   }

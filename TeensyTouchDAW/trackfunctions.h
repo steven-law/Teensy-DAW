@@ -147,6 +147,10 @@ void drawChar(int xPos, byte yPos, char* dvalue_char, int color) {
   tft.print(dvalue_char);
   dvalue_old_char = dvalue_char;
 }
+
+
+
+
 #define SHOW_ENCODER0 1
 #define SHOW_ENCODER1 3
 #define SHOW_ENCODER2 16
@@ -170,7 +174,7 @@ public:
 
   bool muted = false;   //todo
   bool soloed = false;  //todo
-  bool soloMuteState = false;
+  bool muteThruSolo = false;
 
 
   byte gainVol = 127;  //main volume for plugins
@@ -184,6 +188,12 @@ public:
     thisTrack = new_track;
     MIDIChannel = new_MIDIChannel;
     maxVoiceCount = new_maxVoiceCount;
+  }
+  //draws the left navigator for the tracks
+  void drawLeftNavigator(const char* sideDigit) {
+    tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
+    tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
+    tft.print(sideTabDigit[thisTrack]);
   }
   //sets the desired note into the desired voice, "stepPosition" and clip
   //the step is "stepLenght" long
@@ -324,12 +334,7 @@ public:
   }
 
 
-  //draws the left navigator for the tracks
-  void drawLeftNavigator(const char* sideDigit) {
-    tft.fillRect(1, TRACK_FRAME_H * (thisTrack + 1) - 8, 15, TRACK_FRAME_H, trackColor[thisTrack]);  //Xmin, Ymin, Xlength, Ylength, color
-    tft.setCursor(4, TRACK_FRAME_H * (thisTrack + 1) - 2);
-    tft.print(sideTabDigit[thisTrack]);
-  }
+  
   //various "set Volumes" for the mixerpages
   void setVolGain(byte XPos, byte YPos) {
 
@@ -342,22 +347,7 @@ public:
       }
     }
   }
-  void setMuteSolo(byte XPos, byte YPos, int encoder) {
-    static byte muteSolo = 1;
-    if (enc_moved[XPos] || incomingCC_changed[XPos]) {
-      incomingCC_changed[XPos] = false;
-      muteSolo = constrain(getValue(XPos, 1, muteSolo), 0, 2);
-      if (muteSolo == 2) {
-        selectSolo(XPos);
-      }
-      if (muteSolo == 1) {
-        unselectMuteSolo(XPos);
-      }
-      if (muteSolo == 0) {
-        selectMute(XPos);
-      }
-    }
-  }
+ 
   void setVolDry(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
@@ -401,29 +391,7 @@ public:
   void drawPotPos(byte XPos, byte YPos, byte value) {
     drawPot(XPos, YPos, value, value, trackNames_short[thisTrack], trackColor[thisTrack]);
   }
-  void selectSolo(byte XPos) {
-    for (int others = 0; others <= 7; others++) {
-      soloMuteState = HIGH;
-    }
-    soloMuteState = LOW;
-    soloed = HIGH;
-    drawActiveRect((XPos + 1) * 4, 5, 1, 1, soloed, "S", ILI9341_WHITE);
-  }
-
-  void selectMute(byte XPos) {
-    muted = true;
-    drawActiveRect((((XPos + 1) * 4) - 1), 5, 1, 1, muted, "M", ILI9341_RED);
-  }
-  void unselectMuteSolo(byte XPos) {
-    for (int others = 0; others <= 7; others++) {
-      soloMuteState = LOW;
-    }
-    soloMuteState = LOW;
-    soloed = LOW;
-    muted = LOW;
-    drawActiveRect((((XPos + 1) * 4) - 1), 5, 1, 1, muted, "M", ILI9341_RED);
-    drawActiveRect((XPos + 1) * 4, 5, 1, 1, soloed, "S", ILI9341_WHITE);
-  }
+  
 };
 
 class AudioRecorders {

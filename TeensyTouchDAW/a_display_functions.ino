@@ -291,6 +291,10 @@ void drawsongmodepageselector() {
     tft.setCursor(STEP_FRAME_W * pages + 3, STEP_FRAME_H * 13 + 4);
     tft.print((pages - 1));
   }
+  tft.fillRect(STEP_FRAME_W * 18, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_RED);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.setCursor(STEP_FRAME_W * 18 + 3, STEP_FRAME_H * 13 + 4);
+  tft.print("Clear");
 }
 void drawarrengmentLines(int songpageNumber) {
   page_phrase_start = songpageNumber * 16;
@@ -494,13 +498,6 @@ void clearPixelGrid() {  // clear all Steppixels from Display
     }
   }
 }
-void clearPolyGridY(int X_Axis) {  // clear all Steps in the same column
-
-  for (int T = 0; T < 12; T++) {
-
-    tft.fillCircle((X_Axis)*STEP_FRAME_W + DOT_OFFSET_X, T * STEP_FRAME_H + DOT_OFFSET_Y, DOT_RADIUS, ILI9341_DARKGREY);  // circle: x, y, radius, color
-  }
-}
 void clearPixelGridY(int X_Axis) {  // clear all Steppixels in the same column
   for (int T = 0; T < 12; T++) {
     for (int h = 0; h < TICK_PIXEL_WIDTH; h++) {
@@ -524,8 +521,6 @@ void draw_ClipselectorRow() {
   tft.setCursor(STEP_FRAME_W * 2 * 8 + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
   tft.print("Clear");
 }
-
-
 
 
 //draw sub_pages buttons of a plugin, max 4 -- drawActiveRect is recommended
