@@ -16,9 +16,9 @@ void Plugin_2_Settings() {
   pl2amp2.gain(1);
 }
 void Plugin2_Page1_Dynamic() {
- change_preset(1);
+  change_preset(1);
 
- 
+
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
@@ -35,6 +35,9 @@ void Plugin2_Page1_Dynamic() {
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           pl2MIX(1, 2, MixerColumn, lastPotRow);
         }
+        break;
+      case 3:
+        pl2File(1, 0, 0, 3);
         break;
     }
   }
@@ -61,6 +64,7 @@ void Plugin2_Page_Static() {
     drawPot(MixerColumn, 1, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
     drawPot(MixerColumn, 2, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
   }
+  drawPot(0, 3, plugin[1].preset[plpreset[1]].Pot_Value[12], plugin[1].preset[plpreset[1]].Pot_Value[12], wavKit[pl2Pot[12]], trackColor[desired_instrument]);
 }
 void Plugin2_Change() {
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {

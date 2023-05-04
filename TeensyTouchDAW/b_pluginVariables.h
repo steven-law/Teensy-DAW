@@ -4,8 +4,8 @@
 
 int oldWave;  //wfselect
 
-int pl2Pot[MAX_VOICES];
-int pl4Pot[MAX_VOICES];
+int pl2Pot[16];
+int pl4Pot[16];
 
 struct plugin_preset_data_t {
   byte Pot_Value[16]{ 0 };

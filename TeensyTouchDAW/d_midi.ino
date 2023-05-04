@@ -99,7 +99,6 @@ void process_clock() {
                 track[i].notePlayed[polys] = ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] + track[i].NoteOffset[phrase];
                 track[i].MIDI_velocity[polys] = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[polys] / 127.00);
                 pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity[polys] / 127.00);
-                Serial.println(track[i].MIDI_velocity[polys]);
               }
               if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] == VALUE_NOTEOFF) {
                 track[i].notePressed[polys] = false;
@@ -132,7 +131,6 @@ void process_clock() {
                 track[i].notePlayed[0] = (maxValIndex) + (octave * 12) + track[i].NoteOffset[phrase];
                 track[i].MIDI_velocity[0] = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].velo[0] / 127.00);
                 pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity[0] / 127.00);
-                Serial.println(track[i].MIDI_velocity[0]);  //every step, the last played note gets subtracted by the "drop"pot_value[0] value
                 analogReadArray[maxValIndex] = (analogReadArray[maxValIndex] - NFX2[NFX2presetNr].Pot_Value[0]);
                 //if one of the note "weights" has reached the "tide"Pot_Value[1] level, we recall all "weights" from the pot positions
                 if (analogReadArray[maxValIndex] <= NFX2[NFX2presetNr].Pot_Value[1]) {
@@ -159,7 +157,6 @@ void process_clock() {
                 track[i].notePlayed[0] = random(0, 11) + (NFX3Oct1 * 12);
                 track[i].MIDI_velocity[0] = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(NFX3[NFX3presetNr].Pot_Value[0], NFX3[NFX3presetNr].Pot_Value[1]) / 127.00);
                 pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity[0] / 127.00);
-                Serial.println(track[i].MIDI_velocity[0]);
                 track[i].playNoteOnce[0] = true;
                 track[i].notePressed[0] = true;
               }
@@ -205,7 +202,6 @@ void process_clock() {
                     track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
                     track[i].MIDI_velocity[polys] = allTracks[i]->gainVol * (float)(track[i].volume[phrase] / 127.00) * (float)(random(NFX1[track[i].clip_songMode].Pot_Value[12], NFX1[track[i].clip_songMode].Pot_Value[13]) / 127.00);
                     pluginVolume(track[i].MIDIchannel, track[i].MIDI_velocity[polys] / 127.00);
-                    Serial.println(track[i].MIDI_velocity[polys]);
                   }
                 }
                 //NoteOff
@@ -577,6 +573,7 @@ void myNoteOn(int channel, byte note, byte velocity) {
     track[channel - 1].notePressed[0] = true;
     track[channel - 1].playNoteOnce[0] = true;
     track[channel - 1].notePlayed[0] = note;
+    track[channel - 1].MIDI_velocity[0] = velocity;
     //track[channel - 1].notePlayed[0] = note;
 
     if (seq_rec) {
@@ -664,6 +661,7 @@ void myNoteOff(int channel, byte note, byte velocity) {
     LP_octave_bool_keys[0] = false;
     track[channel - 1].notePressed[0] = false;
     track[channel - 1].notePlayed[0] = note;
+    //track[channel - 1].MIDI_velocity[0] = velocity;
     //track[channel - 1].notePlayed[0] = note;
   }
 }
