@@ -25,6 +25,7 @@ void drawPot(int XPos, byte YPos, byte fvalue, int dvalue, char* dname, int colo
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(STEP_FRAME_W * xPos + 4, STEP_FRAME_H * yPos - 3);
   tft.print(dvalue);
+  tft.fillRect(STEP_FRAME_W * (xPos), STEP_FRAME_H * (yPos + 1), STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_DARKGREY);
   tft.setCursor(STEP_FRAME_W * xPos, STEP_FRAME_H * (yPos + 1) + 3);
   tft.print(dname);
 
@@ -334,7 +335,7 @@ public:
   }
 
 
-  
+
   //various "set Volumes" for the mixerpages
   void setVolGain(byte XPos, byte YPos) {
 
@@ -347,7 +348,7 @@ public:
       }
     }
   }
- 
+
   void setVolDry(byte XPos, byte YPos, int encoder) {
     if (enc_moved[XPos] || incomingCC_changed[XPos]) {
       incomingCC_changed[XPos] = false;
@@ -391,7 +392,6 @@ public:
   void drawPotPos(byte XPos, byte YPos, byte value) {
     drawPot(XPos, YPos, value, value, trackNames_short[thisTrack], trackColor[thisTrack]);
   }
-  
 };
 
 class AudioRecorders {

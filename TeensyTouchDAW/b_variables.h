@@ -110,9 +110,8 @@ byte selectPage;
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
-#define MAX_WAV_FILES 12
-#define MAX_DRUMKITS 4
-const char* wavKit[MAX_DRUMKITS] = { "A", "B", "C", "D" };
+#define MAX_WAV_FILES 127
+const char* wavKits[12]{ "K", "S", "H", "H", "C", "P", "P", "P", "F", "F", "X", "X" };  //kick, snare, hihat, hihat, clap, perc, perc, perc, FX, FX, FX2, FX2
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };

@@ -314,7 +314,7 @@ void PluginNoteOn() {
               }
               //play WAV drumplugin when midichannel = 18
               if (track[desired_instruments].MIDIchannel == 18) {
-                sprintf(_pl2Filename, "%s%d.WAV\0", wavKit[pl2Pot[12]], polys);
+                sprintf(_pl2Filename, "%s%d.WAV\0", wavKits[polys], plugin[1].preset[plpreset[1]].Pot_Value2[polys] );
                 PL2PLAYER[polys]->play(_pl2Filename);
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
