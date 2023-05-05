@@ -304,17 +304,18 @@ void PluginNoteOn() {
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
                 // Serial.printf("Send NoteON: %d, channel: %d, at tick: %d\n", track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDIchannel, master_clock.MIDItick);
-                usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
-                MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+                usbMIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
+                MIDI.sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
                 for (int usbs = 0; usbs < 10; usbs++) {
                   if (!launchpad) {
-                    usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity, track[desired_instruments].MIDIchannel);
+                    usb_midi_devices[usbs]->sendNoteOn(track[desired_instruments].notePlayed[polys], track[desired_instruments].MIDI_velocity[polys], track[desired_instruments].MIDIchannel);
                   }
                 }
               }
               //play WAV drumplugin when midichannel = 18
               if (track[desired_instruments].MIDIchannel == 18) {
-                PL2PLAYER[polys]->play(wavKit[polys]);
+                sprintf(_pl2Filename, "%s%d.WAV\0", wavKits[polys], plugin[1].preset[plpreset[1]].Pot_Value2[polys] );
+                PL2PLAYER[polys]->play(_pl2Filename);
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
               }
@@ -666,8 +667,6 @@ void beatComponents() {
     }
   }
 }
-
-
 
 //end of the plugin-function-nightmare
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

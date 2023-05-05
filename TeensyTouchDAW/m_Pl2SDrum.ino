@@ -16,10 +16,10 @@ void Plugin_2_Settings() {
   pl2amp2.gain(1);
 }
 void Plugin2_Page1_Dynamic() {
- change_preset(1);
+  change_preset(1);
 
- 
-  if (!button[14]) {
+
+  if (!button[14] && !button[9]) {
     switch (lastPotRow) {
       case 0:
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
@@ -36,10 +36,36 @@ void Plugin2_Page1_Dynamic() {
           pl2MIX(1, 2, MixerColumn, lastPotRow);
         }
         break;
+      case 3:
+        //pl2File(1, 0, 0, 3);
+        break;
     }
   }
-
+  if (button[9]) {
+    switch (lastPotRow) {
+      case 0:
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2File(1, 0, MixerColumn, lastPotRow);
+        }
+        break;
+      case 1:
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2File(1, 1, MixerColumn, lastPotRow);
+        }
+        break;
+      case 2:
+        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+          pl2File(1, 2, MixerColumn, lastPotRow);
+        }
+        break;
+      case 3:
+        //pl2File(1, 0, 0, 3);
+        break;
+    }
+  }
+  
   if (ts.touched() || button[15]) {
+
     if (gridTouchY == 0) {
       //Save button
       if (gridTouchX == POSITION_SAVE_BUTTON || gridTouchX == POSITION_SAVE_BUTTON + 1) {
@@ -57,9 +83,15 @@ void Plugin2_Page_Static() {
   Plugin2_Change();
   drawNrInRect(18, 1, plpreset[1], ILI9341_PURPLE);
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    drawPot(MixerColumn, 0, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], showVOL[MixerColumn], trackColor[desired_instrument]);
-    drawPot(MixerColumn, 1, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], showVOL[MixerColumn + 4], trackColor[desired_instrument]);
-    drawPot(MixerColumn, 2, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], showVOL[MixerColumn + 8], trackColor[desired_instrument]);
+
+    sprintf(_pl2Filename, "%s%d\0", wavKits[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value2[MixerColumn]);
+    drawPot(MixerColumn, 0, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn], _pl2Filename, trackColor[desired_instrument]);
+
+    sprintf(_pl2Filename, "%s%d\0", wavKits[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value2[MixerColumn + 4]);
+    drawPot(MixerColumn, 1, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 4], _pl2Filename, trackColor[desired_instrument]);
+
+    sprintf(_pl2Filename, "%s%d\0", wavKits[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value2[MixerColumn + 8]);
+    drawPot(MixerColumn, 2, plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], plugin[1].preset[plpreset[1]].Pot_Value[MixerColumn + 8], _pl2Filename, trackColor[desired_instrument]);
   }
 }
 void Plugin2_Change() {

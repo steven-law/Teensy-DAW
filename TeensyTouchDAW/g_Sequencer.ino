@@ -685,7 +685,7 @@ void NoteFX4_Page1_Dynamic() {
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn];
           if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn] + encoded[MixerColumn]), 0, TICKS_PER_BAR-1);
           }
         }
         break;
@@ -694,7 +694,7 @@ void NoteFX4_Page1_Dynamic() {
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4];
           if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 4] + encoded[MixerColumn]), 0, TICKS_PER_BAR - 1);
           }
         }
         break;
@@ -703,7 +703,7 @@ void NoteFX4_Page1_Dynamic() {
         for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
           Potentiometer[MixerColumn] = NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8];
           if (enc_moved[MixerColumn]) {
-            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, NUM_STEPS - 1);
+            Potentiometer[MixerColumn] = constrain((NFX4[NFX4presetNr].Pot_Value[MixerColumn + 8] + encoded[MixerColumn]), 0, TICKS_PER_BAR - 1);
           }
         }
         break;

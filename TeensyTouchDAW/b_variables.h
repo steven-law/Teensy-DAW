@@ -110,9 +110,8 @@ byte selectPage;
 
 #define MAX_RAW_FILES 128
 #define SAMPLE_ROOT 69
-#define MAX_WAV_FILES 12
-
-const char* wavKit[MAX_WAV_FILES] = { "P0.WAV", "P1.WAV", "P2.WAV", "P3.WAV", "P4.WAV", "P5.WAV", "P6.WAV", "P7.WAV", "P8.WAV", "P9.WAV", "P10.WAV", "P11.WAV" };
+#define MAX_WAV_FILES 127
+const char* wavKits[12]{ "K", "S", "H", "H", "C", "P", "P", "P", "F", "F", "X", "X" };  //kick, snare, hihat, hihat, clap, perc, perc, perc, FX, FX, FX2, FX2
 const char* showVOL[12]{ "Vol1", "Vol2", "Vol3", "Vol4", "Vol5", "Vol6", "Vol7", "Vol8", "Vol9", "Vol10", "Vol11", "Vol12" };
 const char* noteNames[12]{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 char* trackNames_short[9]{ "TrD", "Tr2", "Tr3", "Tr4", "Tr5", "Tr6", "Tr7", "Tr8", "" };
@@ -121,6 +120,7 @@ char _trackname[20];
 char _RawFile[20];
 char _RawFile2[20];
 char _RecFile[20];
+char _pl2Filename[10];
 const char* sideTabDigit[NUM_TRACKS]{ "D", "2", "3", "4", "5", "6", "7", "8" };
 const char* filterType[3] = { "LPF", "BPF", "HPF" };
 
@@ -341,7 +341,7 @@ struct tracks {
   bool notePressed[MAX_VOICES] = { false };
   bool envActive[MAX_VOICES] = { false };
   bool playNoteOnce[MAX_VOICES] = { false };
-  byte MIDI_velocity = 99;
+  byte MIDI_velocity[MAX_VOICES] = { 99 };
 
   int MIDItick = 0;
   int MIDItick_16 = 0;
