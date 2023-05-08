@@ -1,4 +1,4 @@
-bool debugTime = false;
+bool debugTime = true;
 extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
@@ -797,8 +797,8 @@ void doMainButtons() {
       if (seq_rec == false) {
         seq_rec = true;
         tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
+        
         if (selectPage == RECORDER_PAGE) {
-
           startRecording();
           drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
         }
@@ -839,6 +839,8 @@ void doMainButtons() {
   if (!button[10]) {
     //select tracks
     if (button[8]) {  //9th button
+      seq_rec = false;
+      tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
       for (int i = 0; i < NUM_TRACKS; i++) {
         //select melodic track 2-8
         if (button[i]) {
@@ -852,6 +854,8 @@ void doMainButtons() {
     }
     //plugin selection
     if (button[9]) {
+      seq_rec = false;
+      tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
       for (int i = 0; i < NUM_TRACKS; i++) {
         if (button[i]) {  //"D"  68  1st button
           button[i] = false;
@@ -874,6 +878,8 @@ void doMainButtons() {
     }
     //  select Mixerpage1
     if (button[11]) {
+      seq_rec = false;
+      tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
       if (button[0]) {
         selectPage = MIXER_PAGE_1;
         button[0] = false;
@@ -894,6 +900,8 @@ void doMainButtons() {
     }
     //FX Selection
     if (button[12]) {
+      seq_rec = false;
+      tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
       //reverb
       if (button[0]) {
         selectPage = FX1_PAGE1;
@@ -917,16 +925,16 @@ void doMainButtons() {
         button[4] = false;
 
         if (allTracks[desired_instrument]->seqMode == 1) {
-          selectPage = NFX2_PAGE1;//dropseq
+          selectPage = NFX2_PAGE1;  //dropseq
         }
         if (allTracks[desired_instrument]->seqMode == 2) {
-          selectPage = NFX3_PAGE1;//random
+          selectPage = NFX3_PAGE1;  //random
         }
         if (allTracks[desired_instrument]->seqMode == 3) {
-          selectPage = NFX4_PAGE1;//polyRhythm
+          selectPage = NFX4_PAGE1;  //polyRhythm
         }
         if (allTracks[desired_instrument]->seqMode == 4) {
-          selectPage = NFX1_PAGE1;//grids
+          selectPage = NFX1_PAGE1;  //grids
         }
         Plugin_View_Static();
       }
@@ -934,13 +942,16 @@ void doMainButtons() {
     //Audiorecorder
     if (button[13]) {  // 14th button
       selectPage = RECORDER_PAGE;
+      seq_rec = false;
+      tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
       button[13] = false;
       Plugin_View_Static();
     }
   }
   if (button[14] && button[15]) {
     button[15] = false;
-
+    seq_rec = false;
+    tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_LIGHTGREY);
     Serial.println("debugging:");
     Serial.println("arrangment1:");
     for (int t = 0; t < NUM_TRACKS; t++) {

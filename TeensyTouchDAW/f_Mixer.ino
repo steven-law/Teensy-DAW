@@ -1,7 +1,7 @@
 
 void selectSolo(int XPos, int YPos) {
   int tracknumber = XPos + (YPos * 4);
-  byte YPosition = 5 + (YPos*2);
+  byte YPosition = 5 + (YPos * 2);
   for (int others = 0; others <= 7; others++) {
     allTracks[others]->muteThruSolo = true;
   }
@@ -11,13 +11,13 @@ void selectSolo(int XPos, int YPos) {
 }
 void selectMute(int XPos, int YPos) {
   int tracknumber = XPos + (YPos * 4);
-   byte YPosition = 5 + (YPos*2);
+  byte YPosition = 5 + (YPos * 2);
   allTracks[tracknumber]->muted = true;
   drawActiveRect((((XPos + 1) * 4) - 1), YPosition, 1, 1, allTracks[tracknumber]->muted, "M", ILI9341_RED);
 }
 void unselectMuteSolo(int XPos, int YPos) {
   int tracknumber = XPos + (YPos * 4);
-   byte YPosition = 5 + (YPos*2);
+  byte YPosition = 5 + (YPos * 2);
   //unmute desired track
   allTracks[tracknumber]->muted = false;
   drawActiveRect((((XPos + 1) * 4) - 1), YPosition, 1, 1, allTracks[tracknumber]->muted, "M", ILI9341_RED);
@@ -469,11 +469,12 @@ void loadMixer() {
   myFile = SD.open("mixer.txt");
   if (myFile) {
     tft.println("opening mixer.txt:");
-
+    Serial.println("opening mixer.txt:");
     // read from the file until there's nothing else in it:
 
     //load mixer variables
-    tft.print("reading mixer from mixer.txt...");
+    tft.print("reading from mixer.txt...");
+    Serial.print("reading from mixer.txt...");
     for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
       allTracks[MixerColumn]->gainVol = myFile.read();
       allTracks[MixerColumn + 4]->gainVol = myFile.read();
@@ -489,6 +490,7 @@ void loadMixer() {
 
 
     tft.println("Done");
+    Serial.println("Done");
     startUpScreen();
     // close the file:
     myFile.close();

@@ -30,6 +30,7 @@ void process_clock() {
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick % TICKS_PER_STEP == 0) {
         track[i].MIDItick_16++;
+        //Serial.printf("Tr= %d, Ti= %d\n", i, track[i].MIDItick_16);
         /*
         for (int polys = polys; polys < MAX_VOICES; polys++) {
           NFX4reset[polys]++;
@@ -44,17 +45,17 @@ void process_clock() {
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick == TICKS_PER_BAR) {
         track[i].MIDItick = 0;
-        track[i].MIDItick_16 = 0;  //!!!!try this tomorrow
+        //track[i].MIDItick_16 = 0;  //!!!!try this tomorrow
       }
     }
-    /*
+
     //reset MIDItick_16 when NUM_STEPS 16 is reached
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (track[i].MIDItick_16 == NUM_STEPS) {
         track[i].MIDItick_16 = 0;
       }
     }
-    */
+
     //reset barcounter at end of song/loop
     if (phrase == MAX_PHRASES || phrase == master_clock.endOfLoop) {
       //master_clock.set_playing(false);
@@ -82,15 +83,20 @@ void process_clock() {
         }
       }
     }
-
-
+    /*
+    //MIDItick_16++, SerialPrints for debugging;
+    for (int i = 0; i < NUM_TRACKS; i++) {
+      if (track[i].MIDItick % TICKS_PER_STEP == 0) {
+        Serial.printf("Phrase:%d, Tr= %d, Ti= %d, St= %d\n", phrase, i, track[i].MIDItick, track[i].MIDItick_16);
+      }
+    }
+    */
     //seqModes note "freeing"
     for (int i = 0; i < NUM_TRACKS; i++) {
       if (!allTracks[i]->muteThruSolo) {
         if (!allTracks[i]->muted) {
           //stepseqeucer for melodic track
           if (allTracks[i]->seqMode == 0) {
-            //tickwise
             //if the actual step is high, play the notes
             for (int polys = 0; polys < MAX_VOICES; polys++) {
               if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] > VALUE_NOTEOFF) {
@@ -102,7 +108,6 @@ void process_clock() {
               }
               if (ctrack[i].sequence[track[i].clip_songMode].tick[track[i].MIDItick].voice[polys] == VALUE_NOTEOFF) {
                 track[i].notePressed[polys] = false;
-                //track[i].notePlayed[polys] = VALUE_NOTEOFF;
               }
             }
           }
@@ -197,6 +202,7 @@ void process_clock() {
                 if (track[i].tick_true[polys]) {
                   track[i].tick_true[polys] = false;
                   if (beatArray[NFX1[track[i].clip_songMode].Pot_Value[polys]][track[i].MIDItick_16]) {
+                    Serial.printf("Tick16 in grids = %d\n", track[i].MIDItick_16);
                     track[i].playNoteOnce[polys] = true;
                     track[i].notePressed[polys] = true;
                     track[i].notePlayed[polys] = polys + (allTracks[i]->shownOctaves * 12);
@@ -411,14 +417,14 @@ void midiCCpage1_Dynamic(int desired_instrument) {
 
 void startSeq() {
   master_clock.set_playing(true);
-
+  beatComponents();
   for (int i = 0; i <= 7; i++) {
     track[i].clip_songMode = track[i].arrangment1[master_clock.startOfLoop];
   }
 }
 void stopSeq() {
   master_clock.set_playing(false);
-  phrase = master_clock.startOfLoop;
+  phrase = master_clock.startOfLoop - 1;
   pixelphrase = -1;
   seq_MIDItick = -1;
   for (int track_number = 0; track_number < NUM_TRACKS; track_number++) {

@@ -189,7 +189,8 @@ void savebutton() {
       }
     }
     tft.println("Done");
-
+    myFile.print((char)master_clock.startOfLoop);
+    myFile.print((char)master_clock.endOfLoop);
     // close the file:
     myFile.close();
     tft.println("Saving done.");
@@ -212,42 +213,42 @@ void savebutton() {
 
     tft.print("Writing plugin 1 to project.txt...");
     //save plugin 1 variables
-    savePlugin("plugin1", 17);
+    savePlugin("plugin1", 0);
     tft.println("Done");
 
     tft.print("Writing plugin 2 to project.txt...");
     //save plugin 2 variables
-    savePlugin("plugin2", 18);
+    savePlugin("plugin2", 1);
     tft.println("Done");
 
     tft.print("Writing plugin 3 to project.txt...");
     //save plugin 3 variables
-    savePlugin("plugin3", 19);
+    savePlugin("plugin3", 2);
     tft.println("Done");
 
     tft.print("Writing plugin 4 to project.txt...");
     //save plugin 4 variables
-    savePlugin("plugin4", 20);
+    savePlugin("plugin4", 3);
     tft.println("Done");
 
     tft.print("Writing plugin 5 to project.txt...");
     //save plugin 5 variables
-    savePlugin("plugin5", 21);
+    savePlugin("plugin5", 4);
     tft.println("Done");
 
     tft.print("Writing plugin 6 to project.txt...");
     //save plugin 6 variables
-    savePlugin("plugin6", 22);
+    savePlugin("plugin6", 5);
     tft.println("Done");
 
     tft.print("Writing plugin 8 to project.txt...");
     //save plugin 8 variables
-    savePlugin("plugin8", 24);
+    savePlugin("plugin8", 7);
     tft.println("Done");
 
     tft.print("Writing plugin 9 to project.txt...");
     //save plugin 9 variables
-    savePlugin("plugin9", 25);
+    savePlugin("plugin9", 8);
     tft.println("Done");
 
     tft.print("Writing FX 1 to project.txt...");
@@ -302,8 +303,10 @@ void loadbutton() {
         track[ctrack].volume[cphrase] = myFile.read();
       }
     }
-    tft.println("Done");
 
+    master_clock.startOfLoop = myFile.read();
+    master_clock.endOfLoop = myFile.read();
+    tft.println("Done");
     // close the file:
     myFile.close();
     for (int ctrack = 0; ctrack < 8; ctrack++) {
@@ -319,8 +322,8 @@ void loadbutton() {
     loadTrack(trackNames_long[0], 0);
     tft.println("Done");
     //load track 2-8
-    tft.print("Reading track2-8 from project.txt...");
-    for (int tracks = 1; tracks < 8; tracks++) {
+    tft.print("Reading track1-8 from project.txt...");
+    for (int tracks = 0; tracks < 8; tracks++) {
       loadTrack(trackNames_long[tracks], tracks);
     }
     //load mixer settings
@@ -330,42 +333,42 @@ void loadbutton() {
 
     //load plugin 1 variables
     tft.print("reading plugin 1 from project.txt...");
-    loadPlugin("plugin1", 17);
+    loadPlugin("plugin1", 0);
     tft.println("Done");
 
     //load plugin 2 variables
     tft.print("reading plugin 2 from project.txt...");
-    loadPlugin("plugin2", 18);
+    loadPlugin("plugin2", 1);
     tft.println("Done");
 
     //load plugin 3 variables
     tft.print("reading plugin 3 from project.txt...");
-    loadPlugin("plugin3", 19);
+    loadPlugin("plugin3", 2);
     tft.println("Done");
 
     //load plugin 4 variables
     tft.print("reading plugin 4 from project.txt...");
-    loadPlugin("plugin4", 20);
+    loadPlugin("plugin4", 3);
     tft.println("Done");
 
     //load plugin 5 variables
     tft.print("reading plugin 5 from project.txt...");
-    loadPlugin("plugin5", 21);
+    //loadPlugin("plugin5", 4);
     tft.println("Done");
 
     //load plugin 6 variables
     tft.print("reading plugin 6 from project.txt...");
-    loadPlugin("plugin6", 22);
+    loadPlugin("plugin6", 5);
     tft.println("Done");
 
     //load plugin 8 variables
     tft.print("reading plugin 8 from project.txt...");
-    loadPlugin("plugin8", 24);
+    loadPlugin("plugin8", 7);
     tft.println("Done");
 
     //load plugin 9 variables
     tft.print("reading plugin 9 from project.txt...");
-    loadPlugin("plugin9", 25);
+    loadPlugin("plugin9", 8);
     tft.println("Done");
 
 

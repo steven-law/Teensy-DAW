@@ -672,7 +672,7 @@ void draw_Raw_File(int pluginNr, int des_node, int COL, int ROW) {  //MIN: unuse
 }
 void pl2MIX(int pluginNr, int des_node, int COL, int ROW) {
   int pot_index = COL + (ROW * 4);
-  if (enc_moved[COL]|| incomingCC_changed[COL]) {
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
     Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
     //if (pl2Pot[pot_index] != Potentiometer[COL]) {
 
@@ -706,5 +706,34 @@ void pl4MIX(int pluginNr, int des_node, int COL, int ROW) {
     plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
     PL4MIX[ROW]->gain(COL, (float)(pl4Pot[COL + (ROW * 4)] / 127.00));
     drawPot(COL, ROW, Potentiometer[COL], pl4Pot[COL + (ROW * 4)], showVOL[COL + (ROW * 4)], trackColor[desired_instrument]);
+  }
+}
+
+void pl11MIX(int pluginNr, int des_node, int COL, int ROW) {
+  int pot_index = COL + (ROW * 4);
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
+    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    //if (pl2Pot[pot_index] != Potentiometer[COL]) {
+    int volumeD = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index];
+    int fileNr = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index];
+    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] = Potentiometer[COL];
+    PL11MIX[ROW]->gain(COL, (float)(volumeD / 127.00));
+
+    sprintf(_pl11Filename, "%s%d\0", wavKits[pot_index], fileNr);
+    drawPot(COL, ROW, volumeD, volumeD, _pl11Filename, trackColor[desired_instrument]);
+    Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index]);
+  }
+}
+void pl11File(int pluginNr, int des_node, int COL, int ROW) {
+  int pot_index = COL + (ROW * 4);
+  if (enc_moved[COL]) {
+    Encoder_to_Pot_Value2(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    // if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index] != Potentiometer[COL]) {
+    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index] = Potentiometer[COL];
+    int anyvalue = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index];
+    int fileNr = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index];
+    sprintf(_pl11Filename, "%s%d\0", wavKits[pot_index], fileNr);
+    drawPot(COL, ROW, anyvalue, anyvalue, _pl11Filename, trackColor[desired_instrument]);
+    Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index]);
   }
 }

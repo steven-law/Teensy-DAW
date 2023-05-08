@@ -68,8 +68,8 @@ void Plugin_View_Static() {
   if (selectPage == PLUGIN16_PAGE1) {
     Plugin16_Page_Static();
   }
-
-
+  ///////////////////////////////////////////////////////////////////////
+  //NFX
   if (selectPage == NFX1_PAGE1) {
     NoteFX1_Page_Static();
   }
@@ -82,6 +82,8 @@ void Plugin_View_Static() {
   if (selectPage == NFX4_PAGE1) {
     NoteFX4_Page_Static();
   }
+  ////////////////////////////////////////////////////////////////////
+  //mixer
   if (selectPage == MIXER_PAGE_1) {
     mixerPage1_Static(0);
   }
@@ -91,6 +93,8 @@ void Plugin_View_Static() {
   if (selectPage == MIXER_PAGE_3) {
     mixerPage3_Static();
   }
+  ////////////////////////////////////////////////////////////////////
+  //FX
   if (selectPage == FX1_PAGE1) {
     FX1reverb_static();
   }
@@ -100,6 +104,8 @@ void Plugin_View_Static() {
   if (selectPage == FX3_PAGE1) {
     FX3Delay_static();
   }
+  ////////////////////////////////////////////////////////////////////
+  //recorder
   if (selectPage == RECORDER_PAGE) {
     recorder_Page_Static();
   }
@@ -211,6 +217,8 @@ void Plugin_View_Dynamic() {
   if (selectPage == PLUGIN16_PAGE1) {
     Plugin16_Page1_Dynamic();
   }
+  ////////////////////////////////////////////////////////////////////
+  //NFX
   //setting up the NoteFX1-view
   if (selectPage == NFX1_PAGE1) {
     NoteFX1_Page1_Dynamic();
@@ -231,10 +239,6 @@ void Plugin_View_Dynamic() {
     NoteFX4_Page1_Dynamic();
     NoteFX4_Control();
   }
-
-
-
-
 
 
   //setting up the StepSequencer-view for #1-8
@@ -260,7 +264,8 @@ void Plugin_View_Dynamic() {
     recorder_Page1_Dynamic();
   }
 
-
+  ////////////////////////////////////////////////////////////////////
+  //mixer
   //setting up the Mixer Page 1
   if (selectPage == MIXER_PAGE_1) {
     MixerPage1_Dynamic();
@@ -273,7 +278,8 @@ void Plugin_View_Dynamic() {
   if (selectPage == MIXER_PAGE_3) {
     MixerPage3_Dynamic();
   }
-  //setting up the Mixer Page 3
+  ////////////////////////////////////////////////////////////////////
+  //FX
   if (selectPage == FX1_PAGE1) {
     FX1reverb_dynamic();
   }
@@ -284,7 +290,7 @@ void Plugin_View_Dynamic() {
   if (selectPage == FX3_PAGE1) {
     FX3Delay_dynamic();
   }
-  //setting up the Mixer Page 2
+  //setting up the Midi cc page
   if (selectPage == MIDICC_PAGE_1) {
     midiCCpage1_Dynamic(desired_track);
   }
@@ -314,7 +320,7 @@ void PluginNoteOn() {
               }
               //play WAV drumplugin when midichannel = 18
               if (track[desired_instruments].MIDIchannel == 18) {
-                sprintf(_pl2Filename, "%s%d.WAV\0", wavKits[polys], plugin[1].preset[plpreset[1]].Pot_Value2[polys] );
+                sprintf(_pl2Filename, "%s%d.WAV\0", wavKits[polys], plugin[1].preset[plpreset[1]].Pot_Value2[polys]);
                 PL2PLAYER[polys]->play(_pl2Filename);
                 track[desired_instruments].playNoteOnce[polys] = false;
                 track[desired_instruments].envActive[polys] = true;
@@ -415,6 +421,98 @@ void PluginNoteOn() {
                   track[desired_instruments].playNoteOnce[8] = false;
                   track[desired_instruments].envActive[8] = true;
                 }
+              }
+              //play RAW drumplugin when midichannel = 27
+              if (track[desired_instruments].MIDIchannel == 27) {
+                if (polys == 0) {
+                  sprintf(_pl11Filename1, "%s%d.RAW\0", wavKits[0], plugin[10].preset[plpreset[10]].Pot_Value2[0]);
+                  //playSdRaw1.setPlaybackRate(1);
+                  playSdRaw1.play(_pl11Filename1);
+                  //sprintf(_pl11Filename, "%s%d.RAW\0", wavKits[polys], plugin[10].preset[plpreset[10]].Pot_Value2[polys]);
+                  //PL11PLAYER[polys]->play(_pl11Filename);
+                  track[desired_instruments].playNoteOnce[0] = false;
+                  track[desired_instruments].envActive[0] = true;
+                  Serial.printf("poly=%d, name=%s\n", polys, _pl11Filename1);
+                }
+                if (polys == 1) {
+                  sprintf(_pl11Filename2, "%s%d.RAW\0", wavKits[1], plugin[10].preset[plpreset[10]].Pot_Value2[1]);
+                  //playSdRaw2.setPlaybackRate(1);
+                  playSdRaw2.play(_pl11Filename2);
+                  track[desired_instruments].playNoteOnce[1] = false;
+                  track[desired_instruments].envActive[1] = true;
+                }
+                if (polys == 2) {
+                  sprintf(_pl11Filename3, "%s%d.RAW\0", wavKits[2], plugin[10].preset[plpreset[10]].Pot_Value2[2]);
+                  //playSdRaw3.setPlaybackRate(1);
+                  playSdRaw3.play(_pl11Filename3); //filename, Nr of channels
+                  track[desired_instruments].playNoteOnce[2] = false;
+                  track[desired_instruments].envActive[2] = true;
+                }
+                /*
+                if (polys == 3) {
+                  sprintf(_pl11Filename4, "%s%d.RAW\0", wavKits[3], plugin[10].preset[plpreset[10]].Pot_Value2[3]);
+                  playSdRaw4.setPlaybackRate(1);
+                  playSdRaw4.playRaw(_pl11Filename4, 1);
+                  track[desired_instruments].playNoteOnce[3] = false;
+                  track[desired_instruments].envActive[3] = true;
+                }
+                if (polys == 4) {
+                  sprintf(_pl11Filename5, "%s%d.RAW\0", wavKits[4], plugin[10].preset[plpreset[10]].Pot_Value2[4]);
+                  playSdRaw5.setPlaybackRate(1);
+                  playSdRaw5.playRaw(_pl11Filename5, 1);
+                  track[desired_instruments].playNoteOnce[4] = false;
+                  track[desired_instruments].envActive[4] = true;
+                }
+                if (polys == 5) {
+                  sprintf(_pl11Filename6, "%s%d.RAW\0", wavKits[5], plugin[10].preset[plpreset[10]].Pot_Value2[5]);
+                  playSdRaw6.setPlaybackRate(1);
+                  playSdRaw6.playRaw(_pl11Filename6, 1);
+                  track[desired_instruments].playNoteOnce[5] = false;
+                  track[desired_instruments].envActive[5] = true;
+                }
+                if (polys == 6) {
+                  sprintf(_pl11Filename7, "%s%d.RAW\0", wavKits[6], plugin[10].preset[plpreset[10]].Pot_Value2[6]);
+                  playSdRaw7.setPlaybackRate(1);
+                  playSdRaw7.playRaw(_pl11Filename7, 1);
+                  track[desired_instruments].playNoteOnce[6] = false;
+                  track[desired_instruments].envActive[6] = true;
+                }
+                if (polys == 7) {
+                  sprintf(_pl11Filename8, "%s%d.RAW\0", wavKits[7], plugin[10].preset[plpreset[10]].Pot_Value2[7]);
+                  playSdRaw8.setPlaybackRate(1);
+                  playSdRaw8.playRaw(_pl11Filename8, 1);
+                  track[desired_instruments].playNoteOnce[7] = false;
+                  track[desired_instruments].envActive[7] = true;
+                }
+                if (polys == 8) {
+                  sprintf(_pl11Filename9, "%s%d.RAW\0", wavKits[8], plugin[10].preset[plpreset[10]].Pot_Value2[8]);
+                  playSdRaw9.setPlaybackRate(1);
+                  playSdRaw9.playRaw(_pl11Filename9, 1);
+                  track[desired_instruments].playNoteOnce[8] = false;
+                  track[desired_instruments].envActive[8] = true;
+                }
+                if (polys == 9) {
+                  sprintf(_pl11Filename10, "%s%d.RAW\0", wavKits[9], plugin[10].preset[plpreset[10]].Pot_Value2[9]);
+                  playSdRaw10.setPlaybackRate(1);
+                  playSdRaw10.playRaw(_pl11Filename10, 1);
+                  track[desired_instruments].playNoteOnce[9] = false;
+                  track[desired_instruments].envActive[9] = true;
+                }
+                if (polys == 10) {
+                  sprintf(_pl11Filename11, "%s%d.RAW\0", wavKits[10], plugin[10].preset[plpreset[10]].Pot_Value2[10]);
+                  playSdRaw11.setPlaybackRate(1);
+                  playSdRaw11.playRaw(_pl11Filename11, 1);
+                  track[desired_instruments].playNoteOnce[10] = false;
+                  track[desired_instruments].envActive[10] = true;
+                }
+                if (polys == 11) {
+                  sprintf(_pl11Filename12, "%s%d.RAW\0", wavKits[11], plugin[10].preset[plpreset[10]].Pot_Value2[11]);
+                  playSdRaw12.setPlaybackRate(1);
+                  playSdRaw12.playRaw(_pl11Filename12, 1);
+                  track[desired_instruments].playNoteOnce[11] = false;
+                  track[desired_instruments].envActive[11] = true;
+                }
+                */
               }
             }
           }
@@ -535,6 +633,9 @@ void PluginNoteOff() {
               track[desired_instruments].envActive[3] = false;
             }
           }
+          if (track[desired_instruments].MIDIchannel == 27) {
+            track[desired_instruments].envActive[polys] = false;
+          }
         }
       }
     }
@@ -648,6 +749,10 @@ void beatComponents() {
       plpreset[8] = track[instruments].Ttrckprst[phrase];
       Plugin9_Change();
     }
+    if (track[instruments].MIDIchannel == 27) {
+      plpreset[pl11NR] = track[instruments].Ttrckprst[phrase];
+      Plugin11_Change();
+    }
 
     if (allTracks[instruments]->seqMode == 1) {
       NFX1presetNr = track[instruments].clip_songMode;
@@ -711,44 +816,50 @@ void saveTrack(const char* trackname, byte trackNr) {
 
 
   // delete the file:
-  tft.print("Removing:");
-  tft.print(_trackname);
+  tft.printf("Removing:%s", _trackname);
+  Serial.printf("Removing:%s", _trackname);
   SD.remove(_trackname);
   tft.println("Done");
+  Serial.println("Done");
 
   // open the file.
-  tft.print("Creating and opening:");
-  tft.print(_trackname);
+  tft.printf("Creating and opening:", _trackname);
+  Serial.printf("Creating and opening:", _trackname);
   myFile = SD.open(_trackname, FILE_WRITE);
   tft.println("Done");
+  Serial.println("Done");
 
   // if the file opened okay, write to it:
   if (myFile) {
     //save tracks
-    tft.print("Writing track to:");
-    tft.print(_trackname);
+    tft.printf("Writing clips to:%s", _trackname);
+    Serial.printf("Writing clips to:%s", _trackname);
 
     for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
       for (int sstep = 0; sstep < TICKS_PER_BAR; sstep++) {
-        myFile.print((char)ctrack[trackNr].sequence[sclip].tick[sstep].voice[0]);
+        for (int v = 0; v < MAX_VOICES; v++) {
+          myFile.print((char)ctrack[trackNr].sequence[sclip].tick[sstep].voice[v]);
+        }
       }
     }
 
 
     // int channel = track[trackNr].MIDIchannel + 48;
+    myFile.print((char)allTracks[trackNr]->MIDIChannel);
     myFile.print((char)track[trackNr].MIDIchannel);
 
     // close the file:
     myFile.close();
     tft.println("Done");
-
+    Serial.println("Done");
   } else {
     // if the file didn't open, print an error:
-    tft.println("error opening:");
-    tft.print(_trackname);
+    tft.printf("error opening:%s", _trackname);
+    Serial.printf("error opening:%s", _trackname);
   }
 
   tft.println("Saving done.");
+  Serial.println("Saving done.");
   startUpScreen();
 }
 
@@ -759,37 +870,42 @@ void loadTrack(char* trackname, int trackNr) {
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(0, 0);
   // open the file for reading:
+  tft.printf("opening:%s...", _trackname);
+  Serial.printf("opening:%s...", _trackname);
   myFile = SD.open(_trackname);
-
+  tft.println("Done");
+  Serial.println("Done");
 
   if (myFile) {
-    tft.println("opening:");
-    tft.println(_trackname);
+
 
     // read from the file until there's nothing else in it:
     //load track 1
-    tft.print("Reading clips from:");
-    tft.println(_trackname);
+    tft.printf("Reading clips from:%s...", _trackname);
+    Serial.printf("Reading clips from:%s...", _trackname);
 
 
     for (int sclip = 0; sclip < NUM_CLIPS; sclip++) {
       for (int sstep = 0; sstep < TICKS_PER_BAR; sstep++) {
-        ctrack[trackNr].sequence[sclip].tick[sstep].voice[0] = myFile.read();
+        for (int v = 0; v < MAX_VOICES; v++) {
+          ctrack[trackNr].sequence[sclip].tick[sstep].voice[v] = myFile.read();
+        }
       }
     }
 
-
     //int channel = track[trackNr].MIDIchannel + 48;
-    myFile.print((char)track[trackNr].MIDIchannel);
+    allTracks[trackNr]->MIDIChannel = myFile.read();
+    track[trackNr].MIDIchannel = myFile.read();
 
     tft.println("Done");
+    Serial.println("Done");
     startUpScreen();
     // close the file:
     myFile.close();
   } else {
     // if the file didn't open, print an error:
-    tft.println("error opening:");
-    tft.println(_trackname);
+    tft.printf("error opening:%s\n", _trackname);
+    Serial.printf("error opening:%s\n", _trackname);
   }
 }
 
@@ -802,31 +918,33 @@ void savePlugin(const char* trackname, byte trackNr) {
 
 
   // delete the file:
-  tft.print("Removing:");
-  tft.print(_trackname);
+  tft.printf("Removing:%s", _trackname);
+  Serial.printf("Removing:%s", _trackname);
   SD.remove(_trackname);
   tft.println("Done");
+  Serial.println("Done");
 
   // open the file.
-  tft.print("Creating and opening:");
-  tft.print(_trackname);
+  tft.printf("Creating and opening:%s", _trackname);
+  Serial.printf("Creating and opening:%s", _trackname);
   myFile = SD.open(_trackname, FILE_WRITE);
   tft.println("Done");
+  Serial.println("Done");
 
   // if the file opened okay, write to it:
   if (myFile) {
     //save tracks
-    tft.print("Writing track to:");
-    tft.print(_trackname);
-
+    tft.printf("Writing plugin to:%s", _trackname);
+    Serial.printf("Writing plugin to:%s", _trackname);
 
 
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int pots = 0; pots < 16; pots++) {
         //save plugin 1 variables
-
         myFile.print((char)plugin[trackNr].preset[maxpreset].Pot_Value2[pots]);
+        Serial.printf("Value2: plugin:%d; preset:%d; pot:%d, value:%d\n", trackNr, maxpreset, pots, plugin[trackNr].preset[maxpreset].Pot_Value2[pots]);
         myFile.print((char)plugin[trackNr].preset[maxpreset].Pot_Value[pots]);
+        Serial.printf("Value1: plugin:%d; preset:%d; pot:%d, value:%d\n", trackNr, maxpreset, pots, plugin[trackNr].preset[maxpreset].Pot_Value[pots]);
       }
     }
 
@@ -835,14 +953,16 @@ void savePlugin(const char* trackname, byte trackNr) {
     // close the file:
     myFile.close();
     tft.println("Done");
+    Serial.println("Done");
 
   } else {
     // if the file didn't open, print an error:
-    tft.println("error opening:");
-    tft.print(_trackname);
+    tft.printf("error opening:%s\n", _trackname);
+    Serial.printf("error opening:%s\n", _trackname);
   }
 
   tft.println("Saving done.");
+  Serial.println("Saving Done");
   startUpScreen();
 }
 void loadPlugin(const char* trackname, int trackNr) {
@@ -852,38 +972,40 @@ void loadPlugin(const char* trackname, int trackNr) {
   tft.setTextColor(ILI9341_WHITE);
   tft.setCursor(0, 0);
   // open the file for reading:
+  tft.printf("opening:%s", _trackname);
+  Serial.printf("opening:%s", _trackname);
   myFile = SD.open(_trackname);
-
+  tft.println("Done");
+  Serial.println("Done");
 
   if (myFile) {
-    tft.println("opening:");
-    tft.println(_trackname);
+
 
     // read from the file until there's nothing else in it:
     //load track 1
-    tft.print("Reading clips from:");
-    tft.println(_trackname);
+    tft.printf("Reading plugin from:%s", _trackname);
+    Serial.printf("Reading plugin from:%s", _trackname);
 
 
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int pots = 0; pots < 16; pots++) {
         plugin[trackNr].preset[maxpreset].Pot_Value2[pots] = myFile.read();
+        Serial.printf("Value2: plugin:%d; preset:%d; pot:%d, value:%d\n", trackNr, maxpreset, pots, plugin[trackNr].preset[maxpreset].Pot_Value2[pots]);
         plugin[trackNr].preset[maxpreset].Pot_Value[pots] = myFile.read();
+        Serial.printf("Value1: plugin:%d; preset:%d; pot:%d, value:%d\n", trackNr, maxpreset, pots, plugin[trackNr].preset[maxpreset].Pot_Value[pots]);
       }
     }
 
 
-    //int channel = track[trackNr].MIDIchannel + 48;
-    myFile.print((char)track[trackNr].MIDIchannel);
-
     tft.println("Done");
+    Serial.println("Done");
     startUpScreen();
     // close the file:
     myFile.close();
   } else {
     // if the file didn't open, print an error:
-    tft.println("error opening:");
-    tft.println(_trackname);
+    tft.printf("error opening:%s\n", _trackname);
+    Serial.printf("error opening:%s\n", _trackname);
   }
 }
 void saveNoteFX(const char* trackname, byte trackNr) {
@@ -895,25 +1017,26 @@ void saveNoteFX(const char* trackname, byte trackNr) {
 
 
   // delete the file:
-  tft.print("Removing:");
-  tft.print(_trackname);
+  tft.printf("Removing:%s", _trackname);
+  Serial.printf("Removing:%s", _trackname);
   SD.remove(_trackname);
   tft.println("Done");
+  Serial.println("Done");
 
   // open the file.
-  tft.print("Creating and opening:");
-  tft.print(_trackname);
+  tft.printf("Creating and opening:%s", _trackname);
+  Serial.printf("Creating and opening:%s", _trackname);
   myFile = SD.open(_trackname, FILE_WRITE);
   tft.println("Done");
+  Serial.println("Done");
 
   // if the file opened okay, write to it:
   if (myFile) {
     //save tracks
-    tft.print("Writing track to:");
-    tft.print(_trackname);
+    tft.printf("Writing NFX to:%s", _trackname);
+    Serial.printf("Writing NFX to:%s", _trackname);
 
     //save NFX1
-
     for (int maxpreset = 0; maxpreset < MAX_PRESETS; maxpreset++) {
       for (int pots = 0; pots < 16; pots++) {
         myFile.print((char)NFX1[maxpreset].Pot_Value[pots]);
@@ -923,19 +1046,19 @@ void saveNoteFX(const char* trackname, byte trackNr) {
       }
     }
 
-
-
     // close the file:
     myFile.close();
     tft.println("Done");
+    Serial.println("Done");
 
   } else {
     // if the file didn't open, print an error:
-    tft.println("error opening:");
-    tft.print(_trackname);
+    tft.printf("error opening:%s\n", _trackname);
+    Serial.printf("error opening:%s\n", _trackname);
   }
 
   tft.println("Saving done.");
+  Serial.println("Saving done.");
   startUpScreen();
 }
 void loadNoteFX(const char* trackname, int trackNr) {
@@ -954,7 +1077,7 @@ void loadNoteFX(const char* trackname, int trackNr) {
 
     // read from the file until there's nothing else in it:
     //load track 1
-    tft.print("Reading clips from:");
+    tft.print("Reading NFX from:");
     tft.println(_trackname);
 
 

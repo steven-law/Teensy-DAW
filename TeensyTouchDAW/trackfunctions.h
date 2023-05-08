@@ -483,7 +483,6 @@ public:
   byte startOfLoop = 0;
   byte endOfLoop = 0;
   bool seq_run = false;
-  bool seq_rec = false;
   bool playing = false;
   byte master_tempo = 120;
   int syncPin = -1;

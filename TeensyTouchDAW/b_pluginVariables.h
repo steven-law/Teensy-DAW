@@ -2,8 +2,6 @@
 //https://newdigate.github.io/teensy-eurorack-audio-gui/
 
 
-int oldWave;  //wfselect
-
 int pl2Pot[16];
 int pl4Pot[16];
 

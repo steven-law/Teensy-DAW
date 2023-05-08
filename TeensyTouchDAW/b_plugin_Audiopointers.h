@@ -12,13 +12,13 @@
 #define pl8NR 7
 #define pl9NR 8
 #define pl10NR 9
-
+#define pl11NR 10
 
 #define fx1NR 0
 #define fx2NR 1
 
 #define fx3NR 2
-const char *pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "11", "12", "13", "14", "15", "16" };
+const char *pluginName[MAX_PLUGINS]{ "Chrd", "SDrm", "1OSC", "MDrm", "Raw1", "Raw2", "Drum", "MogL", "Strng", "dtune", "RDrm", "12", "13", "14", "15", "16" };
 
 #define PLUGIN1_PAGE1 40
 #define PLUGIN2_PAGE1 41
@@ -153,6 +153,11 @@ AudioPlaySdWav *PL2PLAYER[12]{
   &playSdWav9, &playSdWav10, &playSdWav11, &playSdWav12
 };
 
+AudioPlaySdRaw *PL11PLAYER[12]{
+  &playSdRaw1, &playSdRaw2, &playSdRaw3, &playSdRaw4,
+  &playSdRaw5, &playSdRaw6, &playSdRaw7, &playSdRaw8,
+  &playSdRaw9, &playSdRaw10, &playSdRaw11, &playSdRaw12
+};
 /*
 AudioPlayMemory *PL4PLAYER[12]{
   &playMem1, &playMem2, &playMem3, &playMem4,
@@ -240,3 +245,4 @@ AudioEffectReverb *REVERB[1]{ &reverb1 };
 
 AudioMixer4 *PL2MIX[3]{ &drummixer1, &drummixer1, &drummixer1 };
 AudioMixer4 *PL4MIX[3]{ &pl4drummixer1, &pl4drummixer1, &pl4drummixer1 };
+AudioMixer4 *PL11MIX[3]{ &pl11drummixer1, &pl11drummixer1, &pl11drummixer1 };
