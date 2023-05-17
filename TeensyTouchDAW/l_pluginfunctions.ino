@@ -252,6 +252,109 @@ void draw_OSC_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float 
   draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
 }
 
+//NODE: AudioSynthWaveformSineModulated
+void SINE_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: frequency MAX: frequency |range: 0-22000
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
+    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    store_Pot_Value(pluginNr, COL, ROW);
+    change_SINE_MOD_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+    draw_SINE_MOD_frequency(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  }
+}
+void change_SINE_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+
+  SINE_MOD[des_node]->frequency((float)(map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, 127, MIN, MAX)));
+}
+void draw_SINE_MOD_frequency(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: frequency |range: 0-22000
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+void SINE_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
+    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    store_Pot_Value(pluginNr, COL, ROW);
+    change_SINE_MOD_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+    draw_SINE_MOD_amplitude(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  }
+}
+void change_SINE_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  SINE_MOD[des_node]->amplitude((float)((plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / MAX)));
+}
+void draw_SINE_MOD_amplitude(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: 0 MAX: 1.00
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX_ENC_RANGE, text);
+}
+void SINE_MOD_ratio(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
+    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    store_Pot_Value(pluginNr, COL, ROW);
+    change_SINE_MOD_ratio(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+    draw_SINE_MOD_ratio(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  }
+}
+void change_SINE_MOD_ratio(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {
+  byte pl6ratio = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] / (MAX_ENC_RANGE / MAX);
+  pl6ratio_played[COL / 2] = pl6ratios[pl6ratio];
+}
+void draw_SINE_MOD_ratio(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+
+  draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
+//NODE: AudioSynthWavetable
+void WAVETABLE_file(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: amplitude |range: 0-127.00(*n) 127.00 = 1.00 amplitude
+  if (enc_moved[COL] || incomingCC_changed[COL]) {
+    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
+    store_Pot_Value(pluginNr, COL, ROW);
+    change_WAVETABLE_file(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+    draw_WAVETABLE_file(pluginNr, des_node, COL, ROW, MIN, MAX, text);
+  }
+}
+void change_WAVETABLE_file(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {
+
+  byte pl11File = map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, 127, 0, MAX_WAVETABLES - 1);
+  switch (pl11File) {
+    case 0:
+      WAVETABLE[des_node]->setInstrument(BasicFlute1);
+      break;
+    case 1:
+      WAVETABLE[des_node]->setInstrument(FrenchHorns);
+      break;
+    case 2:
+      WAVETABLE[des_node]->setInstrument(Ocarina);
+      break;
+    case 3:
+      WAVETABLE[des_node]->setInstrument(Pizzicato);
+      break;
+    case 4:
+      WAVETABLE[des_node]->setInstrument(Viola);
+      break;
+    case 5:
+      WAVETABLE[des_node]->setInstrument(SpaceVoice);
+      break;
+    case 6:
+      WAVETABLE[des_node]->setInstrument(Banjo);
+      break;
+    case 7:
+      WAVETABLE[des_node]->setInstrument(AcouPiano3);
+      break;
+    case 8:
+      WAVETABLE[des_node]->setInstrument(Piano1);
+      break;
+      /*
+      case 9:
+      WAVETABLE[des_node]->setInstrument(Violin);
+      break;
+      */
+  }
+}
+void draw_WAVETABLE_file(int pluginNr, int des_node, int COL, int ROW, float MIN, float MAX, const char* text) {  //MIN: unused MAX: unused
+  byte pl11File = map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, 127, 0, MAX_WAVETABLES - 1);
+  draw_A(pluginNr, des_node, COL, ROW, MAX, wavetableNames[pl11File]);
+  //draw_A(pluginNr, des_node, COL, ROW, MAX, text);
+}
+
 
 
 //NODE: AudioSynthWaveformPWM
@@ -557,10 +660,8 @@ void change_SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int 
   selectFilterType(des_node, (map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX)));
 }
 void draw_SVF_Type(int pluginNr, int des_node, int COL, int ROW, int MIN, int MAX, const char* text) {  //MIN: unused MAX: unused
-  int xPos = ((COL + 1) * 4) - 1;
-  int selected_filtertype = (map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
-  drawChar(xPos, ((ROW + 1) * 3) + 1, filterType[selected_filtertype], ILI9341_WHITE);
-  draw_A(pluginNr, des_node, COL, ROW, MAX, "");
+  byte selected_filtertype = (map(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)], 0, MAX_ENC_RANGE, MIN, MAX));
+  draw_A(pluginNr, des_node, COL, ROW, MAX, filterType[selected_filtertype]);
 }
 
 
@@ -706,34 +807,5 @@ void pl4MIX(int pluginNr, int des_node, int COL, int ROW) {
     plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[COL + (ROW * 4)] = Potentiometer[COL];
     PL4MIX[ROW]->gain(COL, (float)(pl4Pot[COL + (ROW * 4)] / 127.00));
     drawPot(COL, ROW, Potentiometer[COL], pl4Pot[COL + (ROW * 4)], showVOL[COL + (ROW * 4)], trackColor[desired_instrument]);
-  }
-}
-
-void pl11MIX(int pluginNr, int des_node, int COL, int ROW) {
-  int pot_index = COL + (ROW * 4);
-  if (enc_moved[COL] || incomingCC_changed[COL]) {
-    Encoder_to_Pot_Value(pluginNr, COL, ROW, MAX_ENC_RANGE);
-    //if (pl2Pot[pot_index] != Potentiometer[COL]) {
-    int volumeD = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index];
-    int fileNr = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index];
-    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index] = Potentiometer[COL];
-    PL11MIX[ROW]->gain(COL, (float)(volumeD / 127.00));
-
-    sprintf(_pl11Filename, "%s%d\0", wavKits[pot_index], fileNr);
-    drawPot(COL, ROW, volumeD, volumeD, _pl11Filename, trackColor[desired_instrument]);
-    Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index]);
-  }
-}
-void pl11File(int pluginNr, int des_node, int COL, int ROW) {
-  int pot_index = COL + (ROW * 4);
-  if (enc_moved[COL]) {
-    Encoder_to_Pot_Value2(pluginNr, COL, ROW, MAX_ENC_RANGE);
-    // if (plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index] != Potentiometer[COL]) {
-    plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index] = Potentiometer[COL];
-    int anyvalue = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value[pot_index];
-    int fileNr = plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index];
-    sprintf(_pl11Filename, "%s%d\0", wavKits[pot_index], fileNr);
-    drawPot(COL, ROW, anyvalue, anyvalue, _pl11Filename, trackColor[desired_instrument]);
-    Serial.println(plugin[pluginNr].preset[plpreset[pluginNr]].Pot_Value2[pot_index]);
   }
 }

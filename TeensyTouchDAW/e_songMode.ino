@@ -7,12 +7,10 @@ void gridSongMode(int songpageNumber) {  //static Display rendering
   page_phrase_end = (songpageNumber + 1) * 16;
   clearWorkSpace();
   drawsongmodepageselector();
-  drawActiveRect(18, 3, 2, 2, false, "clear", ILI9341_RED);
+  drawActiveRect(18, 13, 2, 2, true, "clear", ILI9341_RED);
   master_clock.drawStartOfLoop();
   master_clock.drawEndOfLoop();
-  tft.fillRect(STEP_FRAME_W * 2 * 8 + STEP_FRAME_W * 2, STEP_FRAME_H * 13, STEP_FRAME_W * 2, STEP_FRAME_H, ILI9341_RED);
-  tft.setCursor(STEP_FRAME_W * 2 * 8 + STEP_FRAME_W * 2 + 2, STEP_FRAME_H * 13 + 4);
-  tft.print("Clear");
+  
 
   drawChar(1, 0, "", ILI9341_BLUE);
   drawChar(3, 0, "", ILI9341_RED);

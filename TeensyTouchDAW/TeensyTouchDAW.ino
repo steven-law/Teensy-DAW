@@ -1,4 +1,4 @@
-bool debugTime = true;
+bool debugTime = false;
 extern unsigned long _heap_start;
 extern unsigned long _heap_end;
 extern char *__brkval;
@@ -11,21 +11,19 @@ Very Interesting stuff to find and try out!!!
 
 Hello. Here i will show you how to implement new stuff easily.
 
-There are some things left to be made at this point, but feel free to add your features.
+There are allways things left to be made, but feel free to add your features.
 
-toDo´s:
-    • add polyphony
-    • if in the stepsequencer of a track, i would like to hear the selected clip. when in songmode, only play the arrangment 
+
 
 
 
 1. 15stepTeensyDAW3.ino :
 
 This is the main sketch. It is easier to look at it in chapters: 
-Including all the librarys and the .h file
+Including all the librarys and the .h files
 calibration and customizing
 initiate the modules
-Place for the PJRC GUItool for the internal plugins (audio Connections)
+Place for the PJRC GUItool for the internal plugins (audio Connections)-->moved to seperate file
 
 void loop(), run, the sequencer, reading the inputs. Applying all the controls from the 	startscreen when touched(trackselection, transportcontrol, arrengmenttype).
 With each touch on one of the controls we switch all other functions to „false/LOW“ 	so the touches are not misinterpreted. After setting the state the code will open up 	the desired „window“.
@@ -268,6 +266,18 @@ void setup() {
   //ctrack = new track_t[NUM_TRACKS];
   //allocate plugins
   plugin = new plugin_t[MAX_PLUGINS];
+  for (int x = 0; x < NUM_TRACKS; x++) {
+    for (int y = 0; y < MAX_PRESETS; y++) {
+      for (int z = 0; z < 16; z++) {
+        plugin[x].preset[y].Pot_Value[z] = 0;
+        plugin[x].preset[y].Pot_Value2[z] = 0;
+      }
+    }
+  }
+  //set the singlecyclewaveform to 0
+ // for (byte i = 0; i < 256; i++) {
+  //  singleCycleWaveform[i] = 0;
+  //}
   effect = new effect_t[MAX_EFFECTS];
   //allocate NFX1
   NFX1 = new NFX[MAX_PRESETS];
@@ -405,7 +415,6 @@ void setup() {
 
   //initiate variablePlayback
   playSdPitch1.enableInterpolation(true);
-  playSdPitch2.enableInterpolation(true);
   Serial.println("Initializing VariablePlayback");
   tft.println("Initializing VariablePlayback");
 
@@ -797,7 +806,7 @@ void doMainButtons() {
       if (seq_rec == false) {
         seq_rec = true;
         tft.fillCircle(STEP_FRAME_W * POSITION_RECORD_BUTTON + 7, 7, DOT_RADIUS + 1, ILI9341_RED);
-        
+
         if (selectPage == RECORDER_PAGE) {
           startRecording();
           drawActiveRect(CTRL_COL_1, CTRL_ROW_1, 2, 1, audio_rec_rec, "Rec", ILI9341_ORANGE);
@@ -993,6 +1002,18 @@ void doMainButtons() {
     //SerialPrintPlugins();
     Serial.println("Free RAM:");
     debug_free_ram();
+    // print a summary of the current & maximum usage
+    Serial.print("CPU: ");
+
+    Serial.print(AudioProcessorUsage());
+    Serial.print(",");
+    Serial.print(AudioProcessorUsageMax());
+    Serial.print("    ");
+    Serial.print("Memory: ");
+    Serial.print(AudioMemoryUsage());
+    Serial.print(",");
+    Serial.print(AudioMemoryUsageMax());
+    Serial.println();
   }
 }
 void readTouchinput() {

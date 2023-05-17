@@ -56,6 +56,9 @@ void Plugin_View_Static() {
   if (selectPage == PLUGIN12_PAGE1) {
     Plugin12_Page_Static();
   }
+  if (selectPage == PLUGIN12_PAGE2) {
+    Plugin12_Page2_Static();
+  }
   if (selectPage == PLUGIN13_PAGE1) {
     Plugin13_Page_Static();
   }
@@ -197,9 +200,13 @@ void Plugin_View_Dynamic() {
   if (selectPage == PLUGIN11_PAGE1) {
     Plugin11_Page1_Dynamic();
   }
-  //setting up the Plugin10 Page1-view
+  //setting up the Plugin12 Page1-view
   if (selectPage == PLUGIN12_PAGE1) {
     Plugin12_Page1_Dynamic();
+  }
+  //setting up the Plugin12 Page2-view
+  if (selectPage == PLUGIN12_PAGE2) {
+    Plugin12_Page2_Dynamic();
   }
   //setting up the Plugin10 Page1-view
   if (selectPage == PLUGIN13_PAGE1) {
@@ -373,6 +380,17 @@ void PluginNoteOn() {
                   track[desired_instruments].envActive[8] = true;
                 }
               }
+              //3OP FM
+              if (track[desired_instruments].MIDIchannel == 22) {
+                SINE_MOD[pl6MOD_OSC[polys]]->frequency((note_frequency[track[desired_instruments].notePlayed[polys]] * tuning) * pl6ratio_played[0]);
+                SINE_MOD[pl6MOD2_OSC[polys]]->frequency((note_frequency[track[desired_instruments].notePlayed[polys]] * tuning) * pl6ratio_played[1]);
+                SINE_MOD[pl6CAR_OSC[polys]]->frequency(note_frequency[track[desired_instruments].notePlayed[polys]] * tuning);
+                ENVELOPE1[pl6MOD_ENV[polys]]->noteOn();
+                ENVELOPE1[pl6MOD2_ENV[polys]]->noteOn();
+                ENVELOPE1[pl6CAR_ENV[polys]]->noteOn();
+                track[desired_instruments].playNoteOnce[polys] = false;
+                track[desired_instruments].envActive[polys] = true;
+              }
               //play Synthesized drumplugin when midichannel = 23
               if (track[desired_instruments].MIDIchannel == 23) {
                 if (polys == 0) {
@@ -422,97 +440,22 @@ void PluginNoteOn() {
                   track[desired_instruments].envActive[8] = true;
                 }
               }
-              //play RAW drumplugin when midichannel = 27
+              //String
+              if (track[desired_instruments].MIDIchannel == 25) {
+                //float pl9velo = (float)(track[desired_instruments].MIDI_velocity[polys] / 127.00);
+                float pl9freq = note_frequency[track[desired_instruments].notePlayed[polys]] * tuning;
+                PL9STRING[polys]->noteOn(pl9freq, 1);
+                track[desired_instruments].playNoteOnce[polys] = false;
+                track[desired_instruments].envActive[polys] = true;
+              }
+              //sf2
               if (track[desired_instruments].MIDIchannel == 27) {
-                if (polys == 0) {
-                  sprintf(_pl11Filename1, "%s%d.RAW\0", wavKits[0], plugin[10].preset[plpreset[10]].Pot_Value2[0]);
-                  //playSdRaw1.setPlaybackRate(1);
-                  playSdRaw1.play(_pl11Filename1);
-                  //sprintf(_pl11Filename, "%s%d.RAW\0", wavKits[polys], plugin[10].preset[plpreset[10]].Pot_Value2[polys]);
-                  //PL11PLAYER[polys]->play(_pl11Filename);
-                  track[desired_instruments].playNoteOnce[0] = false;
-                  track[desired_instruments].envActive[0] = true;
-                  Serial.printf("poly=%d, name=%s\n", polys, _pl11Filename1);
-                }
-                if (polys == 1) {
-                  sprintf(_pl11Filename2, "%s%d.RAW\0", wavKits[1], plugin[10].preset[plpreset[10]].Pot_Value2[1]);
-                  //playSdRaw2.setPlaybackRate(1);
-                  playSdRaw2.play(_pl11Filename2);
-                  track[desired_instruments].playNoteOnce[1] = false;
-                  track[desired_instruments].envActive[1] = true;
-                }
-                if (polys == 2) {
-                  sprintf(_pl11Filename3, "%s%d.RAW\0", wavKits[2], plugin[10].preset[plpreset[10]].Pot_Value2[2]);
-                  //playSdRaw3.setPlaybackRate(1);
-                  playSdRaw3.play(_pl11Filename3); //filename, Nr of channels
-                  track[desired_instruments].playNoteOnce[2] = false;
-                  track[desired_instruments].envActive[2] = true;
-                }
-                /*
-                if (polys == 3) {
-                  sprintf(_pl11Filename4, "%s%d.RAW\0", wavKits[3], plugin[10].preset[plpreset[10]].Pot_Value2[3]);
-                  playSdRaw4.setPlaybackRate(1);
-                  playSdRaw4.playRaw(_pl11Filename4, 1);
-                  track[desired_instruments].playNoteOnce[3] = false;
-                  track[desired_instruments].envActive[3] = true;
-                }
-                if (polys == 4) {
-                  sprintf(_pl11Filename5, "%s%d.RAW\0", wavKits[4], plugin[10].preset[plpreset[10]].Pot_Value2[4]);
-                  playSdRaw5.setPlaybackRate(1);
-                  playSdRaw5.playRaw(_pl11Filename5, 1);
-                  track[desired_instruments].playNoteOnce[4] = false;
-                  track[desired_instruments].envActive[4] = true;
-                }
-                if (polys == 5) {
-                  sprintf(_pl11Filename6, "%s%d.RAW\0", wavKits[5], plugin[10].preset[plpreset[10]].Pot_Value2[5]);
-                  playSdRaw6.setPlaybackRate(1);
-                  playSdRaw6.playRaw(_pl11Filename6, 1);
-                  track[desired_instruments].playNoteOnce[5] = false;
-                  track[desired_instruments].envActive[5] = true;
-                }
-                if (polys == 6) {
-                  sprintf(_pl11Filename7, "%s%d.RAW\0", wavKits[6], plugin[10].preset[plpreset[10]].Pot_Value2[6]);
-                  playSdRaw7.setPlaybackRate(1);
-                  playSdRaw7.playRaw(_pl11Filename7, 1);
-                  track[desired_instruments].playNoteOnce[6] = false;
-                  track[desired_instruments].envActive[6] = true;
-                }
-                if (polys == 7) {
-                  sprintf(_pl11Filename8, "%s%d.RAW\0", wavKits[7], plugin[10].preset[plpreset[10]].Pot_Value2[7]);
-                  playSdRaw8.setPlaybackRate(1);
-                  playSdRaw8.playRaw(_pl11Filename8, 1);
-                  track[desired_instruments].playNoteOnce[7] = false;
-                  track[desired_instruments].envActive[7] = true;
-                }
-                if (polys == 8) {
-                  sprintf(_pl11Filename9, "%s%d.RAW\0", wavKits[8], plugin[10].preset[plpreset[10]].Pot_Value2[8]);
-                  playSdRaw9.setPlaybackRate(1);
-                  playSdRaw9.playRaw(_pl11Filename9, 1);
-                  track[desired_instruments].playNoteOnce[8] = false;
-                  track[desired_instruments].envActive[8] = true;
-                }
-                if (polys == 9) {
-                  sprintf(_pl11Filename10, "%s%d.RAW\0", wavKits[9], plugin[10].preset[plpreset[10]].Pot_Value2[9]);
-                  playSdRaw10.setPlaybackRate(1);
-                  playSdRaw10.playRaw(_pl11Filename10, 1);
-                  track[desired_instruments].playNoteOnce[9] = false;
-                  track[desired_instruments].envActive[9] = true;
-                }
-                if (polys == 10) {
-                  sprintf(_pl11Filename11, "%s%d.RAW\0", wavKits[10], plugin[10].preset[plpreset[10]].Pot_Value2[10]);
-                  playSdRaw11.setPlaybackRate(1);
-                  playSdRaw11.playRaw(_pl11Filename11, 1);
-                  track[desired_instruments].playNoteOnce[10] = false;
-                  track[desired_instruments].envActive[10] = true;
-                }
-                if (polys == 11) {
-                  sprintf(_pl11Filename12, "%s%d.RAW\0", wavKits[11], plugin[10].preset[plpreset[10]].Pot_Value2[11]);
-                  playSdRaw12.setPlaybackRate(1);
-                  playSdRaw12.playRaw(_pl11Filename12, 1);
-                  track[desired_instruments].playNoteOnce[11] = false;
-                  track[desired_instruments].envActive[11] = true;
-                }
-                */
+                float pl11velo = (float)(track[desired_instruments].MIDI_velocity[polys] / 127.00);
+                float pl11freq = note_frequency[track[desired_instruments].notePlayed[polys]] * tuning;
+                WAVETABLE[pl11WAVETABLES[polys]]->amplitude(pl11velo);
+                WAVETABLE[pl11WAVETABLES[polys]]->playFrequency(pl11freq);
+                track[desired_instruments].playNoteOnce[polys] = false;
+                track[desired_instruments].envActive[polys] = true;
               }
             }
           }
@@ -525,7 +468,7 @@ void PluginNoteOn() {
     if (track[desired_instruments].notePressed[0]) {
       if (track[desired_instruments].playNoteOnce[0]) {
         if (!track[desired_instruments].envActive[0]) {
-
+          //Chord
           if (track[desired_instruments].MIDIchannel == 17) {
             for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
               int Note2play = track[desired_instruments].notePlayed[0] + map(plugin[pl1NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value2[MixerColumn], 0, 127, -18, 18);
@@ -540,6 +483,7 @@ void PluginNoteOn() {
             track[desired_instruments].envActive[0] = true;
             //Serial.println("crackling");
           }
+          //1OSC
           if (track[desired_instruments].MIDIchannel == 19) {
             OSC_MOD[4]->frequency(note_frequency[track[desired_instruments].notePlayed[0]] * tuning);
             pl3envelope1.noteOn();
@@ -547,6 +491,7 @@ void PluginNoteOn() {
             track[desired_instruments].playNoteOnce[0] = false;
             track[desired_instruments].envActive[0] = true;
           }
+          //RAW sampler
           if (track[desired_instruments].MIDIchannel == 21) {
 
             playSdPitch1.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed[0]]);
@@ -557,15 +502,8 @@ void PluginNoteOn() {
             track[desired_instruments].playNoteOnce[0] = false;
             track[desired_instruments].envActive[0] = true;
           }
-          if (track[desired_instruments].MIDIchannel == 22) {
-            playSdPitch2.setPlaybackRate(note_frequency[track[desired_instruments].notePlayed[0]]);
-            sprintf(_RawFile2, "%d.RAW\0", plugin[pl6NR].preset[track[desired_instruments].Ttrckprst[phrase]].Pot_Value[0]);
-            playSdPitch2.playRaw(_RawFile2, 1);
-            pl6envelope1.noteOn();
-            pl6envelope2.noteOn();
-            track[desired_instruments].playNoteOnce[0] = false;
-            track[desired_instruments].envActive[0] = true;
-          }
+
+          //Mog
           if (track[desired_instruments].MIDIchannel == 24) {
             pl8waveform1.frequency(note_frequency[track[desired_instruments].notePlayed[0]] * tuning);
             pl8envelope1.noteOn();
@@ -573,16 +511,20 @@ void PluginNoteOn() {
             track[desired_instruments].playNoteOnce[0] = false;
             track[desired_instruments].envActive[0] = true;
           }
-          if (track[desired_instruments].MIDIchannel == 25) {
-            pl9string1.noteOn(note_frequency[track[desired_instruments].notePlayed[0]] * tuning, 1);
-            track[desired_instruments].playNoteOnce[0] = false;
-            track[desired_instruments].envActive[0] = true;
-          }
+          //detune
           if (track[desired_instruments].MIDIchannel == 26) {
             pl10pwm1.frequency((note_frequency[track[desired_instruments].notePlayed[0]] * tuning));
             pl10pwm2.frequency((note_frequency[track[desired_instruments].notePlayed[0]] + detune_mapped) * tuning);
             pl10envelope1.noteOn();
             pl10envelope2.noteOn();
+            track[desired_instruments].playNoteOnce[0] = false;
+            track[desired_instruments].envActive[0] = true;
+          }
+          //Wavetable
+          if (track[desired_instruments].MIDIchannel == 28) {
+            OSC_MOD[pl12OSC_MOD]->frequency(note_frequency[track[desired_instruments].notePlayed[0]] * tuning);
+            pl12envelope1.noteOn();
+            pl12envelope2.noteOn();
             track[desired_instruments].playNoteOnce[0] = false;
             track[desired_instruments].envActive[0] = true;
           }
@@ -610,12 +552,22 @@ void PluginNoteOff() {
               }
             }
           }
+          //sdrum
           if (track[desired_instruments].MIDIchannel == 18) {
             track[desired_instruments].envActive[polys] = false;
           }
+          //mdrum
           if (track[desired_instruments].MIDIchannel == 20) {
             track[desired_instruments].envActive[polys] = false;
           }
+          //3opFM
+          if (track[desired_instruments].MIDIchannel == 22) {
+            track[desired_instruments].envActive[polys] = false;
+            ENVELOPE1[pl6MOD_ENV[polys]]->noteOff();
+            ENVELOPE1[pl6MOD2_ENV[polys]]->noteOff();
+            ENVELOPE1[pl6CAR_ENV[polys]]->noteOff();
+          }
+          //drum
           if (track[desired_instruments].MIDIchannel == 23) {
             if (polys == 0) {
               track[desired_instruments].envActive[0] = false;
@@ -633,8 +585,15 @@ void PluginNoteOff() {
               track[desired_instruments].envActive[3] = false;
             }
           }
+          //strings
+          if (track[desired_instruments].MIDIchannel == 25) {
+            track[desired_instruments].envActive[polys] = false;
+            PL9STRING[polys]->noteOff(0);
+          }
+          //wavetables
           if (track[desired_instruments].MIDIchannel == 27) {
             track[desired_instruments].envActive[polys] = false;
+            WAVETABLE[pl11WAVETABLES[polys]]->stop();
           }
         }
       }
@@ -663,24 +622,22 @@ void PluginNoteOff() {
           pl5envelope1.noteOff();
           pl5envelope2.noteOff();
         }
-        if (track[desired_instruments].MIDIchannel == 22) {
-          track[desired_instruments].envActive[0] = false;
-          pl6envelope1.noteOff();
-          pl6envelope2.noteOff();
-        }
+
         if (track[desired_instruments].MIDIchannel == 24) {
           track[desired_instruments].envActive[0] = false;
           pl8envelope1.noteOff();
           pl8envelope2.noteOff();
         }
-        if (track[desired_instruments].MIDIchannel == 25) {
-          track[desired_instruments].envActive[0] = false;
-          pl9string1.noteOff(0);
-        }
+
         if (track[desired_instruments].MIDIchannel == 26) {
           track[desired_instruments].envActive[0] = false;
           pl10envelope1.noteOff();
           pl10envelope2.noteOff();
+        }
+        if (track[desired_instruments].MIDIchannel == 28) {
+          track[desired_instruments].envActive[0] = false;
+          pl12envelope1.noteOff();
+          pl12envelope2.noteOff();
         }
       }
     }

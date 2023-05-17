@@ -575,11 +575,13 @@ void myNoteOn(int channel, byte note, byte velocity) {
   if (!launchpad) {
     //send midinotes for drumtrack
 
-    LP_octave_bool_keys[0] = true;
     track[channel - 1].notePressed[0] = true;
     track[channel - 1].playNoteOnce[0] = true;
     track[channel - 1].notePlayed[0] = note;
     track[channel - 1].MIDI_velocity[0] = velocity;
+
+
+
     //track[channel - 1].notePlayed[0] = note;
 
     if (seq_rec) {
@@ -663,6 +665,13 @@ void myNoteOff(int channel, byte note, byte velocity) {
     }
   }
   if (!launchpad) {
+
+
+
+    track[channel - 1].notePressed[0] = false;
+    track[channel - 1].playNoteOnce[0] = false;
+    track[channel - 1].notePlayed[0] = note;
+    track[channel - 1].MIDI_velocity[0] = velocity;
 
     LP_octave_bool_keys[0] = false;
     track[channel - 1].notePressed[0] = false;

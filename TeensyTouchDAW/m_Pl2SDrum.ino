@@ -63,7 +63,7 @@ void Plugin2_Page1_Dynamic() {
         break;
     }
   }
-  
+
   if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
@@ -117,7 +117,7 @@ void Plugin_4_Settings() {
 }
 void Plugin4_Page1_Dynamic() {
   change_preset(3);
-  
+
   if (!button[14]) {
     switch (lastPotRow) {
       case 0:
@@ -135,7 +135,6 @@ void Plugin4_Page1_Dynamic() {
           pl4MIX(3, 2, MixerColumn, lastPotRow);
         }
         break;
-
     }
   }
 
@@ -165,11 +164,9 @@ void Plugin4_Page_Static() {
 void Plugin4_Change() {
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer1.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn] / 127.00));
- 
   }
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer2.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 4] / 127.00));
- 
   }
   for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
     pl4drummixer3.gain(MixerColumn, (float)(plugin[3].preset[plpreset[3]].Pot_Value[MixerColumn + 8] / 127.00));
@@ -182,12 +179,14 @@ void Plugin4_Change() {
 
 
 void Plugin_11_Settings() {
+  pl11mixer5.gain(0, 1);
+  pl11mixer5.gain(1, 1);
+  pl11mixer5.gain(2, 1);
+  pl11mixer5.gain(3, 1);
 
-
-  pl11drummixer4.gain(0, 1);
-  pl11drummixer4.gain(1, 1);
-  pl11drummixer4.gain(2, 1);
-  pl11drummixer4.gain(3, 1);
+  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
+    WAVETABLE[pl11WAVETABLES[MixerColumn]]->setInstrument(Viola);
+  }
 
   pl11amp.gain(1);
   pl11amp2.gain(1);
@@ -199,48 +198,48 @@ void Plugin11_Page1_Dynamic() {
   if (!button[14] && !button[9]) {
     switch (lastPotRow) {
       case 0:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11MIX(10, 0, MixerColumn, lastPotRow);
-        }
+        WAVETABLE_file(pl11NR, pl11WAVETABLES[0], 0, 0, 0, 4, "Table");
+        SVF_frequency(pl11NR, pl11SVF1, 1, 0, 0, 127, "Freq");                //MIN: unused MAX: unused
+        SVF_resonance(pl11NR, pl11SVF1, 2, 0, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+        SVF_Type(pl11NR, pl11TYPE1, 3, 0, ZERO, 2, "Typ");  //MIN: unused M
         break;
       case 1:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11MIX(10, 1, MixerColumn, lastPotRow);
-        }
+        WAVETABLE_file(pl11NR, pl11WAVETABLES[1], 0, 1, 0, 4, "Table");
+        SVF_frequency(pl11NR, pl11SVF2, 1, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+        SVF_resonance(pl11NR, pl11SVF2, 2, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+        SVF_Type(pl11NR, pl11TYPE2, 3, 1, ZERO, 2, "Typ");  //MIN: unused M
         break;
       case 2:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11MIX(10, 2, MixerColumn, lastPotRow);
-        }
+        WAVETABLE_file(pl11NR, pl11WAVETABLES[2], 0, 2, 0, 4, "Table");
+        SVF_frequency(pl11NR, pl11SVF3, 1, 2, 0, 127, "Freq");                //MIN: unused MAX: unused
+        SVF_resonance(pl11NR, pl11SVF3, 2, 2, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+        SVF_Type(pl11NR, pl11TYPE3, 3, 2, ZERO, 2, "Typ");  //MIN: unused M
         break;
       case 3:
-        //pl11File(1, 0, 0, 3);
+        WAVETABLE_file(pl11NR, pl11WAVETABLES[3], 0, 3, 0, 4, "Table");
+        SVF_frequency(pl11NR, pl11SVF4, 1, 3, 0, 127, "Freq");                //MIN: unused MAX: unused
+        SVF_resonance(pl11NR, pl11SVF4, 2, 3, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+        SVF_Type(pl11NR, pl11TYPE4, 3, 3, ZERO, 2, "Typ");  //MIN: unused M
         break;
     }
   }
   if (button[9]) {
     switch (lastPotRow) {
       case 0:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11File(10, 0, MixerColumn, lastPotRow);
-        }
+
         break;
       case 1:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11File(10, 1, MixerColumn, lastPotRow);
-        }
+
         break;
       case 2:
-        for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-          pl11File(10, 2, MixerColumn, lastPotRow);
-        }
+
         break;
       case 3:
-        //pl11File(1, 0, 0, 3);
+
         break;
     }
   }
-  
+
   if (ts.touched() || button[15]) {
 
     if (gridTouchY == 0) {
@@ -259,22 +258,45 @@ void Plugin11_Page_Static() {
   clearWorkSpace();
   Plugin11_Change();
   drawNrInRect(18, 1, plpreset[pl11NR], ILI9341_PURPLE);
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
 
-    sprintf(_pl11Filename, "%s%d\0", wavKits[MixerColumn], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value2[MixerColumn]);
-    drawPot(MixerColumn, 0, plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn], _pl11Filename, trackColor[desired_instrument]);
+  draw_WAVETABLE_file(pl11NR, pl11WAVETABLES[0], 0, 0, 0, 4, "Table");
+  draw_SVF_frequency(pl11NR, pl11SVF1, 1, 0, 0, 127, "Freq");                //MIN: unused MAX: unused
+  draw_SVF_resonance(pl11NR, pl11SVF1, 2, 0, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  draw_SVF_Type(pl11NR, pl11TYPE1, 3, 0, ZERO, 2, "Typ");  //MIN: unused M
 
-    sprintf(_pl11Filename, "%s%d\0", wavKits[MixerColumn + 4], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value2[MixerColumn + 4]);
-    drawPot(MixerColumn, 1, plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 4], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 4], _pl11Filename, trackColor[desired_instrument]);
+  draw_WAVETABLE_file(pl11NR, pl11WAVETABLES[1], 0, 1, 0, 4, "Table");
+  draw_SVF_frequency(pl11NR, pl11SVF2, 1, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+  draw_SVF_resonance(pl11NR, pl11SVF2, 2, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  draw_SVF_Type(pl11NR, pl11TYPE2, 3, 1, ZERO, 2, "Typ");  //MIN: unused M
 
-    sprintf(_pl11Filename, "%s%d\0", wavKits[MixerColumn + 8], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value2[MixerColumn + 8]);
-    drawPot(MixerColumn, 2, plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 8], plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 8], _pl11Filename, trackColor[desired_instrument]);
-  }
+  draw_WAVETABLE_file(pl11NR, pl11WAVETABLES[2], 0, 2, 0, 4, "Table");
+  draw_SVF_frequency(pl11NR, pl11SVF3, 1, 2, 0, 127, "Freq");                //MIN: unused MAX: unused
+  draw_SVF_resonance(pl11NR, pl11SVF3, 2, 2, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  draw_SVF_Type(pl11NR, pl11TYPE3, 3, 2, ZERO, 2, "Typ");  //MIN: unused M
+
+  draw_WAVETABLE_file(pl11NR, pl11WAVETABLES[3], 0, 3, 0, 4, "Table");
+  draw_SVF_frequency(pl11NR, pl11SVF4, 1, 3, 0, 127, "Freq");                //MIN: unused MAX: unused
+  draw_SVF_resonance(pl11NR, pl11SVF4, 2, 3, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  draw_SVF_Type(pl11NR, pl11TYPE4, 3, 3, ZERO, 2, "Typ");  //MIN: unused M
 }
 void Plugin11_Change() {
-  for (int MixerColumn = 0; MixerColumn < 4; MixerColumn++) {
-    pl11drummixer1.gain(MixerColumn, (float)(plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn] / 127.00));
-    pl11drummixer2.gain(MixerColumn, (float)(plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 4] / 127.00));
-    pl11drummixer3.gain(MixerColumn, (float)(plugin[pl11NR].preset[plpreset[pl11NR]].Pot_Value[MixerColumn + 8] / 127.00));
-  }
+  change_WAVETABLE_file(pl11NR, pl11WAVETABLES[0], 0, 0, 0, 4, "Table");
+  change_SVF_frequency(pl11NR, pl11SVF1, 1, 0, 0, 127, "Freq");                //MIN: unused MAX: unused
+  change_SVF_resonance(pl11NR, pl11SVF1, 2, 0, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  change_SVF_Type(pl11NR, pl11TYPE1, 3, 0, ZERO, 2, "Typ");  //MIN: unused M
+
+  change_WAVETABLE_file(pl11NR, pl11WAVETABLES[1], 0, 1, 0, 4, "Table");
+  change_SVF_frequency(pl11NR, pl11SVF2, 1, 1, 0, 127, "Freq");                //MIN: unused MAX: unused
+  change_SVF_resonance(pl11NR, pl11SVF2, 2, 1, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  change_SVF_Type(pl11NR, pl11TYPE2, 3, 1, ZERO, 2, "Typ");  //MIN: unused M
+
+  change_WAVETABLE_file(pl11NR, pl11WAVETABLES[2], 0, 2, 0, 4, "Table");
+  change_SVF_frequency(pl11NR, pl11SVF3, 1, 2, 0, 127, "Freq");                //MIN: unused MAX: unused
+  change_SVF_resonance(pl11NR, pl11SVF3, 2, 2, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  change_SVF_Type(pl11NR, pl11TYPE3, 3, 2, ZERO, 2, "Typ");  //MIN: unused M
+
+  change_WAVETABLE_file(pl11NR, pl11WAVETABLES[3], 0, 3, 0, 4, "Table");
+  change_SVF_frequency(pl11NR, pl11SVF4, 1, 3, 0, 127, "Freq");                //MIN: unused MAX: unused
+  change_SVF_resonance(pl11NR, pl11SVF4, 2, 3, 0, MAX_RESONANCE, "Reso");      //MIN: unused MAX: unused
+  change_SVF_Type(pl11NR, pl11TYPE4, 3, 3, ZERO, 2, "Typ");  //MIN: unused M
 }
