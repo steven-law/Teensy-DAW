@@ -164,6 +164,7 @@ void Plugin12_Page_Static() {
   tft.drawFastHLine(STEP_FRAME_W * 2, 120, 256, ILI9341_WHITE);
   drawActiveRect(18, 12, 2, 2, pl12WaveformAssigned, "Enter", ILI9341_ORANGE);
   drawActiveRect(18, 13, 2, 2, true, "clear", ILI9341_RED);
+  tft.drawRect(STEP_FRAME_W * 2 - 1, STEP_FRAME_H * 1 - 1, 256 + 2, 208 + 2, ILI9341_BLACK);
   for (int i = 0; i < 256; i++) {
     int xpos = i + 32;
     int ypos = map(singleCycleWaveform[i], 32768, -32768, 16, 224);
@@ -175,36 +176,64 @@ void Plugin12_Page_Static() {
 void Plugin12_Page1_Dynamic() {
   static int xPos_SingleCyclePixel;
   static byte yPos_SingleCyclePixel;
-  if (1 < gridTouchX && gridTouchX < 18 && 0 < gridTouchY && gridTouchY < 13) {
-    if (enc_moved[0] || enc_moved[1]) {
+  static int16_t singleCycleValue;
+  switch (lastPotRow) {
+    case 0:
+      //Waveform
+      //OSC_MOD_Waveform(pl12NR, pl12OSC_MOD, 0, 0, ZERO, OSC_MOD_MAX_WF, "W~F");  //pluginNr, pointerarrayPos, column, row
+      OSC_frequency(pl12NR, pl12OSC, 1, 0, ZERO, 15.00, "LFO");       //pluginNr, pointerarrayPos, column, row, max freq
+      OSC_amplitude(pl12NR, pl12OSC, 2, 0, ZERO, GAIN_DIV_4, "LVL");  //pluginNr, pointerarrayPos, column, row
+      OSC_Waveform(pl12NR, pl12OSC, 3, 0, ZERO, OSC_MAX_WF, "W~F");   //pluginNr, pointerarrayPos, column, row
+      break;
+    case 1:
+      SVF_frequency(pl12NR, pl12SVF, 0, 1, ZERO, 127, "Freq");             //MIN: unused MAX: unused
+      SVF_resonance(pl12NR, pl12SVF, 1, 1, ZERO, MAX_RESONANCE, "Reso");   //MIN: unused MAX: unused
+      SVF_octaveControl(pl12NR, pl12SVF, 2, 1, ZERO, SVF_MAX_OCT, "Swp");  //MIN: unused MAX: amplitud
+      SVF_Type(pl12NR, pl12TYPE, 3, 1, 0, 2, "");                          //MIN: unused MAX: unused
+      break;
+    case 2:
+      ENV_ADSR(pl12NR, pl12ADSR1, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
+      ENV_ADSR(pl12NR, pl12ADSR2, 0, 2, ATTACK_TIME, RELEASE_TIME, "");  //MIN: Attack/Decaytime MAX: Releasetime
+      break;
+      //draw singleCycle Waveform BY ENCODERS
+    case 3:
+      //if (1 < gridTouchX && gridTouchX < 18 && 0 < gridTouchY && gridTouchY < 13) {
+      if (enc_moved[0] || enc_moved[1]) {
 
-      static int old_X;
-      static int old_Y;
-      xPos_SingleCyclePixel = constrain(xPos_SingleCyclePixel + encoded[0], STEP_FRAME_W * 2, 288);
-      gridTouchX = (xPos_SingleCyclePixel / 16) - 1;
-      yPos_SingleCyclePixel = constrain(yPos_SingleCyclePixel + encoded[1], STEP_FRAME_H, 224);
-      gridTouchY = (yPos_SingleCyclePixel / 16) - 1;
-      tft.drawRect(old_X - 1, old_Y - 1, 3, 3, ILI9341_DARKGREY);
-      tft.drawRect(xPos_SingleCyclePixel - 1, yPos_SingleCyclePixel - 1, 3, 3, ILI9341_RED);
-      old_X = xPos_SingleCyclePixel;
-      old_Y = yPos_SingleCyclePixel;
-    }
-  } else {
-    //gridTouchX
-    if (enc_moved[0]) {
-      gridTouchX = constrain((gridTouchX + encoded[0]), 0, 19);
-      xPos_SingleCyclePixel = gridTouchX * 16;
-      drawCursor();
-      //showCoordinates();
-    }
-    //gridTouchY
-    if (enc_moved[1]) {
-      gridTouchY = constrain((gridTouchY + encoded[1]), 0, 14);
-      yPos_SingleCyclePixel = gridTouchY * 16;
-      drawCursor();
-      //showCoordinates();
-    }
+        static int old_X;
+        static int old_Y;
+        xPos_SingleCyclePixel = constrain(xPos_SingleCyclePixel + encoded[0], STEP_FRAME_W * 2, 288);
+        yPos_SingleCyclePixel = constrain(yPos_SingleCyclePixel + encoded[1], STEP_FRAME_H, 224);
+        tft.drawRect(old_X - 1, old_Y - 1, 3, 3, ILI9341_DARKGREY);
+        tft.drawRect(xPos_SingleCyclePixel - 1, yPos_SingleCyclePixel - 1, 3, 3, ILI9341_RED);
+        old_X = xPos_SingleCyclePixel;
+        old_Y = yPos_SingleCyclePixel;
+      }
+
+      if (button[15]) {
+        button[15] = false;
+        Serial.println("button pressed");
+        singleCycleValue = map(yPos_SingleCyclePixel, 16, 224, 32768, -32768);
+        int old_xpos = old_xPos_SingleCyclePixel - 32;
+        int new_xpos = xPos_SingleCyclePixel - 32;
+        for (int i = old_xpos; i < new_xpos; i++) {
+          int16_t yPosToArray = old_singleCycleValue + (((singleCycleValue - old_singleCycleValue) / (new_xpos - old_xpos)) * (i - old_xpos));
+          singleCycleWaveform[i] = yPosToArray;
+          Serial.println("");
+          Serial.println("");
+          Serial.println("");
+          Serial.printf("xOld=%i, x=%i, yOld=%i, y=%i\n", old_xPos_SingleCyclePixel, xPos_SingleCyclePixel, old_yPos_SingleCyclePixel, yPos_SingleCyclePixel);
+          Serial.printf("vOld=%i, v=%i\n", old_singleCycleValue, singleCycleValue);
+          Serial.printf("ArrayPos=%d, sampleData=%i\n", i, singleCycleWaveform[i]);
+        }
+        tft.drawLine(old_xPos_SingleCyclePixel, old_yPos_SingleCyclePixel, xPos_SingleCyclePixel, yPos_SingleCyclePixel, ILI9341_WHITE);
+        old_singleCycleValue = singleCycleValue;
+        old_xPos_SingleCyclePixel = xPos_SingleCyclePixel;
+        old_yPos_SingleCyclePixel = yPos_SingleCyclePixel;
+      }
+      break;
   }
+  //clear singleCycle Waveform
   if (button[14]) {
     button[14] = false;
     Serial.println("begin of Wavetable");
@@ -213,62 +242,30 @@ void Plugin12_Page1_Dynamic() {
     }
     Serial.println("end of Wavetable");
   }
-
-
-  if (ts.touched() || button[15]) {
+  //draw singleCycle Waveform BY HAND
+  if (ts.touched()) {
 
     TS_Point p = ts.getPoint();
-     int SCdrawX = map(p.x, TS_MINX, TS_MAXX, 0, 320);
-     int SCdrawY = map(p.y, TS_MINY, TS_MAXY, 0, 240);
+    int SCdrawX = map(p.x, TS_MINX, TS_MAXX, 0, 320);
+    int SCdrawY = map(p.y, TS_MINY, TS_MAXY, 0, 240);
 
     if (!enc_moved[0] && !enc_moved[1]) {
       xPos_SingleCyclePixel = constrain(SCdrawX, 32, 288);
       yPos_SingleCyclePixel = constrain(SCdrawY, 16, 224);
     }
-
-    int arrayPos = constrain(xPos_SingleCyclePixel - 32, 0, 255);
-    int16_t singleCycleValue = map(yPos_SingleCyclePixel, 16, 224, 32768, -32768);
-
-    //singleCycleWaveform[arrayPos] = singleCyclePixel;
-
-    if (button[15]) {
-      button[15] = false;
-      Serial.println("button pressed");
-      for (int i = old_xPos_SingleCyclePixel - 32; i < xPos_SingleCyclePixel - 32; i++) {
-        int16_t yPosToArray = old_singleCycleValue + (((singleCycleValue - old_singleCycleValue) / (xPos_SingleCyclePixel - old_xPos_SingleCyclePixel)) * (i - old_xPos_SingleCyclePixel));
-        singleCycleWaveform[i] = yPosToArray;
-        //tft.drawLine(xpos_old, ypos_old, xpos, ypos, ILI9341_WHITE);
-        Serial.println("");
-        Serial.println("");
-        Serial.println("");
-        Serial.printf("scv=%i, old scv=%i\n", singleCycleValue, old_singleCycleValue);
-        Serial.printf("ArrayPos=%d, sampleData=%i\n", i, singleCycleWaveform[i]);
-      }
-    }
-    if (ts.touched()) {
-
-      Serial.println("display pressed");
+    if (1 < gridTouchX && gridTouchX < 18 && 0 < gridTouchY && gridTouchY < 13) {
+      int arrayPos = constrain(xPos_SingleCyclePixel - 32, 0, 255);
+      singleCycleValue = map(yPos_SingleCyclePixel, 16, 224, 32768, -32768);
       singleCycleWaveform[arrayPos] = singleCycleValue;
       Serial.printf("ArrayPos=%d, sampleData=%i\n", arrayPos, singleCycleValue);
-    }
-    tft.drawLine(old_xPos_SingleCyclePixel, old_yPos_SingleCyclePixel, xPos_SingleCyclePixel, yPos_SingleCyclePixel, ILI9341_WHITE);
-    old_singleCycleValue = singleCycleValue;
-    old_xPos_SingleCyclePixel = xPos_SingleCyclePixel;
-    old_yPos_SingleCyclePixel = yPos_SingleCyclePixel;
-    if (gridTouchY >= 2 && gridTouchY <= 4) {
-      lastPotRow = 0;
+      //tft.drawPixel(xPos_SingleCyclePixel, yPos_SingleCyclePixel, ILI9341_WHITE);
+      tft.drawLine(old_xPos_SingleCyclePixel, old_yPos_SingleCyclePixel, xPos_SingleCyclePixel, yPos_SingleCyclePixel, ILI9341_WHITE);
+      old_singleCycleValue = singleCycleValue;
+      old_xPos_SingleCyclePixel = xPos_SingleCyclePixel;
+      old_yPos_SingleCyclePixel = yPos_SingleCyclePixel;
     }
 
-    if (gridTouchY >= 5 && gridTouchY <= 7) {
-      lastPotRow = 1;
-    }
-
-    if (gridTouchY >= 8 && gridTouchY <= 10) {
-      lastPotRow = 2;
-    }
-    if (gridTouchY >= 11 && gridTouchY <= 13) {
-      lastPotRow = 3;
-    }
+  
     if (gridTouchX >= 18 && gridTouchY == 12) {
       pl12WaveformAssigned = true;
       selectPage = PLUGIN12_PAGE2;
